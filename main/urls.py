@@ -22,4 +22,4 @@ from goods.urls import urlpatterns as goods_urlpatterns
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-]+goods_urlpatterns+track_urlpatterns+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]+goods_urlpatterns+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
