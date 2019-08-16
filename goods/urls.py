@@ -22,6 +22,7 @@ router = DefaultRouter()
 
 router.register(r'shelfimage', views_shelf.ShelfImageViewSet)
 router.register(r'shelfgoods', views_shelf.ShelfGoodsViewSet)
+router.register(r'freezerimage', views.FreezerImageViewSet)
 
 urlpatterns = [
     url(r'^test', views.Test.as_view()),

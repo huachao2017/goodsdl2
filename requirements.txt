@@ -3,7 +3,7 @@ django<=1.11.7
 djangorestframework
 django-filter
 django-crontab
-opencv_python
+opencv_python<=3.4.2.16
 mysqlclient
 gputil
 opencv-contrib-python

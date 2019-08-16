@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from goods.models import ShelfImage, ShelfGoods
+from goods.models import ShelfImage, ShelfGoods, FreezerImage
 
 
 
@@ -17,4 +17,11 @@ class ShelfGoodsSerializer(serializers.ModelSerializer):
         fields = ('pk', 'shopid', 'shelfid', 'score1', 'score2', 'upc', 'xmin', 'ymin', 'xmax', 'ymax', 'level', 'create_time', 'update_time')
         read_only_fields = ('shopid', 'shelfid', 'score1', 'score2', 'level','create_time',)
 
+
+class FreezerImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FreezerImage
+        fields = ('pk', 'deviceid', 'ret', 'source',
+                  'create_time')
+        read_only_fields = ('ret', 'create_time',)
 
