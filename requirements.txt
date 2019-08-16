@@ -1,5 +1,5 @@
 fabric3
-django
+django<=1.11.7
 djangorestframework
 django-filter
 django-crontab
