@@ -20,6 +20,9 @@ from goods import views,views_shelf
 
 router = DefaultRouter()
 
+router.register(r'shelfimage', views_shelf.ShelfImageViewSet)
+router.register(r'shelfgoods', views_shelf.ShelfGoodsViewSet)
+
 urlpatterns = [
     url(r'^test', views.Test.as_view()),
     url(r'^api/createshelfimage', views_shelf.CreateShelfImage.as_view()),
