@@ -95,22 +95,22 @@ class ImageDetector:
 
         time2 = time.time()
         output_image_path = ''
-        if boxes.shape[0] > 0:
-            image_dir = os.path.dirname(image_path)
-            output_image_path = os.path.join(image_dir, 'visual_' + os.path.split(image_path)[-1])
-            vis_util.visualize_boxes_and_labels_on_image_array(
-                image_np,
-                np.squeeze(boxes),
-                np.squeeze(classes).astype(np.int32),
-                np.squeeze(scores),
-                self.category_index,
-                use_normalized_coordinates=True,
-                max_boxes_to_draw=None,
-                min_score_thresh=step1_min_score_thresh,
-                line_thickness=4)
-            output_image = Image.fromarray(image_np)
-            output_image.thumbnail((int(im_width), int(im_height)), Image.ANTIALIAS)
-            output_image.save(output_image_path)
+        # if boxes.shape[0] > 0:
+        #     image_dir = os.path.dirname(image_path)
+        #     output_image_path = os.path.join(image_dir, 'visual_' + os.path.split(image_path)[-1])
+        #     vis_util.visualize_boxes_and_labels_on_image_array(
+        #         image_np,
+        #         np.squeeze(boxes),
+        #         np.squeeze(classes).astype(np.int32),
+        #         np.squeeze(scores),
+        #         self.category_index,
+        #         use_normalized_coordinates=True,
+        #         max_boxes_to_draw=None,
+        #         min_score_thresh=step1_min_score_thresh,
+        #         line_thickness=4)
+        #     output_image = Image.fromarray(image_np)
+        #     output_image.thumbnail((int(im_width), int(im_height)), Image.ANTIALIAS)
+        #     output_image.save(output_image_path)
 
         ret = []
         # have_classes = {}
