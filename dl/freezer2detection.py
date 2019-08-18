@@ -4,9 +4,6 @@ from PIL import Image
 import numpy as np
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
-import threading
-from dl import common
-from goods.models import ExportAction
 import logging
 logger = logging.getLogger("detect")
 
