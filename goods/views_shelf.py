@@ -112,7 +112,7 @@ class RectifyAndDetect(APIView):
             shopid = shopid,
             shelfid = shelfid,
             picurl = picurl,
-            rectjson = json.dump({
+            rectjson = json.dumps({
             x1:x1,
             y1:y1,
             x2:x2,
