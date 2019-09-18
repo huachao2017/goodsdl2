@@ -78,21 +78,8 @@ class ShelfDetector:
                 ymax = int(ymax * im_height)
                 xmax = int(xmax * im_width)
 
-                newimage = image.crop((xmin, ymin, xmax, ymax))
+                # newimage = image.crop((xmin, ymin, xmax, ymax))
 
-                # 生成新的图片 TODO 需要处理性能问题
-                newimage_split = os.path.split(image_path)
-                single_image_dir = os.path.join(newimage_split[0], 'single')
-                if not tf.gfile.Exists(single_image_dir):
-                    tf.gfile.MakeDirs(single_image_dir)
-                new_image_path = os.path.join(single_image_dir, "{}_{}".format(i, newimage_split[1]))
-                # newimage.save(new_image_path, 'JPEG')
-                #
-                # upc_match, score_match = self.tradition_match.detect_one_with_path(new_image_path)
-
-                if score_match < 0.5:
-                    upc_match = ''
-                    score_match = 0
                 ret.append({'score': scores_step1[i],
                             'level': -1,
                             'xmin': xmin, 'ymin': ymin, 'xmax': xmax, 'ymax': ymax,
