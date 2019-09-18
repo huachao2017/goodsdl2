@@ -99,8 +99,9 @@ class RectifyAndDetect(APIView):
         dst = cv2.warpPerspective(img, M, (width, height))
         cv2.imwrite(dest_image_path,dst)
 
-        shopid = request.query_params['shopid']
-        shelfid = request.query_params['shelfid']
+        picid = int(request.query_params['picid'])
+        shopid = int(request.query_params['shopid'])
+        shelfid = int(request.query_params['shelfid'])
         if 'tlevel' in request.query_params:
             tlevel = int(request.query_params['tlevel'])
         else:
@@ -109,6 +110,7 @@ class RectifyAndDetect(APIView):
         now = datetime.datetime.now()
         image_name = '{}.jpg'.format(now.strftime('%Y%m%d_%H%M%S'))
         shelf_image = ShelfImage.objects.create(
+            picid = picid,
             shopid = shopid,
             shelfid = shelfid,
             picurl = picurl,

@@ -3,6 +3,7 @@ import datetime
 from django.conf import settings
 
 class ShelfImage(models.Model):
+    picid = models.IntegerField(default=0, db_index=True)
     shopid = models.IntegerField(default=0, db_index=True)
     shelfid = models.IntegerField(default=0, db_index=True)
     picurl = models.CharField(max_length=200, default='0')
