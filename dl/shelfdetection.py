@@ -6,7 +6,6 @@ import logging
 import time
 from dl.step1_cnn import Step1CNN
 from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
-from dl.shelftradition_match import ShelfTraditionMatch
 
 from sklearn.cluster import KMeans
 import traceback
@@ -53,9 +52,6 @@ class ShelfDetector:
         import time
         time0 = time.time()
 
-        # tradition_match 每次请求重新加载
-        tradition_match = ShelfTraditionMatch(shopid, shelfid)
-
         # image_path = image_instance.source.path
         image = Image.open(image_path)
         if image.mode != 'RGB':
@@ -94,15 +90,12 @@ class ShelfDetector:
                 #
                 # upc_match, score_match = self.tradition_match.detect_one_with_path(new_image_path)
 
-                upc_match, score_match = tradition_match.detect_one_with_cv2array(new_image_path, newimage)
                 if score_match < 0.5:
                     upc_match = ''
                     score_match = 0
                 ret.append({'score': scores_step1[i],
                             'level': -1,
                             'xmin': xmin, 'ymin': ymin, 'xmax': xmax, 'ymax': ymax,
-                            'upc': upc_match,
-                            'score2': score_match,
                             })
 
         if len(ret) > 0:

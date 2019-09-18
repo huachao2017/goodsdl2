@@ -26,7 +26,7 @@ router.register(r'freezerimage', views.FreezerImageViewSet)
 
 urlpatterns = [
     url(r'^test', views.Test.as_view()),
-    url(r'^api/createshelfimage', views_shelf.CreateShelfImage.as_view()),
-    url(r'^api/rectifyshelfimage', views_shelf.RectifyShelfImage.as_view()),
+    url(r'^api/rectify_detect', views_shelf.RectifyAndDetect.as_view()),
+    url(r'^api/comparelayout', views_shelf.CompareLayout.as_view()),
     url(r'^api/', include(router.urls))
 ]
