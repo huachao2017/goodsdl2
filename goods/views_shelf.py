@@ -143,9 +143,7 @@ class RectifyAndDetect(APIView):
                 xmax = one_box['xmax'],
                 ymax = one_box['ymax'],
                 level = one_box['level'],
-                upc = one_box['upc'],
                 score1 = one_box['score'],
-                score2 = one_box['score2']
             )
             ret.append({
                 'id': shelf_goods.pk,
@@ -154,8 +152,7 @@ class RectifyAndDetect(APIView):
                 'xmax': shelf_goods.xmax,
                 'ymax': shelf_goods.ymax,
                 'level': shelf_goods.level,
-                'upc': shelf_goods.upc,
-                'score': shelf_goods.score2,
+                'score': shelf_goods.score1,
             })
 
         logger.info('end detect:{},{}'.format(shopid, shelfid))
