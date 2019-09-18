@@ -84,9 +84,9 @@ class RectifyAndDetect(APIView):
 
         now = datetime.datetime.now()
         source_image_name = '{}.jpg'.format(now.strftime('%Y%m%d_%H%M%S'))
-        media_dir = settings.MEDIA_ROOT
         # 通过 picurl 获取图片
-        image_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf', now.strftime('%Y%m'),now.strftime('%d%H'))
+        image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'shelf', now.strftime('%Y%m'),now.strftime('%d%H'))
+        image_dir = os.path.join(settings.MEDIA_ROOT, image_relative_dir)
         if not tf.gfile.Exists(image_dir):
             tf.gfile.MakeDirs(image_dir)
         source_image_path = os.path.join(image_dir, source_image_name)
@@ -157,7 +157,7 @@ class RectifyAndDetect(APIView):
 
         logger.info('end detect:{},{}'.format(shopid, shelfid))
         all_ret = {
-            'returl':os.path.join(settings.MEDIA_URL, settings.DETECT_DIR_NAME, 'shelf', 'rectify',rectify_image_name),
+            'returl':os.path.join(settings.MEDIA_URL, image_relative_dir, rectify_image_name),
             'detect':ret,
         }
         return Response(all_ret, status=status.HTTP_200_OK)
