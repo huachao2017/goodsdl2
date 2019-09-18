@@ -83,16 +83,16 @@ class RectifyAndDetect(APIView):
 
 
         now = datetime.datetime.now()
-        source_image_name = '{}.jpg'.format(now.strftime('%Y%m%d_%H%M%S'))
         # 通过 picurl 获取图片
         image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'shelf', now.strftime('%Y%m'),now.strftime('%d%H'))
         image_dir = os.path.join(settings.MEDIA_ROOT, image_relative_dir)
         if not tf.gfile.Exists(image_dir):
             tf.gfile.MakeDirs(image_dir)
+        source_image_name = '{}_{}_{}.jpg'.format(shopid,shelfid,now.strftime('%M%S'))
         source_image_path = os.path.join(image_dir, source_image_name)
         urllib.request.urlretrieve(picurl, source_image_path)
 
-        rectify_image_name = 'rectify_{}_{}_{}.jpg'.format(shopid,shelfid,now.strftime('%M%S'))
+        rectify_image_name = 'rectify_{}'.format(source_image_name)
         rectify_image_path = os.path.join(image_dir, rectify_image_name)
         img = cv2.imread(source_image_path)
         rows, cols = img.shape[:2]
