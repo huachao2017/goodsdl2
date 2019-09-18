@@ -1,0 +1,76 @@
+1、矫正图片(get)：http://ai.aicvs.cn/api/rectifyshelfimage?picid=xx&picurl=xx&x1=xx&y1=xx&x2=xx&y2=xx&x3=xx&y3=xx&x4=xx&y4=xx
+返回200：
+{
+    "returl":"/aaa/aaa/aaa.jpg",   -- 返回矫正图片地址，需自行拼接域名
+}
+
+2、检测图片接口(get)：http://ai.aicvs.cn/api/createshelfimage?shopid=xx&shelfid=xx&picid=xx&tlevel=xx
+返回200：
+[
+    {
+        "id":   1,                        -- ai数据库对这个框的id
+        "xmin": 37,                       -- 左上角横坐标
+        "ymin": 116,                      -- 左上角纵坐标
+        "xmax": 855,                      -- 右下角横坐标
+        "ymax": 940                       -- 右下角纵坐标
+        "level": 1                        -- 层级，从0开始，从上往下
+        "score": 66                       -- 可能性评分
+    },
+    {
+        "id":   2,                        -- ai数据库对这个框的id
+        "xmin": 37,                       -- 左上角横坐标
+        "ymin": 116,                      -- 左上角纵坐标
+        "xmax": 855,                      -- 右下角横坐标
+        "ymax": 940                       -- 右下角纵坐标
+        "level": 1                        -- 层级
+        "score": 66                       -- 可能性评分
+    },
+    {
+        "id":   3,                        -- ai数据库对这个框的id
+        "xmin": 37,                       -- 左上角横坐标
+        "ymin": 116,                      -- 左上角纵坐标
+        "xmax": 855,                      -- 右下角横坐标
+        "ymax": 940                       -- 右下角纵坐标
+        "level": 1                        -- 层级
+        "score": 66                       -- 可能性评分
+    },
+]
+
+3、标定框增加接口(post)：http://ai.aicvs.cn/api/shelfgoods/
+post入参：
+picid  int
+xmin  int
+ymin  int
+xmax  int
+ymax  int
+返回201：
+
+4、标定框修改接口(put)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
+put入参：
+xmin  int
+ymin  int
+xmax  int
+ymax  int
+返回200
+
+5、删除标定框(delete)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
+返回204
+
+6、比对接口(get)：http://ai.aicvs.cn/api/comparelayout?picid=xx
+返回200：
+[
+    {
+        "displaygoodid":   1,              -- 陈列设计上对这个商品的id
+        "result": 66                       -- 0:正确，1：错误，2：未知
+    },
+    {
+        "displaygoodid":   1,              -- 陈列设计上对这个商品的id
+        "result": 66                       -- 0:正确，1：错误，2：未知
+    },
+    {
+        "displaygoodid":   1,              -- 陈列设计上对这个商品的id
+        "result": 66                       -- 0:正确，1：错误，2：未知
+    },
+]
+
+7、添加样本商品类别修改接口(get)：http://ai.aicvs.cn/api/addsample?upc=xx&goodspicurl=xx
