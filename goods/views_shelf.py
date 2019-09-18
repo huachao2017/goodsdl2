@@ -171,11 +171,29 @@ class ShelfImageViewSet(DefaultMixin, mixins.ListModelMixin, mixins.RetrieveMode
     serializer_class = ShelfImageSerializer
 
 
-class ShelfGoodsViewSet(DefaultMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
                         mixins.UpdateModelMixin,mixins.DestroyModelMixin,
                         viewsets.GenericViewSet):
     queryset = ShelfGoods.objects.order_by('-id')
     serializer_class = ShelfGoodsSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        upc = serializer.instance.upc
+        if upc != '':
+            # 添加新样本
+            sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
+            image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.rectsource)
+            image = PILImage.open(image_path)
+            sample_image = image.crop((serializer.instance.xmin, serializer.instance.ymin, serializer.instance.xmax,
+                                       serializer.instance.ymax))
+            sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(serializer.instance.pk))
+            sample_image.save(sample_image_path, 'JPEG')
+
+        return Response(serializer.instance.ret, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
