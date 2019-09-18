@@ -210,11 +210,9 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.ListModelMixin, mixins.RetrieveMode
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample',
-                                  '{}'.format(instance.shopid),
-                                  '{}'.format(instance.shelfid))
+        sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
         # 删除原来的样本
-        old_sample_path = os.path.join(sample_dir, '{}_{}.jpg'.format(instance.upc, instance.pk))
+        old_sample_path = os.path.join(sample_dir, instance.upc, '{}.jpg'.format(instance.pk))
         if os.path.isfile(old_sample_path):
             os.remove(old_sample_path)
 
