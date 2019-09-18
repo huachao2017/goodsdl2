@@ -8,7 +8,7 @@ class ShelfImage(models.Model):
     shelfid = models.IntegerField(default=0, db_index=True)
     picurl = models.CharField(max_length=200, default='0')
     rectjson = models.TextField(default='')
-    image_name = models.CharField(max_length=200, default='')
+    rectsource = models.CharField(max_length=200, default='0')
     create_time = models.DateTimeField('date created', auto_now_add=True)
 
 class ShelfGoods(models.Model):

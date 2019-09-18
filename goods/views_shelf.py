@@ -107,8 +107,6 @@ class RectifyAndDetect(APIView):
         cv2.imwrite(rectify_image_path,dst)
 
         logger.info('begin detect:{},{}'.format(shopid, shelfid))
-        now = datetime.datetime.now()
-        image_name = '{}.jpg'.format(now.strftime('%Y%m%d_%H%M%S'))
         shelf_image = ShelfImage.objects.create(
             picid = picid,
             shopid = shopid,
@@ -123,7 +121,7 @@ class RectifyAndDetect(APIView):
             y3:y3,
             x4:x4,
             y4:y4}),
-            image_name = image_name,
+            rectsource = os.path.join(image_relative_dir, rectify_image_name),
         )
 
         ret = []
@@ -192,20 +190,19 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.ListModelMixin, mixins.RetrieveMode
 
         upc = serializer.instance.upc
         if upc != '':
-            sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample', '{}'.format(serializer.instance.shopid),'{}'.format(serializer.instance.shelfid))
+            sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
             if not tf.gfile.Exists(sample_dir):
                 tf.gfile.MakeDirs(sample_dir)
-            old_sample_path = os.path.join(sample_dir, '{}_{}.jpg'.format(old_upc, serializer.instance.pk))
+            old_sample_path = os.path.join(sample_dir, old_upc, '{}.jpg'.format(serializer.instance.pk))
             if os.path.isfile(old_sample_path):
                 # 删除原来的样本
                 os.remove(old_sample_path)
 
             # 添加新样本
-            image_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf', '{}_{}'.format(serializer.instance.shopid,serializer.instance.shelfid))
-            image_path = os.path.join(image_dir, serializer.instance.shelf_image.image_name)
+            image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.rectsource)
             image = PILImage.open(image_path)
             sample_image = image.crop((serializer.instance.xmin, serializer.instance.ymin, serializer.instance.xmax, serializer.instance.ymax))
-            sample_image_path = os.path.join(sample_dir, '{}_{}.jpg'.format(serializer.instance.upc, serializer.instance.pk))
+            sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(serializer.instance.pk))
             sample_image.save(sample_image_path, 'JPEG')
 
         return Response(serializer.data)
