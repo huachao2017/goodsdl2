@@ -49,6 +49,13 @@ class RectifyAndDetect(APIView):
         y1 = int(request.query_params['y1'])
         x2 = int(request.query_params['x2'])
         y2 = int(request.query_params['y2'])
+        picid = int(request.query_params['picid'])
+        shopid = int(request.query_params['shopid'])
+        shelfid = int(request.query_params['shelfid'])
+        if 'tlevel' in request.query_params:
+            tlevel = int(request.query_params['tlevel'])
+        else:
+            tlevel = 6
         if x1>x2:
             xt = x1
             yt = y1
@@ -79,14 +86,14 @@ class RectifyAndDetect(APIView):
         source_image_name = '{}.jpg'.format(now.strftime('%Y%m%d_%H%M%S'))
         media_dir = settings.MEDIA_ROOT
         # 通过 picurl 获取图片
-        image_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf', 'rectify')
+        image_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf', now.strftime('%Y%m'),now.strftime('%d%H'))
         if not tf.gfile.Exists(image_dir):
             tf.gfile.MakeDirs(image_dir)
         source_image_path = os.path.join(image_dir, source_image_name)
         urllib.request.urlretrieve(picurl, source_image_path)
 
-        dest_image_name = 'rectify_{}.jpg'.format(now.strftime('%Y%m%d_%H%M%S'))
-        dest_image_path = os.path.join(image_dir, dest_image_name)
+        rectify_image_name = 'rectify_{}_{}_{}.jpg'.format(shopid,shelfid,now.strftime('%M%S'))
+        rectify_image_path = os.path.join(image_dir, rectify_image_name)
         img = cv2.imread(source_image_path)
         rows, cols = img.shape[:2]
         # 原图中书本的四个角点
@@ -97,15 +104,8 @@ class RectifyAndDetect(APIView):
         M = cv2.getPerspectiveTransform(pts1, pts2)
         # 进行透视变换
         dst = cv2.warpPerspective(img, M, (width, height))
-        cv2.imwrite(dest_image_path,dst)
+        cv2.imwrite(rectify_image_path,dst)
 
-        picid = int(request.query_params['picid'])
-        shopid = int(request.query_params['shopid'])
-        shelfid = int(request.query_params['shelfid'])
-        if 'tlevel' in request.query_params:
-            tlevel = int(request.query_params['tlevel'])
-        else:
-            tlevel = 6
         logger.info('begin detect:{},{}'.format(shopid, shelfid))
         now = datetime.datetime.now()
         image_name = '{}.jpg'.format(now.strftime('%Y%m%d_%H%M%S'))
@@ -130,7 +130,7 @@ class RectifyAndDetect(APIView):
 
         detector = shelfdetection.ShelfDetectorFactory.get_static_detector('shelf')
         step1_min_score_thresh = .5
-        detect_ret, aiinterval, visual_image_path = detector.detect(dest_image_path, shopid, shelfid, step1_min_score_thresh=step1_min_score_thresh,totol_level = tlevel)
+        detect_ret, aiinterval, visual_image_path = detector.detect(rectify_image_path, shopid, shelfid, step1_min_score_thresh=step1_min_score_thresh,totol_level = tlevel)
 
         logger.info('create shelf image: {},{}'.format(len(detect_ret), aiinterval))
         for one_box in detect_ret:
@@ -157,7 +157,7 @@ class RectifyAndDetect(APIView):
 
         logger.info('end detect:{},{}'.format(shopid, shelfid))
         all_ret = {
-            'returl':os.path.join(settings.MEDIA_URL, settings.DETECT_DIR_NAME, 'shelf', 'rectify',dest_image_name),
+            'returl':os.path.join(settings.MEDIA_URL, settings.DETECT_DIR_NAME, 'shelf', 'rectify',rectify_image_name),
             'detect':ret,
         }
         return Response(all_ret, status=status.HTTP_200_OK)
