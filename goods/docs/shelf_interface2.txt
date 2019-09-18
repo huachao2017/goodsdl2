@@ -1,4 +1,5 @@
 1、矫正和检测图片(get)：http://ai.aicvs.cn/api/rectify_detect?picid=xx&picurl=xx&x1=xx&y1=xx&x2=xx&y2=xx&x3=xx&y3=xx&x4=xx&y4=xx&shopid=xx&shelfid=xx&tlevel=xx
+示例：http://ai.aicvs.cn/api/rectify_detect?picid=1&picurl=http://img.starft.com/dmstore/p/13&x1=0&y1=50&x2=706&y2=50&x3=0&y3=820&x4=706&y4=820&shopid=1&shelfid=1&tlevel=3
 返回200：
 {
     "returl":"/aaa/aaa/aaa.jpg",   -- 返回矫正图片地址，需自行拼接域名
