@@ -45,17 +45,23 @@ class NumpyEncoder(json.JSONEncoder):
 class RectifyAndDetect(APIView):
     def get(self, request):
         picurl = request.query_params['picurl']
-        x1 = int(request.query_params['x1'])
-        y1 = int(request.query_params['y1'])
-        x2 = int(request.query_params['x2'])
-        y2 = int(request.query_params['y2'])
-        picid = int(request.query_params['picid'])
-        shopid = int(request.query_params['shopid'])
-        shelfid = int(request.query_params['shelfid'])
-        if 'tlevel' in request.query_params:
+        try:
+            x1 = int(request.query_params['x1'])
+            y1 = int(request.query_params['y1'])
+            x2 = int(request.query_params['x2'])
+            y2 = int(request.query_params['y2'])
+            x3 = int(request.query_params['x3'])
+            y3 = int(request.query_params['y3'])
+            x4 = int(request.query_params['x4'])
+            y4 = int(request.query_params['y4'])
+            picid = int(request.query_params['picid'])
+            shopid = int(request.query_params['shopid'])
+            shelfid = int(request.query_params['shelfid'])
             tlevel = int(request.query_params['tlevel'])
-        else:
-            tlevel = 6
+        except Exception as e:
+            logger.error('Rectify and detect error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+
         if x1>x2:
             xt = x1
             yt = y1
@@ -63,10 +69,6 @@ class RectifyAndDetect(APIView):
             y1 = y2
             x2 = xt
             y2 = yt
-        x3 = int(request.query_params['x3'])
-        y3 = int(request.query_params['y3'])
-        x4 = int(request.query_params['x4'])
-        y4 = int(request.query_params['y4'])
         if x3>x4:
             xt = x3
             yt = y3
@@ -162,6 +164,14 @@ class RectifyAndDetect(APIView):
 
 class CompareLayout(APIView):
     def get(self, request):
+        try:
+            picid = int(request.query_params['picid'])
+            displayid = int(request.query_params['displayid'])
+            shelf_image = ShelfImage.objects.filter(picid=picid)[0]
+
+        except Exception as e:
+            logger.error('compare layout error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
         # TODO
         return Response('', status=status.HTTP_200_OK)
 
@@ -173,26 +183,27 @@ class AddSample(APIView):
         try:
             boxid = int(request.query_params['boxid'])
             shelf_goods = ShelfGoods.objects.filter(pk=boxid)[0]
-            old_upc = shelf_goods.upc
-            if old_upc != '':
-                sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
-                if not tf.gfile.Exists(sample_dir):
-                    tf.gfile.MakeDirs(sample_dir)
-                old_sample_path = os.path.join(sample_dir, old_upc, '{}.jpg'.format(shelf_goods.pk))
-                if os.path.isfile(old_sample_path):
-                    # 删除原来的样本
-                    os.remove(old_sample_path)
-
-            # 添加新样本
-            sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
-            image_path = os.path.join(settings.MEDIA_ROOT, shelf_goods.shelf_image.rectsource)
-            image = PILImage.open(image_path)
-            sample_image = image.crop((shelf_goods.xmin, shelf_goods.ymin, shelf_goods.xmax, shelf_goods.ymax))
-            sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(shelf_goods.pk))
-            sample_image.save(sample_image_path, 'JPEG')
         except Exception as e:
             logger.error('add sample error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+
+        old_upc = shelf_goods.upc
+        if old_upc != '':
+            sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
+            if not tf.gfile.Exists(sample_dir):
+                tf.gfile.MakeDirs(sample_dir)
+            old_sample_path = os.path.join(sample_dir, old_upc, '{}.jpg'.format(shelf_goods.pk))
+            if os.path.isfile(old_sample_path):
+                # 删除原来的样本
+                os.remove(old_sample_path)
+
+        # 添加新样本
+        sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
+        image_path = os.path.join(settings.MEDIA_ROOT, shelf_goods.shelf_image.rectsource)
+        image = PILImage.open(image_path)
+        sample_image = image.crop((shelf_goods.xmin, shelf_goods.ymin, shelf_goods.xmax, shelf_goods.ymax))
+        sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(shelf_goods.pk))
+        sample_image.save(sample_image_path, 'JPEG')
 
         return Response('', status=status.HTTP_200_OK)
 
