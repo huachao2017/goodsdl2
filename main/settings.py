@@ -108,6 +108,16 @@ DATABASES = {
         'PORT': '3306',
         'CHARSET': 'utf8',
         'COLLATION': 'utf8_general_ci',
+    },
+    'ucenter': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ucenter',
+        'USER': 'fastxbox',
+        'PASSWORD': 'C2lz6wxgnqhYBlZf',
+        'HOST': '10.19.79.120',
+        'PORT': '3307',
+        'CHARSET': 'utf8',
+        'COLLATION': 'utf8_general_ci',
     }
 }
 # else:
