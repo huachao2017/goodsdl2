@@ -165,6 +165,37 @@ class CompareLayout(APIView):
         # TODO
         return Response('', status=status.HTTP_200_OK)
 
+
+class AddSample(APIView):
+    def get(self, request):
+        upc = request.query_params['upc']
+
+        try:
+            boxid = int(request.query_params['boxid'])
+            shelf_goods = ShelfGoods.objects.filter(pk=boxid)[0]
+            old_upc = shelf_goods.upc
+            if old_upc != '':
+                sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
+                if not tf.gfile.Exists(sample_dir):
+                    tf.gfile.MakeDirs(sample_dir)
+                old_sample_path = os.path.join(sample_dir, old_upc, '{}.jpg'.format(shelf_goods.pk))
+                if os.path.isfile(old_sample_path):
+                    # 删除原来的样本
+                    os.remove(old_sample_path)
+
+            # 添加新样本
+            sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
+            image_path = os.path.join(settings.MEDIA_ROOT, shelf_goods.shelf_image.rectsource)
+            image = PILImage.open(image_path)
+            sample_image = image.crop((shelf_goods.xmin, shelf_goods.ymin, shelf_goods.xmax, shelf_goods.ymax))
+            sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(shelf_goods.pk))
+            sample_image.save(sample_image_path, 'JPEG')
+        except Exception as e:
+            logger.error('add sample error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response('', status=status.HTTP_200_OK)
+
 class ShelfImageViewSet(DefaultMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
                    viewsets.GenericViewSet):
     queryset = ShelfImage.objects.order_by('-id')
