@@ -11,6 +11,7 @@ logger = logging.getLogger("django")
 class ShelfTraditionMatch:
     def __init__(self, upc):
         self._matcher = Matcher(visual=True)
+        self._upc = upc
 
         logger.info('begin loading TraditionMatch:{}'.format(upc))
         sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample','{}'.format(upc))
@@ -22,13 +23,33 @@ class ShelfTraditionMatch:
         logger.info('end loading TraditionMatch:{}'.format(self._matcher.get_baseline_cnt()))
 
     def detect_one_with_path(self,image_path):
-        upc, score = self._matcher.match_image_best_one(image_path)
-        return upc, score
+        upc, cnt = self._matcher.match_result(image_path)
+        if upc == self._upc:
+            return True
+        else:
+            if cnt >0:
+                return False
+            else:
+                return None
 
     def detect_one_with_cv2array(self,visual_image_path,cv2image):
-        upc, score = self._matcher.match_image_best_one_with_nparray(visual_image_path, cv2.cvtColor(np.array(cv2image),cv2.COLOR_RGB2BGR))
-        return upc, score
+        upc, cnt = self._matcher.match_image_best_one_with_nparray(visual_image_path, cv2.cvtColor(np.array(cv2image),cv2.COLOR_RGB2BGR))
+        if upc == self._upc:
+            return True
+        else:
+            if cnt >0:
+                return False
+            else:
+                return None
+
 
     def detect_one_with_nparray(self,visual_image_path,npimage):
-        upc, score = self._matcher.match_image_best_one_with_nparray(visual_image_path, np.array(npimage))
-        return upc, score
+        upc, cnt = self._matcher.match_image_best_one_with_nparray(visual_image_path, np.array(npimage))
+        if upc == self._upc:
+            return True
+        else:
+            if cnt >0:
+                return False
+            else:
+                return None
+

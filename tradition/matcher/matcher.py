@@ -294,7 +294,7 @@ class Matcher:
         ret = (best_match[0].split('_')[0], best_match[1])
         return ret
 
-    def match_image_best_one_with_cv2array(self, visual_image_path, image, within_upcs=None, filter_upcs=None):
+    def match_image_best_one_with_nparray(self, visual_image_path, image, within_upcs=None, filter_upcs=None):
         self._all_match(visual_image_path,
                         image=image,
                         within_upcs=within_upcs,
@@ -306,6 +306,33 @@ class Matcher:
         sorted_match_info = sorted(self.match_info.items(), key=lambda d: d[1], reverse=True)
         best_match = sorted_match_info[0]
         ret = (best_match[0].split('_')[0], best_match[1])
+        return ret
+
+    def match_result(self, image_path, within_upcs=None, filter_upcs=None):
+        self._all_match(image_path,
+                        within_upcs=within_upcs,
+                        filter_upcs=filter_upcs)
+        if self.match_info is None or len(self.match_info) == 0:
+            return None,0
+        if self.debug:
+            print('match_info:{}'.format(len(self.match_info)))
+        sorted_match_info = sorted(self.match_info.items(), key=lambda d: d[1], reverse=True)
+        best_match = sorted_match_info[0]
+        ret = (best_match[0].split('_')[0], len(self.match_info.items()))
+        return ret
+
+    def match_result_with_nparray(self, visual_image_path, image, within_upcs=None, filter_upcs=None):
+        self._all_match(visual_image_path,
+                        image=image,
+                        within_upcs=within_upcs,
+                        filter_upcs=filter_upcs)
+        if self.match_info is None or len(self.match_info) == 0:
+            return None,0
+        if self.debug:
+            print('match_info:{}'.format(len(self.match_info)))
+        sorted_match_info = sorted(self.match_info.items(), key=lambda d: d[1], reverse=True)
+        best_match = sorted_match_info[0]
+        ret = (best_match[0].split('_')[0], len(self.match_info.items()))
         return ret
 
     def is_find_match(self, image_path, within_upcs=None, filter_upcs=None):
@@ -378,74 +405,6 @@ def test_1():
     print('MATCH: %.2f, %.2f, %.2f, %.2f' % (time3 - time0, time1 - time0, time2 - time1, time3 - time2))
     print(match_key, score)
 
-def test_2(image1,image2):
-    time0 = time.time()
-    matcher = Matcher(debug=True, visual=True)
-    time1 = time.time()
-    matcher.add_baseline_image(image1, 'tt')
-    time2 = time.time()
-    match_key, score = matcher.match_image_best_one(image2)
-    time3 = time.time()
-    print('MATCH: %.2f, %.2f, %.2f, %.2f' % (time3 - time0, time1 - time0, time2 - time1, time3 - time2))
-    print(match_key, score)
-
-def test_match_all():
-    time0 = time.time()
-    matcher = Matcher(debug=False, visual=False)
-    time1 = time.time()
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-    import django
-    django.setup()
-    from goods.models import SampleImageClass
-    from django.conf import settings
-    samples = SampleImageClass.objects.filter(deviceid='')
-    upc_to_image_path = {}
-    for sample in samples:
-        image_path = sample.source.path
-        image_path = image_path.replace(settings.MEDIA_ROOT, '\\\\192.168.1.60\Image')
-        # image_path = image_path.replace('\\','/')
-        # image_path = '\\' + image_path
-        if os.path.isfile(image_path):
-            matcher.add_baseline_image(image_path, sample.upc)
-            upc_to_image_path[sample.upc] = image_path
-    time2 = time.time()
-    for upc in upc_to_image_path:
-        image_path = upc_to_image_path[upc]
-        # print(image_path)
-        match_key, score = matcher.match_image_best_one(image_path, within_upcs=[upc])
-        if score < 0.8:
-            print(match_key, score)
-
-    time3 = time.time()
-    print('MATCH: %.2f, %.2f, %.2f, %.2f' % (time3 - time0, time1 - time0, time2 - time1, time3 - time2))
-
-def test_match_one(test_image_path):
-    time0 = time.time()
-    matcher = Matcher(debug=True, visual=True)
-    time1 = time.time()
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-    import django
-    django.setup()
-    from goods.models import SampleImageClass
-    from django.conf import settings
-    from dl import common
-    samples = SampleImageClass.objects.filter(deviceid=common.STEP2S_PREFIX)
-    upc_to_image_path = {}
-    for sample in samples:
-        image_path = sample.source.path
-        image_path = image_path.replace(settings.MEDIA_ROOT, '\\\\192.168.1.60\Image')
-        # image_path = image_path.replace('\\','/')
-        # image_path = '\\' + image_path
-        if os.path.isfile(image_path):
-            matcher.add_baseline_image(image_path, sample.upc)
-            upc_to_image_path[sample.upc] = image_path
-    time2 = time.time()
-    match_key, score = matcher.match_image_best_one(test_image_path)
-    print(match_key, score)
-
-    time3 = time.time()
-    print('MATCH: %.2f, %.2f, %.2f, %.2f' % (time3 - time0, time1 - time0, time2 - time1, time3 - time2))
-
 if __name__ == '__main__':
     """Test code: Uses the two specified"""
 
@@ -453,19 +412,3 @@ if __name__ == '__main__':
     # sys.exit(0)
     fn1 = 'images/1.jpg'
     fn2 = 'images/2.jpg'
-    # test_2(fn1, fn2)
-
-    # fn1 = 'images/12.jpg'
-    # fn2 = 'images/13.jpg'
-
-    # fn1 = 'images/test/old/15.jpg'
-    # fn2 = 'images/test/old/14.jpg'
-    # #
-    # fn1 = 'images/test/1.jpg'
-    # fn2 = 'images/test/2.jpg'
-    #
-    # fn1 = 'images/error/1.jpg'
-    # fn2 = 'images/error/2.jpg'
-    test_2(fn1, fn2)
-    # test_match_all()
-    # test_match_one(fn1)
