@@ -146,7 +146,7 @@ class RectifyAndDetect(APIView):
                 score1 = one_box['score'],
             )
             ret.append({
-                'id': shelf_goods.pk,
+                'boxid': shelf_goods.pk,
                 'xmin': shelf_goods.xmin,
                 'ymin': shelf_goods.ymin,
                 'xmax': shelf_goods.xmax,
@@ -235,7 +235,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
             sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(serializer.instance.pk))
             sample_image.save(sample_image_path, 'JPEG')
 
-        return Response(serializer.instance.ret, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({'boxid':serializer.instance.pk}, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
