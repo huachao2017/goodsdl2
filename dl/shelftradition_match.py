@@ -12,6 +12,8 @@ class ShelfTraditionMatch:
     def __init__(self, upc):
         self._matcher = Matcher(visual=True)
         self._upc = upc
+        self.visual_image_path = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample_visual',
+                                         '{}'.format(self._upc),'t.jpg')
 
         logger.info('begin loading TraditionMatch:{}'.format(upc))
         sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample','{}'.format(upc))
@@ -32,8 +34,8 @@ class ShelfTraditionMatch:
             else:
                 return None
 
-    def detect_one_with_cv2array(self,visual_image_path,cv2image):
-        upc, cnt = self._matcher.match_image_best_one_with_nparray(visual_image_path, cv2.cvtColor(np.array(cv2image),cv2.COLOR_RGB2BGR))
+    def detect_one_with_cv2array(self,cv2image):
+        upc, cnt = self._matcher.match_image_best_one_with_nparray(self.visual_image_path, cv2.cvtColor(np.array(cv2image),cv2.COLOR_RGB2BGR))
         if upc == self._upc:
             return True
         else:
@@ -43,8 +45,8 @@ class ShelfTraditionMatch:
                 return None
 
 
-    def detect_one_with_nparray(self,visual_image_path,npimage):
-        upc, cnt = self._matcher.match_image_best_one_with_nparray(visual_image_path, np.array(npimage))
+    def detect_one_with_nparray(self,npimage):
+        upc, cnt = self._matcher.match_image_best_one_with_nparray(self.visual_image_path, np.array(npimage))
         if upc == self._upc:
             return True
         else:
