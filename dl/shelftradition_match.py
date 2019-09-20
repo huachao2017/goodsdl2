@@ -5,6 +5,7 @@ import os
 import logging
 import cv2
 import numpy as np
+import tensorflow as tf
 
 logger = logging.getLogger("django")
 
@@ -12,8 +13,13 @@ class ShelfTraditionMatch:
     def __init__(self, upc):
         self._matcher = Matcher(visual=True)
         self._upc = upc
-        self.visual_image_path = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample_visual',
-                                         '{}'.format(self._upc),'t.jpg')
+        self.visual_image_path = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_goods_visual',
+                                         '{}'.format(self._upc))
+        if not tf.gfile.Exists(self.visual_image_path):
+            tf.gfile.MakeDirs(self.visual_image_path)
+
+        #TODO 目前接口只支持文件
+        self.visual_image_path = os.path.join(self.visual_image_path,'t.jpg')
 
         logger.info('begin loading TraditionMatch:{}'.format(upc))
         sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample','{}'.format(upc))
