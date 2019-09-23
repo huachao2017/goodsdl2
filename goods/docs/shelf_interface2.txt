@@ -1,10 +1,33 @@
 以下接口参数错误返回400
 
-1、矫正和检测图片(get)：http://ai.aicvs.cn/api/rectify_detect?picid=xx&picurl=xx&x1=xx&y1=xx&x2=xx&y2=xx&x3=xx&y3=xx&x4=xx&y4=xx&shopid=xx&shelfid=xx&tlevel=xx
-示例：http://ai.aicvs.cn/api/rectify_detect?picid=1&picurl=http://img.starft.com/dmstore/p/13&x1=0&y1=50&x2=706&y2=50&x3=0&y3=820&x4=706&y4=820&shopid=1&shelfid=1&tlevel=3
+一、php请求ai接口
+1、一体化打分(get)：http://ai.aicvs.cn/api/shelf_score?picid=xx&picurl=xx&shopid=xx&displayid=xx&shelfid=xx&tlevel=xx
+参数说明：
+picid：你们需要存一条图片记录，这条记录的id
+picurl：这条图片记录的原图地址
+shopid：商店id
+displayid：台账展示表(sf_taizhang_display)id
+shelfid：台账展示里面(display_goods_info)货架的shelf_id
+tlevel：该货架的总层数
 返回200：
 {
-    "returl":"/aaa/aaa/aaa.jpg",   -- 返回矫正图片地址，需自行拼接域名
+    'score': 80                                -- 得分
+    'retpicurl':                               -- 识别照片
+}
+ai通知php接口,得分更新
+2、
+
+
+二、web界面接口
+1、矫正和检测图片(get)：http://ai.aicvs.cn/api/rectify_detect?picid=xx&x1=xx&y1=xx&x2=xx&y2=xx&x3=xx&y3=xx&x4=xx&y4=xx
+示例：http://ai.aicvs.cn/api/rectify_detect?picid=1&picurl=http://img.starft.com/dmstore/p/13&x1=0&y1=50&x2=706&y2=50&x3=0&y3=820&x4=706&y4=820
+返回200：
+
+
+2、获取图片(get)：http://ai.aicvs.cn/api/shelfimage/111/
+返回200：
+{
+    "recturl":"/aaa/aaa/aaa.jpg",             -- 返回矫正图片地址，需自行拼接域名
     "detect":
     [
         {
@@ -14,7 +37,8 @@
             "xmax": 855,                      -- 右下角横坐标
             "ymax": 940                       -- 右下角纵坐标
             "level": 1                        -- 层级，从0开始，从上往下
-            "score": 66                       -- 可能性评分
+            "upc": 'aaaa'                     -- upc
+            "result": 0                       -- 0:正确，1：错误，2：未知
         },
         {
             "boxid": 2,                       -- ai数据库对这个框的boxid
@@ -23,22 +47,13 @@
             "xmax": 855,                      -- 右下角横坐标
             "ymax": 940                       -- 右下角纵坐标
             "level": 1                        -- 层级
-            "score": 66                       -- 可能性评分
-        },
-        {
-            "boxid": 3,                       -- ai数据库对这个框的boxid
-            "xmin": 37,                       -- 左上角横坐标
-            "ymin": 116,                      -- 左上角纵坐标
-            "xmax": 855,                      -- 右下角横坐标
-            "ymax": 940                       -- 右下角纵坐标
-            "level": 1                        -- 层级
-            "score": 66                       -- 可能性评分
+            "upc": 'aaaa'                     -- upc
+            "result": 0                       -- 0:正确，1：错误，2：未知
         },
     ]
 }
 
-
-2、标定框增加接口(post)：http://ai.aicvs.cn/api/shelfgoods/
+3、标定框增加接口(post)：http://ai.aicvs.cn/api/shelfgoods/
 post入参：
 picid  int
 xmin  int
@@ -50,33 +65,23 @@ ymax  int
     'boxid':       1                   -- ai数据库对这个框的id
 }
 
-3、标定框修改接口(put)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
+4、标定框修改接口(put)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
 put入参：
 xmin  int
 ymin  int
 xmax  int
 ymax  int
+upc   string
 返回200
 
-4、删除标定框(delete)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
+5、删除标定框(delete)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
 返回204
 
-5、比对接口(get)：http://ai.aicvs.cn/api/comparelayout?picid=xx&displayid=xx
+6、比对提交接口(get)：http://ai.aicvs.cn/api/comparelayout?picid=xx&displayid=xx
 返回200：
-[
-    {
-        "displaygoodid":   1,              -- 陈列设计上对这个商品的id
-        "result": 66                       -- 0:正确，1：错误，2：未知
-    },
-    {
-        "displaygoodid":   1,              -- 陈列设计上对这个商品的id
-        "result": 66                       -- 0:正确，1：错误，2：未知
-    },
-    {
-        "displaygoodid":   1,              -- 陈列设计上对这个商品的id
-        "result": 66                       -- 0:正确，1：错误，2：未知
-    },
-]
-
-6、添加样本商品类别修改接口(get)：http://ai.aicvs.cn/api/addsample?upc=xx&boxid=xx
-返回200
+{
+    "score": 85                       -- 0:正确，1：错误，2：未知
+    "equal_cnt": 85                   -- 0:正确，1：错误，2：未知
+    "different_cnt": 22               -- 0:正确，1：错误，2：未知
+    "unknown_cnt": 10                 -- 0:正确，1：错误，2：未知
+}
