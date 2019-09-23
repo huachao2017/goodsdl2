@@ -20,6 +20,7 @@ import cv2
 import math
 
 from dl import shelfdetection
+from goods.shelfgoods.service import tz_good_compare
 from .serializers import *
 import tensorflow as tf
 
@@ -42,9 +43,96 @@ class NumpyEncoder(json.JSONEncoder):
         else:
             return super(NumpyEncoder, self).default(obj)
 
-class RectifyAndDetect(APIView):
+def detect(shelf_image, image_path):
+    # 删除旧的goods
+    ShelfGoods.objects.filter(shelf_image_id=shelf_image.pk).delete()
+
+    logger.info('begin detect:{}'.format(image_path))
+    shelf_goods_map = {}
+    # 检测框
+    detector = shelfdetection.ShelfDetectorFactory.get_static_detector('shelf')
+    step1_min_score_thresh = .5
+    detect_ret, aiinterval, visual_image_path = detector.detect(image_path,
+                                                                step1_min_score_thresh=step1_min_score_thresh,
+                                                                totol_level=shelf_image.tlevel)
+    logger.info('create shelf image: {},{}'.format(len(detect_ret), aiinterval))
+    for one_box in detect_ret:
+        shelf_goods = ShelfGoods.objects.create(
+            shelf_image_id=shelf_image.pk,
+            xmin=one_box['xmin'],
+            ymin=one_box['ymin'],
+            xmax=one_box['xmax'],
+            ymax=one_box['ymax'],
+            level=one_box['level'],
+        )
+        shelf_goods_map[shelf_goods.pk] = shelf_goods
+    logger.info('end detect:{}'.format(image_path))
+    # 比对获取结果
+    compare_ret = tz_good_compare.compare(shelf_image.pk, shelf_image.displayid, shelf_image.shelfid)
+    logger.info('end compare:{}'.format(image_path))
+    # 持久化
+    shelf_image.score = compare_ret['score']
+    shelf_image.equal_cnt = compare_ret['equal_cnt']
+    shelf_image.different_cnt = compare_ret['different_cnt']
+    shelf_image.unknown_cnt = compare_ret['unknown_cnt']
+    shelf_image.save()
+    for one in compare_ret.detail:
+        shelf_goods = shelf_goods_map[one['boxid']]
+        shelf_goods.result = shelf_goods_map['result']
+        if shelf_goods.result == 0:
+            # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
+            shelf_goods.upc = shelf_goods_map['upc']
+        shelf_goods.save()
+
+    # TODO 生成识别图
+
+    return compare_ret
+
+
+class ShelfScore(APIView):
     def get(self, request):
         picurl = request.query_params['picurl']
+        try:
+            picid = int(request.query_params['picid'])
+            shopid = int(request.query_params['shopid'])
+            shelfid = int(request.query_params['shelfid'])
+            displayid = int(request.query_params['displayid'])
+            tlevel = int(request.query_params['tlevel'])
+        except Exception as e:
+            logger.error('Shelf score error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+
+        # 获取图片
+        now = datetime.datetime.now()
+        image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'shelf', now.strftime('%Y%m'),now.strftime('%d%H'))
+        image_dir = os.path.join(settings.MEDIA_ROOT, image_relative_dir)
+        if not tf.gfile.Exists(image_dir):
+            tf.gfile.MakeDirs(image_dir)
+        source_image_name = '{}_{}_{}.jpg'.format(shopid,shelfid,now.strftime('%M%S'))
+        source_image_path = os.path.join(image_dir, source_image_name)
+        urllib.request.urlretrieve(picurl, source_image_path)
+
+        shelf_image = ShelfImage.objects.create(
+            picid=picid,
+            shopid=shopid,
+            shelfid=shelfid,
+            displayid=displayid,
+            tlevel=tlevel,
+            picurl=picurl,
+            source=os.path.join(image_relative_dir,source_image_name)
+        )
+
+        compare_ret = detect(shelf_image, source_image_path)
+
+        ret = {
+            'score':shelf_image.score,
+            'retpicurl':'TODO'
+        }
+        return Response(ret, status=status.HTTP_200_OK)
+
+
+class RectifyAndDetect(APIView):
+    def get(self, request):
         try:
             x1 = int(request.query_params['x1'])
             y1 = int(request.query_params['y1'])
@@ -55,9 +143,7 @@ class RectifyAndDetect(APIView):
             x4 = int(request.query_params['x4'])
             y4 = int(request.query_params['y4'])
             picid = int(request.query_params['picid'])
-            shopid = int(request.query_params['shopid'])
-            shelfid = int(request.query_params['shelfid'])
-            tlevel = int(request.query_params['tlevel'])
+            shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
         except Exception as e:
             logger.error('Rectify and detect error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
@@ -77,22 +163,16 @@ class RectifyAndDetect(APIView):
             x4 = xt
             y4 = yt
 
-        # width = int(request.query_params['width'])
-        # height = int(width * (math.sqrt((x1-x3)*(x1-x3)+(y1-y3)*(y1-y3))) / math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)))
-        # TODO test for big pic
         height = abs(y1-y3) # 800
         width = int(height * math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)) / math.sqrt((x1-x3)*(x1-x3)+(y1-y3)*(y1-y3)))
 
 
         now = datetime.datetime.now()
-        # 通过 picurl 获取图片
-        image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'shelf', now.strftime('%Y%m'),now.strftime('%d%H'))
+        # 通过数据库获取图片
+        image_relative_dir = os.path.split(shelf_image.source)[0]
+        source_image_name = os.path.split(shelf_image.source)[1]
         image_dir = os.path.join(settings.MEDIA_ROOT, image_relative_dir)
-        if not tf.gfile.Exists(image_dir):
-            tf.gfile.MakeDirs(image_dir)
-        source_image_name = '{}_{}_{}.jpg'.format(shopid,shelfid,now.strftime('%M%S'))
-        source_image_path = os.path.join(image_dir, source_image_name)
-        urllib.request.urlretrieve(picurl, source_image_path)
+        source_image_path = os.path.join(settings.MEDIA_ROOT,shelf_image.source)
 
         rectify_image_name = 'rectify_{}'.format(source_image_name)
         rectify_image_path = os.path.join(image_dir, rectify_image_name)
@@ -108,13 +188,7 @@ class RectifyAndDetect(APIView):
         dst = cv2.warpPerspective(img, M, (width, height))
         cv2.imwrite(rectify_image_path,dst)
 
-        logger.info('begin detect:{},{}'.format(shopid, shelfid))
-        shelf_image = ShelfImage.objects.create(
-            picid = picid,
-            shopid = shopid,
-            shelfid = shelfid,
-            picurl = picurl,
-            rectjson = json.dumps({
+        shelf_image.rectjson = json.dumps({
             x1:x1,
             y1:y1,
             x2:x2,
@@ -122,90 +196,47 @@ class RectifyAndDetect(APIView):
             x3:x3,
             y3:y3,
             x4:x4,
-            y4:y4}),
-            rectsource = os.path.join(image_relative_dir, rectify_image_name),
-        )
+            y4:y4})
+        shelf_image.rectsource = os.path.join(image_relative_dir, rectify_image_name)
+        shelf_image.save()
 
-        ret = []
+        compare_ret = detect(shelf_image, rectify_image_path)
 
-        detector = shelfdetection.ShelfDetectorFactory.get_static_detector('shelf')
-        step1_min_score_thresh = .5
-        detect_ret, aiinterval, visual_image_path = detector.detect(rectify_image_path, shopid, shelfid, step1_min_score_thresh=step1_min_score_thresh,totol_level = tlevel)
+        return Response(compare_ret, status=status.HTTP_200_OK)
 
-        logger.info('create shelf image: {},{}'.format(len(detect_ret), aiinterval))
-        for one_box in detect_ret:
-            shelf_goods = ShelfGoods.objects.create(
-                shelf_image_id = shelf_image.pk,
-                shopid=shopid,
-                shelfid=shelfid,
-                xmin = one_box['xmin'],
-                ymin = one_box['ymin'],
-                xmax = one_box['xmax'],
-                ymax = one_box['ymax'],
-                level = one_box['level'],
-                score1 = one_box['score'],
-            )
-            ret.append({
-                'boxid': shelf_goods.pk,
+class GetShelfImage(APIView):
+    def get(self, request):
+        try:
+            picid = int(request.query_params['picid'])
+            shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
+        except Exception as e:
+            logger.error('Rectify and detect error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+
+        detail = []
+        shelf_goods_list = shelf_image.shelf_image_goods.all()
+        for shelf_goods in shelf_goods_list:
+            detail.append({
+                'level': shelf_goods.level,
                 'xmin': shelf_goods.xmin,
                 'ymin': shelf_goods.ymin,
                 'xmax': shelf_goods.xmax,
                 'ymax': shelf_goods.ymax,
-                'level': shelf_goods.level,
-                'score': shelf_goods.score1,
+                'result': shelf_goods.result,
+                'boxid': shelf_goods.pk,
+                'upc': shelf_goods.upc
             })
 
-        logger.info('end detect:{},{}'.format(shopid, shelfid))
-        all_ret = {
-            'returl':os.path.join(settings.MEDIA_URL, image_relative_dir, rectify_image_name),
-            'detect':ret,
+        ret = {
+            "recturl":os.path.join(settings.MEDIA_URL,shelf_image.rectsource),
+            "score":shelf_image.score,
+            "equal_cnt":shelf_image.equal_cnt,
+            "different_cnt":shelf_image.different_cnt,
+            "unknown_cnt":shelf_image.unknown_cnt,
+            "detail":detail
         }
-        return Response(all_ret, status=status.HTTP_200_OK)
+        return Response(ret, status=status.HTTP_200_OK)
 
-class CompareLayout(APIView):
-    def get(self, request):
-        try:
-            picid = int(request.query_params['picid'])
-            displayid = int(request.query_params['displayid'])
-            shelf_image = ShelfImage.objects.filter(picid=picid)[0]
-
-        except Exception as e:
-            logger.error('compare layout error:{}'.format(e))
-            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
-        # TODO
-        return Response('', status=status.HTTP_200_OK)
-
-
-class AddSample(APIView):
-    def get(self, request):
-        upc = request.query_params['upc']
-
-        try:
-            boxid = int(request.query_params['boxid'])
-            shelf_goods = ShelfGoods.objects.filter(pk=boxid)[0]
-        except Exception as e:
-            logger.error('add sample error:{}'.format(e))
-            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
-
-        old_upc = shelf_goods.upc
-        if old_upc != '':
-            sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
-            if not tf.gfile.Exists(sample_dir):
-                tf.gfile.MakeDirs(sample_dir)
-            old_sample_path = os.path.join(sample_dir, old_upc, '{}.jpg'.format(shelf_goods.pk))
-            if os.path.isfile(old_sample_path):
-                # 删除原来的样本
-                os.remove(old_sample_path)
-
-        # 添加新样本
-        sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
-        image_path = os.path.join(settings.MEDIA_ROOT, shelf_goods.shelf_image.rectsource)
-        image = PILImage.open(image_path)
-        sample_image = image.crop((shelf_goods.xmin, shelf_goods.ymin, shelf_goods.xmax, shelf_goods.ymax))
-        sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(shelf_goods.pk))
-        sample_image.save(sample_image_path, 'JPEG')
-
-        return Response('', status=status.HTTP_200_OK)
 
 class ShelfImageViewSet(DefaultMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
                    viewsets.GenericViewSet):

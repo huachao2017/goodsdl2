@@ -6,16 +6,16 @@ from goods.models import ShelfImage, ShelfGoods, FreezerImage
 class ShelfImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShelfImage
-        fields = ('pk', 'picid', 'shopid', 'shelfid', 'picurl', 'rectjson', 'rectsource',
-                  'create_time')
+        fields = ('pk', 'picid', 'shopid', 'shelfid', 'displayid', 'tlevel', 'picurl', 'source', 'rectjson', 'rectsource',
+                  'score', 'equal_cnt', 'different_cnt', 'unknown_cnt', 'create_time', 'update_time')
         read_only_fields = ('create_time',)
 
 
 class ShelfGoodsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShelfGoods
-        fields = ('pk', 'shopid', 'shelfid', 'score1', 'score2', 'upc', 'xmin', 'ymin', 'xmax', 'ymax', 'level', 'create_time', 'update_time')
-        read_only_fields = ('shopid', 'shelfid', 'score1', 'score2', 'level','create_time',)
+        fields = ('pk', 'upc', 'xmin', 'ymin', 'xmax', 'ymax', 'level', 'result', 'create_time', 'update_time')
+        read_only_fields = ('level', 'result', 'create_time', 'update_time')
 
 
 class FreezerImageSerializer(serializers.ModelSerializer):

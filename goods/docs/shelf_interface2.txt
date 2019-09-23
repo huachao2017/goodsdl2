@@ -27,7 +27,7 @@ ai通知php接口,得分更新
 2、获取图片(get)：http://ai.aicvs.cn/api/get_shelfimage?picid=xx
 返回200：
 {
-    "recturl":"http://ai.aicvs.cn/aaa/bbb/ccc.jpg",             -- 返回矫正图片地址
+    "recturl":"aaa/bbb/ccc.jpg",             -- 返回矫正图片地址，需自行拼接域名
     "score": 85                               -- 得分
     "equal_cnt": 85                           -- 正确数量
     "different_cnt": 22                       -- 错误数量

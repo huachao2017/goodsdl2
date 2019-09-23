@@ -41,7 +41,7 @@ class ShelfDetector:
             self.step1_cnn.load(self.config)
 
 
-    def detect(self, image_path, shopid, shelfid, step1_min_score_thresh=.5, totol_level = 6):
+    def detect(self, image_path, step1_min_score_thresh=.5, totol_level = 6):
         if not self.step1_cnn.is_load():
             self.load()
             if not self.step1_cnn.is_load():

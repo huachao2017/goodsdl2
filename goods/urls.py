@@ -26,8 +26,8 @@ router.register(r'freezerimage', views.FreezerImageViewSet)
 
 urlpatterns = [
     url(r'^test', views.Test.as_view()),
+    url(r'^api/shelf_score', views_shelf.ShelfScore.as_view()),
     url(r'^api/rectify_detect', views_shelf.RectifyAndDetect.as_view()),
-    url(r'^api/comparelayout', views_shelf.CompareLayout.as_view()),
-    url(r'^api/addsample', views_shelf.AddSample.as_view()),
+    url(r'^api/get_shelfimage', views_shelf.GetShelfImage.as_view()),
     url(r'^api/', include(router.urls))
 ]
