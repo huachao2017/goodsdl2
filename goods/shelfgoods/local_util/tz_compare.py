@@ -69,7 +69,7 @@ class Compare:
                     'ymin':ymin,
                     'xmax':xmax,
                     'ymax':ymax,
-                    'code':compare_code,
+                    'result':compare_code,
                     'process_code':process_code,
                     'boxid':box_id,
                     'upc':upc
