@@ -88,4 +88,27 @@ upc   string
     "equal_cnt": 85                   -- 正确数量
     "different_cnt": 22               -- 错误数量
     "unknown_cnt": 10                 -- 未知数量
+    "detail":
+    [
+        {
+            "boxid": 1,                       -- ai数据库对这个框的boxid
+            "xmin": 37,                       -- 左上角横坐标
+            "ymin": 116,                      -- 左上角纵坐标
+            "xmax": 855,                      -- 右下角横坐标
+            "ymax": 940                       -- 右下角纵坐标
+            "level": 1                        -- 层级，从0开始，从上往下
+            "upc": 'aaaa'                     -- upc
+            "result": 0                       -- 0:正确，1：错误，2：未知
+        },
+        {
+            "boxid": 2,                       -- ai数据库对这个框的boxid
+            "xmin": 37,                       -- 左上角横坐标
+            "ymin": 116,                      -- 左上角纵坐标
+            "xmax": 855,                      -- 右下角横坐标
+            "ymax": 940                       -- 右下角纵坐标
+            "level": 1                        -- 层级
+            "upc": 'aaaa'                     -- upc
+            "result": 0                       -- 0:正确，1：错误，2：未知
+        },
+    ]
 }
