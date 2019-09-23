@@ -23,7 +23,7 @@ class Compare:
             return self.for_dcompare(box_ids,levels,xmins, ymins, xmaxs, ymaxs,shelf_img,level_goods[self.shelf_id])
         else:
             logger.error("load data failed ,display_id=%s,shelf_image_id=%s"%(self.display_id,self.shelf_image_id))
-            return None
+            return None,None,None,None,None
 
     def for_dcompare(self,box_ids,box_levels,xmins, ymins, xmaxs, ymaxs,shelf_img,level_goods):
         level_boxes = self.get_check_level_boxes(box_ids,box_levels,xmins, ymins, xmaxs, ymaxs)
@@ -40,8 +40,10 @@ class Compare:
             else:
                 gbx_ins = level_error.process(level,level_boxes[level])
                 gbx_inss.append(gbx_ins)
-        ret = []
-        sum_true = 0
+        detail = []
+        equal_cnt = 0
+        different_cnt = 0
+        unknown_cnt = 0
         for gbx_ins in gbx_inss:
             level = gbx_ins.level
             for good_col in gbx_ins.goodscolumns:
@@ -49,14 +51,19 @@ class Compare:
                 box_id = good_col.box_id
                 compare_code = None
                 process_code = good_col.compare_code
+                upc = good_col.upc
                 for key in code.filter_code:
                     if good_col.compare_code is not None and good_col.compare_code in code.filter_code[key]:
                         compare_code = key
                 if compare_code==None or good_col.compare_code == None:
                     compare_code=3
+                if compare_code == 0:
+                    equal_cnt+=1
                 if compare_code == 1:
-                    sum_true+=1
-                ret.append({
+                    different_cnt+=1
+                if compare_code == 2:
+                    unknown_cnt+=1
+                detail.append({
                     'level':int(level),
                     'xmin':xmin,
                     'ymin':ymin,
@@ -64,10 +71,11 @@ class Compare:
                     'ymax':ymax,
                     'code':compare_code,
                     'process_code':process_code,
-                    'box_id':box_id
+                    'boxid':box_id,
+                    'upc':upc
                             })
-        score=float("%.2f" % sum_true/len(ret))
-        return ret,score
+        score=float("%.2f" % (equal_cnt+unknown_cnt)/len(detail))
+        return detail,score,equal_cnt,different_cnt,unknown_cnt
 
     def get_check_level_boxes(self,box_ids,box_levels,xmins, ymins, xmaxs, ymaxs):
         levels=list(set(box_levels))

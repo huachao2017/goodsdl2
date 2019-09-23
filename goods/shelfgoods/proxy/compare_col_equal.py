@@ -26,6 +26,8 @@ def process(check_box_ins,display_ins,shelf_img):
                     match_result = match_ins.detect_one_with_cv2array(target_img)
                     ck_gcs.compare_code = code.match_result[match_result]
                     ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
+                    if match_result:
+                        ck_gcs.upc = ds_upc
                 elif  ck_gcs.compare_code == None and  ds_location_column == ck_location_column and ck_location_row > max(ds_rows):
                     ck_gcs.compare_code = code.code_5
                     ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
