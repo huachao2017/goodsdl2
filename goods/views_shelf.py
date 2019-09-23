@@ -43,31 +43,37 @@ class NumpyEncoder(json.JSONEncoder):
         else:
             return super(NumpyEncoder, self).default(obj)
 
-def detect(shelf_image, image_path):
-    # 删除旧的goods
-    ShelfGoods.objects.filter(shelf_image_id=shelf_image.pk).delete()
-
-    logger.info('begin detect:{}'.format(image_path))
+def detect_compare(shelf_image, image_path, need_detect = True):
     shelf_goods_map = {}
-    # 检测框
-    detector = shelfdetection.ShelfDetectorFactory.get_static_detector('shelf')
-    step1_min_score_thresh = .5
-    detect_ret, aiinterval, visual_image_path = detector.detect(image_path,
-                                                                step1_min_score_thresh=step1_min_score_thresh,
-                                                                totol_level=shelf_image.tlevel)
-    logger.info('create shelf image: {},{}'.format(len(detect_ret), aiinterval))
-    for one_box in detect_ret:
-        shelf_goods = ShelfGoods.objects.create(
-            shelf_image_id=shelf_image.pk,
-            xmin=one_box['xmin'],
-            ymin=one_box['ymin'],
-            xmax=one_box['xmax'],
-            ymax=one_box['ymax'],
-            level=one_box['level'],
-        )
-        shelf_goods_map[shelf_goods.pk] = shelf_goods
-    logger.info('end detect:{}'.format(image_path))
+    if need_detect:
+        # 删除旧的goods
+        ShelfGoods.objects.filter(shelf_image_id=shelf_image.pk).delete()
+
+        logger.info('begin detect:{}'.format(image_path))
+        # 检测框
+        detector = shelfdetection.ShelfDetectorFactory.get_static_detector('shelf')
+        step1_min_score_thresh = .5
+        detect_ret, aiinterval, visual_image_path = detector.detect(image_path,
+                                                                    step1_min_score_thresh=step1_min_score_thresh,
+                                                                    totol_level=shelf_image.tlevel)
+        for one_box in detect_ret:
+            shelf_goods = ShelfGoods.objects.create(
+                shelf_image_id=shelf_image.pk,
+                xmin=one_box['xmin'],
+                ymin=one_box['ymin'],
+                xmax=one_box['xmax'],
+                ymax=one_box['ymax'],
+                level=one_box['level'],
+            )
+            shelf_goods_map[shelf_goods.pk] = shelf_goods
+        logger.info('end detect:{}'.format(image_path))
+    else:
+        shelf_goods_list = shelf_image.shelf_image_goods.all()
+        for shelf_goods in shelf_goods_list:
+            shelf_goods_map[shelf_goods.pk] = shelf_goods
+
     # 比对获取结果
+    logger.info('begin compare:{}'.format(image_path))
     compare_ret = tz_good_compare.compare(shelf_image.pk, shelf_image.displayid, shelf_image.shelfid)
     logger.info('end compare:{}'.format(image_path))
     # 持久化
@@ -122,7 +128,7 @@ class ShelfScore(APIView):
             source=os.path.join(image_relative_dir,source_image_name)
         )
 
-        compare_ret = detect(shelf_image, source_image_path)
+        compare_ret = detect_compare(shelf_image, source_image_path)
 
         ret = {
             'score':shelf_image.score,
@@ -200,7 +206,7 @@ class RectifyAndDetect(APIView):
         shelf_image.rectsource = os.path.join(image_relative_dir, rectify_image_name)
         shelf_image.save()
 
-        compare_ret = detect(shelf_image, rectify_image_path)
+        compare_ret = detect_compare(shelf_image, rectify_image_path)
 
         return Response(compare_ret, status=status.HTTP_200_OK)
 
@@ -236,6 +242,21 @@ class GetShelfImage(APIView):
             "detail":detail
         }
         return Response(ret, status=status.HTTP_200_OK)
+
+
+class DetectShelfImage(APIView):
+    def get(self, request):
+        try:
+            picid = int(request.query_params['picid'])
+            shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
+        except Exception as e:
+            logger.error('Rectify and detect error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+
+        rectify_image_path = os.path.join(settings.MEDIA_ROOT, shelf_image.rectsource)
+        compare_ret = detect_compare(shelf_image, rectify_image_path)
+
+        return Response(compare_ret, status=status.HTTP_200_OK)
 
 
 class ShelfImageViewSet(DefaultMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,

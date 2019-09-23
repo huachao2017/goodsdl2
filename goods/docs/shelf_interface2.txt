@@ -57,31 +57,7 @@ ai通知php接口,得分更新
     ]
 }
 
-3、标定框增加接口(post)：http://ai.aicvs.cn/api/shelfgoods/
-post入参：
-picid  int
-xmin  int
-ymin  int
-xmax  int
-ymax  int
-返回201：
-{
-    'boxid':       1                   -- ai数据库对这个框的id
-}
-
-4、标定框修改接口(put)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
-put入参：
-xmin  int
-ymin  int
-xmax  int
-ymax  int
-upc   string
-返回200
-
-5、删除标定框(delete)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
-返回204
-
-6、比对提交接口(get)：http://ai.aicvs.cn/api/comparelayout?picid=xx&displayid=xx
+3、提交接口(get)：http://ai.aicvs.cn/api/detect_shelfimage?picid=xx
 返回200：
 {
     "score": 85                       -- 得分
@@ -112,3 +88,28 @@ upc   string
         },
     ]
 }
+
+4、标定框增加接口(post)：http://ai.aicvs.cn/api/shelfgoods/
+post入参：
+picid  int
+xmin  int
+ymin  int
+xmax  int
+ymax  int
+返回201：
+{
+    'boxid':       1                   -- ai数据库对这个框的id
+}
+
+5、标定框修改接口(put)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
+put入参：
+xmin  int
+ymin  int
+xmax  int
+ymax  int
+upc   string
+返回200
+
+6、删除标定框(delete)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
+返回204
+

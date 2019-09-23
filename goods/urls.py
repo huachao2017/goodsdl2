@@ -29,5 +29,6 @@ urlpatterns = [
     url(r'^api/shelf_score', views_shelf.ShelfScore.as_view()),
     url(r'^api/rectify_detect', views_shelf.RectifyAndDetect.as_view()),
     url(r'^api/get_shelfimage', views_shelf.GetShelfImage.as_view()),
+    url(r'^api/detect_shelfimage', views_shelf.DetectShelfImage.as_view()),
     url(r'^api/', include(router.urls))
 ]
