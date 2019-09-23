@@ -75,6 +75,7 @@ class Compare:
                     'upc':upc
                             })
         score=float("%.2f" % (equal_cnt+unknown_cnt)/len(detail))
+        logger.info("for_dcompare detail="+str(detail))
         return detail,score,equal_cnt,different_cnt,unknown_cnt
 
     def get_check_level_boxes(self,box_ids,box_levels,xmins, ymins, xmaxs, ymaxs):
