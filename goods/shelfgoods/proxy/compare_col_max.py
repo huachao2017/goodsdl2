@@ -30,21 +30,18 @@ def process_good_col(check_box_ins,col_compare_l):
         ck_location_column = ck_gcs.location_column
         ck_location_row = ck_gcs.location_row
         ck_box = ck_gcs.location_box
-        compare_result = ck_gcs.compare_result
-        compare_code = ck_gcs.compare_code
         for i in range(len(col_compare_l)):
             (col,row,result) = col_compare_l[i]
-            if compare_code == None and ck_location_column==col and ck_location_row==row:
-                compare_code=code.match_result[result]
-                compare_result = code.result_code[compare_result]
+            if ck_gcs.compare_code == None and ck_location_column==col and ck_location_row==row:
+                ck_gcs.compare_code=code.match_result[result]
+                ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
 
     for ck_gcs in ck_goodscolumn_inss:
         if ck_gcs == [] or ck_gcs == None :
             continue
-        compare_code = ck_gcs.compare_code
-        if compare_code==None:
-            compare_code=code.code_8
-            compare_result = code.result_code[compare_code]
+        if ck_gcs.compare_code==None:
+            ck_gcs.compare_code=code.code_8
+            ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
     return check_box_ins
 
 
@@ -66,9 +63,9 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
                 ck_location_column = ck_gcs.location_column - i
                 ck_location_row = ck_gcs.location_row
                 ck_box = ck_gcs.location_box
-                compare_result = ck_gcs.compare_result
-                compare_code = ck_gcs.compare_code
-                if compare_code == None and ds_location_column == ck_location_column and ds_location_row == ck_location_row:
+                # compare_result = ck_gcs.compare_result
+                # compare_code = ck_gcs.compare_code
+                if ck_gcs.compare_code == None and ds_location_column == ck_location_column and ds_location_row == ck_location_row:
                     target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
                     match_ins = shelftradition_match.ShelfTraditionMatch(ds_upc)
                     match_result = match_ins.detect_one_with_cv2array(target_img)

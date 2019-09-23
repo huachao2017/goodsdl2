@@ -10,6 +10,7 @@ class GoodsBox:
 
 class GoodsColumn:
     upc=None
+    box_id = None
     location_column = None
     location_row = None
     location_left = None
@@ -17,5 +18,6 @@ class GoodsColumn:
     location_box = None
     compare_result = None
     compare_code = None
+    is_fitting = None
 
 

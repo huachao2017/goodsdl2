@@ -17,11 +17,11 @@ class CheckBoxStructure:
         bottoms = {}
         columnboxs = []
         for box1,i in zip(value,range(len(value))):
-            (xmin1, ymin1, xmax1, ymax1) = box1
+            (xmin1, ymin1, xmax1, ymax1,box_id1) = box1
             lefts[i] = xmin1
             bottoms[i] = 5000 - ymin1
             for box2,j in zip(value,range(len(value))):
-                (xmin2, ymin2, xmax2, ymax2) = box2
+                (xmin2, ymin2, xmax2, ymax2,box_id2) = box2
                 if i != j :
                     x_iou = get_iou((xmin1,xmax1),(xmin2,xmax2))
                     y_iou = get_iou((ymin1,ymax1),(ymin2,ymax2))
@@ -37,7 +37,9 @@ class CheckBoxStructure:
                 gc_ins = goods_box.GoodsColumn()
                 gc_ins.location_column = col
                 gc_ins.location_row = 0
-                gc_ins.location_box = value[key[0]]
+                (xmin, ymin, xmax, ymax, box_id) = value[key[0]]
+                gc_ins.location_box = (xmin, ymin, xmax, ymax)
+                gc_ins.box_id = box_id
                 columnboxs.append(gc_ins)
         return columns, columnboxs
 
@@ -107,7 +109,9 @@ class CheckBoxStructure:
                     gc_ins = goods_box.GoodsColumn()
                     gc_ins.location_column = i
                     gc_ins.location_row = j
-                    gc_ins.location_box = value[col1]
+                    (xmin,ymin,xmax,ymax,box_id)=value[col1]
+                    gc_ins.location_box = (xmin,ymin,xmax,ymax)
+                    gc_ins.box_id = box_id
                     colmunboxes.append(gc_ins)
             else:
                 continue

@@ -25,18 +25,20 @@ class DispalyStructure():
     def get_goods_box_location(self,value,columns_info):
         goodscolumns = []
         for upc_box in value:
-            (upc, bottom, left, width, height) = upc_box
+            (upc,is_fitting, bottom, left, width, height) = upc_box
             goodscolumn_ins = goods_box.GoodsColumn()
             if bottom == 0:
                 for i in columns_info:
                     if left == columns_info[i][0] and width ==columns_info[i][1] :
                         goodscolumn_ins.upc = upc
+                        goodscolumn_ins.is_fitting = is_fitting
                         goodscolumn_ins.location_column = i
                         goodscolumn_ins.location_row = 0
                         goodscolumn_ins.location_left = left
                         goodscolumn_ins.location_bottom = bottom
             else:
                 goodscolumn_ins.upc = upc
+                goodscolumn_ins.is_fitting = is_fitting
                 goodscolumn_ins.location_column = self.get_column(left,width,columns_info)
                 goodscolumn_ins.location_left = left
                 goodscolumn_ins.location_row = self.get_row(goodscolumns,bottom,goodscolumn_ins.location_column)
