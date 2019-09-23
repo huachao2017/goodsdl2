@@ -272,22 +272,27 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
     serializer_class = ShelfGoodsSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        upc = serializer.instance.upc
-        if upc != '':
-            # 添加新样本
-            sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
-            image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.rectsource)
-            image = PILImage.open(image_path)
-            sample_image = image.crop((serializer.instance.xmin, serializer.instance.ymin, serializer.instance.xmax,
-                                       serializer.instance.ymax))
-            sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(serializer.instance.pk))
-            sample_image.save(sample_image_path, 'JPEG')
+        try:
+            picid = int(request.data['picid'])
+            xmin = int(request.data['xmin'])
+            ymin = int(request.data['ymin'])
+            xmax = int(request.data['xmax'])
+            ymax = int(request.data['ymax'])
 
-        return Response({'boxid':serializer.instance.pk}, status=status.HTTP_201_CREATED, headers=headers)
+            shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
+        except Exception as e:
+            logger.error('Rectify and detect error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+
+        shelf_goods = ShelfGoods.objects.create(
+            shelf_image_id=shelf_image.pk,
+            xmin=xmin,
+            ymin=ymin,
+            xmax=xmax,
+            ymax=ymax,
+        )
+
+        return Response({'boxid':shelf_goods.pk}, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -295,7 +300,6 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
 
         old_upc = instance.upc
 
-        instance.score2 = 1.0
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
