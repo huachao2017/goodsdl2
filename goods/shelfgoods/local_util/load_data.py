@@ -5,6 +5,8 @@ from goods.shelfgoods.local_util import parse_util
 import os
 from django.conf import settings
 import logging
+import traceback
+
 logger = logging.getLogger("detect")
 import cv2
 class LoadData:
@@ -23,7 +25,7 @@ class LoadData:
             return shelf_floor_upc
         except Exception as e :
             logger.error("get_tz_dispaly_goods failed  , display_id="+str(display_id))
-            logger.error(e)
+            logger.error(traceback.format_exc())
             mysql_ins.close()
             return None
 
@@ -58,7 +60,7 @@ class LoadData:
                 return box_id, shelf_img_id, xmin, ymin, xmax, ymax, level,shelf_img
         except Exception as e:
             logger.error("get_ai_goods failed ,shelf_image_id="+str(shelf_image_id))
-            logger.error(e)
+            logger.error(traceback.format_exc())
             return None,None,None,None,None,None,None,None
     def get_ai_shelf_img(self,shelf_img_idi):
         mysql_ins = django_mysql_util.DjangoMysql('default')
@@ -75,7 +77,7 @@ class LoadData:
             return shelf_img
         except Exception as e:
             logger.error("get_ai_shelf_img failed ,shelf_img_idi="+str(shelf_img_idi))
-            logger.error(e)
+            logger.error(traceback.format_exc())
             mysql_ins.close()
             return None
 
