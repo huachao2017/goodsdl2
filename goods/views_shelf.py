@@ -83,10 +83,10 @@ def detect_compare(shelf_image, image_path, need_detect = True):
         shelf_image.save()
         for one in compare_ret['detail']:
             shelf_goods = shelf_goods_map[one['boxid']]
-            shelf_goods.result = shelf_goods_map['result']
+            shelf_goods.result = one['result']
             if shelf_goods.result == 0:
                 # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
-                shelf_goods.upc = shelf_goods_map['upc']
+                shelf_goods.upc = one['upc']
             shelf_goods.save()
 
         # TODO 生成识别图
