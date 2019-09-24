@@ -19,7 +19,7 @@ class Compare:
         loaddata_ins = load_data.LoadData()
         level_goods = loaddata_ins.get_tz_dispaly_goods(self.display_id)
         box_ids, shelf_img_ids, xmins, ymins, xmaxs, ymaxs, levels, shelf_img = loaddata_ins.get_ai_goods(self.shelf_image_id)
-        if level_goods != None and box_ids != None and shelf_img != None and level_goods[self.shelf_id] != None:
+        if level_goods is not None and box_ids is not None and shelf_img is not None and level_goods[self.shelf_id] is not None:
             return self.for_dcompare(box_ids,levels,xmins, ymins, xmaxs, ymaxs,shelf_img,level_goods[self.shelf_id])
         else:
             logger.error("load data failed ,display_id=%s,shelf_image_id=%s"%(self.display_id,self.shelf_image_id))
