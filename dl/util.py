@@ -288,15 +288,11 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
     box_to_color_map = vis_util.collections.defaultdict(str)
     for i in range(len(boxes)):
         box = boxes[i]
-        box_to_display_str_map[box] = [text_infos[i]]
-        box_to_color_map[box] = 'Red'
-
-    # Draw all boxes onto image.
-    for box, color in box_to_color_map.items():
         ymin = box['ymin']
         xmin = box['xmin']
         ymax = box['ymax']
         xmax = box['xmax']
+        color = 'red'
         vis_util.draw_bounding_box_on_image_array(
             image,
             ymin,
@@ -305,7 +301,7 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
             xmax,
             color=color,
             thickness=line_thickness,
-            display_str_list=box_to_display_str_map[box],
+            display_str_list=[text_infos[i]],
             use_normalized_coordinates=False)
 
     return image
