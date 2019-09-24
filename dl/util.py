@@ -264,8 +264,7 @@ def visualize_boxes_and_labels_on_image_array_V1(image,
 
 def visualize_boxes_and_labels_on_image_array_for_shelf(image,
                                                         boxes,
-                                                        other_infos,
-                                                        scores_step1,
+                                                        text_infos,
                                                         instance_masks=None,
                                                         keypoints=None,
                                                         use_normalized_coordinates=False,
@@ -283,10 +282,7 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
     Args:
       image: uint8 numpy array with shape (img_height, img_width, 3)
       boxes: a numpy array of shape [N, 4]
-      other_infos: a python array of other_infos
-      scores_step1: a numpy array of shape [N] or None.  If scores=None, then
-        this function assumes that the boxes to be plotted are groundtruth
-        boxes and plot all boxes as black with no classes or scores.
+      text_infos: a python array of other_infos
       instance_masks: a numpy array of shape [N, image_height, image_width], can
         be None
       keypoints: a numpy array of shape [N, num_keypoints, 2], can
@@ -310,22 +306,15 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
     if not max_boxes_to_draw:
         max_boxes_to_draw = boxes.shape[0]
     for i in range(min(max_boxes_to_draw, boxes.shape[0])):
-        if scores_step1 is None or scores_step1[i] > 0.01:
-            if scores_step1[i] >= step1_min_score_thresh or show_error_boxes:
-                box = tuple(boxes[i].tolist())
-                if instance_masks is not None:
-                    box_to_instance_masks_map[box] = instance_masks[i]
-                if keypoints is not None:
-                    box_to_keypoints_map[box].extend(keypoints[i])
-                if scores_step1 is None:
-                    box_to_color_map[box] = 'black'
-                else:
-                    display_str = '{}-{}%'.format(other_infos[i]['level'],int(100 * scores_step1[i]), )
-                    box_to_display_str_map[box].append(display_str)
-                    if scores_step1[i] > step1_min_score_thresh:
-                        box_to_color_map[box] = 'RoyalBlue'
-                    else:
-                        box_to_color_map[box] = 'Red'
+        box = tuple(boxes[i].tolist())
+        if instance_masks is not None:
+            box_to_instance_masks_map[box] = instance_masks[i]
+        if keypoints is not None:
+            box_to_keypoints_map[box].extend(keypoints[i])
+        else:
+            display_str = '{}'.format(text_infos[i])
+            box_to_display_str_map[box].append(display_str)
+            box_to_color_map[box] = 'Red'
 
     # Draw all boxes onto image.
     for box, color in box_to_color_map.items():

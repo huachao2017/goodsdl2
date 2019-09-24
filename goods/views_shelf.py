@@ -53,7 +53,7 @@ def detect_compare(shelf_image, image_path, need_detect = True):
         step1_min_score_thresh = .5
         detect_ret, aiinterval, visual_image_path = detector.detect(image_path,
                                                                     step1_min_score_thresh=step1_min_score_thresh,
-                                                                    totol_level=shelf_image.tlevel)
+                                                                    total_level=shelf_image.tlevel)
         for one_box in detect_ret:
             shelf_goods = ShelfGoods.objects.create(
                 shelf_image_id=shelf_image.pk,

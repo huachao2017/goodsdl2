@@ -40,7 +40,7 @@ class ShelfDetector:
             self.step1_cnn.load(self.config)
 
 
-    def detect(self, image_path, step1_min_score_thresh=.5, totol_level = 6):
+    def detect(self, image_path, step1_min_score_thresh=.5, total_level = 6):
         if not self.step1_cnn.is_load():
             self.load()
             if not self.step1_cnn.is_load():
@@ -85,18 +85,20 @@ class ShelfDetector:
                             })
 
         if len(ret) > 0:
-            caculate_level(ret,totol_level)
+            caculate_level(ret, total_level)
 
         # visualization
         output_image_path = None
         if len(ret) > 0:
+            text_infos = []
+            for one in ret:
+                text_infos.append(one['level'])
             image_dir = os.path.dirname(image_path)
             output_image_path = os.path.join(image_dir, 'visual_' + os.path.split(image_path)[-1])
             visualize_boxes_and_labels_on_image_array_for_shelf(
                 image_np,
                 boxes,
-                ret,
-                scores_step1,
+                text_infos,
                 use_normalized_coordinates=True,
                 step1_min_score_thresh=step1_min_score_thresh,
                 line_thickness=2,
