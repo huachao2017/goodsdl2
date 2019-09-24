@@ -2,9 +2,6 @@ import datetime
 import json
 import logging
 import os
-import shutil
-import subprocess
-import time
 import urllib.request
 from PIL import Image as PILImage
 
@@ -214,13 +211,34 @@ class RectifyAndDetect(APIView):
 
         return Response(compare_ret, status=status.HTTP_200_OK)
 
+
 class GetShelfImage(APIView):
     def get(self, request):
         try:
             picid = int(request.query_params['picid'])
             shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
         except Exception as e:
-            logger.error('Rectify and detect error:{}'.format(e))
+            logger.error('GetShelfImage error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+
+        image_path = os.path.join(settings.MEDIA_ROOT, shelf_image.source)
+        image = PILImage.open(image_path)
+        (im_width, im_height) = image.size
+        ret = {
+            "url": os.path.join(settings.MEDIA_URL, shelf_image.source),
+            "width": im_width,
+            "height": im_height,
+        }
+        return Response(ret, status=status.HTTP_200_OK)
+
+
+class GetShelfImageDetail(APIView):
+    def get(self, request):
+        try:
+            picid = int(request.query_params['picid'])
+            shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
+        except Exception as e:
+            logger.error('GetShelfImageDetail error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
 
         detail = []

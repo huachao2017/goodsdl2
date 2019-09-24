@@ -22,15 +22,23 @@ ai通知php接口,得分更新
 
 
 二、web界面接口
+0、获取原始图片(get)：http://ai.aicvs.cn/api/get_shelfimage?picid=xx
+返回200：
+{
+    "url":"aaa/bbb/ccc.jpg",              -- 返回矫正图片地址，需自行拼接域名
+    "width":600,                          -- 宽
+    "height":800,                         -- 高
+}
+
 1、矫正和检测图片(get)：http://ai.aicvs.cn/api/rectify_detect?picid=xx&x1=xx&y1=xx&x2=xx&y2=xx&x3=xx&y3=xx&x4=xx&y4=xx
 示例：http://ai.aicvs.cn/api/rectify_detect?picid=1&picurl=http://img.starft.com/dmstore/p/13&x1=0&y1=50&x2=706&y2=50&x3=0&y3=820&x4=706&y4=820
 返回200：
 
 
-2、获取图片(get)：http://ai.aicvs.cn/api/get_shelfimage?picid=xx
+2、获取识别详情(get)：http://ai.aicvs.cn/api/get_shelfimage_detail?picid=xx
 返回200：
 {
-    "recturl":"aaa/bbb/ccc.jpg",             -- 返回矫正图片地址，需自行拼接域名
+    "recturl":"aaa/bbb/ccc.jpg",              -- 返回矫正图片地址，需自行拼接域名
     "score": 85                               -- 得分
     "equal_cnt": 85                           -- 正确数量
     "different_cnt": 22                       -- 错误数量
