@@ -60,7 +60,7 @@ class Compare:
                     if good_col.compare_code is not None and good_col.compare_code in code.filter_code[key]:
                         compare_code = key
                 if compare_code==None or good_col.compare_code == None:
-                    compare_code=3
+                    compare_code=2
                 if compare_code == 0:
                     equal_cnt+=1
                 if compare_code == 1:
