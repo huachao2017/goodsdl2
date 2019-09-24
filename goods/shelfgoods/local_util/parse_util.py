@@ -18,9 +18,13 @@ def parse_tz_display_goods(result):
             upcs = []
             for good in fl_goods:
                 good = dict(good)
+                if "goods_upc" not in list(good.keys()) or "is_fitting" not in list(good.keys()) or "top" not in list(good.keys()) or "left" not in  list(good.keys()) or "width" not in list(good.keys()) or "height" not in list(good.keys()):
+                    continue
                 upc = good['goods_upc']
-                is_fitting = good['is_fitting'] #1 陈列盒  0 商品
-                bottom, left, width, height = good['bottom'],good['left'],good['width'],good['height']
+                is_fitting = 0
+                if 'is_fitting' in list(good.keys()):
+                    is_fitting = good['is_fitting'] #1 陈列盒  0 商品
+                bottom, left, width, height = good['top'],good['left'],good['width'],good['height']
                 upcs.append((upc,int(is_fitting),float(bottom), float(left), float(width), float(height)))
             floor_goods[str(fl_num)] = upcs
         shelf_floor_upc[str(shelfId)] = floor_goods
