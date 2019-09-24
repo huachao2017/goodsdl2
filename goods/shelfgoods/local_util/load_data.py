@@ -57,6 +57,7 @@ class LoadData:
             mysql_ins.close()
             if (len(shelf_img_id))>0:
                 shelf_img = self.get_ai_shelf_img(shelf_img_id[0])
+                print (box_id)
                 return box_id, shelf_img_id, xmin, ymin, xmax, ymax, level,shelf_img
         except Exception as e:
             logger.error("get_ai_goods failed ,shelf_image_id="+str(shelf_image_id))
