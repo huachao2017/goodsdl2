@@ -77,20 +77,21 @@ def detect_compare(shelf_image, image_path, need_detect = True):
     compare_ret = tz_good_compare.compare(shelf_image.pk, shelf_image.displayid, shelf_image.shelfid)
     logger.info('end compare:{}'.format(image_path))
     # 持久化
-    shelf_image.score = compare_ret['score']
-    shelf_image.equal_cnt = compare_ret['equal_cnt']
-    shelf_image.different_cnt = compare_ret['different_cnt']
-    shelf_image.unknown_cnt = compare_ret['unknown_cnt']
-    shelf_image.save()
-    for one in compare_ret.detail:
-        shelf_goods = shelf_goods_map[one['boxid']]
-        shelf_goods.result = shelf_goods_map['result']
-        if shelf_goods.result == 0:
-            # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
-            shelf_goods.upc = shelf_goods_map['upc']
-        shelf_goods.save()
+    if compare_ret is not None:
+        shelf_image.score = compare_ret['score']
+        shelf_image.equal_cnt = compare_ret['equal_cnt']
+        shelf_image.different_cnt = compare_ret['different_cnt']
+        shelf_image.unknown_cnt = compare_ret['unknown_cnt']
+        shelf_image.save()
+        for one in compare_ret.detail:
+            shelf_goods = shelf_goods_map[one['boxid']]
+            shelf_goods.result = shelf_goods_map['result']
+            if shelf_goods.result == 0:
+                # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
+                shelf_goods.upc = shelf_goods_map['upc']
+            shelf_goods.save()
 
-    # TODO 生成识别图
+        # TODO 生成识别图
 
     return compare_ret
 
@@ -101,7 +102,7 @@ class ShelfScore(APIView):
         try:
             picid = int(request.query_params['picid'])
             shopid = int(request.query_params['shopid'])
-            shelfid = int(request.query_params['shelfid'])
+            shelfid = request.query_params['shelfid']
             displayid = int(request.query_params['displayid'])
             tlevel = int(request.query_params['tlevel'])
         except Exception as e:
@@ -132,6 +133,9 @@ class ShelfScore(APIView):
 
         ret = {
             'score':shelf_image.score,
+            "equal_cnt":shelf_image.equal_cnt,
+            "different_cnt":shelf_image.different_cnt,
+            "unknown_cnt":shelf_image.unknown_cnt,
             'retpicurl':'TODO'
         }
         return Response(ret, status=status.HTTP_200_OK)
@@ -284,6 +288,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
             logger.error('Rectify and detect error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
 
+        # TODO 需要计算层数
         shelf_goods = ShelfGoods.objects.create(
             shelf_image_id=shelf_image.pk,
             xmin=xmin,

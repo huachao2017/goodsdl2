@@ -10,3 +10,4 @@ opencv-contrib-python
 scipy>=1.0.0
 scikit-surprise
 demjson
+django-cors-headers
