@@ -132,6 +132,9 @@ class ShelfScore(APIView):
 
         ret = {
             'score':shelf_image.score,
+            "equal_cnt":shelf_image.equal_cnt,
+            "different_cnt":shelf_image.different_cnt,
+            "unknown_cnt":shelf_image.unknown_cnt,
             'retpicurl':'TODO'
         }
         return Response(ret, status=status.HTTP_200_OK)
