@@ -15,14 +15,15 @@ class LoadData:
         try:
             sql = taizhang.get_display_good
             #TODO 对sql传参
-            sql = sql % (display_id)
+            sql = sql.format(display_id)
             result=mysql_ins.selectOne(sql)
             display_info = result[0]
             shelf_floor_upc = parse_util.parse_tz_display_goods(display_info)
             mysql_ins.close()
             return shelf_floor_upc
-        except:
+        except Exception as e :
             logger.error("get_tz_dispaly_goods failed  , display_id="+str(display_id))
+            logger.error(e)
             mysql_ins.close()
             return None
 
@@ -32,7 +33,7 @@ class LoadData:
         mysql_ins = django_mysql_util.DjangoMysql("default")
         try:
             sql = ai.get_shelf_goods
-            sql = sql % (shelf_image_id)
+            sql = sql.format(shelf_image_id)
             results = mysql_ins.selectAll(sql)
             box_id = []
             shelf_img_id = []
@@ -55,13 +56,14 @@ class LoadData:
             if (len(shelf_img_id))>0:
                 shelf_img = self.get_ai_shelf_img(shelf_img_id[0])
                 return box_id, shelf_img_id, xmin, ymin, xmax, ymax, level,shelf_img
-        except:
+        except Exception as e:
             logger.error("get_ai_goods failed ,shelf_image_id="+str(shelf_image_id))
+            logger.error(e)
             return None,None,None,None,None,None,None,None
     def get_ai_shelf_img(self,shelf_img_idi):
         mysql_ins = django_mysql_util.DjangoMysql('default')
         try:
-            sql = ai.get_shelf_img % (int(shelf_img_idi))
+            sql = ai.get_shelf_img.format(int(shelf_img_idi))
             result = mysql_ins.selectOne(sql)
             print(result[0])
             img_file = os.path.join(settings.MEDIA_ROOT, str(result[0]))
@@ -71,8 +73,9 @@ class LoadData:
             shelf_img = cv2.imread(img_file)
             mysql_ins.close()
             return shelf_img
-        except:
+        except Exception as e:
             logger.error("get_ai_shelf_img failed ,shelf_img_idi="+str(shelf_img_idi))
+            logger.error(e)
             mysql_ins.close()
             return None
 
