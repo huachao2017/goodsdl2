@@ -14,7 +14,7 @@ class DjangoMysql:
     def __init__(self,name):
         self.cursor = connections[name].cursor()
     def selectOne(self,sql):
-        self.cursor.execute(sql)
+        cursor = self.cursor.execute(sql)
         # 获取所有记录列表
         result = cursor.fetchone()
         # for row in results:
@@ -22,7 +22,7 @@ class DjangoMysql:
         return result
 
     def selectAll(self,sql):
-        self.cursor.execute(sql)
+        cursor = self.cursor.execute(sql)
         # 获取所有记录列表
         results = cursor.fetchall()
         # for row in results:
