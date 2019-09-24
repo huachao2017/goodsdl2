@@ -101,7 +101,7 @@ class ShelfScore(APIView):
         try:
             picid = int(request.query_params['picid'])
             shopid = int(request.query_params['shopid'])
-            shelfid = int(request.query_params['shelfid'])
+            shelfid = request.query_params['shelfid']
             displayid = int(request.query_params['displayid'])
             tlevel = int(request.query_params['tlevel'])
         except Exception as e:
@@ -284,6 +284,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
             logger.error('Rectify and detect error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
 
+        # TODO 需要计算层数
         shelf_goods = ShelfGoods.objects.create(
             shelf_image_id=shelf_image.pk,
             xmin=xmin,
