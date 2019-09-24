@@ -73,7 +73,7 @@ def detect_compare(shelf_image, image_path, need_detect = True):
     # 比对获取结果
     logger.info('begin compare:{}'.format(image_path))
     compare_ret = tz_good_compare.compare(shelf_image.pk, shelf_image.displayid, shelf_image.shelfid)
-    logger.info('end compare:{}'.format(image_path))
+    logger.info('end compare:{}'.format(compare_ret))
     # 持久化
     if compare_ret is not None:
         shelf_image.score = compare_ret['score']
