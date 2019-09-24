@@ -265,6 +265,7 @@ def visualize_boxes_and_labels_on_image_array_V1(image,
 def visualize_boxes_and_labels_on_image_array_for_shelf(image,
                                                         boxes,
                                                         text_infos,
+                                                        color_infos,
                                                         line_thickness=4):
     """Overlay labeled boxes on an image with formatted scores and label names.
 
@@ -276,7 +277,8 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
     Args:
       image: uint8 numpy array with shape (img_height, img_width, 3)
       boxes: a numpy array of shape [N, 4]
-      text_infos: a python array of other_infos
+      text_infos: a python array of text_info
+      color_infos: a python array of color_info
       line_thickness: integer (default: 4) controlling line width of the boxes.
 
     Returns:
@@ -292,7 +294,7 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
         xmin = box['xmin']
         ymax = box['ymax']
         xmax = box['xmax']
-        color = 'red'
+        color = color_infos[i]
         vis_util.draw_bounding_box_on_image_array(
             image,
             ymin,

@@ -91,15 +91,18 @@ class ShelfDetector:
         output_image_path = None
         if len(ret) > 0:
             text_infos = []
+            color_infos = []
             for one in ret:
                 text_infos.append('{}'.format(one['level']))
-            image_dir = os.path.dirname(image_path)
-            output_image_path = os.path.join(image_dir, 'visual_' + os.path.split(image_path)[-1])
+                color_infos.append('red')
             visualize_boxes_and_labels_on_image_array_for_shelf(
                 image_np,
                 ret,
-                text_infos
+                text_infos,
+                color_infos
             )
+            image_dir = os.path.dirname(image_path)
+            output_image_path = os.path.join(image_dir, 'visual_' + os.path.split(image_path)[-1])
             output_image = Image.fromarray(image_np)
             output_image.thumbnail((int(im_width), int(im_height)), Image.ANTIALIAS)
             output_image.save(output_image_path)
