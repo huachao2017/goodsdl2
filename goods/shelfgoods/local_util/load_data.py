@@ -37,6 +37,7 @@ class LoadData:
             sql = ai.get_shelf_goods
             sql = sql.format(shelf_image_id)
             results = mysql_ins.selectAll(sql)
+            print (results)
             box_id = []
             shelf_img_id = []
             xmin, ymin, xmax, ymax = [],[],[],[]
@@ -55,9 +56,9 @@ class LoadData:
             # for lv in level:
             #     new_level.append(max_level-lv)
             mysql_ins.close()
+            print (box_id)
             if (len(shelf_img_id))>0:
                 shelf_img = self.get_ai_shelf_img(shelf_img_id[0])
-                print (box_id)
                 return box_id, shelf_img_id, xmin, ymin, xmax, ymax, level,shelf_img
         except Exception as e:
             logger.error("get_ai_goods failed ,shelf_image_id="+str(shelf_image_id))
@@ -68,8 +69,13 @@ class LoadData:
         try:
             sql = ai.get_shelf_img.format(int(shelf_img_idi))
             result = mysql_ins.selectOne(sql)
-            print(result[0])
-            img_file = os.path.join(settings.MEDIA_ROOT, str(result[0]))
+            rectsource = str(result[0])
+            source = str(result[1])
+            img_file=None
+            if rectsource != '' and rectsource != '0' :
+                img_file = os.path.join(settings.MEDIA_ROOT, rectsource)
+            else:
+                img_file = os.path.join(settings.MEDIA_ROOT, source)
             if os.path.isfile(img_file) == False:
                 logger.error("LoadData get_ai_shelf_img is Null , shelf_img_path = "+str(img_file))
                 return None
