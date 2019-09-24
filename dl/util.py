@@ -265,13 +265,7 @@ def visualize_boxes_and_labels_on_image_array_V1(image,
 def visualize_boxes_and_labels_on_image_array_for_shelf(image,
                                                         boxes,
                                                         text_infos,
-                                                        instance_masks=None,
-                                                        keypoints=None,
-                                                        use_normalized_coordinates=False,
-                                                        max_boxes_to_draw=50,
-                                                        step1_min_score_thresh=.5,
-                                                        line_thickness=4,
-                                                        show_error_boxes=True):
+                                                        line_thickness=4):
     """Overlay labeled boxes on an image with formatted scores and label names.
 
     This function groups boxes that correspond to the same location
@@ -283,15 +277,6 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
       image: uint8 numpy array with shape (img_height, img_width, 3)
       boxes: a numpy array of shape [N, 4]
       text_infos: a python array of other_infos
-      instance_masks: a numpy array of shape [N, image_height, image_width], can
-        be None
-      keypoints: a numpy array of shape [N, num_keypoints, 2], can
-        be None
-      use_normalized_coordinates: whether boxes is to be interpreted as
-        normalized coordinates or not.
-      max_boxes_to_draw: maximum number of boxes to visualize.  If None, draw
-        all boxes.
-      step1_min_score_thresh: step1 minimum score threshold for a box to be visualized
       line_thickness: integer (default: 4) controlling line width of the boxes.
 
     Returns:
@@ -301,30 +286,17 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
     # that correspond to the same location.
     box_to_display_str_map = vis_util.collections.defaultdict(list)
     box_to_color_map = vis_util.collections.defaultdict(str)
-    box_to_instance_masks_map = {}
-    box_to_keypoints_map = vis_util.collections.defaultdict(list)
-    if not max_boxes_to_draw:
-        max_boxes_to_draw = boxes.shape[0]
-    for i in range(min(max_boxes_to_draw, boxes.shape[0])):
-        box = tuple(boxes[i].tolist())
-        if instance_masks is not None:
-            box_to_instance_masks_map[box] = instance_masks[i]
-        if keypoints is not None:
-            box_to_keypoints_map[box].extend(keypoints[i])
-        else:
-            display_str = '{}'.format(text_infos[i])
-            box_to_display_str_map[box].append(display_str)
-            box_to_color_map[box] = 'Red'
+    for i in range(len(boxes)):
+        box = boxes[i]
+        box_to_display_str_map[box] = text_infos[i]
+        box_to_color_map[box] = 'Red'
 
     # Draw all boxes onto image.
     for box, color in box_to_color_map.items():
-        ymin, xmin, ymax, xmax = box
-        if instance_masks is not None:
-            vis_util.draw_mask_on_image_array(
-                image,
-                box_to_instance_masks_map[box],
-                color=color
-            )
+        ymin = box['ymin']
+        xmin = box['xmin']
+        ymax = box['ymax']
+        xmax = box['xmax']
         vis_util.draw_bounding_box_on_image_array(
             image,
             ymin,
@@ -334,14 +306,7 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
             color=color,
             thickness=line_thickness,
             display_str_list=box_to_display_str_map[box],
-            use_normalized_coordinates=use_normalized_coordinates)
-        if keypoints is not None:
-            vis_util.draw_keypoints_on_image_array(
-                image,
-                box_to_keypoints_map[box],
-                color=color,
-                radius=line_thickness / 2,
-                use_normalized_coordinates=use_normalized_coordinates)
+            use_normalized_coordinates=False)
 
     return image
 

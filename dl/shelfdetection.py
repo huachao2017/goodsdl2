@@ -97,13 +97,8 @@ class ShelfDetector:
             output_image_path = os.path.join(image_dir, 'visual_' + os.path.split(image_path)[-1])
             visualize_boxes_and_labels_on_image_array_for_shelf(
                 image_np,
-                boxes,
-                text_infos,
-                use_normalized_coordinates=True,
-                step1_min_score_thresh=step1_min_score_thresh,
-                line_thickness=2,
-                show_error_boxes=False,
-                max_boxes_to_draw=None,
+                ret,
+                text_infos
             )
             output_image = Image.fromarray(image_np)
             output_image.thumbnail((int(im_width), int(im_height)), Image.ANTIALIAS)
