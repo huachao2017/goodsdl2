@@ -29,7 +29,7 @@ class ProxyFactory:
         elif ck_col_nums < ds_col_nums:
             return ['filter_wz_box', 'compare_col_min']
         elif ck_col_nums>ds_col_nums:
-            return ['filter_wz_box', 'compare_col_min']
+            return ['filter_wz_box', 'compare_col_max']
 
 
 
