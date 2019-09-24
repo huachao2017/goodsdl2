@@ -14,20 +14,24 @@ class DjangoMysql:
     def __init__(self,name):
         self.cursor = connections[name].cursor()
     def selectOne(self,sql):
-        cursor = self.cursor.execute(sql)
+        self.cursor.execute(sql)
         # 获取所有记录列表
-        result = cursor.fetchone()
+        result = self.cursor.fetchone()
         # for row in results:
         #     uuid_list.append(str(row[0]))
         return result
 
     def selectAll(self,sql):
-        cursor = self.cursor.execute(sql)
+        self.cursor.execute(sql)
         # 获取所有记录列表
-        results = cursor.fetchall()
+        results = self.cursor.fetchall()
         # for row in results:
         #     uuid_list.append(str(row[0]))
         return results
 
     def close(self):
         self.cursor.close()
+
+if __name__=='__main__':
+    dj_ins = DjangoMysql("ucenter")
+    dj_ins.selectOne("select display_goods_info from sf_taizhang_display where id = 25")
