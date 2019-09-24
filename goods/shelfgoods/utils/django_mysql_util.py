@@ -24,7 +24,7 @@ class DjangoMysql:
     def selectAll(self,sql):
         self.cursor.execute(sql)
         # 获取所有记录列表
-        results = cursor.fetchAll()
+        results = cursor.fetchall()
         # for row in results:
         #     uuid_list.append(str(row[0]))
         return results
