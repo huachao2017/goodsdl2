@@ -78,7 +78,11 @@ class Compare:
                     'boxid':box_id,
                     'upc':upc
                             })
-        score=float("%.2f" % (equal_cnt+unknown_cnt)/len(detail))
+        score = 0.0
+        if len(detail)==0:
+            score = 0.0
+        else:
+            score=float("%.2f" % ((equal_cnt+unknown_cnt)/len(detail)))
         logger.info("for_dcompare detail="+str(detail))
         return detail,score,equal_cnt,different_cnt,unknown_cnt
 
