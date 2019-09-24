@@ -19,7 +19,9 @@ def parse_tz_display_goods(result):
             for good in fl_goods:
                 good = dict(good)
                 upc = good['goods_upc']
-                is_fitting = good['is_fitting'] #1 陈列盒  0 商品
+                is_fitting = 0
+                if 'is_fitting' in list(good.keys()):
+                    is_fitting = good['is_fitting'] #1 陈列盒  0 商品
                 bottom, left, width, height = good['bottom'],good['left'],good['width'],good['height']
                 upcs.append((upc,int(is_fitting),float(bottom), float(left), float(width), float(height)))
             floor_goods[str(fl_num)] = upcs
