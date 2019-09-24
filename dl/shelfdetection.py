@@ -6,9 +6,8 @@ import logging
 import time
 from dl.step1_cnn import Step1CNN
 from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
+from dl.util import caculate_level
 
-from sklearn.cluster import KMeans
-import traceback
 logger = logging.getLogger("detect")
 
 
@@ -86,7 +85,7 @@ class ShelfDetector:
                             })
 
         if len(ret) > 0:
-            self.caculate_level(ret,totol_level)
+            caculate_level(ret,totol_level)
 
         # visualization
         output_image_path = None
@@ -110,37 +109,3 @@ class ShelfDetector:
 
         time1 = time.time()
         return ret, time1-time0,output_image_path
-
-    def caculate_level(self,boxes,n_clusters = 6):
-        """
-        通过连续聚类计算框所属的层级
-        """
-        try:
-            data = []
-            for one_box in boxes:
-                data.append((one_box['ymin'],one_box['ymax']))
-            X = np.array(data)
-            logger.info('calulate level: {},{}'.format(n_clusters,X.shape))
-            estimator = KMeans(n_clusters=int(n_clusters))
-            estimator.fit(X)
-            label_pred = estimator.labels_  # 获取聚类标签
-            label_to_mean = {}
-
-            for i in range(n_clusters):
-                one_X = X[label_pred == i]
-                label_to_mean[i] = np.sum(one_X)/one_X.shape[0]
-
-            # 根据平均值排序
-            sorted_list = sorted(label_to_mean.items(),key=lambda item:item[1])
-            t = np.array(sorted_list, dtype=int)
-            t = t[:,0]
-            sorted_label = {}
-            for i in range(t.shape[0]):
-                sorted_label[t[i]] = i
-
-            for i in range(len(boxes)):
-                box_label = label_pred[i]
-                boxes[i]['level'] = sorted_label[box_label]
-        except Exception as e:
-            logger.error('caculate level error:{}'.format(e))
-            traceback.print_exc()

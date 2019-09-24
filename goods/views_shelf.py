@@ -20,6 +20,7 @@ from dl import shelfdetection
 from goods.shelfgoods.service import tz_good_compare
 from .serializers import *
 import tensorflow as tf
+from dl.util import caculate_level
 
 logger = logging.getLogger("detect")
 
@@ -80,7 +81,7 @@ def detect_compare(shelf_image, image_path, need_detect = True):
         shelf_image.different_cnt = compare_ret['different_cnt']
         shelf_image.unknown_cnt = compare_ret['unknown_cnt']
         shelf_image.save()
-        for one in compare_ret.detail:
+        for one in compare_ret['detail']:
             shelf_goods = shelf_goods_map[one['boxid']]
             shelf_goods.result = shelf_goods_map['result']
             if shelf_goods.result == 0:
@@ -306,13 +307,33 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
             logger.error('Rectify and detect error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
 
-        # TODO 需要计算层数
+        # 需要计算层数
+        boxes = []
+        shelf_goods_list = shelf_image.shelf_image_goods.all()
+        for shelf_goods in shelf_goods_list:
+            # 新增的添加在第一条
+            boxes.append({
+                'xmin': xmin,
+                'ymin': ymin,
+                'xmax': xmax,
+                'ymax': ymax,
+                'level': -1,
+            })
+            boxes.append({
+                'level': shelf_goods.level,
+                'xmin': shelf_goods.xmin,
+                'ymin': shelf_goods.ymin,
+                'xmax': shelf_goods.xmax,
+                'ymax': shelf_goods.ymax,
+            })
+        caculate_level(boxes, shelf_image.tlevel)
         shelf_goods = ShelfGoods.objects.create(
             shelf_image_id=shelf_image.pk,
             xmin=xmin,
             ymin=ymin,
             xmax=xmax,
             ymax=ymax,
+            level=boxes[0]['level'],
         )
 
         return Response({'boxid':shelf_goods.pk}, status=status.HTTP_201_CREATED)

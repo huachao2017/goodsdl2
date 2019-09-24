@@ -1,5 +1,10 @@
+import logging
 import tensorflow as tf
 from object_detection.utils import visualization_utils as vis_util
+import numpy as np
+from sklearn.cluster import KMeans
+import traceback
+logger = logging.getLogger("django")
 
 def get_client_ip(request):
     try:
@@ -350,3 +355,38 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
                 use_normalized_coordinates=use_normalized_coordinates)
 
     return image
+
+
+def caculate_level(boxes, n_clusters=6):
+    """
+    通过连续聚类计算框所属的层级
+    @param boxes 这是一个数组对象，数组中每个对象是个字典，字典中有都有ymin和ymax字段，计算完字典中加入level字段
+    """
+    try:
+        data = []
+        for one_box in boxes:
+            data.append((one_box['ymin'], one_box['ymax']))
+        X = np.array(data)
+        estimator = KMeans(n_clusters=int(n_clusters))
+        estimator.fit(X)
+        label_pred = estimator.labels_  # 获取聚类标签
+        label_to_mean = {}
+
+        for i in range(n_clusters):
+            one_X = X[label_pred == i]
+            label_to_mean[i] = np.sum(one_X) / one_X.shape[0]
+
+        # 根据平均值排序
+        sorted_list = sorted(label_to_mean.items(), key=lambda item: item[1])
+        t = np.array(sorted_list, dtype=int)
+        t = t[:, 0]
+        sorted_label = {}
+        for i in range(t.shape[0]):
+            sorted_label[t[i]] = i
+
+        for i in range(len(boxes)):
+            box_label = label_pred[i]
+            boxes[i]['level'] = sorted_label[box_label]
+    except Exception as e:
+        logger.error('caculate level error:{}'.format(e))
+        traceback.print_exc()
