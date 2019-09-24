@@ -22,7 +22,7 @@ from .serializers import *
 import tensorflow as tf
 from dl.util import caculate_level
 
-logger = logging.getLogger("detect")
+logger = logging.getLogger("django")
 
 class DefaultMixin:
     paginate_by = 25
