@@ -77,20 +77,21 @@ def detect_compare(shelf_image, image_path, need_detect = True):
     compare_ret = tz_good_compare.compare(shelf_image.pk, shelf_image.displayid, shelf_image.shelfid)
     logger.info('end compare:{}'.format(image_path))
     # 持久化
-    shelf_image.score = compare_ret['score']
-    shelf_image.equal_cnt = compare_ret['equal_cnt']
-    shelf_image.different_cnt = compare_ret['different_cnt']
-    shelf_image.unknown_cnt = compare_ret['unknown_cnt']
-    shelf_image.save()
-    for one in compare_ret.detail:
-        shelf_goods = shelf_goods_map[one['boxid']]
-        shelf_goods.result = shelf_goods_map['result']
-        if shelf_goods.result == 0:
-            # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
-            shelf_goods.upc = shelf_goods_map['upc']
-        shelf_goods.save()
+    if compare_ret is not None:
+        shelf_image.score = compare_ret['score']
+        shelf_image.equal_cnt = compare_ret['equal_cnt']
+        shelf_image.different_cnt = compare_ret['different_cnt']
+        shelf_image.unknown_cnt = compare_ret['unknown_cnt']
+        shelf_image.save()
+        for one in compare_ret.detail:
+            shelf_goods = shelf_goods_map[one['boxid']]
+            shelf_goods.result = shelf_goods_map['result']
+            if shelf_goods.result == 0:
+                # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
+                shelf_goods.upc = shelf_goods_map['upc']
+            shelf_goods.save()
 
-    # TODO 生成识别图
+        # TODO 生成识别图
 
     return compare_ret
 
