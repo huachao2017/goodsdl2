@@ -288,7 +288,7 @@ def visualize_boxes_and_labels_on_image_array_for_shelf(image,
     box_to_color_map = vis_util.collections.defaultdict(str)
     for i in range(len(boxes)):
         box = boxes[i]
-        box_to_display_str_map[box] = text_infos[i]
+        box_to_display_str_map[box] = [text_infos[i]]
         box_to_color_map[box] = 'Red'
 
     # Draw all boxes onto image.
