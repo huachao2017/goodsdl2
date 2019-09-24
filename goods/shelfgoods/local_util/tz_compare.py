@@ -32,6 +32,8 @@ class Compare:
     def for_dcompare(self,box_ids,box_levels,xmins, ymins, xmaxs, ymaxs,shelf_img,level_goods):
         level_boxes = self.get_check_level_boxes(box_ids,box_levels,xmins, ymins, xmaxs, ymaxs)
         gbx_inss = []
+        logger.info("level_boxes : "+str(level_boxes))
+        logger.info("level_goods : "+str(level_goods))
         for level in level_boxes:
             if level in list(level_goods.keys()):
                 for levelj in level_goods:
