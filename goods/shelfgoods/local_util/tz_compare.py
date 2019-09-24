@@ -5,7 +5,7 @@ from goods.shelfgoods.proxy import compare_proxy_factory,level_error
 import logging
 logger = logging.getLogger("detect")
 
-
+import traceback
 class Compare:
     shelf_image_id = None
     display_id = None
@@ -16,14 +16,18 @@ class Compare:
         self.shelf_id = shelf_id
 
     def do_compare(self):
-        loaddata_ins = load_data.LoadData()
-        level_goods = loaddata_ins.get_tz_dispaly_goods(self.display_id)
-        box_ids, shelf_img_ids, xmins, ymins, xmaxs, ymaxs, levels, shelf_img = loaddata_ins.get_ai_goods(self.shelf_image_id)
-        if level_goods != None and box_ids != None and shelf_img != None and level_goods[self.shelf_id] != None:
-            return self.for_dcompare(box_ids,levels,xmins, ymins, xmaxs, ymaxs,shelf_img,level_goods[self.shelf_id])
-        else:
-            logger.error("load data failed ,display_id=%s,shelf_image_id=%s"%(self.display_id,self.shelf_image_id))
-            return None,None,None,None,None
+        try:
+            loaddata_ins = load_data.LoadData()
+            level_goods = loaddata_ins.get_tz_dispaly_goods(self.display_id)
+            box_ids, shelf_img_ids, xmins, ymins, xmaxs, ymaxs, levels, shelf_img = loaddata_ins.get_ai_goods(self.shelf_image_id)
+            if level_goods is not None and box_ids is not None and shelf_img is not None and level_goods[self.shelf_id] is not None:
+                return self.for_dcompare(box_ids,levels,xmins, ymins, xmaxs, ymaxs,shelf_img,level_goods[self.shelf_id])
+            else:
+                logger.error("load data failed ,display_id=%s,shelf_image_id=%s"%(self.display_id,self.shelf_image_id))
+                return None,None,None,None,None
+        except:
+            logger.error(traceback.format_exc())
+            return None, None, None, None, None
 
     def for_dcompare(self,box_ids,box_levels,xmins, ymins, xmaxs, ymaxs,shelf_img,level_goods):
         level_boxes = self.get_check_level_boxes(box_ids,box_levels,xmins, ymins, xmaxs, ymaxs)
@@ -74,7 +78,11 @@ class Compare:
                     'boxid':box_id,
                     'upc':upc
                             })
-        score=float("%.2f" % (equal_cnt+unknown_cnt)/len(detail))
+        score = 0.0
+        if len(detail)==0:
+            score = 0.0
+        else:
+            score=float("%.2f" % ((equal_cnt+unknown_cnt)/len(detail)))
         logger.info("for_dcompare detail="+str(detail))
         return detail,score,equal_cnt,different_cnt,unknown_cnt
 
