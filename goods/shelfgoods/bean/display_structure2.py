@@ -3,33 +3,41 @@ from goods.shelfgoods.bean import goods_box
 #  未考虑 空列的影响 。
 class DispalyStructure():
     gbx_ins = None
+    bottom_max = 20
     # 获取陈列设计二维排序结构
     def __init__(self,level,value):
-        columns, columns_info = self.get_goods_box_columns(value)
+        columns, columns_info,bottom_max = self.get_goods_box_columns(value)
         print (columns)
         print (columns_info)
-        goodscolumns = self.get_goods_box_location(value,columns_info)
+        goodscolumns = self.get_goods_box_location(value,columns_info,bottom_max)
         self.gbx_ins = goods_box.GoodsBox(int(level), columns, goodscolumns)
 
 
     def get_goods_box_columns(self,value):
         columns = 0
         columns_info = {}
+        bottoms= []
+        for upc_box in value:
+            (upc, is_fitting, bottom, left, width, height) = upc_box
+            bottoms.append(bottom)
+        bottom_max = max(bottoms)
+
+
         for upc_box in value:
             (upc,is_fitting,bottom,left,width,height) =upc_box
-            if int(bottom) == 0:
+            if bottom_max - int(bottom) <=self.bottom_max:
                 # columns_info['left_start_location'] = left
                 # columns_info['min_width'] = width
                 columns_info[columns] = (left,width)
                 columns += 1
-        return columns,columns_info
+        return columns,columns_info,bottom_max
 
-    def get_goods_box_location(self,value,columns_info):
+    def get_goods_box_location(self,value,columns_info,bottom_max):
         goodscolumns = []
         for upc_box in value:
             (upc,is_fitting, bottom, left, width, height) = upc_box
             goodscolumn_ins = goods_box.GoodsColumn()
-            if int(bottom) == 0:
+            if bottom_max - int(bottom)  <= self.bottom_max:
                 for i in columns_info:
                     if left == columns_info[i][0] and width == columns_info[i][1] :
                         goodscolumn_ins.upc = upc
