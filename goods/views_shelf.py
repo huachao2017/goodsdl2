@@ -342,28 +342,43 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
+        old_result = instance.result
         old_upc = instance.upc
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        upc = serializer.instance.upc
-        if upc != '':
-            sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
-            if not tf.gfile.Exists(sample_dir):
-                tf.gfile.MakeDirs(sample_dir)
-            old_sample_path = os.path.join(sample_dir, old_upc, '{}.jpg'.format(serializer.instance.pk))
-            if os.path.isfile(old_sample_path):
-                # 删除原来的样本
-                os.remove(old_sample_path)
+        result = serializer.instance.result
+        if result == 1:
+            if old_result == 0 and old_upc != '':
+                sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
+                if not tf.gfile.Exists(sample_dir):
+                    tf.gfile.MakeDirs(sample_dir)
+                old_sample_path = os.path.join(sample_dir, old_upc, '{}.jpg'.format(serializer.instance.pk))
+                if os.path.isfile(old_sample_path):
+                    # 删除原来的样本
+                    os.remove(old_sample_path)
+                serializer.instance.upc = ''
+                serializer.instance.save()
+                # TODO 重新计算得分
+
+        elif result == 0:
+            # TODO 计算upc
+            upc = ''
 
             # 添加新样本
-            image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.rectsource)
+            sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
+            if serializer.instance.shelf_image.rectsource != '':
+                image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.rectsource)
+            else:
+                image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.source)
             image = PILImage.open(image_path)
             sample_image = image.crop((serializer.instance.xmin, serializer.instance.ymin, serializer.instance.xmax, serializer.instance.ymax))
             sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(serializer.instance.pk))
             sample_image.save(sample_image_path, 'JPEG')
+
+            # TODO 重新计算
 
         return Response(serializer.data)
 
