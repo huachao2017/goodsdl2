@@ -16,6 +16,7 @@ class ShelfImage(models.Model):
     equal_cnt = models.IntegerField(default=0)
     different_cnt = models.IntegerField(default=0)
     unknown_cnt = models.IntegerField(default=0)
+    resultsource = models.CharField(max_length=200, default='')
     create_time = models.DateTimeField('date created', auto_now_add=True)
     update_time = models.DateTimeField('date updated', auto_now=True)
 

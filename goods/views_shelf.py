@@ -12,7 +12,6 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import goods.util
 import cv2
 import math
 
@@ -21,6 +20,7 @@ from goods.shelfgoods.service import tz_good_compare
 from .serializers import *
 import tensorflow as tf
 from dl.util import caculate_level
+from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
 
 logger = logging.getLogger("django")
 
@@ -51,9 +51,10 @@ def detect_compare(shelf_image, image_path, need_detect = True):
         # 检测框
         detector = shelfdetection.ShelfDetectorFactory.get_static_detector('shelf')
         step1_min_score_thresh = .5
-        detect_ret, aiinterval, visual_image_path = detector.detect(image_path,
-                                                                    step1_min_score_thresh=step1_min_score_thresh,
-                                                                    total_level=shelf_image.tlevel)
+        detect_ret = detector.detect(image_path,step1_min_score_thresh=step1_min_score_thresh)
+        if len(detect_ret) > 0:
+            caculate_level(detect_ret, shelf_image.tlevel)
+
         for one_box in detect_ret:
             shelf_goods = ShelfGoods.objects.create(
                 shelf_image_id=shelf_image.pk,
@@ -76,6 +77,34 @@ def detect_compare(shelf_image, image_path, need_detect = True):
     logger.info('end compare:{}'.format(compare_ret))
     # 持久化
     if compare_ret is not None:
+        # 生成识别图
+        if len(compare_ret['detail']) > 0:
+            image = PILImage.open(image_path)
+            text_infos = []
+            color_infos = []
+            for one in compare_ret['detail']:
+                text_infos.append('{}-{}'.format(one['level'], one['upc']))
+                color = 'black'
+                if one['result'] == 0:
+                    color = 'blue'
+                elif one['result'] == 1 or one['result'] == 2:
+                    color = 'red'
+                color_infos.append(color)
+            visualize_boxes_and_labels_on_image_array_for_shelf(
+                np.array(image),
+                compare_ret['detail'],
+                text_infos,
+                color_infos
+            )
+            image_relative_dir = os.path.split(shelf_image.source)[0]
+            image_dir = os.path.dirname(image_path)
+            result_image_name = 'visual_' + os.path.split(image_path)[-1]
+            result_image_path = os.path.join(image_dir, result_image_name)
+            (im_width, im_height) = image.size
+            image.thumbnail((int(im_width), int(im_height)), PILImage.ANTIALIAS)
+            image.save(result_image_path)
+            shelf_image.resultsource = os.path.join(image_relative_dir, result_image_name)
+
         shelf_image.score = compare_ret['score']
         shelf_image.equal_cnt = compare_ret['equal_cnt']
         shelf_image.different_cnt = compare_ret['different_cnt']
@@ -88,8 +117,6 @@ def detect_compare(shelf_image, image_path, need_detect = True):
                 # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
                 shelf_goods.upc = one['upc']
             shelf_goods.save()
-
-        # TODO 生成识别图
 
     return compare_ret
 
@@ -134,7 +161,8 @@ class ShelfScore(APIView):
             "equal_cnt":shelf_image.equal_cnt,
             "different_cnt":shelf_image.different_cnt,
             "unknown_cnt":shelf_image.unknown_cnt,
-            'retpicurl':'TODO'
+            'retpicurl':os.path.join(settings.MEDIA_URL, shelf_image.resultsource)
+
         }
         return Response(ret, status=status.HTTP_200_OK)
 

@@ -5,7 +5,6 @@ import numpy as np
 import logging
 import time
 from dl.step1_cnn import Step1CNN
-from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
 from dl.util import caculate_level
 
 logger = logging.getLogger("detect")
@@ -40,16 +39,13 @@ class ShelfDetector:
             self.step1_cnn.load(self.config)
 
 
-    def detect(self, image_path, step1_min_score_thresh=.5, total_level = 6):
+    def detect(self, image_path, step1_min_score_thresh=.5):
         if not self.step1_cnn.is_load():
             self.load()
             if not self.step1_cnn.is_load():
                 logger.warning('loading model failed')
                 return None
 
-
-        import time
-        time0 = time.time()
 
         # image_path = image_instance.source.path
         image = Image.open(image_path)
@@ -84,28 +80,4 @@ class ShelfDetector:
                             'xmin': xmin, 'ymin': ymin, 'xmax': xmax, 'ymax': ymax,
                             })
 
-        if len(ret) > 0:
-            caculate_level(ret, total_level)
-
-        # visualization
-        output_image_path = None
-        if len(ret) > 0:
-            text_infos = []
-            color_infos = []
-            for one in ret:
-                text_infos.append('{}'.format(one['level']))
-                color_infos.append('red')
-            visualize_boxes_and_labels_on_image_array_for_shelf(
-                image_np,
-                ret,
-                text_infos,
-                color_infos
-            )
-            image_dir = os.path.dirname(image_path)
-            output_image_path = os.path.join(image_dir, 'visual_' + os.path.split(image_path)[-1])
-            output_image = Image.fromarray(image_np)
-            output_image.thumbnail((int(im_width), int(im_height)), Image.ANTIALIAS)
-            output_image.save(output_image_path)
-
-        time1 = time.time()
-        return ret, time1-time0,output_image_path
+        return ret
