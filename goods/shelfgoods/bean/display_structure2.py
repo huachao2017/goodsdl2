@@ -1,35 +1,45 @@
 from goods.shelfgoods.bean import goods_box
 
-
+#  未考虑 空列的影响 。
 class DispalyStructure():
     gbx_ins = None
+    bottom_max = 20
     # 获取陈列设计二维排序结构
     def __init__(self,level,value):
-        columns, columns_info = self.get_goods_box_columns(value)
-        goodscolumns = self.get_goods_box_location(value,columns_info)
+        columns, columns_info,bottom_max = self.get_goods_box_columns(value)
+        print (columns)
+        print (columns_info)
+        goodscolumns = self.get_goods_box_location(value,columns_info,bottom_max)
         self.gbx_ins = goods_box.GoodsBox(int(level), columns, goodscolumns)
 
 
     def get_goods_box_columns(self,value):
         columns = 0
         columns_info = {}
+        bottoms= []
         for upc_box in value:
-            (upc,bottom,left,width,height) =upc_box
-            if bottom == 0:
-                columns+=1
+            (upc, is_fitting, bottom, left, width, height) = upc_box
+            bottoms.append(bottom)
+        bottom_max = max(bottoms)
+
+
+        for upc_box in value:
+            (upc,is_fitting,bottom,left,width,height) =upc_box
+            if bottom_max - int(bottom) <=self.bottom_max:
                 # columns_info['left_start_location'] = left
                 # columns_info['min_width'] = width
-                columns_info[0] = (left,width)
-        return columns,columns_info
+                columns_info[columns] = (left,width)
+                columns += 1
+        return columns,columns_info,bottom_max
 
-    def get_goods_box_location(self,value,columns_info):
+    def get_goods_box_location(self,value,columns_info,bottom_max):
         goodscolumns = []
         for upc_box in value:
             (upc,is_fitting, bottom, left, width, height) = upc_box
             goodscolumn_ins = goods_box.GoodsColumn()
-            if bottom == 0:
+            if bottom_max - int(bottom)  <= self.bottom_max:
                 for i in columns_info:
-                    if left == columns_info[i][0] and width ==columns_info[i][1] :
+                    if left == columns_info[i][0] and width == columns_info[i][1] :
                         goodscolumn_ins.upc = upc
                         goodscolumn_ins.is_fitting = is_fitting
                         goodscolumn_ins.location_column = i
@@ -59,13 +69,15 @@ class DispalyStructure():
         return 0
     def get_column(self,left,width,columns_info):
         column_iou = {}
-        for i in columns_info:
-            (i_left, i_width) = columns_info[i]
+        for key in columns_info:
+            (i_left, i_width) = columns_info[key]
             x1 = (left, width)
             x2 = (i_left, i_width)
             x_iou = get_x_iou(x1, x2)
-            column_iou[i] = x_iou
+            column_iou[key] = x_iou
         a2 = sorted(column_iou.items(), key=lambda x: x[1],reverse=True)
+        a2=list(a2)
+        print (a2)
         return a2[0][0]
 
 def get_x_iou(x1,x2):

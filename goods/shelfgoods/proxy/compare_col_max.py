@@ -4,10 +4,10 @@ import logging
 logger = logging.getLogger("detect")
 def process(check_box_ins,display_ins,shelf_img):
     logger.info("level proxy process is compare_col_max ..................")
-    ck_goodscolumn_inss = check_box_ins.goodscolumns
-    ds_goodscolumn_inss = display_ins.goodscolumns
-    ck_cols = check_box_ins.level_columns
-    ds_cols = display_ins.level_columns
+    ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
+    ds_goodscolumn_inss = display_ins.gbx_ins.goodscolumns
+    ck_cols = check_box_ins.gbx_ins.level_columns
+    ds_cols = display_ins.gbx_ins.level_columns
     col_goods={}
     col_compare_l = {}
     ck_goodscolumn_inss_copys = {}
@@ -59,7 +59,7 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
         ds_location_column = ds_gcs.location_column
         ds_location_row = ds_gcs.location_row
         ds_rows = get_col_display_max(ds_goodscolumn_inss, ds_location_column)
-        if ds_rows > 0:
+        if len(ds_rows) > 0:
             for ck_gcs in ck_goodscolumn_inss:
                 if ck_gcs == [] or ck_gcs == None:
                     continue

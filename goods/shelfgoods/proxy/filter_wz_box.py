@@ -3,15 +3,15 @@ import logging
 logger = logging.getLogger("detect")
 def process(check_box_ins,display_ins,shelf_img):
     logger.info("current level process filter_wz_box ..................")
-    ck_goodscolumn_inss = check_box_ins.goodscolumns
-    ds_goodscolumn_inss = display_ins.goodscolumns
+    ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
+    ds_goodscolumn_inss = display_ins.gbx_ins.goodscolumns
     for ck_gcs in ck_goodscolumn_inss:
         if ck_gcs == [] or ck_gcs == None :
             continue
         ck_location_column = ck_gcs.location_column
         ck_location_row = ck_gcs.location_row
         ds_rows = get_col_display_max(ds_goodscolumn_inss,ck_location_column)
-        if ds_rows > 0:
+        if len(ds_rows) > 0:
             for ds_gcs in ds_goodscolumn_inss:
                 if ds_gcs == [] or ds_gcs == None:
                     continue
