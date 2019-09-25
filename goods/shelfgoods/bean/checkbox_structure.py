@@ -163,5 +163,5 @@ def get_iou(x1,x2):
     x_max = max(x1_max,x2_max)
     x_b = x_max - x_min
     x_j = x1_max-x1_min+x2_max-x2_min - x_b
-    return float(x_j/x_b)
+    return float(x_j/(x_b+0.001))
 

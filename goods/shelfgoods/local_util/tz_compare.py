@@ -1,5 +1,5 @@
 from goods.shelfgoods.local_util import load_data
-from goods.shelfgoods.bean import checkbox_structure,display_structure2,code
+from goods.shelfgoods.bean import checkbox_structure,display_structure,code
 from goods.shelfgoods.proxy import compare_proxy_factory,level_error
 
 import logging
@@ -39,7 +39,7 @@ class Compare:
                 for levelj in level_goods:
                     if int(level) == int(levelj):
                        ckbx_stu = checkbox_structure.CheckBoxStructure(level, level_boxes[level])
-                       disy_stu = display_structure2.DispalyStructure(levelj, level_goods[levelj])
+                       disy_stu = display_structure.DispalyStructure(levelj, level_goods[levelj])
                        proxy_ins = compare_proxy_factory.ProxyFactory(ckbx_stu,disy_stu,shelf_img)
                        gbx_ins = proxy_ins.process()
                        gbx_inss.append(gbx_ins)
