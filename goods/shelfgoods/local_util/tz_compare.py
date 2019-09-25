@@ -38,7 +38,7 @@ class Compare:
             if level in list(level_goods.keys()):
                 for levelj in level_goods:
                     if int(level) == int(levelj):
-                       ckbx_stu = checkbox_structure.CheckBoxStructure(level,level_boxes[level])
+                       ckbx_stu = checkbox_structure.CheckBoxStructure(level, level_boxes[level])
                        disy_stu = display_structure.DispalyStructure(levelj,level_goods[levelj])
                        proxy_ins = compare_proxy_factory.ProxyFactory(ckbx_stu,disy_stu,shelf_img)
                        gbx_ins = proxy_ins.process()

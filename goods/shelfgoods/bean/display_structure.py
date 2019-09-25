@@ -1,6 +1,6 @@
 from goods.shelfgoods.bean import goods_box
 
-
+#  未考虑 空列的影响 。
 class DispalyStructure():
     gbx_ins = None
     # 获取陈列设计二维排序结构
@@ -19,7 +19,7 @@ class DispalyStructure():
                 columns+=1
                 # columns_info['left_start_location'] = left
                 # columns_info['min_width'] = width
-                columns_info[0] = (left,width)
+                columns_info[columns-1] = (left,width)
         return columns,columns_info
 
     def get_goods_box_location(self,value,columns_info):
