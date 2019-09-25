@@ -14,7 +14,7 @@ class DispalyStructure():
         columns = 0
         columns_info = {}
         for upc_box in value:
-            (upc,bottom,left,width,height) =upc_box
+            (upc,is_fitting,bottom,left,width,height) =upc_box
             if bottom == 0:
                 columns+=1
                 # columns_info['left_start_location'] = left
