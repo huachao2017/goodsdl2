@@ -66,6 +66,8 @@ class DispalyStructure():
             x_iou = get_x_iou(x1, x2)
             column_iou[i] = x_iou
         a2 = sorted(column_iou.items(), key=lambda x: x[1],reverse=True)
+        a2=list(a2)
+        print (a2)
         return a2[0][0]
 
 def get_x_iou(x1,x2):
