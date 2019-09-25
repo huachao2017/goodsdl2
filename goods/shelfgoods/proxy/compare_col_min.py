@@ -57,7 +57,7 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
         ck_location_row = ck_gcs.location_row
         ck_box = ck_gcs.location_box
         ds_rows = get_col_display_max(ds_goodscolumn_inss, ck_location_column)
-        if ds_rows > 0:
+        if len(ds_rows) > 0:
             for ds_gcs in ds_goodscolumn_inss:
                 if ds_gcs == [] or ds_gcs == None:
                     continue

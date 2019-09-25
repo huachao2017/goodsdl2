@@ -11,7 +11,7 @@ def process(check_box_ins,display_ins,shelf_img):
         ck_location_column = ck_gcs.location_column
         ck_location_row = ck_gcs.location_row
         ds_rows = get_col_display_max(ds_goodscolumn_inss,ck_location_column)
-        if ds_rows > 0:
+        if len(ds_rows) > 0:
             for ds_gcs in ds_goodscolumn_inss:
                 if ds_gcs == [] or ds_gcs == None:
                     continue
