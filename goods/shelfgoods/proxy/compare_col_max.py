@@ -4,10 +4,10 @@ import logging
 logger = logging.getLogger("detect")
 def process(check_box_ins,display_ins,shelf_img):
     logger.info("level proxy process is compare_col_max ..................")
-    ck_goodscolumn_inss = check_box_ins.goodscolumns
-    ds_goodscolumn_inss = display_ins.goodscolumns
-    ck_cols = check_box_ins.level_columns
-    ds_cols = display_ins.level_columns
+    ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
+    ds_goodscolumn_inss = display_ins.gbx_ins.goodscolumns
+    ck_cols = check_box_ins.gbx_ins.level_columns
+    ds_cols = display_ins.gbx_ins.level_columns
     col_goods={}
     col_compare_l = {}
     ck_goodscolumn_inss_copys = {}

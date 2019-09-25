@@ -4,8 +4,8 @@ import logging
 logger = logging.getLogger("detect")
 def process(check_box_ins,display_ins,shelf_img):
     logger.info("current level process compare_col_equal ..................")
-    ck_goodscolumn_inss = check_box_ins.goodscolumns
-    ds_goodscolumn_inss = display_ins.goodscolumns
+    ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
+    ds_goodscolumn_inss = display_ins.gbx_ins.goodscolumns
     for ck_gcs in ck_goodscolumn_inss:
         if ck_gcs == [] or ck_gcs == None :
             continue
