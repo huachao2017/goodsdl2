@@ -21,11 +21,11 @@ def process(check_box_ins,display_ins,shelf_img):
     a = sorted(col_goods.items(), key=lambda x: x[1], reverse=True)
     col_good_i = a[0][0]
     logger.info("level proxy process is compare_col_min  col_good_i = "+str(col_good_i))
-    check_box_ins = process_good_col(ck_goodscolumn_inss,col_compare_l[col_good_i],ck_goodscolumn_inss_copys[col_good_i])
+    check_box_ins = process_good_col(check_box_ins,col_compare_l[col_good_i],ck_goodscolumn_inss_copys[col_good_i])
     return check_box_ins, display_ins
 
-def process_good_col(ck_goodscolumn_inss,col_compare_l,ck_goodscolumn_inss_copy):
-    ck_goodscolumn_inss = ck_goodscolumn_inss
+def process_good_col(check_box_ins,col_compare_l,ck_goodscolumn_inss_copy):
+    ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
     for ck_gcs,ck_gcs_copy in zip(ck_goodscolumn_inss,ck_goodscolumn_inss_copy):
         if ck_gcs == [] or ck_gcs == None :
             continue
