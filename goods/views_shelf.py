@@ -156,12 +156,15 @@ class ShelfScore(APIView):
 
         compare_ret = detect_compare(shelf_image, source_image_path)
 
+        retpicurl = ''
+        if shelf_image.resultsource != '':
+            retpicurl = os.path.join(settings.MEDIA_URL, shelf_image.resultsource)
         ret = {
             'score':shelf_image.score,
             "equal_cnt":shelf_image.equal_cnt,
             "different_cnt":shelf_image.different_cnt,
             "unknown_cnt":shelf_image.unknown_cnt,
-            'retpicurl':os.path.join(settings.MEDIA_URL, shelf_image.resultsource)
+            'retpicurl':retpicurl
 
         }
         return Response(ret, status=status.HTTP_200_OK)
