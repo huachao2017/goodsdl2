@@ -6,6 +6,8 @@ class DispalyStructure():
     # 获取陈列设计二维排序结构
     def __init__(self,level,value):
         columns, columns_info = self.get_goods_box_columns(value)
+        print (columns)
+        print (columns_info)
         goodscolumns = self.get_goods_box_location(value,columns_info)
         self.gbx_ins = goods_box.GoodsBox(int(level), columns, goodscolumns)
 
@@ -15,11 +17,11 @@ class DispalyStructure():
         columns_info = {}
         for upc_box in value:
             (upc,is_fitting,bottom,left,width,height) =upc_box
-            if bottom == 0:
-                columns+=1
+            if int(bottom) == 0:
                 # columns_info['left_start_location'] = left
                 # columns_info['min_width'] = width
-                columns_info[columns-1] = (left,width)
+                columns_info[columns] = (left,width)
+                columns += 1
         return columns,columns_info
 
     def get_goods_box_location(self,value,columns_info):
@@ -27,9 +29,9 @@ class DispalyStructure():
         for upc_box in value:
             (upc,is_fitting, bottom, left, width, height) = upc_box
             goodscolumn_ins = goods_box.GoodsColumn()
-            if bottom == 0:
+            if int(bottom) == 0:
                 for i in columns_info:
-                    if left == columns_info[i][0] and width ==columns_info[i][1] :
+                    if left == columns_info[i][0] and width == columns_info[i][1] :
                         goodscolumn_ins.upc = upc
                         goodscolumn_ins.is_fitting = is_fitting
                         goodscolumn_ins.location_column = i
@@ -59,12 +61,12 @@ class DispalyStructure():
         return 0
     def get_column(self,left,width,columns_info):
         column_iou = {}
-        for i in columns_info:
-            (i_left, i_width) = columns_info[i]
+        for key in columns_info:
+            (i_left, i_width) = columns_info[key]
             x1 = (left, width)
             x2 = (i_left, i_width)
             x_iou = get_x_iou(x1, x2)
-            column_iou[i] = x_iou
+            column_iou[key] = x_iou
         a2 = sorted(column_iou.items(), key=lambda x: x[1],reverse=True)
         a2=list(a2)
         print (a2)
