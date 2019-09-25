@@ -25,7 +25,7 @@ def process(check_box_ins,display_ins,shelf_img):
     return check_box_ins, display_ins
 
 def process_good_col(check_box_ins,col_compare_l,ck_goodscolumn_inss_copy):
-    ck_goodscolumn_inss = check_box_ins.goodscolumns
+    ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
     for ck_gcs,ck_gcs_copy in zip(ck_goodscolumn_inss,ck_goodscolumn_inss_copy):
         if ck_gcs == [] or ck_gcs == None :
             continue
