@@ -113,7 +113,7 @@ DATABASES = {
     },
     'ucenter': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ucenter',
+        'NAME': 'alpha_ucenter',
         'USER': 'fastxbox',
         'PASSWORD': 'C2lz6wxgnqhYBlZf',
         'HOST': '10.19.79.120',

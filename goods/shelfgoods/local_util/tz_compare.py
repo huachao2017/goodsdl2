@@ -39,7 +39,9 @@ class Compare:
                 for levelj in level_goods:
                     if int(level) == int(levelj):
                        ckbx_stu = checkbox_structure.CheckBoxStructure(level, level_boxes[level])
+                       logger.info("ckbx_stu : " + str(ckbx_stu))
                        disy_stu = display_structure.DispalyStructure(levelj, level_goods[levelj])
+                       logger.info("disy_stu : " + str(disy_stu))
                        proxy_ins = compare_proxy_factory.ProxyFactory(ckbx_stu,disy_stu,shelf_img)
                        gbx_ins = proxy_ins.process()
                        gbx_inss.append(gbx_ins)
@@ -78,6 +80,8 @@ class Compare:
                     'result':compare_code,
                     'process_code':process_code,
                     'boxid':box_id,
+                    'col':good_col.location_column,
+                    'row':good_col.location_row,
                     'upc':upc
                             })
         logger.info("for_dcompare detail="+str(detail))

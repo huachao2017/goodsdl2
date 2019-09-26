@@ -7,8 +7,6 @@ class DispalyStructure():
     # 获取陈列设计二维排序结构
     def __init__(self,level,value):
         columns, columns_info,bottom_max = self.get_goods_box_columns(value)
-        print (columns)
-        print (columns_info)
         goodscolumns = self.get_goods_box_location(value,columns_info,bottom_max)
         self.gbx_ins = goods_box.GoodsBox(int(level), columns, goodscolumns)
 
@@ -19,13 +17,13 @@ class DispalyStructure():
         bottoms= []
         for upc_box in value:
             (upc, is_fitting, bottom, left, width, height) = upc_box
-            bottoms.append(bottom)
+            bottoms.append(bottom+height)
         bottom_max = max(bottoms)
 
 
         for upc_box in value:
             (upc,is_fitting,bottom,left,width,height) =upc_box
-            if bottom_max - int(bottom) <=self.bottom_max:
+            if bottom_max - int(bottom)-int(height) <=self.bottom_max:
                 # columns_info['left_start_location'] = left
                 # columns_info['min_width'] = width
                 columns_info[columns] = (left,width)
@@ -80,8 +78,7 @@ class DispalyStructure():
             x_iou = get_x_iou(x1, x2)
             column_iou[key] = x_iou
         a2 = sorted(column_iou.items(), key=lambda x: x[1],reverse=True)
-        a2=list(a2)
-        print (a2)
+        a2 = list(a2)
         return a2[0][0]
 
 def get_x_iou(x1,x2):
