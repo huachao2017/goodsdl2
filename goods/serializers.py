@@ -7,7 +7,7 @@ class ShelfImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShelfImage
         fields = ('pk', 'picid', 'shopid', 'shelfid', 'displayid', 'tlevel', 'picurl', 'source', 'rectjson', 'rectsource',
-                  'score', 'equal_cnt', 'different_cnt', 'unknown_cnt', 'resultsource', 'create_time', 'update_time')
+                  'score', 'equal_cnt', 'different_cnt', 'unknown_cnt', 'resultsource', 'test_server', 'create_time', 'update_time')
         read_only_fields = ('create_time',)
 
 

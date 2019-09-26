@@ -1,7 +1,7 @@
 以下接口参数错误返回400
 
 一、php请求ai接口
-1、一体化打分(get)：http://ai.aicvs.cn/api/shelf_score?picid=xx&picurl=xx&shopid=xx&displayid=xx&shelfid=xx&tlevel=xx
+1、一体化打分(get)：http://ai.aicvs.cn/api/shelf_score?picid=xx&picurl=xx&shopid=xx&displayid=xx&shelfid=xx&tlevel=xx&debug=0
 参数说明：
 picid：你们需要存一条图片记录，这条记录的id
 picurl：这条图片记录的原图地址
@@ -9,6 +9,7 @@ shopid：商店id
 displayid：台账展示表(sf_taizhang_display)id
 shelfid：台账展示里面(display_goods_info)货架的shelf_id
 tlevel：该货架的总层数
+debug:0为产线环境，其他全为测试环境
 返回200：
 {
     'score': 80                                -- 得分
@@ -19,6 +20,17 @@ tlevel：该货架的总层数
 }
 ai通知php接口,得分更新
 2、
+ 测试环境：http://alphataizhang.aicvs.cn/m/shelf/updateScore?picid=xxx&score=xxx&retpicurl=xxx&equal_cnt=1&different_cnt=2&unknown_cnt=3
+ 产线环境：http://taizhang.aicvs.cn/m/shelf/updateScore?picid=xxx&score=xxx&retpicurl=xxx&equal_cnt=1&different_cnt=2&unknown_cnt=3
+ 参数说明：
+   picid ：     上传图片记录的id
+   score ：     更新分数
+   retpicurl ： 识别图片地址
+   equal_cnt：  相同数量
+   different_cnt： 不同数量
+   unknown_cnt： 未知数量
+ 返回结果(json)：
+  { "status": 200, "message": "ok"}
 
 
 二、web界面接口

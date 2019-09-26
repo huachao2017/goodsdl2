@@ -41,7 +41,7 @@ class NumpyEncoder(json.JSONEncoder):
         else:
             return super(NumpyEncoder, self).default(obj)
 
-def detect_compare(shelf_image, image_path, need_detect = True):
+def detect_compare(shelf_image, image_path, need_detect = True, need_notify = False):
     shelf_goods_map = {}
     if need_detect:
         # 删除旧的goods
@@ -119,9 +119,29 @@ def detect_compare(shelf_image, image_path, need_detect = True):
             else:
                 shelf_goods.upc = ''
             shelf_goods.save()
+    if need_notify:
+        notify_result(shelf_image)
 
     return compare_ret
 
+def notify_result(shelf_image):
+    # 测试环境：http: // alphataizhang.aicvs.cn / m / shelf / updateScore?picid = xxx & score = xxx & retpicurl = xxx & equal_cnt = 1 & different_cnt = 2 & unknown_cnt = 3
+    # 产线环境：http: // taizhang.aicvs.cn / m / shelf / updateScore?picid = xxx & score = xxx & retpicurl = xxx & equal_cnt = 1 & different_cnt = 2 & unknown_cnt = 3
+
+    request_param = 'picid={}&score={}&retpicurl={}&equal_cnt={}&different_cnt={}&unknown_cnt={}'.format(
+        shelf_image.picid,
+        shelf_image.score,
+        os.path.join(settings.MEDIA_URL, shelf_image.resultsource),
+        shelf_image.equal_cnt,
+        shelf_image.different_cnt,
+        shelf_image.unknown_cnt
+    )
+    if shelf_image.test_server:
+        res = urllib.request.urlopen('http://alphataizhang.aicvs.cn/m/shelf/updateScore?' + request_param)
+    else:
+        res = urllib.request.urlopen('http://taizhang.aicvs.cn/m/shelf/updateScore?' + request_param)
+
+    logger.info(res.read())
 
 class ShelfScore(APIView):
     def get(self, request):
@@ -132,6 +152,10 @@ class ShelfScore(APIView):
             shelfid = request.query_params['shelfid']
             displayid = int(request.query_params['displayid'])
             tlevel = int(request.query_params['tlevel'])
+            if 'debug' in request.query_params and request.query_params['debug'] == '0':
+                test_server = False
+            else:
+                test_server = True
         except Exception as e:
             logger.error('Shelf score error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
@@ -153,7 +177,8 @@ class ShelfScore(APIView):
             displayid=displayid,
             tlevel=tlevel,
             picurl=picurl,
-            source=os.path.join(image_relative_dir,source_image_name)
+            source=os.path.join(image_relative_dir,source_image_name),
+            test_server=test_server
         )
 
         compare_ret = detect_compare(shelf_image, source_image_path)
@@ -241,7 +266,7 @@ class RectifyAndDetect(APIView):
         shelf_image.rectsource = os.path.join(image_relative_dir, rectify_image_name)
         shelf_image.save()
 
-        compare_ret = detect_compare(shelf_image, rectify_image_path)
+        compare_ret = detect_compare(shelf_image, rectify_image_path, need_notify=True)
 
         return Response(compare_ret, status=status.HTTP_200_OK)
 
@@ -317,8 +342,7 @@ class DetectShelfImage(APIView):
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
 
         rectify_image_path = os.path.join(settings.MEDIA_ROOT, shelf_image.rectsource)
-        compare_ret = detect_compare(shelf_image, rectify_image_path, need_detect = False)
-
+        compare_ret = detect_compare(shelf_image, rectify_image_path, need_detect = False, need_notify=True)
         return Response(compare_ret, status=status.HTTP_200_OK)
 
 
@@ -434,7 +458,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         else:
             image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.source)
         # TODO 需要优化成单层更新，提升效率
-        compare_ret = detect_compare(serializer.instance.shelf_image, image_path, need_detect=False)
+        compare_ret = detect_compare(serializer.instance.shelf_image, image_path, need_detect=False, need_notify=True)
         return Response(compare_ret)
 
 
