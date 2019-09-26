@@ -1,4 +1,4 @@
-from goods.shelfgoods.local_util import tz_compare,level_compare,upc_util
+from goods.shelfgoods.local_util import tz_compare,levelcompare,upc_util
 def compare(shelf_image_id,dispaly_id,shelf_id):
     compare_ins = tz_compare.Compare(shelf_image_id,dispaly_id,shelf_id)
     detail, equal_cnt, different_cnt, unknown_cnt = compare_ins.do_compare()
@@ -16,7 +16,7 @@ def compare(shelf_image_id,dispaly_id,shelf_id):
 
 
 def level_compare(display_img_id,shelf_id,shelf_image_id,box_id):
-    detail, equal_cnt, different_cnt, unknown_cnt = level_compare.compare(display_img_id,shelf_id,shelf_image_id,box_id)
+    detail, equal_cnt, different_cnt, unknown_cnt = levelcompare.compare(display_img_id,shelf_id,shelf_image_id,box_id)
     score = get_score(equal_cnt, unknown_cnt, different_cnt)
     ret = None
     if detail is not None:
