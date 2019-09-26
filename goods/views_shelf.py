@@ -216,7 +216,7 @@ class RectifyAndDetect(APIView):
         rectify_image_name = 'rectify_{}'.format(source_image_name)
         rectify_image_path = os.path.join(image_dir, rectify_image_name)
         img = cv2.imread(source_image_path)
-        rows, cols = img.shape[:2]
+        # rows, cols = img.shape[:2]
         # 原图中书本的四个角点
         pts1 = np.float32([[x1, y1], [x2, y2], [x3, y3], [x4, y4]])
         # 变换后分别在左上、右上、左下、右下四个点
