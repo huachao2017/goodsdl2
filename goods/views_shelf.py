@@ -116,6 +116,8 @@ def detect_compare(shelf_image, image_path, need_detect = True):
             if shelf_goods.result == 0:
                 # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
                 shelf_goods.upc = one['upc']
+            else:
+                shelf_goods.upc = ''
             shelf_goods.save()
 
     return compare_ret
@@ -421,12 +423,18 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
             serializer.instance.upc = upc
             serializer.instance.save()
 
-        compare_ret = tz_good_compare.level_compare(
-            serializer.instance.shelf_image.displayid,
-            serializer.instance.shelf_image.shelfid,
-            serializer.instance.shelf_image.pk,
-            serializer.instance.pk)
+        # compare_ret = tz_good_compare.level_compare(
+        #     serializer.instance.shelf_image.displayid,
+        #     serializer.instance.shelf_image.shelfid,
+        #     serializer.instance.shelf_image.pk,
+        #     serializer.instance.pk)
 
+        if serializer.instance.shelf_image.rectsource != '':
+            image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.rectsource)
+        else:
+            image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.source)
+        # TODO 需要优化成单层更新，提升效率
+        compare_ret = detect_compare(serializer.instance.shelf_image, image_path, need_detect=False)
         return Response(compare_ret)
 
 
