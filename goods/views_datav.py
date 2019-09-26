@@ -113,9 +113,7 @@ class Interface4(APIView):
       "x": day,
       "y": paymentRate
     })
-
-    today = datetime.date.today()
-    tomorrow = str(today + datetime.timedelta(days=1))
+    tomorrow = str(day + datetime.timedelta(days=-1))
     ret.append({
       "s": 1,
       "times": tomorrow,
@@ -130,7 +128,7 @@ class Interface4(APIView):
       "x": tomorrow,
       "y": 0
     })
-    tomorrow2 = str(today + datetime.timedelta(days=2))
+    tomorrow2 = str(day + datetime.timedelta(days=-2))
     ret.append({
       "s": 1,
       "times": tomorrow2,
