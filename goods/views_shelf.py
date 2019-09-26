@@ -289,8 +289,13 @@ class GetShelfImageDetail(APIView):
                 'upc': shelf_goods.upc
             })
 
+        image_path = os.path.join(settings.MEDIA_ROOT, shelf_image.rectsource)
+        image = PILImage.open(image_path)
+        (im_width, im_height) = image.size
         ret = {
             "recturl":os.path.join(settings.MEDIA_URL,shelf_image.rectsource),
+            "rectwidth": im_width,
+            "rectheight": im_height,
             "score":shelf_image.score,
             "equal_cnt":shelf_image.equal_cnt,
             "different_cnt":shelf_image.different_cnt,
