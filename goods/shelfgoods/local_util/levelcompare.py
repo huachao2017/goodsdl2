@@ -55,8 +55,8 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
                 'ymax': ymax,
                 'result': compare_code,
                 'process_code': process_code,
-                'col': good_col.col,
-                'row': good_col.row,
+                'col': good_col.location_column,
+                'row': good_col.location_row,
                 'boxid': box_id,
                 'upc': upc
             })

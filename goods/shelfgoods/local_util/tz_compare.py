@@ -80,8 +80,8 @@ class Compare:
                     'result':compare_code,
                     'process_code':process_code,
                     'boxid':box_id,
-                    'col':good_col.col,
-                    'row':good_col.row,
+                    'col':good_col.location_column,
+                    'row':good_col.location_row,
                     'upc':upc
                             })
         logger.info("for_dcompare detail="+str(detail))
