@@ -125,7 +125,6 @@ def detect_compare(shelf_image, image_path, need_detect = True):
 
 class ShelfScore(APIView):
     def get(self, request):
-        logger.info(request.META['HTTP_REFERER'])
         picurl = request.query_params['picurl']
         try:
             picid = int(request.query_params['picid'])
