@@ -399,11 +399,14 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                     os.remove(old_sample_path)
                 serializer.instance.upc = ''
                 serializer.instance.save()
-                # TODO 重新计算得分
 
         elif result == 0:
-            # TODO 计算upc
-            upc = ''
+            # 计算upc
+            upc = tz_good_compare.get_upc(
+                serializer.instance.shelf_image.displayid,
+                serializer.instance.shelf_image.shelfid,
+                serializer.instance.shelf_image.pk,
+                serializer.instance.pk)
 
             # 添加新样本
             sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
@@ -415,10 +418,16 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
             sample_image = image.crop((serializer.instance.xmin, serializer.instance.ymin, serializer.instance.xmax, serializer.instance.ymax))
             sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(serializer.instance.pk))
             sample_image.save(sample_image_path, 'JPEG')
+            serializer.instance.upc = upc
+            serializer.instance.save()
 
-            # TODO 重新计算
+        compare_ret = tz_good_compare.level_compare(
+            serializer.instance.shelf_image.displayid,
+            serializer.instance.shelf_image.shelfid,
+            serializer.instance.shelf_image.pk,
+            serializer.instance.pk)
 
-        return Response(serializer.data)
+        return Response(compare_ret)
 
 
     def destroy(self, request, *args, **kwargs):
