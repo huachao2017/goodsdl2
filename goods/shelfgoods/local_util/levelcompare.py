@@ -15,7 +15,9 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
     gbx_inss=[]
     if level is not None and level in list(level_goods.keys()):
         ckbx_stu = checkbox_structure.CheckBoxStructure(level, level_boxes[level])
+        logger.info("ckbx_stu : " + str(ckbx_stu))
         disy_stu = display_structure.DispalyStructure(level, level_goods[level])
+        logger.info("disy_stu : " + str(disy_stu))
         proxy_ins = compare_proxy_factory.ProxyFactory(ckbx_stu, disy_stu, shelf_img)
         gbx_ins = proxy_ins.process()
         gbx_inss.append(gbx_ins)
@@ -53,6 +55,8 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
                 'ymax': ymax,
                 'result': compare_code,
                 'process_code': process_code,
+                'col': good_col.col,
+                'row': good_col.row,
                 'boxid': box_id,
                 'upc': upc
             })
@@ -75,6 +79,8 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
                 'ymax': ymax,
                 'result': result,
                 'process_code': code.code_11,
+                'col': None,
+                'row': None,
                 'boxid': box_id,
                 'upc': upc
             })
