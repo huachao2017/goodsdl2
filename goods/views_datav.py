@@ -75,11 +75,18 @@ class Interface3(APIView):
   def get(self, request):
     cur_hour = time.strftime('%H', time.localtime(time.time()))
     ret = []
-    for i in range(int(cur_hour)):
-      ret.append({
-        'x':g_data[i][0],
-        'y':g_data[i][1]
-      })
+    for i in range(24):
+      if i < cur_hour:
+        ret.append({
+          'x':g_data[i][0],
+          'y':g_data[i][1]
+        })
+      else:
+        ret.append({
+          'x':g_data[i][0],
+          'y':0
+        })
+
     return Response(ret, status=status.HTTP_200_OK)
 
 
