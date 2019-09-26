@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+import datetime
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -86,6 +87,49 @@ class Interface3(APIView):
           'x':g_data[i][0],
           'y':0
         })
+
+class Interface4(APIView):
+  def get(self, request):
+    cur_hour = time.strftime('%H', time.localtime(time.time()))
+    day = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+    paymentRate = 0
+    faceRate = 0
+    for i in range(int(cur_hour)):
+      faceRate += g_data[i][1]
+      paymentRate += g_data[i][2]
+    ret = []
+    ret.append({
+      "s": 1,
+      "times": day,
+      "number": faceRate,
+      "x": day,
+      "y": faceRate
+    })
+    ret.append({
+      "s": 2,
+      "times": day,
+      "number": paymentRate,
+      "x": day,
+      "y": paymentRate
+    })
+
+    today = datetime.date.today()
+    tomorrow = str(today + datetime.timedelta(days=1))
+    tomorrow2 = str(today + datetime.timedelta(days=2))
+    ret.append({
+      "s": 1,
+      "times": tomorrow,
+      "number": 0,
+      "x": tomorrow,
+      "y": 0
+    })
+    ret.append({
+      "s": 2,
+      "times": tomorrow2,
+      "number": 0,
+      "x": tomorrow2,
+      "y": 0
+    })
 
     return Response(ret, status=status.HTTP_200_OK)
 

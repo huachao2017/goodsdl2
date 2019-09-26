@@ -34,5 +34,6 @@ urlpatterns = [
     url(r'^api/interface1', views_datav.Interface1.as_view()),
     url(r'^api/interface2', views_datav.Interface2.as_view()),
     url(r'^api/interface3', views_datav.Interface3.as_view()),
+    url(r'^api/interface4', views_datav.Interface4.as_view()),
     url(r'^api/', include(router.urls))
 ]
