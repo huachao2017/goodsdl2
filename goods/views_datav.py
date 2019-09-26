@@ -76,7 +76,7 @@ class Interface3(APIView):
     cur_hour = time.strftime('%H', time.localtime(time.time()))
     ret = []
     for i in range(24):
-      if i < cur_hour:
+      if i < int(cur_hour):
         ret.append({
           'x':g_data[i][0],
           'y':g_data[i][1]
