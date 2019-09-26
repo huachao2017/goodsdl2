@@ -9,7 +9,7 @@ result_code={
     8:"max_display_col_notcompare",
     9:"level_error",
     10:"is_fitting",
-
+    11:"from database",
 }
 
 code_5 = 5 # 相等列中，检测框多的
@@ -18,7 +18,7 @@ code_7 = 7 # 小于陈列设计中， 该值未进入比较
 code_8 = 8 # 大于陈列设计中，该值未进入比较
 code_9 = 9 # 有错层 不进行比较
 code_10 = 10 # 黑盒子 不进入比较
-
+code_11 = 11 # 从数据库获取的result
 match_result={
     True:1,
     False:2,

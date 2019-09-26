@@ -7,6 +7,7 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
     loaddata_ins = load_data.LoadData()
     level_boxes, shelf_img_id, shelf_img = loaddata_ins.get_ai_goods(shelf_image_id)
     level_goods = loaddata_ins.get_tz_dispaly_goods(display_img_id)
+    level_boxes_result = loaddata_ins.get_ai_goods_result(shelf_image_id)
     level_goods = level_goods[shelf_id]
     logger.info("level_boxes : " + str(level_boxes))
     logger.info("level_goods : " + str(level_goods))
@@ -55,7 +56,28 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
                 'boxid': box_id,
                 'upc': upc
             })
-
+    for key in level_boxes_result:
+        if level != key:
+            (xmin,ymin,xmax,ymax,box_id,result,upc) = level_boxes_result[key]
+            if result is None or result == -1 :
+                result = 2
+            if result == 0:
+                equal_cnt += 1
+            if result == 1:
+                different_cnt += 1
+            if result == 2:
+                unknown_cnt += 1
+            detail.append({
+                'level': int(key),
+                'xmin': xmin,
+                'ymin': ymin,
+                'xmax': xmax,
+                'ymax': ymax,
+                'result': result,
+                'process_code': code.code_11,
+                'boxid': box_id,
+                'upc': upc
+            })
     logger.info("level compare detail=" + str(detail))
     return detail, equal_cnt, different_cnt, unknown_cnt
 
