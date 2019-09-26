@@ -55,13 +55,9 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
                 'boxid': box_id,
                 'upc': upc
             })
-    score = 0.0
-    if len(detail) == 0:
-        score = 0.0
-    else:
-        score = float("%.2f" % ((equal_cnt + unknown_cnt) / len(detail))) * 100
+
     logger.info("level compare detail=" + str(detail))
-    return detail, score, equal_cnt, different_cnt, unknown_cnt
+    return detail, equal_cnt, different_cnt, unknown_cnt
 
 def get_level(box_id_0,level_boxes):
     for level in level_boxes:
