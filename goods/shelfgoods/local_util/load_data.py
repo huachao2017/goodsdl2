@@ -34,7 +34,7 @@ class LoadData:
         # mysql_ins = mysql_util.MysqlUtil("ai")
         mysql_ins = django_mysql_util.DjangoMysql("default")
         try:
-            sql = ai.get_shelf_goods
+            sql = ai.get_shelf_goods_result
             sql = sql.format(shelf_image_id)
             results = mysql_ins.selectAll(sql)
             print (results)
@@ -65,6 +65,9 @@ class LoadData:
             logger.error("get_ai_goods failed ,shelf_image_id="+str(shelf_image_id))
             logger.error(traceback.format_exc())
             return None,None,None
+
+
+
 
     def get_check_level_boxes(self, box_ids, box_levels, xmins, ymins, xmaxs, ymaxs):
         levels = list(set(box_levels))
@@ -98,8 +101,50 @@ class LoadData:
             logger.error("get_ai_shelf_img failed ,shelf_img_idi="+str(shelf_img_idi))
             logger.error(traceback.format_exc())
             mysql_ins.close()
-            return None
+        return None
 
 
 
+    def get_ai_goods_result(self,shelf_image_id):
+            # mysql_ins = mysql_util.MysqlUtil("ai")
+            mysql_ins = django_mysql_util.DjangoMysql("default")
+            try:
+                sql = ai.get_shelf_goods_result
+                sql = sql.format(shelf_image_id)
+                results = mysql_ins.selectAll(sql)
+                box_id = []
+                shelf_img_id = []
+                xmin, ymin, xmax, ymax = [],[],[],[]
+                level = []
+                result = []
+                upc=[]
+                for row in list(results):
+                    box_id.append(int(row[0]))
+                    shelf_img_id.append(int(row[1]))
+                    xmin.append(int(row[2]))
+                    ymin.append(int(row[3]))
+                    xmax.append(int(row[4]))
+                    ymax.append(int(row[5]))
+                    level.append(int(row[6]))
+                    result.append(int(row[7]))
+                    upc.append(str(row[8]))
+                mysql_ins.close()
+                if (len(shelf_img_id))>0:
+                    # shelf_img = self.get_ai_shelf_img(shelf_img_id[0])
+                    level_boxes = self.get_check_level_boxes_result(box_id,level,xmin, ymin, xmax, ymax,result,upc)
+                    return level_boxes
+            except Exception as e:
+                logger.error("get_ai_goods failed ,shelf_image_id="+str(shelf_image_id))
+                logger.error(traceback.format_exc())
+                return None
 
+    def get_check_level_boxes_result(self, box_ids, box_levels, xmins, ymins, xmaxs, ymaxs,results,upcs):
+        levels = list(set(box_levels))
+        level_boxes = {}
+        for level in levels:
+            level_boxes[level] = []
+        for level in levels:
+            for box_id, box_level, xmin, ymin, xmax, ymax,result,upc in zip(box_ids, box_levels, xmins, ymins, xmaxs, ymaxs,results,upcs):
+                if level == box_level:
+                    level_boxes[level].append((xmin, ymin, xmax, ymax, box_id,result,upc))
+        return level_boxes
