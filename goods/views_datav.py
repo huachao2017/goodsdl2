@@ -117,31 +117,31 @@ class Interface4(APIView):
     ret.append({
       "s": 1,
       "times": tomorrow,
-      "number": 0,
+      "number": 4,
       "x": tomorrow,
-      "y": 0
+      "y": 4
     })
     ret.append({
       "s": 2,
       "times": tomorrow,
-      "number": 0,
+      "number": 4,
       "x": tomorrow,
-      "y": 0
+      "y": 4
     })
     tomorrow2 = str(day + datetime.timedelta(days=-2))
     ret.append({
       "s": 1,
       "times": tomorrow2,
-      "number": 0,
+      "number": 4,
       "x": tomorrow2,
-      "y": 0
+      "y": 4
     })
     ret.append({
       "s": 2,
       "times": tomorrow2,
-      "number": 0,
+      "number": 4,
       "x": tomorrow2,
-      "y": 0
+      "y": 4
     })
     return Response(ret, status=status.HTTP_200_OK)
 
