@@ -41,7 +41,7 @@ class Interface1(APIView):
   def get(self, request):
     cur_hour = time.strftime('%H', time.localtime(time.time()))
     value = 0
-    for i in range(int(cur_hour) - 1):
+    for i in range(int(cur_hour)):
       value += g_data[i][1]
     ret = [
       {
@@ -58,7 +58,7 @@ class Interface2(APIView):
     cur_hour = time.strftime('%H', time.localtime(time.time()))
     paymentRate = 0
     faceRate = 0
-    for i in range(int(cur_hour) - 1):
+    for i in range(int(cur_hour)):
       faceRate += g_data[i][1]
       paymentRate += g_data[i][2]
     ret = [
@@ -75,7 +75,7 @@ class Interface3(APIView):
   def get(self, request):
     cur_hour = time.strftime('%H', time.localtime(time.time()))
     ret = []
-    for i in range(int(cur_hour) - 1):
+    for i in range(int(cur_hour)):
       ret.append({
         'x':g_data[i][0],
         'y':g_data[i][1]
