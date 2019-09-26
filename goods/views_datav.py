@@ -87,6 +87,7 @@ class Interface3(APIView):
           'x':g_data[i][0],
           'y':0
         })
+    return Response(ret, status=status.HTTP_200_OK)
 
 class Interface4(APIView):
   def get(self, request):
@@ -115,7 +116,6 @@ class Interface4(APIView):
 
     today = datetime.date.today()
     tomorrow = str(today + datetime.timedelta(days=1))
-    tomorrow2 = str(today + datetime.timedelta(days=2))
     ret.append({
       "s": 1,
       "times": tomorrow,
@@ -125,12 +125,26 @@ class Interface4(APIView):
     })
     ret.append({
       "s": 2,
+      "times": tomorrow,
+      "number": 0,
+      "x": tomorrow,
+      "y": 0
+    })
+    tomorrow2 = str(today + datetime.timedelta(days=2))
+    ret.append({
+      "s": 1,
       "times": tomorrow2,
       "number": 0,
       "x": tomorrow2,
       "y": 0
     })
-
+    ret.append({
+      "s": 2,
+      "times": tomorrow2,
+      "number": 0,
+      "x": tomorrow2,
+      "y": 0
+    })
     return Response(ret, status=status.HTTP_200_OK)
 
 
