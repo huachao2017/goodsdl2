@@ -35,7 +35,7 @@ ai通知php接口,得分更新
 返回200：
 
 
-2、获取识别详情(get)：http://ai.aicvs.cn/api/get_shelfimage_detail?picid=xx
+2、获取识别详情(get)：http://ai.aicvs.cn/api/shelfimage_detail?picid=xx
 返回200：
 {
     "recturl":"aaa/bbb/ccc.jpg",              -- 返回矫正图片地址，需自行拼接域名
