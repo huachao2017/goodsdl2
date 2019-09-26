@@ -34,6 +34,7 @@ class DispalyStructure():
 
     def get_goods_box_location(self,value,columns_info,bottom_max):
         goodscolumns = []
+        box_id_0 =0
         for upc_box in value:
             (upc,is_fitting, bottom, left, width, height) = upc_box
             goodscolumn_ins = goods_box.GoodsColumn()
@@ -46,6 +47,7 @@ class DispalyStructure():
                         goodscolumn_ins.location_row = 0
                         goodscolumn_ins.location_left = left
                         goodscolumn_ins.location_bottom = bottom
+                        goodscolumn_ins.box_id = box_id_0
             else:
                 goodscolumn_ins.upc = upc
                 goodscolumn_ins.is_fitting = is_fitting
@@ -53,7 +55,9 @@ class DispalyStructure():
                 goodscolumn_ins.location_left = left
                 goodscolumn_ins.location_row = self.get_row(goodscolumns,bottom,goodscolumn_ins.location_column)
                 goodscolumn_ins.location_bottom = bottom
+                goodscolumn_ins.box_id = box_id_0
             goodscolumns.append(goodscolumn_ins)
+            box_id_0+=1
         return goodscolumns
     def get_row(self,goodscolumns,bottom,column):
         bottoms= []

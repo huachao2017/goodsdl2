@@ -19,9 +19,9 @@ class Compare:
         try:
             loaddata_ins = load_data.LoadData()
             level_goods = loaddata_ins.get_tz_dispaly_goods(self.display_id)
-            box_ids, shelf_img_ids, xmins, ymins, xmaxs, ymaxs, levels, shelf_img = loaddata_ins.get_ai_goods(self.shelf_image_id)
-            if level_goods is not None and box_ids is not None and shelf_img is not None and level_goods[self.shelf_id] is not None:
-                return self.for_dcompare(box_ids,levels,xmins, ymins, xmaxs, ymaxs,shelf_img,level_goods[self.shelf_id])
+            level_boxes, shelf_img_id, shelf_img = loaddata_ins.get_ai_goods(self.shelf_image_id)
+            if level_boxes is not None and shelf_img_id is not None and shelf_img is not None and level_goods[self.shelf_id] is not None:
+                return self.for_dcompare(level_boxes,shelf_img,level_goods[self.shelf_id])
             else:
                 logger.error("load data failed ,display_id=%s,shelf_image_id=%s"%(self.display_id,self.shelf_image_id))
                 return None,None,None,None,None
@@ -29,8 +29,8 @@ class Compare:
             logger.error(traceback.format_exc())
             return None, None, None, None, None
 
-    def for_dcompare(self,box_ids,box_levels,xmins, ymins, xmaxs, ymaxs,shelf_img,level_goods):
-        level_boxes = self.get_check_level_boxes(box_ids,box_levels,xmins, ymins, xmaxs, ymaxs)
+    def for_dcompare(self,level_boxes,shelf_img,level_goods):
+        # level_boxes = self.get_check_level_boxes(box_ids,box_levels,xmins, ymins, xmaxs, ymaxs)
         gbx_inss = []
         logger.info("level_boxes : "+str(level_boxes))
         logger.info("level_goods : "+str(level_goods))
@@ -88,16 +88,6 @@ class Compare:
         logger.info("for_dcompare detail="+str(detail))
         return detail,score,equal_cnt,different_cnt,unknown_cnt
 
-    def get_check_level_boxes(self,box_ids,box_levels,xmins, ymins, xmaxs, ymaxs):
-        levels=list(set(box_levels))
-        level_boxes = {}
-        for level in levels:
-            level_boxes[level]=[]
-        for level in levels:
-            for box_id,box_level, xmin, ymin, xmax, ymax in zip(box_ids,box_levels, xmins, ymins, xmaxs, ymaxs):
-                if level == box_level:
-                    level_boxes[level].append((xmin, ymin, xmax, ymax,box_id))
-        return level_boxes
 
 
 

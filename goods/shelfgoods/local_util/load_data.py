@@ -59,11 +59,23 @@ class LoadData:
             print (box_id)
             if (len(shelf_img_id))>0:
                 shelf_img = self.get_ai_shelf_img(shelf_img_id[0])
-                return box_id, shelf_img_id, xmin, ymin, xmax, ymax, level,shelf_img
+                level_boxes = self.get_check_level_boxes(box_id,level,xmin, ymin, xmax, ymax)
+                return level_boxes,shelf_img_id,shelf_img
         except Exception as e:
             logger.error("get_ai_goods failed ,shelf_image_id="+str(shelf_image_id))
             logger.error(traceback.format_exc())
-            return None,None,None,None,None,None,None,None
+            return None,None,None
+
+    def get_check_level_boxes(self, box_ids, box_levels, xmins, ymins, xmaxs, ymaxs):
+        levels = list(set(box_levels))
+        level_boxes = {}
+        for level in levels:
+            level_boxes[level] = []
+        for level in levels:
+            for box_id, box_level, xmin, ymin, xmax, ymax in zip(box_ids, box_levels, xmins, ymins, xmaxs, ymaxs):
+                if level == box_level:
+                    level_boxes[level].append((xmin, ymin, xmax, ymax, box_id))
+        return level_boxes
     def get_ai_shelf_img(self,shelf_img_idi):
         mysql_ins = django_mysql_util.DjangoMysql('default')
         try:
