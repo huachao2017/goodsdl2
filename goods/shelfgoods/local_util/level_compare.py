@@ -8,7 +8,6 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
     level_boxes, shelf_img_id, shelf_img = loaddata_ins.get_ai_goods(shelf_image_id)
     level_goods = loaddata_ins.get_tz_dispaly_goods(display_img_id)
     level_goods = level_goods[shelf_id]
-    gbx_inss = []
     logger.info("level_boxes : " + str(level_boxes))
     logger.info("level_goods : " + str(level_goods))
     level = get_level(box_id,level_boxes)
