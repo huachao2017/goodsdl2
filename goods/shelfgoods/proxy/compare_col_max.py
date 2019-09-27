@@ -9,6 +9,7 @@ def process(check_box_ins,display_ins,shelf_img):
     ck_cols = check_box_ins.gbx_ins.level_columns
     ds_cols = display_ins.gbx_ins.level_columns
     col_goods={}
+    logger.info("level proxy process is compare_col_min  ck_cols=%s,ds_cols =%s" % (str(ck_cols), str(ds_cols)))
     col_compare_l = {}
     ck_goodscolumn_inss_copys = {}
     for i in range(ck_cols-ds_cols+1):
