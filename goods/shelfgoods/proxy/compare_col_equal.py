@@ -24,6 +24,8 @@ def process(check_box_ins,display_ins,shelf_img):
                     target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
                     match_ins = shelftradition_match.ShelfTraditionMatch(ds_upc)
                     match_result = match_ins.detect_one_with_cv2array(target_img)
+                    logger.info("ck_box box_id=%s,upc=%s,match_result=%s" % (
+                    str(ck_gcs.box_id), str(ds_upc), str(code.match_result[match_result])))
                     ck_gcs.compare_code = code.match_result[match_result]
                     ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
                     if match_result:
