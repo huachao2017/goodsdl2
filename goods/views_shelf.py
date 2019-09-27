@@ -79,31 +79,8 @@ def detect_compare(shelf_image, image_path, need_detect = True, need_notify = Fa
     if compare_ret is not None:
         # 生成识别图
         if len(compare_ret['detail']) > 0:
-            image = PILImage.open(image_path)
-            text_infos = []
-            color_infos = []
-            for one in compare_ret['detail']:
-                text_infos.append('{}-{}'.format(one['level'], one['upc']))
-                color = 'black'
-                if one['result'] == 0:
-                    color = 'blue'
-                elif one['result'] == 1 or one['result'] == 2:
-                    color = 'red'
-                color_infos.append(color)
-            logger.info('visualize:{}'.format(compare_ret['detail']))
-            visualize_boxes_and_labels_on_image_array_for_shelf(
-                np.array(image),
-                compare_ret['detail'],
-                text_infos,
-                color_infos
-            )
-            image_relative_dir = os.path.split(shelf_image.source)[0]
-            image_dir = os.path.dirname(image_path)
-            result_image_name = 'visual_' + os.path.split(image_path)[-1]
-            result_image_path = os.path.join(image_dir, result_image_name)
-            (im_width, im_height) = image.size
-            image.thumbnail((int(im_width), int(im_height)), PILImage.ANTIALIAS)
-            image.save(result_image_path)
+            result_image_name = shelf_visualize(compare_ret['detail'], image_path)
+            image_relative_dir = os.path.split(image_path)[0]
             shelf_image.resultsource = os.path.join(image_relative_dir, result_image_name)
 
         shelf_image.score = compare_ret['score']
@@ -124,6 +101,35 @@ def detect_compare(shelf_image, image_path, need_detect = True, need_notify = Fa
         notify_result(shelf_image)
 
     return compare_ret
+
+
+def shelf_visualize(boxes, image_path):
+    image = PILImage.open(image_path)
+    text_infos = []
+    color_infos = []
+    for one in boxes:
+        text_infos.append('{}-{}'.format(one['level'], one['upc']))
+        color = 'black'
+        if one['result'] == 0:
+            color = 'blue'
+        elif one['result'] == 1 or one['result'] == 2:
+            color = 'red'
+        color_infos.append(color)
+    logger.info('visualize:{}'.format(boxes))
+    visualize_boxes_and_labels_on_image_array_for_shelf(
+        np.array(image),
+        boxes,
+        text_infos,
+        color_infos
+    )
+    image_dir = os.path.dirname(image_path)
+    result_image_name = 'visual_' + os.path.split(image_path)[-1]
+    result_image_path = os.path.join(image_dir, result_image_name)
+    (im_width, im_height) = image.size
+    image.thumbnail((int(im_width), int(im_height)), PILImage.ANTIALIAS)
+    image.save(result_image_path)
+    return result_image_name
+
 
 def notify_result(shelf_image):
     # 测试环境：http: // alphataizhang.aicvs.cn / m / shelf / updateScore?picid = xxx & score = xxx & retpicurl = xxx & equal_cnt = 1 & different_cnt = 2 & unknown_cnt = 3
