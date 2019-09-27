@@ -24,10 +24,10 @@ class Compare:
                 return self.for_dcompare(level_boxes,shelf_img,level_goods[self.shelf_id])
             else:
                 logger.error("load data failed ,display_id=%s,shelf_image_id=%s"%(self.display_id,self.shelf_image_id))
-                return None,None,None,None,None
+                return None,None,None,None
         except:
             logger.error(traceback.format_exc())
-            return None, None, None, None, None
+            return None, None, None, None
 
     def for_dcompare(self,level_boxes,shelf_img,level_goods):
         # level_boxes = self.get_check_level_boxes(box_ids,box_levels,xmins, ymins, xmaxs, ymaxs)
