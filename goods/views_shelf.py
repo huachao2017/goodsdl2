@@ -274,7 +274,6 @@ class RectifyAndDetect(APIView):
 
 class GetShelfImage(APIView):
     def get(self, request):
-        logger.info('GetShelfImage test')
         try:
             picid = int(request.query_params['picid'])
             shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
@@ -295,7 +294,6 @@ class GetShelfImage(APIView):
 
 class GetShelfImageDetail(APIView):
     def get(self, request):
-        logger.info('GetShelfImageDetail test')
         try:
             picid = int(request.query_params['picid'])
             shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
