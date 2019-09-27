@@ -10,6 +10,7 @@ def process(check_box_ins,display_ins,shelf_img):
     ds_cols = display_ins.gbx_ins.level_columns
     col_goods={}
     col_compare_l = {}
+    logger.info("level proxy process is compare_col_min  ck_cols=%s,ds_cols = %s" + (str(ck_cols),str(ds_cols)))
     ck_goodscolumn_inss_copys = {}
     for i in range(ds_cols-ck_cols+1):
         ck_goodscolumn_inss_copy = ck_goodscolumn_inss.copy()
@@ -74,7 +75,9 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
                     if match_result == True:
                         ck_gcs.upc = ds_upc
                         sum_true+=1
-                break
+                        break
+                else:
+                    continue
     return sum_true,compare_re_l,ck_goodscolumn_inss
 
 
