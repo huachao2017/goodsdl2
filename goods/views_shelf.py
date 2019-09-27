@@ -90,6 +90,7 @@ def detect_compare(shelf_image, image_path, need_detect = True, need_notify = Fa
                 elif one['result'] == 1 or one['result'] == 2:
                     color = 'red'
                 color_infos.append(color)
+            logger.info('visualize:{}'.format(compare_ret['detail']))
             visualize_boxes_and_labels_on_image_array_for_shelf(
                 np.array(image),
                 compare_ret['detail'],
