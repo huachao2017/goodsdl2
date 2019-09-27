@@ -57,8 +57,8 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
             continue
         ck_location_column = ck_gcs.location_column
         ck_location_row = ck_gcs.location_row
-        logger.info(
-            "ck_location_column,ck_location_row=(%s,%s)" % (str(ck_location_column), str(ck_location_row)))
+        # logger.info(
+        #     "ck_location_column,ck_location_row=(%s,%s)" % (str(ck_location_column), str(ck_location_row)))
         ck_box = ck_gcs.location_box
         # ds_rows = get_col_display_max(ds_goodscolumn_inss, ck_location_column)
         # if len(ds_rows) > 0:
@@ -68,8 +68,8 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
             ds_upc = ds_gcs.upc
             ds_location_column = ds_gcs.location_column - i
             ds_location_row = ds_gcs.location_row
-            logger.info(
-                "ds_location_column,ds_location_row=(%s,%s)" % (str(ds_location_column), str(ds_location_row)))
+            # logger.info(
+            #     "ds_location_column,ds_location_row=(%s,%s)" % (str(ds_location_column), str(ds_location_row)))
             if ck_gcs.compare_code == None and ds_location_column == ck_location_column and ds_location_row == ck_location_row:
                 target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
                 match_ins = shelftradition_match.ShelfTraditionMatch(ds_upc)
