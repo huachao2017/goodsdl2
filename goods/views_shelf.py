@@ -80,7 +80,7 @@ def detect_compare(shelf_image, image_path, need_detect = True, need_notify = Fa
         # 生成识别图
         if len(compare_ret['detail']) > 0:
             result_image_name = shelf_visualize(compare_ret['detail'], image_path)
-            image_relative_dir = os.path.split(image_path)[0]
+            image_relative_dir = os.path.split(shelf_image.source)[0]
             shelf_image.resultsource = os.path.join(image_relative_dir, result_image_name)
 
         shelf_image.score = compare_ret['score']
