@@ -56,9 +56,11 @@ def show_checkbox(display_img_id,shelf_id,shelf_image_id,box_id):
 
 def get_level(box_id_0,level_boxes):
     for level in level_boxes:
-        (xmin,ymin,xmax,ymax,box_id) = level_boxes[level]
-        if box_id ==box_id_0:
-            return level
+        boxes_l = level_boxes[level]
+        for box in boxes_l:
+            (xmin, ymin, xmax, ymax,box_id) =box
+            if box_id ==box_id_0:
+                return level
     return None
 
 import cv2
