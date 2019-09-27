@@ -1,6 +1,7 @@
 from goods.shelfgoods.bean import goods_box
 from goods.shelfgoods.bean.check_box_col_bean import CheckBoxCol
-
+import logging
+logger = logging.getLogger("detect")
 class CheckBoxStructure:
     x_iou_min = 0.6  # 横向 偏差iou大于阈值  判定为一个列
     y_iou_max = 0.2  # 且 纵向 偏差iou小于阈值  判定为一个列
@@ -25,8 +26,10 @@ class CheckBoxStructure:
             cb_col_ins.c_ymax = ymax1
             cb_col_ins.box_id = box_id1
             cb_cols = self.add_cb_col(cb_col_ins,cb_cols)
+        logger.info("wei add none "+str(len(cb_cols)))
         #添加空列
         cb_cols = self.add_none_col(cb_cols)
+        logger.info("add none " + str(len(cb_cols)))
         cols = []
         colmunboxes=[]
         for cb_col in cb_cols:
@@ -39,6 +42,7 @@ class CheckBoxStructure:
             gc_ins.box_id = box_id
             colmunboxes.append(gc_ins)
         columns = max(cols)+1
+        logger.info("columns " + str(len(cb_cols)))
         return columns, colmunboxes
 
     # 加入cb_cols
