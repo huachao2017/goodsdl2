@@ -1,26 +1,26 @@
 import datetime
 import json
 import logging
+import math
 import os
 import urllib.request
-from PIL import Image as PILImage
 
+import cv2
 import numpy as np
+import tensorflow as tf
+from PIL import Image as PILImage
 from django.conf import settings
 from rest_framework import mixins
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import cv2
-import math
 
 from dl import shelfdetection
-from goods.shelfgoods.service import tz_good_compare
-from .serializers import *
-import tensorflow as tf
 from dl.util import caculate_level
-from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
+from goods.shelfgoods.service import tz_good_compare
+from goods.util import shelf_visualize
+from .serializers import *
 
 logger = logging.getLogger("django")
 
@@ -101,34 +101,6 @@ def detect_compare(shelf_image, image_path, need_detect = True, need_notify = Fa
         notify_result(shelf_image)
 
     return compare_ret
-
-
-def shelf_visualize(boxes, image_path):
-    image = PILImage.open(image_path)
-    text_infos = []
-    color_infos = []
-    for one in boxes:
-        text_infos.append('{}-{}'.format(one['level'], one['upc']))
-        color = 'black'
-        if one['result'] == 0:
-            color = 'blue'
-        elif one['result'] == 1 or one['result'] == 2:
-            color = 'red'
-        color_infos.append(color)
-    logger.info('visualize:{}'.format(boxes))
-    visualize_boxes_and_labels_on_image_array_for_shelf(
-        np.array(image),
-        boxes,
-        text_infos,
-        color_infos
-    )
-    image_dir = os.path.dirname(image_path)
-    result_image_name = 'visual_' + os.path.split(image_path)[-1]
-    result_image_path = os.path.join(image_dir, result_image_name)
-    (im_width, im_height) = image.size
-    image.thumbnail((int(im_width), int(im_height)), PILImage.ANTIALIAS)
-    image.save(result_image_path)
-    return result_image_name
 
 
 def notify_result(shelf_image):
