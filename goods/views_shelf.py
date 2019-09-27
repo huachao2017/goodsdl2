@@ -107,8 +107,9 @@ def notify_result(shelf_image):
     # 测试环境：http: // alphataizhang.aicvs.cn / m / shelf / updateScore?picid = xxx & score = xxx & retpicurl = xxx & equal_cnt = 1 & different_cnt = 2 & unknown_cnt = 3
     # 产线环境：http: // taizhang.aicvs.cn / m / shelf / updateScore?picid = xxx & score = xxx & retpicurl = xxx & equal_cnt = 1 & different_cnt = 2 & unknown_cnt = 3
 
-    request_param = 'picid={}&score={}&retpicurl={}&equal_cnt={}&different_cnt={}&unknown_cnt={}'.format(
+    request_param = 'picid={}&shopid={}&score={}&retpicurl={}&equal_cnt={}&different_cnt={}&unknown_cnt={}'.format(
         shelf_image.picid,
+        shelf_image.shopid,
         shelf_image.score,
         os.path.join(settings.MEDIA_URL, shelf_image.resultsource),
         shelf_image.equal_cnt,
