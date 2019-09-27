@@ -26,7 +26,8 @@ def parse_tz_display_goods(result):
                     is_fitting = good['is_fitting'] #1 陈列盒  0 商品
                 bottom, left, width, height = good['top'],good['left'],good['width'],good['height']
                 upcs.append((upc,int(is_fitting),float(bottom), float(left), float(width), float(height)))
-            floor_goods[fl_num] = upcs
+            if len(upcs) > 0 :
+                floor_goods[fl_num] = upcs
         shelf_floor_upc[str(shelfId)] = floor_goods
     return shelf_floor_upc
 
