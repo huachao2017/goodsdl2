@@ -81,7 +81,7 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
                 if match_result == True:
                     ck_gcs.upc = ds_upc
                     sum_true+=1
-                    break
+                break
             else:
                 continue
     return sum_true,compare_re_l,ck_goodscolumn_inss
