@@ -36,7 +36,7 @@ class DispalyStructure():
         for upc_box in value:
             (upc,is_fitting, bottom, left, width, height) = upc_box
             goodscolumn_ins = goods_box.GoodsColumn()
-            if bottom_max - int(bottom)  <= self.bottom_max:
+            if bottom_max - int(bottom) - int(height)  <= self.bottom_max:
                 for i in columns_info:
                     if left == columns_info[i][0] and width == columns_info[i][1] :
                         goodscolumn_ins.upc = upc
