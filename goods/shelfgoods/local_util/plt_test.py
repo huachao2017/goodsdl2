@@ -78,6 +78,6 @@ def bboxes_draw_on_img(img, bbox, col_row_code,thickness=2):
 if __name__=='__main__':
     display_img_id= 136
     shelf_id = "DJ-008-91-001"
-    shelf_image_id = 164
-    box_id = 3079
+    shelf_image_id = 170
+    box_id = 3272
     show_checkbox(display_img_id,shelf_id,shelf_image_id,box_id)
