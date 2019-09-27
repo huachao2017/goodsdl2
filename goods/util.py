@@ -26,17 +26,26 @@ def shelf_visualize(boxes, image_path):
         elif one['result'] == 1 or one['result'] == 2:
             color = 'red'
         color_infos.append(color)
-    print('visualize:{}'.format(boxes))
+    image_np = np.array(image)
     visualize_boxes_and_labels_on_image_array_for_shelf(
-        np.array(image),
+        image_np,
         boxes,
         text_infos,
         color_infos
     )
+    output_image = PILImage.fromarray(image_np)
     image_dir = os.path.dirname(image_path)
     result_image_name = 'visual_' + os.path.split(image_path)[-1]
     result_image_path = os.path.join(image_dir, result_image_name)
-    (im_width, im_height) = image.size
-    image.thumbnail((int(im_width), int(im_height)), PILImage.ANTIALIAS)
-    image.save(result_image_path)
+    # (im_width, im_height) = image.size
+    # output_image.thumbnail((int(im_width), int(im_height)), PILImage.ANTIALIAS)
+    output_image.save(result_image_path)
     return result_image_name
+
+if __name__ == '__main__':
+    """Test code: Uses the two specified"""
+
+    boxes = [{'level': 1, 'xmin': 200, 'ymin': 200, 'xmax': 400, 'ymax': 400, 'result': 1, 'upc':''}]
+    image_path = 'c:/fastbox/1.jpg'
+
+    shelf_visualize(boxes,image_path)
