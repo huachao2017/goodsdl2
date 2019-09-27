@@ -404,7 +404,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-
+        logger.info("11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
         old_result = instance.result
         old_upc = instance.upc
 
