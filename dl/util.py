@@ -1,5 +1,4 @@
 import logging
-import tensorflow as tf
 from object_detection.utils import visualization_utils as vis_util
 import numpy as np
 from sklearn.cluster import KMeans
@@ -27,33 +26,6 @@ def get_host_ip():
         s.close()
 
     return ip
-
-
-def get_labels_to_names(labels_filepath):
-    with tf.gfile.Open(labels_filepath, 'rb') as f:
-        lines = f.read().decode()
-    lines = lines.split('\n')
-    lines = filter(None, lines)
-
-    labels_to_names = {}
-    for line in lines:
-        index = line.index(':')
-        labels_to_names[int(line[:index])] = line[index + 1:]
-
-    return labels_to_names
-
-def get_names_to_labels(labels_filepath):
-    with tf.gfile.Open(labels_filepath, 'rb') as f:
-        lines = f.read().decode()
-    lines = lines.split('\n')
-    lines = filter(None, lines)
-
-    names_to_labels = {}
-    for line in lines:
-        index = line.index(':')
-        names_to_labels[line[index + 1:]] = int(line[:index])
-
-    return names_to_labels
 
 def visualize_boxes_and_labels_on_image_array_V2(image,
                                                  boxes,
