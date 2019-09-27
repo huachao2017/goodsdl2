@@ -412,7 +412,6 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         self.perform_update(serializer)
 
         result = serializer.instance.result
-        logger.info("1111111111111111111111111"+str(result))
         if result == 1:
             if old_result == 0 and old_upc != '':
                 sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
@@ -425,7 +424,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                 serializer.instance.upc = ''
                 serializer.instance.save()
 
-        elif result == 0:
+        elif result == 2:
             # 计算upc
             upc = tz_good_compare.get_upc(
                 serializer.instance.shelf_image.displayid,
