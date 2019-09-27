@@ -76,9 +76,10 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
                     logger.info("ck_box box_id=%s,upc=%s,match_result=%s" % (
                     str(ck_gcs.box_id), str(ds_upc), str(code.match_result[match_result])))
                     compare_re_l.append((ck_location_column,ck_location_row,match_result))
-                    if match_result:
+                    if  match_result == True:
                         ck_gcs.upc = ds_upc
                         sum_true+=1
+                    break
     return sum_true,compare_re_l,ck_goodscolumn_inss
 
 
