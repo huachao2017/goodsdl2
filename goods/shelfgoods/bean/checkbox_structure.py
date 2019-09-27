@@ -50,7 +50,7 @@ class CheckBoxStructure:
                     columns_row.append((xmin1, ymin1, xmax1, ymax1, box_id1,col1,row1))
         columns_col.extend(columns_row)
         columns_col_dict = {}
-        for i in range(a2):
+        for i in range(len(a2)):
             columns_row_sort = {}
             for ccol in columns_col:
                 (xmin, ymin, xmax, ymax, box_id, col, row) = ccol
