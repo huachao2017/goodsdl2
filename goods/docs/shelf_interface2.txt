@@ -57,6 +57,7 @@ ai通知php接口,得分更新
     "equal_cnt": 85                           -- 正确数量
     "different_cnt": 22                       -- 错误数量
     "unknown_cnt": 10                         -- 未知数量
+    "displayurl":"http://lximages.xianlife.com/g1/1909/2711/5d8d7fb354141255.jpg",              -- 返回台账图片地址
     "detail":
     [
         {
