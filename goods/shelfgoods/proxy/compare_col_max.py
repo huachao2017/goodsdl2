@@ -60,6 +60,8 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
         ds_upc = ds_gcs.upc
         ds_location_column = ds_gcs.location_column
         ds_location_row = ds_gcs.location_row
+        logger.info(
+        "ds_location_column,ds_location_row=(%s,%s)" % (str(ds_location_column), str(ds_location_row)))
         ds_rows = get_col_display_max(ds_goodscolumn_inss, ds_location_column)
         if len(ds_rows) > 0:
             for ck_gcs in ck_goodscolumn_inss:
@@ -67,6 +69,8 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
                     continue
                 ck_location_column = ck_gcs.location_column - i
                 ck_location_row = ck_gcs.location_row
+                logger.info(
+                    "ck_location_column,ck_location_row=(%s,%s)" % (str(ck_location_column), str(ck_location_row)))
                 ck_box = ck_gcs.location_box
                 # compare_result = ck_gcs.compare_result
                 # compare_code = ck_gcs.compare_code
@@ -74,8 +78,8 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
                     target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
                     match_ins = shelftradition_match.ShelfTraditionMatch(ds_upc)
                     match_result = match_ins.detect_one_with_cv2array(target_img)
-                    logger.info("ck_box box_id=%s,upc=%s,match_result=%s" % (
-                    str(ck_gcs.box_id), str(ds_upc), str(code.match_result[match_result])))
+                    logger.info("ck_box box_id=%s,upc=%s,match_result=%s,ds=(%s,%s),ck=(%s,%s)" % (
+                    str(ck_gcs.box_id), str(ds_upc), str(code.match_result[match_result]),str(ds_location_column), str(ds_location_row),str(ck_location_column),str(ck_location_row)))
                     compare_re_l.append((ck_location_column,ck_location_row,match_result))
                     if  match_result == True:
                         ck_gcs.upc = ds_upc
