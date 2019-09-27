@@ -7,6 +7,7 @@ import urllib.request
 
 import cv2
 import numpy as np
+import traceback
 import tensorflow as tf
 from PIL import Image as PILImage
 from django.conf import settings
@@ -306,9 +307,28 @@ class GetShelfImageDetail(APIView):
             "equal_cnt":shelf_image.equal_cnt,
             "different_cnt":shelf_image.different_cnt,
             "unknown_cnt":shelf_image.unknown_cnt,
+            "displayurl":get_display_url(shelf_image.displayid,shelf_image.shelfid),
             "detail":detail
         }
         return Response(ret, status=status.HTTP_200_OK)
+
+def get_display_url(displayid, shelfid):
+    try:
+        url = ''
+        from django.db import connections
+        # TODO 需要切换正式和测试服务器
+        cursor = connections['ucenter'].cursor()
+        cursor.execute("select tmp_display_img_list from sf_taizhang_display where id = {}".format(displayid))
+        raw = cursor.fetchone()
+        if len(raw) == 1:
+            url = 'http://lximages.xianlife.com/'
+            shelfid_to_url = json.loads(raw[0])
+            url += shelfid_to_url[shelfid]
+        return url
+    except Exception as e:
+        logger.error('caculate level error:{}'.format(e))
+        traceback.print_exc()
+    return ''
 
 
 class DetectShelfImage(APIView):
