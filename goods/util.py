@@ -4,9 +4,6 @@ import numpy as np
 from PIL import Image as PILImage
 
 from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
-import logging
-logger = logging.getLogger("django")
-
 
 def wrap_ret(ret):
     standard_ret = {
@@ -29,7 +26,7 @@ def shelf_visualize(boxes, image_path):
         elif one['result'] == 1 or one['result'] == 2:
             color = 'red'
         color_infos.append(color)
-    logger.info('visualize:{}'.format(boxes))
+    print('visualize:{}'.format(boxes))
     visualize_boxes_and_labels_on_image_array_for_shelf(
         np.array(image),
         boxes,
