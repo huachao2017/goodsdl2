@@ -90,6 +90,7 @@ def detect_compare(shelf_image, image_path, need_detect = True, need_notify = Fa
                 elif one['result'] == 1 or one['result'] == 2:
                     color = 'red'
                 color_infos.append(color)
+            logger.info('visualize:{}'.format(compare_ret['detail']))
             visualize_boxes_and_labels_on_image_array_for_shelf(
                 np.array(image),
                 compare_ret['detail'],
@@ -273,7 +274,6 @@ class RectifyAndDetect(APIView):
 
 class GetShelfImage(APIView):
     def get(self, request):
-        logger.info('GetShelfImage test')
         try:
             picid = int(request.query_params['picid'])
             shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
@@ -294,7 +294,6 @@ class GetShelfImage(APIView):
 
 class GetShelfImageDetail(APIView):
     def get(self, request):
-        logger.info('GetShelfImageDetail test')
         try:
             picid = int(request.query_params['picid'])
             shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
