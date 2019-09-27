@@ -23,7 +23,7 @@ def get_upc(display_img_id,shelf_id,shelf_image_id,box_id):
                         if ckbx_goodscolumn_ins.box_id == box_id:
                             for disy_goodscolumn_ins in disy_goodscolumn_inss:
                                 if disy_goodscolumn_ins.location_column == ckbx_goodscolumn_ins.location_column and disy_goodscolumn_ins.location_row == ckbx_goodscolumn_ins.location_row:
-                                    logger.info("get_upc col=%s,row=%s,upc=%s"%(str(disy_goodscolumn_ins.col),str(disy_goodscolumn_ins.row),str(disy_goodscolumn_ins.upc)))
+                                    logger.info("get_upc col=%s,row=%s,upc=%s"%(str(disy_goodscolumn_ins.location_column),str(disy_goodscolumn_ins.location_column),str(disy_goodscolumn_ins.upc)))
                                     return disy_goodscolumn_ins.upc
     logger.info("get_upc failed !!!!")
     return None
