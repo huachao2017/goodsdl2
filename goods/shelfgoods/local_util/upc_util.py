@@ -8,6 +8,7 @@ def get_upc(display_img_id,shelf_id,shelf_image_id,box_id):
     level_goods = loaddata_ins.get_tz_dispaly_goods(display_img_id)
     level_goods = level_goods[shelf_id]
     gbx_inss = []
+    logger.info("get_upc box_id="+str(box_id))
     logger.info("level_boxes : " + str(level_boxes))
     logger.info("level_goods : " + str(level_goods))
     for level in level_boxes:
@@ -22,8 +23,9 @@ def get_upc(display_img_id,shelf_id,shelf_image_id,box_id):
                         if ckbx_goodscolumn_ins.box_id == box_id:
                             for disy_goodscolumn_ins in disy_goodscolumn_inss:
                                 if disy_goodscolumn_ins.col == ckbx_goodscolumn_ins.col and disy_goodscolumn_ins.row == ckbx_goodscolumn_ins.row:
-                                    logger.info("get_upc "+str(disy_goodscolumn_ins))
+                                    logger.info("get_upc col=%s,row=%s,upc=%s"%(str(disy_goodscolumn_ins.col),str(disy_goodscolumn_ins.row),str(disy_goodscolumn_ins.upc)))
                                     return disy_goodscolumn_ins.upc
+    logger.info("get_upc failed !!!!")
     return None
 
 
