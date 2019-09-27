@@ -39,9 +39,13 @@ class Compare:
                 for levelj in level_goods:
                     if int(level) == int(levelj):
                        ckbx_stu = checkbox_structure.CheckBoxStructure(level, level_boxes[level])
-                       logger.info("ckbx_stu : " + str(demjson.encode(ckbx_stu)))
+                       # logger.info("ckbx_stu : " + str(demjson.encode(ckbx_stu)))
+                       print ("ckbx_stu :" )
+                       print('\n'.join(['%s:%s' % item for item in ckbx_stu.__dict__.items()]))
                        disy_stu = display_structure.DispalyStructure(levelj, level_goods[levelj])
-                       logger.info("disy_stu : " + str(demjson.encode(disy_stu)))
+                       print("disy_stu :")
+                       print('\n'.join(['%s:%s' % item for item in disy_stu.__dict__.items()]))
+                       # logger.info("disy_stu : " + str(demjson.encode(disy_stu)))
                        proxy_ins = compare_proxy_factory.ProxyFactory(ckbx_stu,disy_stu,shelf_img)
                        gbx_ins = proxy_ins.process()
                        gbx_inss.append(gbx_ins)

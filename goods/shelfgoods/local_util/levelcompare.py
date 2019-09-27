@@ -15,9 +15,11 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
     gbx_inss=[]
     if level is not None and level in list(level_goods.keys()):
         ckbx_stu = checkbox_structure.CheckBoxStructure(level, level_boxes[level])
-        logger.info("ckbx_stu : " + str(ckbx_stu))
+        print("ckbx_stu :")
+        print('\n'.join(['%s:%s' % item for item in ckbx_stu.__dict__.items()]))
         disy_stu = display_structure.DispalyStructure(level, level_goods[level])
-        logger.info("disy_stu : " + str(disy_stu))
+        print("disy_stu :")
+        print('\n'.join(['%s:%s' % item for item in disy_stu.__dict__.items()]))
         proxy_ins = compare_proxy_factory.ProxyFactory(ckbx_stu, disy_stu, shelf_img)
         gbx_ins = proxy_ins.process()
         gbx_inss.append(gbx_ins)
