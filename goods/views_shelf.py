@@ -115,12 +115,13 @@ def notify_result(shelf_image):
         shelf_image.different_cnt,
         shelf_image.unknown_cnt
     )
+    logger.info('notify_result request_param:{}'.format(request_param))
     if shelf_image.test_server:
         res = urllib.request.urlopen('http://alphataizhang.aicvs.cn/m/shelf/updateScore?' + request_param)
     else:
         res = urllib.request.urlopen('http://taizhang.aicvs.cn/m/shelf/updateScore?' + request_param)
 
-    logger.info(res.read())
+    logger.info('notify_result response:{}'.format(res.read()))
 
 class ShelfScore(APIView):
     def get(self, request):
