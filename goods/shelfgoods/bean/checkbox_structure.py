@@ -30,10 +30,10 @@ class CheckBoxStructure:
         for cb_col in cb_cols:
             logger.info("wei add none " + str(cb_col.col))
         #添加空列
-        cb_cols = self.add_none_col(cb_cols)
-        logger.info("add none " + str(len(cb_cols)))
-        for cb_col in cb_cols:
-            logger.info("add none " + str(cb_col.col))
+        # cb_cols = self.add_none_col(cb_cols)  # 方法存在问题  对列值造成变大
+        # logger.info("add none " + str(len(cb_cols)))
+        # for cb_col in cb_cols:
+        #     logger.info("add none " + str(cb_col.col))
         cols = []
         colmunboxes=[]
         for cb_col in cb_cols:
