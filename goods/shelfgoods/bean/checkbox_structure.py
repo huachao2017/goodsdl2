@@ -9,8 +9,71 @@ class CheckBoxStructure:
     none_col = 0.88  # 空列 左右的占两个框与该均值的 比  > 该阈值 认为中间存在空列
     gbx_ins=None
     def __init__(self,level,value):
-        columns, columnboxs = self.get_goods_box_info(value)
+        columns, columnboxs = self.get_column(value)
         self.gbx_ins = goods_box.GoodsBox(int(level), columns, columnboxs)
+
+
+    def get_column(self,value):
+        columns = []
+        colmunboxes=[]
+        for box1, i in zip(value, range(len(value))):
+            (xmin1, ymin1, xmax1, ymax1, box_id1) = box1
+            if len(columns)<1:
+                columns.append(box1)
+            else:
+                falg = False
+                for column in columns:
+                    x_iou = get_iou((xmin1,xmax1),(column[0],column[2]))
+                    if x_iou > self.x_iou_min: # xiang tong
+                        falg=True
+                if falg == False:
+                    columns.append(box1)
+        sort_column = {}
+        for key in columns:
+            sort_column[key[0]] = key
+        a2 = sorted(sort_column.items(), key=lambda x: x[0])
+        columns_col = []
+        for i in range(len(a2)):
+            (xmin1, ymin1, xmax1, ymax1, box_id1) = a2[i][1]
+            columns_col.append((xmin1, ymin1, xmax1, ymax1, box_id1,i,0))
+        columns_row = []
+        for box1, i in zip(value, range(len(value))):
+            (xmin1, ymin1, xmax1, ymax1, box_id1) = box1
+            row1=None
+            col1=None
+            for ccol in columns_col:
+                (xmin2, ymin2, xmax2, ymax2, box_id2,col2,row2) = ccol
+                x_iou = get_iou((xmin1, xmax1), (xmin2, xmin2))
+                if box_id1 != box_id2 and x_iou > self.x_iou_min:
+                    row1=row2+1
+                    col1=col1
+                    columns_row.append((xmin1, ymin1, xmax1, ymax1, box_id1,col1,row1))
+        columns_col.extend(columns_row)
+        columns_col_dict = {}
+        for i in range(a2):
+            columns_row_sort = {}
+            for ccol in columns_col:
+                (xmin, ymin, xmax, ymax, box_id, col, row) = ccol
+                if col==i:
+                    columns_row_sort[box_id] = ymin
+            a3 = sorted(columns_row_sort.items(), key=lambda x: x[1])
+            for j in range(len(a3)):
+                for ccol1 in columns_col:
+                    (xmin1, ymin1, xmax1, ymax1, box_id1, col1, row1) = ccol1
+                    if box_id1 == a3[j][0]:
+                        row1=j
+                        columns_col_dict[box_id1] = (xmin1, ymin1, xmax1, ymax1, box_id1, col1, row1)
+
+        for key in columns_col_dict:
+            gc_ins = goods_box.GoodsColumn()
+            (xmin, ymin, xmax, ymax, box_id, col, row) = columns_col_dict[key]
+            gc_ins.location_column = col
+            gc_ins.location_row = row
+            gc_ins.location_box = (xmin, ymin, xmax, ymax)
+            gc_ins.box_id = box_id
+            colmunboxes.append(gc_ins)
+        return len(columns),colmunboxes
+
 
     def get_goods_box_info(self,value):
         cb_cols = []
@@ -112,7 +175,7 @@ class CheckBoxStructure:
             if (cb_col_ins.c_ymin+cb_col_ins.c_ymax)/2 > (cb_col.c_ymin+cb_col.c_ymax)/2:
                 get_row = cb_col.row+1
         # 处理 三种情况  1 get_row 最下行   2 get_row 中间行  3 get_row 最上行
-        if get_row == None:  # 最左列
+        if get_row == None:  # 最xihang
             for cb_col in cb_cols:
                 if cb_col.col == cb_col_ins.col:
                     cb_col.row += 1
@@ -133,9 +196,9 @@ class CheckBoxStructure:
             if cb_col.row == 0:
                 x_iou = get_iou((cb_col_ins.xmin,cb_col_ins.xmax),(cb_col.xmin,cb_col.xmax))
                 y_iou = get_iou((cb_col_ins.c_ymin,cb_col_ins.c_ymax),(cb_col.c_ymin,cb_col.c_ymax))
-                if x_iou > self.x_iou_min and y_iou <  self.y_iou_max :
+                if x_iou > self.x_iou_min and y_iou <  self.y_iou_max : # 相同列
                     return cb_col.col,cb_cols
-                else:
+                else: #不同列
                     col_sort[cb_col.col] = cb_col
 
         a2 = sorted(col_sort.items(), key=lambda x: x[0])
@@ -160,12 +223,6 @@ class CheckBoxStructure:
             return get_col,cb_cols
         else:
             return get_col,cb_cols
-
-
-
-     # 添加空列
-
-
 
 def get_iou(x1,x2):
     (x1_min,x1_max) = x1
