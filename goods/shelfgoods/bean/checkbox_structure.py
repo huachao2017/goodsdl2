@@ -27,9 +27,13 @@ class CheckBoxStructure:
             cb_col_ins.box_id = box_id1
             cb_cols = self.add_cb_col(cb_col_ins,cb_cols)
         logger.info("wei add none "+str(len(cb_cols)))
+        for cb_col in cb_cols:
+            logger.info("wei add none " + str(cb_col.col))
         #添加空列
         cb_cols = self.add_none_col(cb_cols)
         logger.info("add none " + str(len(cb_cols)))
+        for cb_col in cb_cols:
+            logger.info("add none " + str(cb_col.col))
         cols = []
         colmunboxes=[]
         for cb_col in cb_cols:
@@ -40,6 +44,8 @@ class CheckBoxStructure:
             (xmin, ymin, xmax, ymax, box_id) = value[cb_col.value_index]
             gc_ins.location_box = (xmin, ymin, xmax, ymax)
             gc_ins.box_id = box_id
+            logger.info("col " + str(cb_col.col))
+            logger.info("row " + str(cb_col.row))
             colmunboxes.append(gc_ins)
         columns = max(cols)+1
         logger.info("columns " + str(len(cb_cols)))
@@ -74,10 +80,11 @@ class CheckBoxStructure:
             if i+1 <= len(cols)-1:
                 avg_weight = (cols[i].xmax - cols[i].xmin) + (cols[i+1].xmax - cols[i+1].xmin) / 2
                 t = int(cols[i + 1].xmin - cols[i].xmax / avg_weight)
-                if float(cols[i + 1].xmin - cols[i].xmax / avg_weight) - t > self.none_col:
+                if t>= 0 and float(cols[i + 1].xmin - cols[i].xmax / avg_weight) - t > self.none_col:
                     t+=1
                     sum_t+=t
                     indexs[i+1] = i+1+sum_t
+
         for cb_col in cb_cols:
             for key in indexs:
                 if cb_col.col == key:
