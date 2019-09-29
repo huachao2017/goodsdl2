@@ -411,7 +411,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         old_result = instance.result
         old_upc = instance.upc
 
-        if 'xmin' in request.data:
+        if 'xmin' in request.data and 'xmax' in request.data and 'ymin' in request.data and 'ymax' in request.data:
             if request.data['xmin'] > request.data['xmax'] or request.data['ymin'] > request.data['ymax']:
                 raise ValueError("position error")
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
