@@ -32,7 +32,8 @@ class ShelfGoods(models.Model):
     result = models.IntegerField(default=-1)
     create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
     update_time = models.DateTimeField('date updated', auto_now=True)
-
+    def __str__(self):
+        return '{}-{}:{}'.format(self.pk, self.upc, self.result)
 
 def image_upload_source(instance, filename):
     now = datetime.datetime.now()
