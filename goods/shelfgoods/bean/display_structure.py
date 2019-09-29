@@ -19,7 +19,7 @@ class DispalyStructure():
         colmunboxes = []
 
         for upc_box, i in zip(value, range(len(value))):
-            (upc, is_fitting, bottom, left, width, height) = upc_box
+            (upc, is_fitting, name,bottom, left, width, height) = upc_box
             xmin1 = left
             ymin1 = bottom
             xmax1 = left+width
@@ -45,7 +45,7 @@ class DispalyStructure():
             (xmin1, ymin1, xmax1, ymax1, box_id1) = a2[i][1]
             columns_col.append((xmin1, ymin1, xmax1, ymax1, box_id1, i, 0))
         columns_row = []
-        for box1, i in zip(value, range(len(value))):
+        for upc_box, i in zip(value, range(len(value))):
             (upc, is_fitting, bottom, left, width, height) = upc_box
             xmin1 = left
             ymin1 = bottom
@@ -82,8 +82,8 @@ class DispalyStructure():
             gc_ins = goods_box.GoodsColumn()
             (xmin, ymin, xmax, ymax, box_id, col, row) = columns_col_dict[key]
 
-            for box1, i in zip(value, range(len(value))):
-                (upc, is_fitting, bottom, left, width, height) = upc_box
+            for upc_box, i in zip(value, range(len(value))):
+                (upc, is_fitting,name, bottom, left, width, height) = upc_box
                 if i == box_id:
                     gc_ins.is_fitting = is_fitting
                     gc_ins.location_left = left
@@ -91,6 +91,7 @@ class DispalyStructure():
                     gc_ins.location_height = height
                     gc_ins.location_weight = width
                     gc_ins.upc = upc
+                    gc_ins.name = name
             gc_ins.location_column = col
             gc_ins.location_row = row
             gc_ins.location_box = (xmin, ymin, xmax, ymax)

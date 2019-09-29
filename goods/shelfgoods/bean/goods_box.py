@@ -10,6 +10,7 @@ class GoodsBox:
 
 class GoodsColumn:
     upc=None
+    name=None
     box_id = None
     location_column = None
     location_row = None
