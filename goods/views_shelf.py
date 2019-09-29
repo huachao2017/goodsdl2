@@ -366,6 +366,8 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
             ymin = int(request.data['ymin'])
             xmax = int(request.data['xmax'])
             ymax = int(request.data['ymax'])
+            if xmin > xmax or ymin > ymax:
+                raise ValueError("position error")
 
             shelf_image = ShelfImage.objects.filter(picid=picid).order_by('-pk')[0]
         except Exception as e:
@@ -409,6 +411,9 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         old_result = instance.result
         old_upc = instance.upc
 
+        if 'xmin' in request.data:
+            if request.data['xmin'] > request.data['xmax'] or request.data['ymin'] > request.data['ymax']:
+                raise ValueError("position error")
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
