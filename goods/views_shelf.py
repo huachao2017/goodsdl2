@@ -407,15 +407,12 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         old_result = instance.result
         old_upc = instance.upc
 
-        logger.info(request.data)
-        logger.info(partial)
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
 
         result = serializer.instance.result
-        logger.info(serializer.instance)
         if result == 1:
             if old_result == 0 and old_upc != '':
                 sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
