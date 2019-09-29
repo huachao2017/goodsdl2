@@ -15,6 +15,8 @@ class GoodsColumn:
     location_row = None
     location_left = None
     location_bottom = None
+    location_weight = None
+    location_height = None
     location_box = None
     compare_result = None
     compare_code = None
