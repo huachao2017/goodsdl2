@@ -46,7 +46,7 @@ class DispalyStructure():
             columns_col.append((xmin1, ymin1, xmax1, ymax1, box_id1, i, 0))
         columns_row = []
         for upc_box, i in zip(value, range(len(value))):
-            (upc, is_fitting, bottom, left, width, height) = upc_box
+            (upc, is_fitting,name, bottom, left, width, height) = upc_box
             xmin1 = left
             ymin1 = bottom
             xmax1 = left + width
