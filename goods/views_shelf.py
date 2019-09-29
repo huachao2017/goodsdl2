@@ -302,7 +302,7 @@ class GetShelfImageDetail(APIView):
         image = PILImage.open(image_path)
         (im_width, im_height) = image.size
         ret = {
-            "recturl":os.path.join(settings.MEDIA_URL,d.rectsource),
+            "recturl":os.path.join(settings.MEDIA_URL,shelf_image.rectsource),
             "rectwidth": im_width,
             "rectheight": im_height,
             "score":shelf_image.score,
