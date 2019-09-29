@@ -27,6 +27,7 @@ def process(check_box_ins,display_ins,shelf_img):
             # logger.info(
             #     "ds_location_column,ds_location_row=(%s,%s)" % (str(ds_location_column), str(ds_location_row)))
             if ck_gcs.compare_code == None and  ds_location_column == ck_location_column and ds_location_row==ck_location_row:
+                logger.info("(box_id,xmin,ymin,xmax,ymax)=(%s,%s,%s,%s,%s)" % (str(ck_gcs.box_id),str(ck_box[0]), str(ck_box[1]), str(ck_box[2]), str(ck_box[3])))
                 target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
                 match_ins = shelftradition_match.ShelfTraditionMatch(ds_upc)
                 match_result = match_ins.detect_one_with_cv2array(target_img)
@@ -39,9 +40,9 @@ def process(check_box_ins,display_ins,shelf_img):
             elif  ck_gcs.compare_code == None and  ds_location_column == ck_location_column:
                 ck_gcs.compare_code = code.code_5
                 ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
-        else:
-            ck_gcs.compare_code = code.code_6
-            ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
+            # else:
+            #     ck_gcs.compare_code = code.code_6
+            #     ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
     return check_box_ins,display_ins
 
 

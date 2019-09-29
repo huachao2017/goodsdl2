@@ -71,12 +71,14 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
             # logger.info(
             #     "ds_location_column,ds_location_row=(%s,%s)" % (str(ds_location_column), str(ds_location_row)))
             if ck_gcs.compare_code == None and ds_location_column == ck_location_column and ds_location_row == ck_location_row:
+                logger.info("(box_id,xmin,ymin,xmax,ymax)=(%s,%s,%s,%s,%s)" % (str(ck_gcs.box_id),str(ck_box[0]), str(ck_box[1]), str(ck_box[2]), str(ck_box[3])))
                 target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
                 match_ins = shelftradition_match.ShelfTraditionMatch(ds_upc)
                 match_result = match_ins.detect_one_with_cv2array(target_img)
                 logger.info("ck_box box_id=%s,upc=%s,match_result=%s,ds=(%s,%s),ck=(%s,%s)" % (
                     str(ck_gcs.box_id), str(ds_upc), str(code.match_result[match_result]), str(ds_location_column),
                     str(ds_location_row), str(ck_location_column), str(ck_location_row)))
+
                 compare_re_l.append((ck_location_column,ck_location_row,match_result))
                 if match_result == True:
                     ck_gcs.upc = ds_upc
