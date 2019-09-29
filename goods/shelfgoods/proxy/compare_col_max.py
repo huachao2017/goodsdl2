@@ -75,8 +75,7 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
             # compare_result = ck_gcs.compare_result
             # compare_code = ck_gcs.compare_code
             if ck_gcs.compare_code == None and ds_location_column == ck_location_column and ds_location_row == ck_location_row:
-                logger.info("(xmin,ymin,xmax,ymax)=(%s,%s,%s,%s)" % (
-                str(ck_box[0]), str(ck_box[1]), str(ck_box[2]), str(ck_box[3])))
+                logger.info("(box_id,xmin,ymin,xmax,ymax)=(%s,%s,%s,%s,%s)" % (str(ck_gcs.box_id),str(ck_box[0]), str(ck_box[1]), str(ck_box[2]), str(ck_box[3])))
                 target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
                 match_ins = shelftradition_match.ShelfTraditionMatch(ds_upc)
                 match_result = match_ins.detect_one_with_cv2array(target_img)
