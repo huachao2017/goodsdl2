@@ -10,7 +10,7 @@ class DispalyStructure():
     def __init__(self,level,value):
         # columns, columns_info,bottom_max = self.get_goods_box_columns(value)
         # goodscolumns = self.get_goods_box_location(value,columns_info,bottom_max)
-        columns,goodscolumns = self.get_column(value)
+        columns,goodscolumns = self.get_columns(value)
         self.gbx_ins = goods_box.GoodsBox(int(level), columns, goodscolumns)
 
 
