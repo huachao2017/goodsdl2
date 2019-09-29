@@ -441,9 +441,13 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                     image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.rectsource)
                 else:
                     image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.source)
+                upc_sample_dir = os.path.join(sample_dir,upc)
+                if not tf.gfile.Exists(upc_sample_dir):
+                    tf.gfile.MakeDirs(upc_sample_dir)
+
                 image = PILImage.open(image_path)
                 sample_image = image.crop((serializer.instance.xmin, serializer.instance.ymin, serializer.instance.xmax, serializer.instance.ymax))
-                sample_image_path = os.path.join(sample_dir, upc, '{}.jpg'.format(serializer.instance.pk))
+                sample_image_path = os.path.join(upc_sample_dir, '{}.jpg'.format(serializer.instance.pk))
                 logger.info("add upc image ,filepath="+str(sample_image_path))
                 sample_image.save(sample_image_path, 'JPEG',quality=100)
                 serializer.instance.upc = upc
