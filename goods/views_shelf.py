@@ -402,7 +402,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         return Response({'boxid':shelf_goods.pk}, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', True)
+        partial = kwargs.pop('partial', False)
         instance = self.get_object()
         old_result = instance.result
         old_upc = instance.upc
@@ -413,6 +413,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
 
 
         result = serializer.instance.result
+        logger.info(serializer.instance)
         if result == 1:
             if old_result == 0 and old_upc != '':
                 sample_dir = os.path.join(settings.MEDIA_ROOT, settings.DETECT_DIR_NAME, 'shelf_sample')
