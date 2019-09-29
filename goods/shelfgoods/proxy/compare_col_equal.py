@@ -39,9 +39,9 @@ def process(check_box_ins,display_ins,shelf_img):
             elif  ck_gcs.compare_code == None and  ds_location_column == ck_location_column:
                 ck_gcs.compare_code = code.code_5
                 ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
-        else:
-            ck_gcs.compare_code = code.code_6
-            ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
+            # else:
+            #     ck_gcs.compare_code = code.code_6
+            #     ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
     return check_box_ins,display_ins
 
 
