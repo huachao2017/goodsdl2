@@ -42,7 +42,7 @@ class NumpyEncoder(json.JSONEncoder):
         else:
             return super(NumpyEncoder, self).default(obj)
 
-def detect_compare(shelf_image, image_path, need_detect = True, need_notify = False, label_shelf_goods = None):
+def detect_compare(shelf_image, image_path, need_detect = True, need_notify = False):
     shelf_goods_map = {}
     if need_detect:
         # 删除旧的goods
@@ -92,7 +92,7 @@ def detect_compare(shelf_image, image_path, need_detect = True, need_notify = Fa
         for one in compare_ret['detail']:
             shelf_goods = shelf_goods_map[one['boxid']]
             # 以标注的商品为准
-            if label_shelf_goods is None or label_shelf_goods.pk != shelf_goods.pk:
+            if not shelf_goods.is_label:
                 shelf_goods.result = one['result']
                 if shelf_goods.result == 0:
                     # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
@@ -435,6 +435,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                 if os.path.isfile(old_sample_path):
                     # 删除原来的样本
                     os.remove(old_sample_path)
+                serializer.instance.is_label = True
                 serializer.instance.upc = ''
                 serializer.instance.save()
 
@@ -463,6 +464,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                 logger.info("add upc image ,filepath="+str(sample_image_path))
                 sample_image.save(sample_image_path, 'JPEG')
                 serializer.instance.upc = upc
+                serializer.instance.is_label = True
                 serializer.instance.save()
             else:
                 logger.error('get_upc is None')
@@ -478,7 +480,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         else:
             image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.source)
         # TODO 需要优化成单层更新，提升效率
-        compare_ret = detect_compare(serializer.instance.shelf_image, image_path, need_detect=False, need_notify=True, label_shelf_goods = serializer.instance)
+        compare_ret = detect_compare(serializer.instance.shelf_image, image_path, need_detect=False, need_notify=True)
         return Response(compare_ret)
 
 

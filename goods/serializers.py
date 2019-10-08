@@ -14,7 +14,7 @@ class ShelfImageSerializer(serializers.ModelSerializer):
 class ShelfGoodsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShelfGoods
-        fields = ('pk', 'upc', 'xmin', 'ymin', 'xmax', 'ymax', 'level', 'result', 'create_time', 'update_time')
+        fields = ('pk', 'upc', 'xmin', 'ymin', 'xmax', 'ymax', 'level', 'result', 'is_label', 'create_time', 'update_time')
         read_only_fields = ('level', 'create_time', 'update_time')
 
 

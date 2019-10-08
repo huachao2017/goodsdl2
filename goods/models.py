@@ -30,6 +30,7 @@ class ShelfGoods(models.Model):
     ymax = models.PositiveIntegerField(default=0)
     level = models.IntegerField(default=-1)
     result = models.IntegerField(default=-1)
+    is_label = models.BooleanField(default=False)
     create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
     update_time = models.DateTimeField('date updated', auto_now=True)
     def __str__(self):
