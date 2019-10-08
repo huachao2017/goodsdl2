@@ -42,7 +42,7 @@ class NumpyEncoder(json.JSONEncoder):
         else:
             return super(NumpyEncoder, self).default(obj)
 
-def detect_compare(shelf_image, image_path, need_detect = True, need_notify = False):
+def detect_compare(shelf_image, image_path, need_detect = True, need_notify = False, label_shelf_goods = None):
     shelf_goods_map = {}
     if need_detect:
         # 删除旧的goods
@@ -91,13 +91,15 @@ def detect_compare(shelf_image, image_path, need_detect = True, need_notify = Fa
         shelf_image.save()
         for one in compare_ret['detail']:
             shelf_goods = shelf_goods_map[one['boxid']]
-            shelf_goods.result = one['result']
-            if shelf_goods.result == 0:
-                # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
-                shelf_goods.upc = one['upc']
-            else:
-                shelf_goods.upc = ''
-            shelf_goods.save()
+            # 以标注的商品为准
+            if label_shelf_goods is None or label_shelf_goods.pk != shelf_goods.pk:
+                shelf_goods.result = one['result']
+                if shelf_goods.result == 0:
+                    # TODO 如果前后两个upc不相同，有可能冲掉用户标注的数据
+                    shelf_goods.upc = one['upc']
+                else:
+                    shelf_goods.upc = ''
+                shelf_goods.save()
     if need_notify:
         notify_result(shelf_image)
 
@@ -476,7 +478,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         else:
             image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.source)
         # TODO 需要优化成单层更新，提升效率
-        compare_ret = detect_compare(serializer.instance.shelf_image, image_path, need_detect=False, need_notify=True)
+        compare_ret = detect_compare(serializer.instance.shelf_image, image_path, need_detect=False, need_notify=True, label_shelf_goods = serializer.instance)
         return Response(compare_ret)
 
 
