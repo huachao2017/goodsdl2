@@ -22,6 +22,7 @@ from dl.util import caculate_level
 from goods.shelfgoods.service import tz_good_compare
 from goods.util import shelf_visualize
 from .serializers import *
+from goods.shelfgoods.imgsearch.search import ImgSearch
 
 logger = logging.getLogger("django")
 
@@ -441,6 +442,8 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                 serializer.instance.is_label = True
                 serializer.instance.upc = ''
                 serializer.instance.save()
+                img_search = ImgSearch()
+                img_search.delete_img(old_upc,str(serializer.instance.pk))
 
         elif result == 0:
             # 计算upc
@@ -469,6 +472,8 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                 serializer.instance.upc = upc
                 serializer.instance.is_label = True
                 serializer.instance.save()
+                img_search = ImgSearch()
+                img_search.add_img(upc,str(serializer.instance.pk),sample_image_path)
             else:
                 logger.error('get_upc is None')
 
