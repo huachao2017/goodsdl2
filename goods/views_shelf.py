@@ -241,14 +241,14 @@ class RectifyAndDetect(APIView):
         cv2.imwrite(rectify_image_path,dst)
 
         shelf_image.rectjson = json.dumps({
-            x1:x1,
-            y1:y1,
-            x2:x2,
-            y2:y2,
-            x3:x3,
-            y3:y3,
-            x4:x4,
-            y4:y4})
+            "x1":x1,
+            "y1":y1,
+            "x2":x2,
+            "y2":y2,
+            "x3":x3,
+            "y3":y3,
+            "x4":x4,
+            "y4":y4})
         shelf_image.rectsource = os.path.join(image_relative_dir, rectify_image_name)
         shelf_image.save()
 
@@ -274,6 +274,9 @@ class GetShelfImage(APIView):
             "width": im_width,
             "height": im_height,
         }
+        if shelf_image.rectjson != '':
+            rect = json.loads(shelf_image.rectjson)
+            ret.update(rect)
         return Response(ret, status=status.HTTP_200_OK)
 
 
