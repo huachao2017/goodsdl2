@@ -13,6 +13,7 @@ import demjson
 AccessKey ID LTAI4Ftp8inKDzFmaEWyj17P
 AccessKeySecret mCVOzv0fABM19dTRlYlWMZdGlAoqsz
 """
+import time
 class ImgSearch:
     AccessKeyID = "LTAI4Ftp8inKDzFmaEWyj17P"
     AccessKeySecret = "mCVOzv0fABM19dTRlYlWMZdGlAoqsz"
@@ -44,6 +45,7 @@ class ImgSearch:
             #     encoded_pic_content = base64.b64encode(imgfile.read())
             #     request.set_PicContent(encoded_pic_content)
             response = self.client.do_action_with_exception(request)
+            time.sleep(0.5)
             logger.info("aliyun add_img,response="+str(response))
             print(response)
             code = dict(demjson.decode(response))['Code']
@@ -68,6 +70,7 @@ class ImgSearch:
             #     encoded_pic_content = base64.b64encode(imgfile.read())
             #     request.set_PicContent(encoded_pic_content)
             response = self.client.do_action_with_exception(request)
+            time.sleep(0.5)
             logger.info("aliyun add_img,response="+str(response))
             print(response)
             code = dict(demjson.decode(response))['Code']
@@ -85,6 +88,7 @@ class ImgSearch:
             if imgname!=None:
                 request.set_PicName(imgname)
             response = self.client.do_action_with_exception(request)
+            time.sleep(0.5)
             print(response)
             logger.info("aliyun delete_img,response=" + str(response))
             code = dict(demjson.decode(response))['Code']
@@ -105,6 +109,7 @@ class ImgSearch:
             img_encode = base64.b64encode(img_encode)
             request.set_PicContent(img_encode)
             response = self.client.do_action_with_exception(request)
+            time.sleep(0.5)
             logger.info("aliyun search_img,response=" + str(response))
             print (response)
             result = dict(demjson.decode(response))
@@ -132,6 +137,7 @@ class ImgSearch:
             img_encode = base64.b64encode(img_encode)
             request.set_PicContent(img_encode)
             response = self.client.do_action_with_exception(request)
+            time.sleep(0.5)
             logger.info("aliyun search_img,response=" + str(response))
             result = dict(demjson.decode(response))
             upcs = []
