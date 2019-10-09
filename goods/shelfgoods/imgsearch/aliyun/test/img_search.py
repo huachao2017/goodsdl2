@@ -22,7 +22,7 @@ def add_img():
 
 def search_img():
     search_ins = ImgSearch()
-    imgpath = "D:\\opt\\data\\goods\\uc_merchant_goods\\img\\11001126_686.jpg"
+    imgpath = "D:\\opt\\data\\11\\2.png"
     upc = search_ins.search_img(imgpath)
     print (upc)
 

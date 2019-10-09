@@ -19,7 +19,7 @@ class ImgSearch:
     region = "cn-shanghai"
     instance_name = "hsimgsearch"
     client = None
-    min_score = 10
+    min_score = 5
     search_point = "imagesearch."+region+".aliyuncs.com"
     def __init__(self):
         self.client = self.get_client()
@@ -106,6 +106,7 @@ class ImgSearch:
             request.set_PicContent(img_encode)
             response = self.client.do_action_with_exception(request)
             logger.info("aliyun search_img,response=" + str(response))
+            print (response)
             result = dict(demjson.decode(response))
             if result['Code'] == 0 :
                 sort_values = list(result['Auctions'])
