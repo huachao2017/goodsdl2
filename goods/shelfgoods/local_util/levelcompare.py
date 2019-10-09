@@ -43,15 +43,16 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
                     compare_code = key
             for key in level_boxes_result:
                 if level == key:
-                    (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1) = level_boxes_result[key]
-                    if result1 == 0 and box_id == box_id1:
-                        compare_code = 0
-                        process_code = code.code_11
-                        upc = upc1
-                    elif result1 == 1 and box_id == box_id1:
-                        compare_code = 1
-                        process_code = code.code_11
-                        upc = upc1
+                    for value in list(level_boxes_result[key]):
+                        (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1) = value
+                        if result1 == 0 and box_id == box_id1:
+                            compare_code = 0
+                            process_code = code.code_11
+                            upc = upc1
+                        elif result1 == 1 and box_id == box_id1:
+                            compare_code = 1
+                            process_code = code.code_11
+                            upc = upc1
             if compare_code == None or process_code == None:
                 compare_code = 2
             if compare_code == 0:
