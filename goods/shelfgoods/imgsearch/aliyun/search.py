@@ -19,7 +19,7 @@ class ImgSearch:
     region = "cn-shanghai"
     instance_name = "hsimgsearch"
     client = None
-    min_score = 5
+    min_score = 0
     search_point = "imagesearch."+region+".aliyuncs.com"
     def __init__(self):
         self.client = self.get_client()

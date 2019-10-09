@@ -31,7 +31,25 @@ def delete_img():
     code = search_ins.delete_img('11001126')
     if code == 0:
         print (code)
+
+def test_acc():
+    search_ins = ImgSearch()
+    jpgpath = "D:\\opt\\data\\goods\\upc_test\\"
+    upc_files = os.listdir(jpgpath)
+    j = 0
+    i = 0
+    for file in upc_files:
+        upc_f = str(file).split("_")[0]
+        filepath = os.path.join(jpgpath,file)
+        upc = search_ins.search_img(filepath)
+        time.sleep(1)
+        j+=1
+        if upc!=None and upc == upc_f:
+            i+=1
+    print (float(i/j))
+
 if __name__=='__main__':
     # add_img()
-    search_img()
+    # search_img()
     # delete_img()
+    test_acc()
