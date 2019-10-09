@@ -52,6 +52,29 @@ class ImgSearch:
             logging.error(err)
             return None
 
+    def add_cvimg(self,upc,imgname,cvimg):
+        # 添加图片
+        try:
+            request = AddImageRequest.AddImageRequest()
+            request.set_endpoint(self.search_point)
+            request.set_InstanceName(self.instance_name)
+            request.set_ProductId(upc)
+            request.set_PicName(imgname)
+            img = cv2.resize(cvimg, (200,200))
+            img_encode = cv2.imencode('.jpg', img)[1]
+            img_encode = base64.b64encode(img_encode)
+            request.set_PicContent(img_encode)
+            # with open(img_path, 'rb') as imgfile:
+            #     encoded_pic_content = base64.b64encode(imgfile.read())
+            #     request.set_PicContent(encoded_pic_content)
+            response = self.client.do_action_with_exception(request)
+            logger.info("aliyun add_img,response="+str(response))
+            print(response)
+            code = dict(demjson.decode(response))['Code']
+            return code
+        except Exception as err:
+            logging.error(err)
+            return None
 
     def delete_img(self,upc):
         try:
@@ -95,4 +118,28 @@ class ImgSearch:
             logging.error(err)
             return None
 
+    def search_cvimg(self, cvimg):
+        try:
+            request = SearchImageRequest.SearchImageRequest()
+            request.set_endpoint(self.search_point)
+            request.set_InstanceName(self.instance_name)
+            img = cv2.resize(cvimg, (200, 200))
+            img_encode = cv2.imencode('.jpg', img)[1]
+            img_encode = base64.b64encode(img_encode)
+            request.set_PicContent(img_encode)
+            response = self.client.do_action_with_exception(request)
+            logger.info("aliyun search_img,response=" + str(response))
+            result = dict(demjson.decode(response))
+            if result['Code'] == 0:
+                sort_values = list(result['Auctions'])
+                for value in sort_values:
+                    ProductId = dict(value)['ProductId']
+                    PicName = dict(value)['PicName']
+                    SortExprValues = str(dict(value)['SortExprValues'])
+                    if float(SortExprValues.split(";")[0]) > self.min_score:
+                        return ProductId
+            return None
+        except Exception as err:
+            logging.error(err)
+            return None
 

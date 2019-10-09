@@ -2,6 +2,9 @@ from goods.shelfgoods.bean import code
 from dl import shelftradition_match
 import logging
 logger = logging.getLogger("detect")
+from set_config import config
+from goods.shelfgoods.imgsearch.aliyun.search import ImgSearch
+aliyun_search_img_switch = config.aliyun_search_img_switch
 def process(check_box_ins,display_ins,shelf_img):
     logger.info("level proxy process is compare_col_min ..................")
     ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
