@@ -10,6 +10,9 @@ result_code={
     9:"level_error",
     10:"is_fitting",
     11:"from database",
+    12:"from aliyun",
+    13:"from aliyun",
+    14:"from aliyun"
 }
 
 code_5 = 5 # 相等列中，检测框多的
@@ -19,6 +22,9 @@ code_8 = 8 # 大于陈列设计中，该值未进入比较
 code_9 = 9 # 有错层 不进行比较
 code_10 = 10 # 黑盒子 不进入比较
 code_11 = 11 # 从数据库获取的result
+code_12 = 12 # 阿里云返回 正确比较结果
+code_13 = 13 # 阿里云没有比对上
+code_14 = 14 #阿里云没有搜索到
 match_result={
     True:1,
     False:2,
@@ -26,7 +32,7 @@ match_result={
 }
 
 filter_code ={
-    0:[1],
-    1:[2,5,6,7,8],
-    2:[3,4,10]
+    0:[1,12],
+    1:[2,5,6,7,8,13],
+    2:[3,4,10,14]
 }

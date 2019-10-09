@@ -2,6 +2,9 @@ from goods.shelfgoods.bean import code
 from dl import shelftradition_match
 import logging
 logger = logging.getLogger("detect")
+from set_config import config
+from goods.shelfgoods.imgsearch.aliyun.search import ImgSearch
+aliyun_search_img_switch = config.aliyun_search_img_switch
 def process(check_box_ins,display_ins,shelf_img):
     logger.info("current level process compare_col_equal ..................")
     ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
@@ -29,14 +32,30 @@ def process(check_box_ins,display_ins,shelf_img):
             if ck_gcs.compare_code == None and  ds_location_column == ck_location_column and ds_location_row==ck_location_row:
                 logger.info("(box_id,xmin,ymin,xmax,ymax)=(%s,%s,%s,%s,%s)" % (str(ck_gcs.box_id),str(ck_box[0]), str(ck_box[1]), str(ck_box[2]), str(ck_box[3])))
                 target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
-                match_ins = shelftradition_match.ShelfTraditionMatch(ds_upc)
-                match_result = match_ins.detect_one_with_cv2array(target_img)
-                logger.info("ck_box box_id=%s,upc=%s,match_result=%s,ds=(%s,%s),ck=(%s,%s)" % (
-                str(ck_gcs.box_id), str(ds_upc), str(code.match_result[match_result]),str(ds_location_column), str(ds_location_row),str(ck_location_column),str(ck_location_row)))
-                ck_gcs.compare_code = code.match_result[match_result]
-                ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
-                if match_result:
-                    ck_gcs.upc = ds_upc
+                if aliyun_search_img_switch:
+                    search_ins = ImgSearch()
+                    upc = search_ins.search_cvimg(target_img)
+                    logger.info("ck_box box_id=%s,upc=%s,aliyun match upc=%s,ds=(%s,%s),ck=(%s,%s)" % (str(ck_gcs.box_id), str(ds_upc), str(upc),str(ds_location_column), str(ds_location_row),str(ck_location_column),str(ck_location_row)))
+                    if upc != None and upc == ds_upc:
+                        ck_gcs.compare_code = code.code_12
+                        ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
+                        ck_gcs.upc = ds_upc
+                    elif(upc != None and upc != ds_upc):
+                        ck_gcs.compare_code = code.code_13
+                        ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
+                    else:
+                        ck_gcs.compare_code = code.code_14
+                        ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
+
+                else:
+                    match_ins = shelftradition_match.ShelfTraditionMatch(ds_upc)
+                    match_result = match_ins.detect_one_with_cv2array(target_img)
+                    logger.info("ck_box box_id=%s,upc=%s,match_result=%s,ds=(%s,%s),ck=(%s,%s)" % (
+                    str(ck_gcs.box_id), str(ds_upc), str(code.match_result[match_result]),str(ds_location_column), str(ds_location_row),str(ck_location_column),str(ck_location_row)))
+                    ck_gcs.compare_code = code.match_result[match_result]
+                    ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
+                    if match_result:
+                        ck_gcs.upc = ds_upc
             elif  ck_gcs.compare_code == None and  ds_location_column == ck_location_column:
                 ck_gcs.compare_code = code.code_5
                 ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
