@@ -118,6 +118,7 @@ class LoadData:
                 level = []
                 result = []
                 upc=[]
+                is_label = []
                 for row in list(results):
                     box_id.append(int(row[0]))
                     shelf_img_id.append(int(row[1]))
@@ -128,23 +129,24 @@ class LoadData:
                     level.append(int(row[6]))
                     result.append(int(row[7]))
                     upc.append(str(row[8]))
+                    is_label.append(int(row[9]))
                 mysql_ins.close()
                 if (len(shelf_img_id))>0:
                     # shelf_img = self.get_ai_shelf_img(shelf_img_id[0])
-                    level_boxes = self.get_check_level_boxes_result(box_id,level,xmin, ymin, xmax, ymax,result,upc)
+                    level_boxes = self.get_check_level_boxes_result(box_id,level,xmin, ymin, xmax, ymax,result,upc,is_label)
                     return level_boxes
             except Exception as e:
                 logger.error("get_ai_goods failed ,shelf_image_id="+str(shelf_image_id))
                 logger.error(traceback.format_exc())
                 return None
 
-    def get_check_level_boxes_result(self, box_ids, box_levels, xmins, ymins, xmaxs, ymaxs,results,upcs):
+    def get_check_level_boxes_result(self, box_ids, box_levels, xmins, ymins, xmaxs, ymaxs,results,upcs,is_labels):
         levels = list(set(box_levels))
         level_boxes = {}
         for level in levels:
             level_boxes[level] = []
         for level in levels:
-            for box_id, box_level, xmin, ymin, xmax, ymax,result,upc in zip(box_ids, box_levels, xmins, ymins, xmaxs, ymaxs,results,upcs):
+            for box_id, box_level, xmin, ymin, xmax, ymax,result,upc,is_label in zip(box_ids, box_levels, xmins, ymins, xmaxs, ymaxs,results,upcs,is_labels):
                 if level == box_level:
-                    level_boxes[level].append((xmin, ymin, xmax, ymax, box_id,result,upc))
+                    level_boxes[level].append((xmin, ymin, xmax, ymax, box_id,result,upc,is_label))
         return level_boxes

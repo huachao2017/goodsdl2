@@ -71,12 +71,12 @@ class Compare:
                 for key in level_boxes_result:
                     if level == key:
                         for value in list(level_boxes_result[key]):
-                            (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1) = value
-                            if result1 == 0 and box_id == box_id1:
+                            (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1,is_label) = value
+                            if result1 == 0 and box_id == box_id1 and is_label == 1:
                                 compare_code = 0
                                 process_code = code.code_11
                                 upc = upc1
-                            elif result1 == 1 and  box_id == box_id1:
+                            elif result1 == 1 and  box_id == box_id1 and is_label == 1:
                                 compare_code = 1
                                 process_code = code.code_11
                                 upc = upc1

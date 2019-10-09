@@ -44,12 +44,12 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
             for key in level_boxes_result:
                 if level == key:
                     for value in list(level_boxes_result[key]):
-                        (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1) = value
-                        if result1 == 0 and box_id == box_id1:
+                        (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1, is_label) = value
+                        if result1 == 0 and box_id == box_id1 and is_label == 1:
                             compare_code = 0
                             process_code = code.code_11
                             upc = upc1
-                        elif result1 == 1 and box_id == box_id1:
+                        elif result1 == 1 and box_id == box_id1 and is_label == 1:
                             compare_code = 1
                             process_code = code.code_11
                             upc = upc1
@@ -71,30 +71,6 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
                 'process_code': process_code,
                 'col': good_col.location_column,
                 'row': good_col.location_row,
-                'boxid': box_id,
-                'upc': upc
-            })
-    for key in level_boxes_result:
-        if level == key:
-            (xmin,ymin,xmax,ymax,box_id,result,upc) = level_boxes_result[key]
-            if result is None or result == -1 :
-                result = 2
-            if result == 0:
-                equal_cnt += 1
-            if result == 1:
-                different_cnt += 1
-            if result == 2:
-                unknown_cnt += 1
-            detail.append({
-                'level': int(key),
-                'xmin': xmin,
-                'ymin': ymin,
-                'xmax': xmax,
-                'ymax': ymax,
-                'result': result,
-                'process_code': code.code_11,
-                'col': None,
-                'row': None,
                 'boxid': box_id,
                 'upc': upc
             })
