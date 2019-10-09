@@ -75,13 +75,15 @@ class ImgSearch:
         except Exception as err:
             logging.error(err)
             return None
-
-    def delete_img(self,upc):
+    #若不指定imgname 参数，则删除upc下所有图片；若指定参数，删除upc+imgname指定的图片。
+    def delete_img(self,upc,imgname=None):
         try:
             request = DeleteImageRequest.DeleteImageRequest()
             request.set_endpoint(self.search_point)
             request.set_InstanceName(self.instance_name)
             request.set_ProductId(upc)
+            if imgname!=None:
+                request.set_PicName(imgname)
             response = self.client.do_action_with_exception(request)
             print(response)
             logger.info("aliyun delete_img,response=" + str(response))
