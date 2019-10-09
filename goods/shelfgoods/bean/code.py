@@ -10,9 +10,11 @@ result_code={
     9:"level_error",
     10:"is_fitting",
     11:"from database",
-    12:"from aliyun",
-    13:"from aliyun",
-    14:"from aliyun"
+    12:"from aliyun success",
+    13:"from aliyun failed",
+    14:"from aliyun wz",
+    15:"from aliyun error"
+
 }
 
 code_5 = 5 # 相等列中，检测框多的
@@ -25,6 +27,7 @@ code_11 = 11 # 从数据库获取的result
 code_12 = 12 # 阿里云返回 正确比较结果
 code_13 = 13 # 阿里云没有比对上
 code_14 = 14 #阿里云没有搜索到
+code_15 = 15 #阿里云搜索时有错
 match_result={
     True:1,
     False:2,
@@ -34,5 +37,5 @@ match_result={
 filter_code ={
     0:[1,12],
     1:[2,5,6,7,8,13],
-    2:[3,4,10,14]
+    2:[3,4,10,14,15]
 }

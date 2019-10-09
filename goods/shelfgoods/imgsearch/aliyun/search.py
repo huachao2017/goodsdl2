@@ -19,7 +19,7 @@ class ImgSearch:
     region = "cn-shanghai"
     instance_name = "hsimgsearch"
     client = None
-    min_score = 0
+    min_score = 5
     search_point = "imagesearch."+region+".aliyuncs.com"
     def __init__(self):
         self.client = self.get_client()
@@ -108,6 +108,7 @@ class ImgSearch:
             logger.info("aliyun search_img,response=" + str(response))
             print (response)
             result = dict(demjson.decode(response))
+            upcs = []
             if result['Code'] == 0 :
                 sort_values = list(result['Auctions'])
                 for value in sort_values:
@@ -115,8 +116,8 @@ class ImgSearch:
                     PicName = dict(value)['PicName']
                     SortExprValues = str(dict(value)['SortExprValues'])
                     if float(SortExprValues.split(";")[0]) > self.min_score:
-                        return ProductId
-            return None
+                        upcs.append(ProductId)
+            return upcs
         except Exception as err:
             logging.error(err)
             return None
@@ -133,6 +134,7 @@ class ImgSearch:
             response = self.client.do_action_with_exception(request)
             logger.info("aliyun search_img,response=" + str(response))
             result = dict(demjson.decode(response))
+            upcs = []
             if result['Code'] == 0:
                 sort_values = list(result['Auctions'])
                 for value in sort_values:
@@ -140,8 +142,8 @@ class ImgSearch:
                     PicName = dict(value)['PicName']
                     SortExprValues = str(dict(value)['SortExprValues'])
                     if float(SortExprValues.split(";")[0]) > self.min_score:
-                        return ProductId
-            return None
+                        upcs.append(ProductId)
+            return upcs
         except Exception as err:
             logging.error(err)
             return None

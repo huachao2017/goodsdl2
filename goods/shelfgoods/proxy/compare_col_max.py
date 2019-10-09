@@ -82,18 +82,25 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
                 target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
                 if aliyun_search_img_switch:
                     search_ins = ImgSearch()
-                    upc = search_ins.search_cvimg(target_img)
-                    logger.info("ck_box box_id=%s,upc=%s,aliyun match upc=%s,ds=(%s,%s),ck=(%s,%s)" % (str(ck_gcs.box_id), str(ds_upc), str(upc),str(ds_location_column), str(ds_location_row),str(ck_location_column),str(ck_location_row)))
-                    if upc != None and upc == ds_upc:
+                    upcs = search_ins.search_cvimg(target_img)
+                    logger.info("ck_box box_id=%s,upc=%s,aliyun match upc=%s,ds=(%s,%s),ck=(%s,%s)" % (
+                    str(ck_gcs.box_id), str(ds_upc), str(upcs), str(ds_location_column), str(ds_location_row),
+                    str(ck_location_column), str(ck_location_row)))
+                    if upcs != None and len(upcs) > 0 and ds_upc in upcs:
                         ck_gcs.compare_code = code.code_12
                         ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
                         ck_gcs.upc = ds_upc
-                    elif(upc != None and upc != ds_upc):
+                        sum_true += 1
+                    elif (upcs != None and len(upcs) > 0 and ds_upc not in upcs):
                         ck_gcs.compare_code = code.code_13
                         ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
-                    else:
+                    elif (upcs != None and len(upcs) <= 0):
                         ck_gcs.compare_code = code.code_14
                         ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
+                    else:
+                        ck_gcs.compare_code = code.code_15
+                        ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
+                    break
                 else:
                     match_ins = shelftradition_match.ShelfTraditionMatch(ds_upc)
                     match_result = match_ins.detect_one_with_cv2array(target_img)

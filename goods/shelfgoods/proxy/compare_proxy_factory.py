@@ -1,5 +1,5 @@
 
-from goods.shelfgoods.proxy import compare_col_equal,compare_col_max,compare_col_min,filter_wz_box
+from goods.shelfgoods.proxy import compare_col_equal,compare_col_max,compare_col_min,filter_wz_box,compare_col
 class ProxyFactory:
     checkbox_ins = None
     display_ins = None
@@ -9,6 +9,7 @@ class ProxyFactory:
                 'compare_col_equal':compare_col_equal,
                 'compare_col_min':compare_col_min,
                 'compare_col_max':compare_col_max,
+                'compare_col':compare_col
                      }
     def __init__(self,checkbox_ins,display_ins,shelf_img):
         self.checkbox_ins = checkbox_ins
@@ -22,14 +23,15 @@ class ProxyFactory:
             checkbox_ins,display_ins = self.factory_proxy[proxy_name].process(self.checkbox_ins,self.display_ins,self.shelf_img)
         return checkbox_ins.gbx_ins
     def get_proxy_process_name(self):
-        ck_col_nums = self.checkbox_ins.gbx_ins.level_columns
-        ds_col_nums = self.display_ins.gbx_ins.level_columns
-        if ck_col_nums == ds_col_nums:
-            return ['filter_wz_box','compare_col_equal']
-        elif ck_col_nums < ds_col_nums:
-            return ['filter_wz_box', 'compare_col_min']
-        elif ck_col_nums>ds_col_nums:
-            return ['filter_wz_box', 'compare_col_max']
+        # ck_col_nums = self.checkbox_ins.gbx_ins.level_columns
+        # ds_col_nums = self.display_ins.gbx_ins.level_columns
+        # if ck_col_nums == ds_col_nums:
+        #     return ['filter_wz_box','compare_col_equal']
+        # elif ck_col_nums < ds_col_nums:
+        #     return ['filter_wz_box', 'compare_col_min']
+        # elif ck_col_nums>ds_col_nums:
+        #     return ['filter_wz_box', 'compare_col_max']
+        return ['filter_wz_box', 'compare_col']
 
 
 
