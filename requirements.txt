@@ -11,3 +11,5 @@ scipy>=1.0.0
 scikit-surprise
 demjson
 django-cors-headers
+aliyun-python-sdk-core
+aliyun-python-sdk-imagesearch

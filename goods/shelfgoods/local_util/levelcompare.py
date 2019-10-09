@@ -41,7 +41,18 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
             for key in code.filter_code:
                 if good_col.compare_code is not None and good_col.compare_code in code.filter_code[key]:
                     compare_code = key
-            if compare_code == None or good_col.compare_code == None:
+            for key in level_boxes_result:
+                if level == key:
+                    (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1) = level_boxes_result[key]
+                    if result1 == 0 and box_id == box_id1:
+                        compare_code = 0
+                        process_code = code.code_11
+                        upc = upc1
+                    elif result1 == 1 and box_id == box_id1:
+                        compare_code = 1
+                        process_code = code.code_11
+                        upc = upc1
+            if compare_code == None or process_code == None:
                 compare_code = 2
             if compare_code == 0:
                 equal_cnt += 1
@@ -63,7 +74,7 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
                 'upc': upc
             })
     for key in level_boxes_result:
-        if level != key:
+        if level == key:
             (xmin,ymin,xmax,ymax,box_id,result,upc) = level_boxes_result[key]
             if result is None or result == -1 :
                 result = 2
