@@ -22,8 +22,10 @@ class ImgSearch:
     client = None
     min_score = 5
     search_point = "imagesearch."+region+".aliyuncs.com"
+    sleep_time=0.2
     def __init__(self):
         self.client = self.get_client()
+        self.client.set_max_retry_num(5)
     def get_client(self):
         client = AcsClient(self.AccessKeyID, self.AccessKeySecret, self.region)
         return client
@@ -45,9 +47,9 @@ class ImgSearch:
             #     encoded_pic_content = base64.b64encode(imgfile.read())
             #     request.set_PicContent(encoded_pic_content)
             response = self.client.do_action_with_exception(request)
-            time.sleep(0.5)
+            # print (response.getcode())
+            time.sleep(self.sleep_time)
             logger.info("aliyun add_img,response="+str(response))
-            print(response)
             code = dict(demjson.decode(response))['Code']
             return code
         except Exception as err:
@@ -70,9 +72,8 @@ class ImgSearch:
             #     encoded_pic_content = base64.b64encode(imgfile.read())
             #     request.set_PicContent(encoded_pic_content)
             response = self.client.do_action_with_exception(request)
-            time.sleep(0.5)
+            time.sleep(self.sleep_time)
             logger.info("aliyun add_img,response="+str(response))
-            print(response)
             code = dict(demjson.decode(response))['Code']
             return code
         except Exception as err:
@@ -88,8 +89,7 @@ class ImgSearch:
             if imgname!=None:
                 request.set_PicName(imgname)
             response = self.client.do_action_with_exception(request)
-            time.sleep(0.5)
-            print(response)
+            time.sleep(self.sleep_time)
             logger.info("aliyun delete_img,response=" + str(response))
             code = dict(demjson.decode(response))['Code']
             # 成功返回code == 0
@@ -109,9 +109,8 @@ class ImgSearch:
             img_encode = base64.b64encode(img_encode)
             request.set_PicContent(img_encode)
             response = self.client.do_action_with_exception(request)
-            time.sleep(0.5)
+            time.sleep(self.sleep_time)
             logger.info("aliyun search_img,response=" + str(response))
-            print (response)
             result = dict(demjson.decode(response))
             upcs = []
             if result['Code'] == 0 :
@@ -137,7 +136,7 @@ class ImgSearch:
             img_encode = base64.b64encode(img_encode)
             request.set_PicContent(img_encode)
             response = self.client.do_action_with_exception(request)
-            time.sleep(0.5)
+            time.sleep(self.sleep_time)
             logger.info("aliyun search_img,response=" + str(response))
             result = dict(demjson.decode(response))
             upcs = []

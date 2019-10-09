@@ -52,7 +52,7 @@ def test_acc():
         print (upc_f)
         filepath = os.path.join(jpgpath,file)
         upcs = search_ins.search_img(filepath)
-        time.sleep(0.5)
+        # time.sleep(0.5)
         j+=1
         if upcs!=None and upc_f in upcs:
             i+=1
