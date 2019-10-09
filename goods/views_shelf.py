@@ -22,7 +22,7 @@ from dl.util import caculate_level
 from goods.shelfgoods.service import tz_good_compare
 from goods.util import shelf_visualize
 from .serializers import *
-from goods.shelfgoods.imgsearch.search import ImgSearch
+from goods.shelfgoods.imgsearch.aliyun.search import ImgSearch
 
 logger = logging.getLogger("django")
 
