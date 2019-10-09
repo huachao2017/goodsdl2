@@ -70,6 +70,7 @@ class Compare:
                         compare_code = key
                 for key in level_boxes_result:
                     if level == key:
+                        logger.info(" level_boxes_result[key]  "+str(level_boxes_result[key]))
                         (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1) = level_boxes_result[key]
                         if result1 == 0 and box_id == box_id1:
                             compare_code = 0
