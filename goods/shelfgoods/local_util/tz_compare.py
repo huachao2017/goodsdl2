@@ -10,19 +10,20 @@ class Compare:
     shelf_image_id = None
     display_id = None
     shelf_id = None
-    def __init__(self,shelf_image_id,display_id,shelf_id):
+    upcs = None
+    def __init__(self,shelf_image_id,display_id,shelf_id,upcs):
         self.shelf_image_id = shelf_image_id
         self.display_id = display_id
         self.shelf_id = shelf_id
+        self.upcs = upcs
 
     def do_compare(self):
         try:
             loaddata_ins = load_data.LoadData()
-            level_boxes_result = loaddata_ins.get_ai_goods_result(self.shelf_image_id)
             level_goods = loaddata_ins.get_tz_dispaly_goods(self.display_id)
             level_boxes, shelf_img_id, shelf_img = loaddata_ins.get_ai_goods(self.shelf_image_id)
             if level_boxes is not None and shelf_img_id is not None and shelf_img is not None and level_goods[self.shelf_id] is not None:
-                return self.for_dcompare(level_boxes,shelf_img,level_goods[self.shelf_id],level_boxes_result)
+                return self.for_dcompare(level_boxes,shelf_img,level_goods[self.shelf_id],self.upcs)
             else:
                 logger.error("load data failed ,display_id=%s,shelf_image_id=%s"%(self.display_id,self.shelf_image_id))
                 return None,None,None,None
@@ -30,7 +31,7 @@ class Compare:
             logger.error(traceback.format_exc())
             return None, None, None, None
 
-    def for_dcompare(self,level_boxes,shelf_img,level_goods,level_boxes_result):
+    def for_dcompare(self,level_boxes,shelf_img,level_goods,upcs):
         # level_boxes = self.get_check_level_boxes(box_ids,box_levels,xmins, ymins, xmaxs, ymaxs)
         gbx_inss = []
         logger.info("level_boxes : "+str(level_boxes))
@@ -40,14 +41,12 @@ class Compare:
                 for levelj in level_goods:
                     if int(level) == int(levelj):
                        ckbx_stu = checkbox_structure.CheckBoxStructure(level, level_boxes[level])
-                       # logger.info("ckbx_stu : " + str(demjson.encode(ckbx_stu)))
                        logger.info ("ckbx_stu :" )
                        logger.info('\n'.join(['%s:%s' % item for item in ckbx_stu.__dict__.items()]))
                        disy_stu = display_structure.DispalyStructure(levelj, level_goods[levelj])
                        logger.info("disy_stu :")
                        logger.info('\n'.join(['%s:%s' % item for item in disy_stu.__dict__.items()]))
-                       # logger.info("disy_stu : " + str(demjson.encode(disy_stu)))
-                       proxy_ins = compare_proxy_factory.ProxyFactory(ckbx_stu,disy_stu,shelf_img)
+                       proxy_ins = compare_proxy_factory.ProxyFactory(ckbx_stu,disy_stu,shelf_img,upcs)
                        gbx_ins = proxy_ins.process()
                        gbx_inss.append(gbx_ins)
             else:
@@ -61,45 +60,33 @@ class Compare:
             level = gbx_ins.level
             for good_col in gbx_ins.goodscolumns:
                 (xmin,ymin,xmax,ymax) = good_col.location_box
-                box_id = good_col.box_id
-                compare_code = None
-                process_code = good_col.compare_code
-                upc = good_col.upc
+                if good_col.process_code is not None and good_col.process_code == -1:
+                    good_col.process_code = good_col.compare_code
                 for key in code.filter_code:
                     if good_col.compare_code is not None and good_col.compare_code in code.filter_code[key]:
-                        compare_code = key
-                for key in level_boxes_result:
-                    if level == key:
-                        for value in list(level_boxes_result[key]):
-                            (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1,is_label) = value
-                            if result1 == 0 and box_id == box_id1 and is_label == 1:
-                                compare_code = 0
-                                process_code = code.code_11
-                                upc = upc1
-                            elif result1 == 1 and  box_id == box_id1 and is_label == 1:
-                                compare_code = 1
-                                process_code = code.code_11
-                                upc = upc1
-                if compare_code==None or process_code == None:
-                    compare_code=2
-                if compare_code == 0:
+                        good_col.compare_code = key
+                if good_col.compare_code==None:
+                    good_col.compare_code=2
+                if good_col.compare_code == 0:
                     equal_cnt+=1
-                if compare_code == 1:
+                if good_col.compare_code == 1:
                     different_cnt+=1
-                if compare_code == 2:
+                if good_col.compare_code == 2:
                     unknown_cnt+=1
+                if good_col.process_code is None:
+                    good_col.process_code=-1
                 detail.append({
                     'level':int(level),
                     'xmin':xmin,
                     'ymin':ymin,
                     'xmax':xmax,
                     'ymax':ymax,
-                    'result':compare_code,
-                    'process_code':process_code,
-                    'boxid':box_id,
+                    'result':good_col.compare_code,
+                    'process_code':good_col.process_code,
+                    'boxid':good_col.box_id,
                     'col':good_col.location_column,
                     'row':good_col.location_row,
-                    'upc':upc
+                    'upc':good_col.upc
                             })
         logger.info("for_dcompare detail="+str(detail))
         return detail,equal_cnt,different_cnt,unknown_cnt

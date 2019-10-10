@@ -1,2 +1,2 @@
 get_shelf_img="select rectsource,source from goods_shelfimage where id = {0}"
-get_shelf_goods_result="select id,shelf_image_id,xmin,ymin,xmax,ymax,level,result,upc,is_label from goods_shelfgoods where shelf_image_id = {0}"
+get_shelf_goods_result="select id,shelf_image_id,xmin,ymin,xmax,ymax,level,result,upc,is_label,col,row,process_code from goods_shelfgoods where shelf_image_id = {0}"

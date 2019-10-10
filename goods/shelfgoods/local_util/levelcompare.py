@@ -7,7 +7,6 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
     loaddata_ins = load_data.LoadData()
     level_boxes, shelf_img_id, shelf_img = loaddata_ins.get_ai_goods(shelf_image_id)
     level_goods = loaddata_ins.get_tz_dispaly_goods(display_img_id)
-    level_boxes_result = loaddata_ins.get_ai_goods_result(shelf_image_id)
     level_goods = level_goods[shelf_id]
     logger.info("level_boxes : " + str(level_boxes))
     logger.info("level_goods : " + str(level_goods))
@@ -41,18 +40,6 @@ def compare(display_img_id,shelf_id,shelf_image_id,box_id):
             for key in code.filter_code:
                 if good_col.compare_code is not None and good_col.compare_code in code.filter_code[key]:
                     compare_code = key
-            for key in level_boxes_result:
-                if level == key:
-                    for value in list(level_boxes_result[key]):
-                        (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1, is_label) = value
-                        if result1 == 0 and box_id == box_id1 and is_label == 1:
-                            compare_code = 0
-                            process_code = code.code_11
-                            upc = upc1
-                        elif result1 == 1 and box_id == box_id1 and is_label == 1:
-                            compare_code = 1
-                            process_code = code.code_11
-                            upc = upc1
             if compare_code == None or process_code == None:
                 compare_code = 2
             if compare_code == 0:

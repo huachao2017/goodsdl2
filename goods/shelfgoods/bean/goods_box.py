@@ -22,5 +22,9 @@ class GoodsColumn:
     compare_result = None
     compare_code = None
     is_fitting = None
+    process_code = None
+    is_label = None
+    result = None
+
 
 

@@ -5,7 +5,7 @@ logger = logging.getLogger("detect")
 from set_config import config
 from goods.shelfgoods.imgsearch.aliyun.search import ImgSearch
 aliyun_search_img_switch = config.aliyun_search_img_switch
-def process(check_box_ins,display_ins,shelf_img):
+def process(check_box_ins,display_ins,shelf_img,with_in_upcs=None):
     logger.info("level proxy process is compare_col_max ..................")
     ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
     ds_goodscolumn_inss = display_ins.gbx_ins.goodscolumns
@@ -69,6 +69,8 @@ def sum_compare_model_true(ck_goodscolumn_inss,ds_goodscolumn_inss,i,shelf_img):
         # if len(ds_rows) > 0:
         for ck_gcs in ck_goodscolumn_inss:
             if ck_gcs == [] or ck_gcs == None:
+                continue
+            if ck_gcs.is_label is not None and ck_gcs.is_label == 1:  # 人工已标注的不做比对
                 continue
             ck_location_column = ck_gcs.location_column - i
             ck_location_row = ck_gcs.location_row
