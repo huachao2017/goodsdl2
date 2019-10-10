@@ -62,12 +62,14 @@ class Compare:
                 result = -1
                 (xmin,ymin,xmax,ymax) = good_col.location_box
                 if upcs is None :  # 首次识别
-                    good_col.process_code = good_col.compare_code
-                else:
                     if good_col.docompare is not None:
                         good_col.process_code = good_col.compare_code
                     else:
                         good_col.process_code = code.code_16
+                else:
+                    if good_col.docompare is not None:
+                        good_col.process_code = good_col.compare_code
+
 
                 if good_col.process_code in code.filter_code[0]:
                     result = 0
