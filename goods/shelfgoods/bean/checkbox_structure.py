@@ -34,7 +34,7 @@ class CheckBoxStructure:
         a2 = sorted(sort_column.items(), key=lambda x: x[0])
         columns_col = []
         for i in range(len(a2)):
-            (xmin1, ymin1, xmax1, ymax1, box_id1) = a2[i][1]
+            (xmin1, ymin1, xmax1, ymax1, box_id1,result1,upc1,is_label1,col1,row1,process_code1) = a2[i][1]
             columns_col.append((xmin1, ymin1, xmax1, ymax1, box_id1,i,0))
         columns_row = []
         for box1, i in zip(value, range(len(value))):
