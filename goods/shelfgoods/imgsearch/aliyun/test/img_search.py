@@ -21,8 +21,8 @@ def add_img():
             print ("error:"+str(img_path))
 def add_img1():
     search_ins = ImgSearch()
-    img_path = "D:\\opt\\data\\goods\\uc_merchant_goods\\img\\"
-    img_file = "6924743915770_3362.jpg"
+    img_path = "D:\\opt\\data\\goods\\upc_test2\\"
+    img_file = "6924743915770_39121.jpg"
     img_name = img_file.strip(".jpg")
     upc = img_file.split("_")[0]
     code = search_ins.add_img(upc,img_name,img_path+img_file)
@@ -66,5 +66,5 @@ if __name__=='__main__':
     # add_img()
     # search_img()
     # delete_img()
-    test_acc()
-    # add_img1()
+    # test_acc()
+    add_img1()
