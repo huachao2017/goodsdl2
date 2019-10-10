@@ -36,7 +36,6 @@ class LoadData:
             sql = ai.get_shelf_goods_result
             sql = sql.format(shelf_image_id)
             results = mysql_ins.selectAll(sql)
-            print (results)
             box_id = []
             shelf_img_id = []
             xmin, ymin, xmax, ymax = [],[],[],[]
@@ -78,7 +77,7 @@ class LoadData:
         for level in levels:
             for box_id, box_level, xmin, ymin, xmax, ymax,result,upc,is_label,col,row,process_code in zip(box_ids, box_levels, xmins, ymins, xmaxs, ymaxs,results,upcs,is_labels,cols,rows,process_codes):
                 if level == box_level:
-                    level_boxes[level].append((xmin, ymin, xmax, ymax, box_id))
+                    level_boxes[level].append((xmin, ymin, xmax, ymax, box_id,result,upc,is_label,col,row,process_code))
         return level_boxes
     def get_ai_shelf_img(self,shelf_img_idi):
         mysql_ins = django_mysql_util.DjangoMysql('default')
