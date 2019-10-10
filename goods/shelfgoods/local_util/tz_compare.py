@@ -61,10 +61,11 @@ class Compare:
             for good_col in gbx_ins.goodscolumns:
                 result = -1
                 (xmin,ymin,xmax,ymax) = good_col.location_box
-                if good_col.docompare is not None:  #进入了比较
+                if upcs is None :  # 首次识别
                     good_col.process_code = good_col.compare_code
-                elif( good_col.docompare is None and good_col.process_code == -1): #首次检测 未进入比较
-                    result = 1
+                else:
+                    if good_col.docompare is not None:
+                        good_col.process_code = good_col.compare_code
 
                 if good_col.process_code in code.filter_code[0]:
                     result = 0

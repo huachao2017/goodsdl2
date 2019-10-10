@@ -31,7 +31,7 @@ def process(check_box_ins,display_ins,shelf_img,with_in_upcs):
                 if with_in_upcs is not None and len(with_in_upcs)>0 and ds_upc not in with_in_upcs:
                     continue
                 target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
-                ck_box.docompare = 1
+                ck_gcs.docompare = 1
                 if aliyun_search_img_switch:
                     search_ins = ImgSearch()
                     upcs = search_ins.search_cvimg(target_img)
@@ -58,8 +58,8 @@ def process(check_box_ins,display_ins,shelf_img,with_in_upcs):
                     ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
                     if match_result:
                         ck_gcs.upc = ds_upc
-            elif  ck_gcs.compare_code == None and  ds_location_column == ck_location_column:
-                ck_gcs.compare_code = code.code_5
+            else:
+                ck_gcs.compare_code = code.code_16
                 ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
     return check_box_ins,display_ins
 

@@ -13,7 +13,8 @@ result_code={
     12:"from aliyun success",
     13:"from aliyun failed",
     14:"from aliyun wz",
-    15:"from aliyun error"
+    15:"from aliyun error",
+    16:"error index"
 
 }
 
@@ -28,6 +29,7 @@ code_12 = 12 # 阿里云返回 正确比较结果
 code_13 = 13 # 阿里云没有比对上
 code_14 = 14 #阿里云没有搜索到
 code_15 = 15 #阿里云搜索时有错
+code_16 = 16 #陈列设计没有对上
 match_result={
     True:1,
     False:2,
@@ -36,6 +38,6 @@ match_result={
 
 filter_code ={
     0:[1,12],
-    1:[2,5,6,7,8,13],
+    1:[2,5,6,7,8,13,16],
     2:[3,4,9,10,14,15]
 }
