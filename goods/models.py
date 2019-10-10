@@ -31,6 +31,9 @@ class ShelfGoods(models.Model):
     level = models.IntegerField(default=-1)
     result = models.IntegerField(default=-1)
     is_label = models.BooleanField(default=False)
+    process_code = models.IntegerField(default=-1)
+    col = models.IntegerField(default=-1)
+    row = models.IntegerField(default=-1)
     create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
     update_time = models.DateTimeField('date updated', auto_now=True)
     def __str__(self):
