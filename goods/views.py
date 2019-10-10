@@ -10,7 +10,10 @@ from .serializers import *
 from dl import freezer2detection
 
 logger = logging.getLogger("django")
-
+from goods.freezer.keras_yolo3.yolo3 import yolo_freezer
+from set_config import config
+freezer_check_yolov3_switch = config.common_params['freezer_check_yolov3_switch']
+yolov3 = yolo_freezer.YOLO()
 class Test(APIView):
     def get(self, request):
         print(request.query_params)
@@ -42,8 +45,12 @@ class FreezerImageViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
 
         logger.info('begin detect:{},{}'.format(serializer.instance.deviceid, serializer.instance.source.path))
         ret = []
-        detector = freezer2detection.ImageDetectorFactory.get_static_detector('freezer2')
-        detect_ret, aiinterval, _ = detector.detect(serializer.instance.source.path, step1_min_score_thresh=0.3)
+        if freezer_check_yolov3_switch:
+            detect_ret, aiinterval, visual_image_path = yolo_freezer.detect(yolov3, serializer.instance.source.path)
+        else:
+            detector = freezer2detection.ImageDetectorFactory.get_static_detector('freezer2')
+            detect_ret, aiinterval, _ = detector.detect(serializer.instance.source.path, step1_min_score_thresh=0.3)
+
 
         ret = json.dumps(detect_ret, cls=NumpyEncoder)
         serializer.instance.ret = ret

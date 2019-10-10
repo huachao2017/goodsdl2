@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger("detect")
 from set_config import config
 from goods.shelfgoods.imgsearch.aliyun.search import ImgSearch
-aliyun_search_img_switch = config.aliyun_search_img_switch
+aliyun_search_img_switch = config.common_params['aliyun_search_img_switch']
 def process(check_box_ins,display_ins,shelf_img,with_in_upcs=None):
     logger.info("level proxy process is compare_col_max ..................")
     ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns

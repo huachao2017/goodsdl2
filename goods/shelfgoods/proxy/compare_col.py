@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger("detect")
 from set_config import config
 from goods.shelfgoods.imgsearch.aliyun.search import ImgSearch
-aliyun_search_img_switch = config.aliyun_search_img_switch
+aliyun_search_img_switch = config.common_params['aliyun_search_img_switch']
 def process(check_box_ins,display_ins,shelf_img,with_in_upcs):
     logger.info("current level process compare_col ..................")
     ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
