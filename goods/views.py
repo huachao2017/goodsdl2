@@ -43,10 +43,11 @@ class FreezerImageViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
         logger.info('begin detect:{},{}'.format(serializer.instance.deviceid, serializer.instance.source.path))
         ret = []
         detector = freezer2detection.ImageDetectorFactory.get_static_detector('freezer2')
-        detect_ret, aiinterval, _ = detector.detect(serializer.instance.source.path, step1_min_score_thresh=0.3)
+        detect_ret, aiinterval, visual_image_path = detector.detect(serializer.instance.source.path, step1_min_score_thresh=0.3)
 
         ret = json.dumps(detect_ret, cls=NumpyEncoder)
         serializer.instance.ret = ret
+        serializer.instance.visual = visual_image_path.replace(settings.MEDIA_ROOT,'')
         serializer.instance.save()
 
         logger.info('end detect:{}'.format(serializer.instance.deviceid))
