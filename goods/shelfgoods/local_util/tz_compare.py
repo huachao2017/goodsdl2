@@ -60,8 +60,9 @@ class Compare:
             level = gbx_ins.level
             for good_col in gbx_ins.goodscolumns:
                 (xmin,ymin,xmax,ymax) = good_col.location_box
-                if good_col.process_code is not None and good_col.process_code == -1:
-                    good_col.process_code = good_col.compare_code
+                good_col.process_code = good_col.compare_code
+                if good_col.process_code is None :
+                    good_col.process_code = -1
                 result = -1
                 if good_col.process_code in code.filter_code[0]:
                     result = 0
@@ -69,7 +70,7 @@ class Compare:
                     result = 1
                 if good_col.process_code in code.filter_code[2]:
                     result = 2
-                if good_col.process_code  == code.code_11:
+                if good_col.is_label  == 1:
                     result = good_col.result
                 if result == 0 :
                     equal_cnt+=1
