@@ -75,6 +75,8 @@ class Compare:
                     unknown_cnt+=1
                 if good_col.process_code is None:
                     good_col.process_code=-1
+                if good_col.process_code  == code.code_11:
+                    good_col.compare_code = good_col.result
                 detail.append({
                     'level':int(level),
                     'xmin':xmin,
