@@ -22,11 +22,13 @@ def add_img():
 def add_img1():
     search_ins = ImgSearch()
     img_path = "D:\\opt\\data\\goods\\upc_test2\\"
-    img_file = "6924743915770_32779.jpg"
-    img_name = img_file.strip(".jpg")
-    upc = img_file.split("_")[0]
-    code = search_ins.add_img(upc,img_name,img_path+img_file)
-    time.sleep(0.5)
+    img_files = ["6902538005141_40713.jpg","6902538006261_32622.jpg","6903252000771_32273.jpg","6920180209724_37530.jpg","6921168593552_33638.jpg","6924743915770_32631.jpg"]
+    for file in img_files:
+        img_name = file.strip(".jpg")
+        upc = file.split("_")[0]
+        code = search_ins.add_img(upc,img_name,img_path+file)
+        print (code)
+        time.sleep(0.5)
 
 def search_img():
     search_ins = ImgSearch()
@@ -36,9 +38,12 @@ def search_img():
 
 def delete_img():
     search_ins = ImgSearch()
-    code = search_ins.delete_img('6924743915770')
-    if code == 0:
-        print (code)
+    upcs = ['6902538005141','6902538006261','6903252000771','6920180209724','6921168593552','6924743915770']
+    for upc in upcs:
+        code = search_ins.delete_img(upc)
+        time.sleep(1)
+        if code == 0:
+            print (code)
 
 def test_acc():
     search_ins = ImgSearch()
@@ -69,6 +74,6 @@ def test_acc():
 if __name__=='__main__':
     # add_img()
     # search_img()
-    delete_img()
-    # test_acc()
+    # delete_img()
+    test_acc()
     # add_img1()
