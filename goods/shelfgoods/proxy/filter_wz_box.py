@@ -1,7 +1,7 @@
 from goods.shelfgoods.bean import code
 import logging
 logger = logging.getLogger("detect")
-def process(check_box_ins,display_ins,shelf_img):
+def process(check_box_ins,display_ins,shelf_img,upcs=None):
     logger.info("current level process filter_wz_box ..................")
     ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
     ds_goodscolumn_inss = display_ins.gbx_ins.goodscolumns
