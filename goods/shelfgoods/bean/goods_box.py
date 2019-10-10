@@ -25,6 +25,6 @@ class GoodsColumn:
     process_code = None
     is_label = None
     result = None
-
+    docompare=None
 
 
