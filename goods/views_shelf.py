@@ -358,8 +358,11 @@ class DetectShelfImage(APIView):
             logger.error('Rectify and detect error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
 
-        rectify_image_path = os.path.join(settings.MEDIA_ROOT, shelf_image.rectsource)
-        compare_ret = detect_compare(shelf_image, rectify_image_path, need_detect = False, need_notify=True)
+        if shelf_image.rectsource != '':
+            image_path = os.path.join(settings.MEDIA_ROOT, shelf_image.rectsource)
+        else:
+            image_path = os.path.join(settings.MEDIA_ROOT, shelf_image.source)
+        compare_ret = detect_compare(shelf_image, image_path, need_detect = False, need_notify=True)
         return Response(compare_ret, status=status.HTTP_200_OK)
 
 
