@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework import viewsets
 from .serializers import *
 from dl import freezer2detection
+from django.conf import settings
 logger = logging.getLogger("django")
 from goods.freezer.keras_yolo3.yolo3 import yolo_freezer
 from set_config import config
