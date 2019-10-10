@@ -58,9 +58,7 @@ def process(check_box_ins,display_ins,shelf_img,with_in_upcs):
                     ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
                     if match_result:
                         ck_gcs.upc = ds_upc
-            else:
-                ck_gcs.compare_code = code.code_16
-                ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
+
     return check_box_ins,display_ins
 
 

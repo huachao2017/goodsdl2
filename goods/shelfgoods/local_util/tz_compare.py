@@ -66,6 +66,8 @@ class Compare:
                 else:
                     if good_col.docompare is not None:
                         good_col.process_code = good_col.compare_code
+                    else:
+                        good_col.process_code = code.code_16
 
                 if good_col.process_code in code.filter_code[0]:
                     result = 0
