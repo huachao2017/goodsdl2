@@ -62,28 +62,28 @@ class Compare:
                 (xmin,ymin,xmax,ymax) = good_col.location_box
                 if good_col.process_code is not None and good_col.process_code == -1:
                     good_col.process_code = good_col.compare_code
-                for key in code.filter_code:
-                    if good_col.compare_code is not None and good_col.compare_code in code.filter_code[key]:
-                        good_col.compare_code = key
-                if good_col.compare_code==None:
-                    good_col.compare_code=2
-                if good_col.compare_code == 0:
-                    equal_cnt+=1
-                if good_col.compare_code == 1:
-                    different_cnt+=1
-                if good_col.compare_code == 2:
-                    unknown_cnt+=1
-                if good_col.process_code is None:
-                    good_col.process_code=-1
+                result = -1
+                if good_col.process_code in code.filter_code[0]:
+                    result = 0
+                if good_col.process_code in code.filter_code[1]:
+                    result = 1
+                if good_col.process_code in code.filter_code[2]:
+                    result = 2
                 if good_col.process_code  == code.code_11:
-                    good_col.compare_code = good_col.result
+                    result = good_col.result
+                if result == 0 :
+                    equal_cnt+=1
+                if result == 1 :
+                    different_cnt+=1
+                if result == 2:
+                    unknown_cnt+=1
                 detail.append({
                     'level':int(level),
                     'xmin':xmin,
                     'ymin':ymin,
                     'xmax':xmax,
                     'ymax':ymax,
-                    'result':good_col.compare_code,
+                    'result':result,
                     'process_code':good_col.process_code,
                     'boxid':good_col.box_id,
                     'col':good_col.location_column,
