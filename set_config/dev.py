@@ -5,7 +5,7 @@ aliyun_instance1={
     "AccessKeySecret" : "mCVOzv0fABM19dTRlYlWMZdGlAoqsz",
     "region" : "cn-shanghai",
     "instance_name" : "hsimgsearch",
-    "min_score" : 5,
+    "min_score" : 0,
     "search_point": "imagesearch.cn-shanghai.aliyuncs.com",
     "sleep_time" : 0.3,
 }
@@ -15,7 +15,7 @@ aliyun_instance2={
     "AccessKeySecret" : "cJRZsV2ayTAhSLhZWiuzBHrgHK2uhq",
     "region" : "cn-shanghai",
     "instance_name" : "hsimgsearch1",
-    "min_score" : 5,
+    "min_score" : 0,
     "search_point": "imagesearch.cn-shanghai.aliyuncs.com",
     "sleep_time" : 0.3,
 }
