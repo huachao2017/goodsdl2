@@ -156,6 +156,7 @@ class ImgSearch:
             img_encode = base64.b64encode(img_encode)
             request.set_PicContent(img_encode)
             response = self.client.do_action_with_exception(request)
+            print (response)
             logger.info("aliyun search_img,response=" + str(response))
             result = dict(demjson.decode(response))
             upcs = []
@@ -182,6 +183,7 @@ class ImgSearch:
                     img_encode = base64.b64encode(img_encode)
                     request.set_PicContent(img_encode)
                     response = self.client.do_action_with_exception(request)
+                    print(response)
                     logger.info("aliyun search_img,response=" + str(response))
                     result = dict(demjson.decode(response))
                     upcs = []
