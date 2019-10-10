@@ -75,11 +75,11 @@ def detect_compare(shelf_image, image_path, need_detect = True, need_notify = Fa
 
     # 比对获取结果
     logger.info('begin compare:{}'.format(image_path))
-    if label_goods == None:
+    if label_goods == None or label_goods.upc == '':
         compare_ret = tz_good_compare.compare(shelf_image.pk, shelf_image.displayid, shelf_image.shelfid)
     else:
         # TODO 需要优化成单个商品更新，提升效率
-        compare_ret = tz_good_compare.compare(shelf_image.pk, shelf_image.displayid, shelf_image.shelfid)
+        compare_ret = tz_good_compare.compare(shelf_image.pk, shelf_image.displayid, shelf_image.shelfid, upcs=[label_goods.upc])
     logger.info('end compare:{}'.format(compare_ret))
     # 持久化
     if compare_ret is not None:
