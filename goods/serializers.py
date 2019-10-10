@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from goods.models import ShelfImage, ShelfGoods, FreezerImage
 
+from django.conf import settings
 
 
 class ShelfImageSerializer(serializers.ModelSerializer):
