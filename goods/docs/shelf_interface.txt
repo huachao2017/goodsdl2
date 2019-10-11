@@ -1,3 +1,4 @@
+
 1、检测图片接口(get)：http://ai.fastxbox.cn/api/createshelfimage?shopid=xx&shelfid=xx&picurl=xx&tlevel=xx
 返回200：
 [
