@@ -14,7 +14,7 @@ class ShelfImageSerializer(serializers.ModelSerializer):
         read_only_fields = ('create_time',)
     def get_rect_source_url(self, shelfImage):
         request = self.context.get('request')
-        if shelfImage.visual:
+        if shelfImage.rectsource:
             current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
                                                                    host=request.get_host(),
                                                                    path=settings.MEDIA_URL,
@@ -25,7 +25,7 @@ class ShelfImageSerializer(serializers.ModelSerializer):
             return None
     def get_result_source_url(self, shelfImage):
         request = self.context.get('request')
-        if shelfImage.visual:
+        if shelfImage.resultsource:
             current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
                                                                    host=request.get_host(),
                                                                    path=settings.MEDIA_URL,
