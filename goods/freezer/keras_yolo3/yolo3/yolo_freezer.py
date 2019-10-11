@@ -23,11 +23,11 @@ from goods.freezer.keras_yolo3.good_proxy import proxy
 import logging
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
-# import os
+import os
 # os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-# config = tf.ConfigProto()
-# config.gpu_options.per_process_gpu_memory_fraction = 0.8
-# set_session(tf.Session(config=config))
+config = tf.ConfigProto()
+config.gpu_options.per_process_gpu_memory_fraction = 0.5
+set_session(tf.Session(config=config))
 
 logger = logging.getLogger("detect")
 gpu_num = config.yolov3_params['gpu_num']
@@ -161,7 +161,7 @@ class YOLO(object):
     def close_session(self):
         self.sess.close()
 
-def detect(yolov3,image_path):
+def detect(image_path,yolov3=None):
     yolo_v3 = None
     if yolov3 is None:
         yolo_v3 = yolo_freezer.YOLO()
