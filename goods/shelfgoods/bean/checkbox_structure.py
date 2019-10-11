@@ -45,7 +45,7 @@ class CheckBoxStructure:
             for ccol in columns_col:
                 (xmin2, ymin2, xmax2, ymax2, box_id2,col2,row2) = ccol
                 x_iou = get_iou((xmin1, xmax1), (xmin2, xmin2))
-                if box_id1 != box_id2 and x_iou <= self.x_iou_min:
+                if box_id1 != box_id2 and x_iou >= self.x_iou_min:
                     row1=row2+1
                     col1=col2
                     columns_row.append((xmin1, ymin1, xmax1, ymax1, box_id1,col1,row1))
