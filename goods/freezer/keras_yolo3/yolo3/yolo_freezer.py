@@ -58,7 +58,8 @@ class YOLO(object):
         self.class_names = self._get_class()
         self.anchors = self._get_anchors()
         self.sess = K.get_session()
-        self.boxes, self.scores, self.classes = self.generate()
+        self.boxes, self.scores, self.classes = None,None,None
+        # self.boxes, self.scores, self.classes = self.generate()
         label_map = label_map_util.load_labelmap(label_path)
         categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=1000,
                                                                     use_display_name=True)
@@ -161,73 +162,70 @@ class YOLO(object):
     def close_session(self):
         self.sess.close()
 
-def detect(image_path,yolov3=None):
-    yolo_v3 = None
-    if yolov3 is None:
-        yolo_v3 = yolo_freezer.YOLO()
-        logger.info("yolov3 freezer model reload")
-    else:
-        yolo_v3 = yolov3
-    import time
-    time0 = time.time()
-    image = Image.open(image_path)
-    if image.mode != 'RGB':
-        image = image.convert('RGB')
+    def detect(self,image_path):
 
-    (im_width, im_height) = image.size
-    image_np = np.array(image).reshape(
-        (im_height, im_width, 3)).astype(np.uint8)
-    # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+        if self.classes is None:
+            self.boxes, self.scores, self.classes = self.generate()
+            logger.info("yolov3 freezer model reload")
+        import time
+        time0 = time.time()
+        image = Image.open(image_path)
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+        (im_width, im_height) = image.size
+        image_np = np.array(image).reshape(
+            (im_height, im_width, 3)).astype(np.uint8)
+        # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
 
-    time1 = time.time()
-    # Actual detection.
-    (classes,scores,boxes) = yolo_v3.predict_img(image)
-    if diff_switch:
-        classes, scores, boxes = proxy.diff_fiter(diff_iou, classes,scores,boxes)
+        time1 = time.time()
+        # Actual detection.
+        (classes,scores,boxes) = self.predict_img(image)
+        if diff_switch:
+            classes, scores, boxes = proxy.diff_fiter(diff_iou, classes,scores,boxes)
 
-    if single_switch:
-        classes, scores, boxes = proxy.single_filter(single_iou, single_min_score, classes,scores,boxes)
+        if single_switch:
+            classes, scores, boxes = proxy.single_filter(single_iou, single_min_score, classes,scores,boxes)
 
-    # data solving
-    boxes = np.squeeze(boxes)
-    classes = np.squeeze(classes).astype(np.int32)
-    scores = np.squeeze(scores)
+        # data solving
+        boxes = np.squeeze(boxes)
+        classes = np.squeeze(classes).astype(np.int32)
+        scores = np.squeeze(scores)
 
-    time2 = time.time()
-    output_image_path = ''
-    draw_boxes = []
-    for i in range(boxes.shape[0]):
-        xmin, ymin, xmax, ymax = boxes[i]
-        draw_boxes.append(
-            [float(ymin) / im_height, float(xmin) / im_width, float(ymax) / im_height, float(xmax) / im_width])
-    if boxes.shape[0] > 0:
-        image_dir = os.path.dirname(image_path)
-        output_image_path = os.path.join(image_dir, 'visual_' + os.path.split(image_path)[-1])
-        vis_util.visualize_boxes_and_labels_on_image_array(
-            image_np,
-            np.squeeze(draw_boxes),
-            np.squeeze(classes).astype(np.int32),
-            np.squeeze(scores),
-            yolo_v3.category_index,
-            use_normalized_coordinates=True,
-            max_boxes_to_draw=None,
-            min_score_thresh=min_score,
-            line_thickness=4)
-        output_image = Image.fromarray(image_np)
-        output_image.thumbnail((int(im_width), int(im_height)), Image.ANTIALIAS)
-        output_image.save(output_image_path)
+        time2 = time.time()
+        output_image_path = ''
+        draw_boxes = []
+        for i in range(boxes.shape[0]):
+            xmin, ymin, xmax, ymax = boxes[i]
+            draw_boxes.append(
+                [float(ymin) / im_height, float(xmin) / im_width, float(ymax) / im_height, float(xmax) / im_width])
+        if boxes.shape[0] > 0:
+            image_dir = os.path.dirname(image_path)
+            output_image_path = os.path.join(image_dir, 'visual_' + os.path.split(image_path)[-1])
+            vis_util.visualize_boxes_and_labels_on_image_array(
+                image_np,
+                np.squeeze(draw_boxes),
+                np.squeeze(classes).astype(np.int32),
+                np.squeeze(scores),
+                self.category_index,
+                use_normalized_coordinates=True,
+                max_boxes_to_draw=None,
+                min_score_thresh=min_score,
+                line_thickness=4)
+            output_image = Image.fromarray(image_np)
+            output_image.thumbnail((int(im_width), int(im_height)), Image.ANTIALIAS)
+            output_image.save(output_image_path)
 
-    ret = []
-    # have_classes = {}
-    for i in range(boxes.shape[0]):
-        xmin, ymin, xmax, ymax = boxes[i]
-        ret.append({'class': classes[i],
-                    'score': scores[i],
-                    'xmin': xmin, 'ymin': ymin, 'xmax': xmax, 'ymax': ymax
-                    })
-    time3 = time.time()
-    logger.info('detect_freezer: %d, %.2f, %.2f, %.2f, %.2f' % (
-    len(ret), time3 - time0, time1 - time0, time2 - time1, time3 - time2))
-    return ret, time1 - time0, output_image_path
+        ret = []
+        # have_classes = {}
+        for i in range(boxes.shape[0]):
+            xmin, ymin, xmax, ymax = boxes[i]
+            ret.append({'class': classes[i],
+                        'score': scores[i],
+                        'xmin': xmin, 'ymin': ymin, 'xmax': xmax, 'ymax': ymax
+                        })
+        time3 = time.time()
+        logger.info('detect_freezer: %d, %.2f, %.2f, %.2f, %.2f' % (
+        len(ret), time3 - time0, time1 - time0, time2 - time1, time3 - time2))
+        return ret, time1 - time0, output_image_path
 
 
