@@ -22,14 +22,14 @@ from object_detection.utils import label_map_util
 from goods.freezer.keras_yolo3.good_proxy import proxy
 import logging
 import tensorflow as tf
-from keras.backend.tensorflow_backend import set_session,get_session
+# from keras.backend.tensorflow_backend import set_session,get_session
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 config1 = tf.ConfigProto()
 config1.gpu_options.allow_growth=True   #不全部占满显存, 按需分配
 config1.gpu_options.per_process_gpu_memory_fraction = 0.3
-set_session(tf.Session(config=config1))
-
+K.set_session(tf.Session(config=config1))
+# set_session(tf.Session(config=config1))
 logger = logging.getLogger("detect")
 gpu_num = config.yolov3_params['gpu_num']
 label_path = config.yolov3_params['label_path']
@@ -58,8 +58,7 @@ class YOLO(object):
         self.__dict__.update(kwargs) # and update with user overrides
         self.class_names = self._get_class()
         self.anchors = self._get_anchors()
-        # self.sess = K.get_session()
-        self.sess = get_session()
+        self.sess = K.get_session()
         self.boxes, self.scores, self.classes = None,None,None
         # self.boxes, self.scores, self.classes = self.generate()
         label_map = label_map_util.load_labelmap(label_path)
