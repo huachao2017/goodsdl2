@@ -14,8 +14,9 @@ result_code={
     13:"from aliyun failed",
     14:"from aliyun wz",
     15:"from aliyun error",
-    16:"error index"
-
+    16:"error index",
+    17:"none error",
+    18:"col row gen error"
 }
 
 code_5 = 5 # 相等列中，检测框多的
@@ -30,8 +31,8 @@ code_13 = 13 # 阿里云没有比对上
 code_14 = 14 #阿里云没有搜索到
 code_15 = 15 #阿里云搜索时有错
 code_16 = 16 #陈列设计没有对上
-code_17 = 17 #未知错误 未对框生成col 和 row
-
+code_17 = 17 #未知错误 一般不会出现
+code_18 = 18 # 生成ck 结构时 ， 未知错误
 match_result={
     True:1,
     False:2,
@@ -41,5 +42,5 @@ match_result={
 filter_code ={
     0:[1,12],
     1:[2,5,6,7,8,13,16],
-    2:[3,4,9,10,14,15]
+    2:[3,4,9,10,14,15,18]
 }
