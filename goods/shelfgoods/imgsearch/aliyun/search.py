@@ -34,220 +34,127 @@ class ImgSearch:
 
     def add_img(self,upc,imgname,img_path):
         # 添加图片
-        try:
-            request = AddImageRequest.AddImageRequest()
-            request.set_endpoint(self.search_point)
-            request.set_InstanceName(self.instance_name)
-            request.set_ProductId(upc)
-            request.set_PicName(imgname)
-            img = cv2.imread(img_path)
-            img = cv2.resize(img, (200,200))
-            img_encode = cv2.imencode('.jpg', img)[1]
-            img_encode = base64.b64encode(img_encode)
-            request.set_PicContent(img_encode)
-            response = self.client.do_action_with_exception(request)
-            logger.info("aliyun add_img,response="+str(response))
-            code = dict(demjson.decode(response))['Code']
-            return code
-        except Exception as err:
-            logging.error(err)
-            for i in range(1, 5):
-                time.sleep(self.sleep_time)
-                try:
-                    request = AddImageRequest.AddImageRequest()
-                    request.set_endpoint(self.search_point)
-                    request.set_InstanceName(self.instance_name)
-                    request.set_ProductId(upc)
-                    request.set_PicName(imgname)
-                    img = cv2.imread(img_path)
-                    img = cv2.resize(img, (200, 200))
-                    img_encode = cv2.imencode('.jpg', img)[1]
-                    img_encode = base64.b64encode(img_encode)
-                    request.set_PicContent(img_encode)
-                    response = self.client.do_action_with_exception(request)
-                    logger.info("aliyun add_img,response=" + str(response))
-                    code = dict(demjson.decode(response))['Code']
-                    return code
-                except:
-                    continue
-            return None
+        for i in range(1, 5):
+            time.sleep(self.sleep_time)
+            try:
+                request = AddImageRequest.AddImageRequest()
+                request.set_endpoint(self.search_point)
+                request.set_InstanceName(self.instance_name)
+                request.set_ProductId(upc)
+                request.set_PicName(imgname)
+                img = cv2.imread(img_path)
+                img = cv2.resize(img, (200, 200))
+                img_encode = cv2.imencode('.jpg', img)[1]
+                img_encode = base64.b64encode(img_encode)
+                request.set_PicContent(img_encode)
+                response = self.client.do_action_with_exception(request)
+                logger.info("aliyun add_img,response=" + str(response))
+                code = dict(demjson.decode(response))['Code']
+                return code
+            except:
+                continue
+        return None
 
     def add_cvimg(self,upc,imgname,cvimg):
         # 添加图片
-        try:
-            request = AddImageRequest.AddImageRequest()
-            request.set_endpoint(self.search_point)
-            request.set_InstanceName(self.instance_name)
-            request.set_ProductId(upc)
-            request.set_PicName(imgname)
-            img = cv2.resize(cvimg, (200,200))
-            img_encode = cv2.imencode('.jpg', img)[1]
-            img_encode = base64.b64encode(img_encode)
-            request.set_PicContent(img_encode)
-            response = self.client.do_action_with_exception(request)
-            logger.info("aliyun add_img,response="+str(response))
-            code = dict(demjson.decode(response))['Code']
-            return code
-        except Exception as err:
-            logging.error(err)
-            for i in range(1,5):
-                time.sleep(self.sleep_time)
-                try:
-                    request = AddImageRequest.AddImageRequest()
-                    request.set_endpoint(self.search_point)
-                    request.set_InstanceName(self.instance_name)
-                    request.set_ProductId(upc)
-                    request.set_PicName(imgname)
-                    img = cv2.resize(cvimg, (200, 200))
-                    img_encode = cv2.imencode('.jpg', img)[1]
-                    img_encode = base64.b64encode(img_encode)
-                    request.set_PicContent(img_encode)
-                    response = self.client.do_action_with_exception(request)
-                    logger.info("aliyun add_img,response=" + str(response))
-                    code = dict(demjson.decode(response))['Code']
-                    return code
-                except:
-                    continue
-            return None
+
+        for i in range(1,5):
+            time.sleep(self.sleep_time)
+            try:
+                request = AddImageRequest.AddImageRequest()
+                request.set_endpoint(self.search_point)
+                request.set_InstanceName(self.instance_name)
+                request.set_ProductId(upc)
+                request.set_PicName(imgname)
+                img = cv2.resize(cvimg, (200, 200))
+                img_encode = cv2.imencode('.jpg', img)[1]
+                img_encode = base64.b64encode(img_encode)
+                request.set_PicContent(img_encode)
+                response = self.client.do_action_with_exception(request)
+                logger.info("aliyun add_img,response=" + str(response))
+                code = dict(demjson.decode(response))['Code']
+                return code
+            except:
+                continue
+        return None
     #若不指定imgname 参数，则删除upc下所有图片；若指定参数，删除upc+imgname指定的图片。
     def delete_img(self,upc,imgname=None):
-        try:
-            request = DeleteImageRequest.DeleteImageRequest()
-            request.set_endpoint(self.search_point)
-            request.set_InstanceName(self.instance_name)
-            request.set_ProductId(upc)
-            if imgname!=None:
-                request.set_PicName(imgname)
-            response = self.client.do_action_with_exception(request)
+
+        for i in range(1, 5):
             time.sleep(self.sleep_time)
-            logger.info("aliyun delete_img,response=" + str(response))
-            code = dict(demjson.decode(response))['Code']
-            # 成功返回code == 0
-            return code
-        except Exception as err:
-            logging.error(err)
-            for i in range(1, 5):
+            try:
+                request = DeleteImageRequest.DeleteImageRequest()
+                request.set_endpoint(self.search_point)
+                request.set_InstanceName(self.instance_name)
+                request.set_ProductId(upc)
+                if imgname != None:
+                    request.set_PicName(imgname)
+                response = self.client.do_action_with_exception(request)
                 time.sleep(self.sleep_time)
-                try:
-                    request = DeleteImageRequest.DeleteImageRequest()
-                    request.set_endpoint(self.search_point)
-                    request.set_InstanceName(self.instance_name)
-                    request.set_ProductId(upc)
-                    if imgname != None:
-                        request.set_PicName(imgname)
-                    response = self.client.do_action_with_exception(request)
-                    time.sleep(self.sleep_time)
-                    logger.info("aliyun delete_img,response=" + str(response))
-                    code = dict(demjson.decode(response))['Code']
-                    # 成功返回code == 0
-                    return code
-                except:
-                    continue
-            return None
+                logger.info("aliyun delete_img,response=" + str(response))
+                code = dict(demjson.decode(response))['Code']
+                # 成功返回code == 0
+                return code
+            except:
+                continue
+        return None
 
     def search_img(self,img_path):
-        try:
-            request = SearchImageRequest.SearchImageRequest()
-            request.set_endpoint(self.search_point)
-            request.set_InstanceName(self.instance_name)
-            img = cv2.imread(img_path)
-            img = cv2.resize(img, (200, 200))
-            img_encode = cv2.imencode('.jpg', img)[1]
-            img_encode = base64.b64encode(img_encode)
-            request.set_PicContent(img_encode)
-            response = self.client.do_action_with_exception(request)
-            print (response)
-            logger.info("aliyun search_img,response=" + str(response))
-            result = dict(demjson.decode(response))
-            upcs = []
-            if result['Code'] == 0 :
-                sort_values = list(result['Auctions'])
-                for value in sort_values:
-                    ProductId = dict(value)['ProductId']
-                    PicName = dict(value)['PicName']
-                    SortExprValues = str(dict(value)['SortExprValues'])
-                    if float(SortExprValues.split(";")[0]) > self.min_score:
-                        upcs.append(ProductId)
-            return upcs
-        except Exception as err:
-            logging.error(err)
-            for i in range(1,5):
-                time.sleep(self.sleep_time)
-                try:
-                    request = SearchImageRequest.SearchImageRequest()
-                    request.set_endpoint(self.search_point)
-                    request.set_InstanceName(self.instance_name)
-                    img = cv2.imread(img_path)
-                    img = cv2.resize(img, (200, 200))
-                    img_encode = cv2.imencode('.jpg', img)[1]
-                    img_encode = base64.b64encode(img_encode)
-                    request.set_PicContent(img_encode)
-                    response = self.client.do_action_with_exception(request)
-                    print(response)
-                    logger.info("aliyun search_img,response=" + str(response))
-                    result = dict(demjson.decode(response))
-                    upcs = []
-                    if result['Code'] == 0:
-                        sort_values = list(result['Auctions'])
-                        for value in sort_values:
-                            ProductId = dict(value)['ProductId']
-                            PicName = dict(value)['PicName']
-                            SortExprValues = str(dict(value)['SortExprValues'])
-                            if float(SortExprValues.split(";")[0]) > self.min_score:
-                                upcs.append(ProductId)
-                    return upcs
-                except:
-                    continue
-            return None
+        for i in range(1,5):
+            time.sleep(self.sleep_time)
+            try:
+                request = SearchImageRequest.SearchImageRequest()
+                request.set_endpoint(self.search_point)
+                request.set_InstanceName(self.instance_name)
+                img = cv2.imread(img_path)
+                img = cv2.resize(img, (200, 200))
+                img_encode = cv2.imencode('.jpg', img)[1]
+                img_encode = base64.b64encode(img_encode)
+                request.set_PicContent(img_encode)
+                response = self.client.do_action_with_exception(request)
+                print(response)
+                logger.info("aliyun search_img,response=" + str(response))
+                result = dict(demjson.decode(response))
+                upcs = []
+                if result['Code'] == 0:
+                    sort_values = list(result['Auctions'])
+                    for value in sort_values:
+                        ProductId = dict(value)['ProductId']
+                        PicName = dict(value)['PicName']
+                        SortExprValues = str(dict(value)['SortExprValues'])
+                        if float(SortExprValues.split(";")[0]) > self.min_score:
+                            upcs.append(ProductId)
+                return upcs
+            except:
+                continue
+        return None
 
     def search_cvimg(self, cvimg):
-        try:
-            request = SearchImageRequest.SearchImageRequest()
-            request.set_endpoint(self.search_point)
-            request.set_InstanceName(self.instance_name)
-            img = cv2.resize(cvimg, (200, 200))
-            img_encode = cv2.imencode('.jpg', img)[1]
-            img_encode = base64.b64encode(img_encode)
-            request.set_PicContent(img_encode)
-            response = self.client.do_action_with_exception(request)
-            logger.info("aliyun search_img,response=" + str(response))
-            result = dict(demjson.decode(response))
-            upcs = []
-            if result['Code'] == 0:
-                sort_values = list(result['Auctions'])
-                for value in sort_values:
-                    ProductId = dict(value)['ProductId']
-                    PicName = dict(value)['PicName']
-                    SortExprValues = str(dict(value)['SortExprValues'])
-                    if float(SortExprValues.split(";")[0]) > self.min_score:
-                        upcs.append(ProductId)
-            return upcs
-        except Exception as err:
-            logging.error(err)
-            for i in range(1, 5):
-                time.sleep(self.sleep_time)
-                try:
-                    request = SearchImageRequest.SearchImageRequest()
-                    request.set_endpoint(self.search_point)
-                    request.set_InstanceName(self.instance_name)
-                    img = cv2.resize(cvimg, (200, 200))
-                    img_encode = cv2.imencode('.jpg', img)[1]
-                    img_encode = base64.b64encode(img_encode)
-                    request.set_PicContent(img_encode)
-                    response = self.client.do_action_with_exception(request)
-                    logger.info("aliyun search_img,response=" + str(response))
-                    result = dict(demjson.decode(response))
-                    upcs = []
-                    if result['Code'] == 0:
-                        sort_values = list(result['Auctions'])
-                        for value in sort_values:
-                            ProductId = dict(value)['ProductId']
-                            PicName = dict(value)['PicName']
-                            SortExprValues = str(dict(value)['SortExprValues'])
-                            if float(SortExprValues.split(";")[0]) > self.min_score:
-                                upcs.append(ProductId)
-                    return upcs
-                except:
-                    continue
-            return None
+
+        for i in range(1, 5):
+            time.sleep(self.sleep_time)
+            try:
+                request = SearchImageRequest.SearchImageRequest()
+                request.set_endpoint(self.search_point)
+                request.set_InstanceName(self.instance_name)
+                img = cv2.resize(cvimg, (200, 200))
+                img_encode = cv2.imencode('.jpg', img)[1]
+                img_encode = base64.b64encode(img_encode)
+                request.set_PicContent(img_encode)
+                response = self.client.do_action_with_exception(request)
+                logger.info("aliyun search_img,response=" + str(response))
+                result = dict(demjson.decode(response))
+                upcs = []
+                if result['Code'] == 0:
+                    sort_values = list(result['Auctions'])
+                    for value in sort_values:
+                        ProductId = dict(value)['ProductId']
+                        PicName = dict(value)['PicName']
+                        SortExprValues = str(dict(value)['SortExprValues'])
+                        if float(SortExprValues.split(";")[0]) > self.min_score:
+                            upcs.append(ProductId)
+                return upcs
+            except:
+                continue
+        return None
 
