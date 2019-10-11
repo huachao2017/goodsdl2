@@ -46,6 +46,7 @@ class CheckBoxStructure:
             for ccol in columns_col:
                 (xmin2, ymin2, xmax2, ymax2, box_id2,col2,row2) = ccol
                 x_iou = get_iou((xmin1, xmax1), (xmin2, xmin2))
+                logger.info("x_iou: "+str(x_iou))
                 if box_id1 != box_id2 and abs(x_iou) >= self.x_iou_min2:
                     row1=row2+1
                     col1=col2
@@ -103,18 +104,23 @@ def get_iou(x1,x2):
     (x2_min, x2_max) = x2
     xa = None
     xm = None
-    if float(x1_min+x1_max) / 2 < float(x2_min + x2_max)/2:
+    if x1_min < x2_min:
         xa =  (x2_min, x2_max)
         xm = (x1_min, x1_max)
     else:
         xa = (x1_min, x1_max)
         xm =  (x2_min, x2_max)
-    if xa[0] >= xm[0] and xa[0] <= xm[1]:
-        x1 = xm[1] - xa[0]
-        x_min = min(x1_min, x2_min)
-        x_max = max(x1_max, x2_max)
-        x2 = x_max - x_min
+    x1 = 0
+    x2 = 0
+    if xa[1] < xm[1]:
+        x1= xa[1] - xa[0]
+        x2 = xm[1] - xm[0]
+        return float(x1 / (x2 + 0.001))
+    elif (xm[1] - xa[0]) > 0:
+        x1 =  xm[1] - xa[0]
+        x2 =  xa[1] - xm[0]
         return float(x1 / (x2 + 0.001))
     else:
         return 0
+
 
