@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger("detect")
 class CheckBoxStructure:
     x_iou_min = 0.6  # 横向 偏差iou大于阈值  判定为一个列
-    y_iou_max = 0.2  # 且 纵向 偏差iou小于阈值  判定为一个列
+    x_iou_min2 = 0.2  # 横向 偏差iou大于阈值  判定为一个列
 
     none_col = 0.88  # 空列 左右的占两个框与该均值的 比  > 该阈值 认为中间存在空列
     gbx_ins=None
@@ -46,7 +46,7 @@ class CheckBoxStructure:
             for ccol in columns_col:
                 (xmin2, ymin2, xmax2, ymax2, box_id2,col2,row2) = ccol
                 x_iou = get_iou((xmin1, xmax1), (xmin2, xmin2))
-                if box_id1 != box_id2 and x_iou >= self.x_iou_min:
+                if box_id1 != box_id2 and x_iou >= self.x_iou_min2:
                     row1=row2+1
                     col1=col2
                     columns_row.append((xmin1, ymin1, xmax1, ymax1, box_id1,col1,row1))
