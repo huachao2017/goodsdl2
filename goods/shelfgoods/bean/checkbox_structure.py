@@ -48,7 +48,9 @@ class CheckBoxStructure:
                 if box_id1 != box_id2 :
                     x_iou = get_iou((xmin1, xmax1), (xmin2, xmin2))
                     logger.info("boxid1: " + str(box_id1))
+                    logger.info((xmin1, xmax1))
                     logger.info("boxid2: " + str(box_id2))
+                    logger.info((xmin2, xmax2))
                     logger.info("x_iou: " + str(x_iou))
                     if x_iou > self.x_iou_min2:
                         row1=row2+1
