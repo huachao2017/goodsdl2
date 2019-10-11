@@ -13,7 +13,7 @@ logger = logging.getLogger("django")
 from goods.freezer.keras_yolo3.yolo3 import yolo_freezer
 from set_config import config
 freezer_check_yolov3_switch = config.common_params['freezer_check_yolov3_switch']
-yolov3 = None
+yolov3 = yolo_freezer.YOLO()
 class Test(APIView):
     def get(self, request):
         print(request.query_params)
