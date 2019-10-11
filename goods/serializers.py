@@ -5,13 +5,25 @@ from django.conf import settings
 
 
 class ShelfImageSerializer(serializers.ModelSerializer):
+    source_url = serializers.SerializerMethodField()
     rect_source_url = serializers.SerializerMethodField()
     result_source_url = serializers.SerializerMethodField()
     class Meta:
         model = ShelfImage
-        fields = ('pk', 'picid', 'shopid', 'shelfid', 'displayid', 'tlevel', 'picurl', 'source', 'rectjson', 'rect_source_url',
+        fields = ('pk', 'picid', 'shopid', 'shelfid', 'displayid', 'tlevel', 'picurl', 'source_url', 'rectjson', 'rect_source_url',
                   'score', 'equal_cnt', 'different_cnt', 'unknown_cnt', 'result_source_url', 'test_server', 'create_time', 'update_time')
         read_only_fields = ('create_time',)
+    def get_source_url(self, shelfImage):
+        request = self.context.get('request')
+        if shelfImage.source:
+            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
+                                                                   host=request.get_host(),
+                                                                   path=settings.MEDIA_URL,
+                                                                   visual=shelfImage.source)
+            return current_uri
+
+        else:
+            return None
     def get_rect_source_url(self, shelfImage):
         request = self.context.get('request')
         if shelfImage.rectsource:
