@@ -45,12 +45,13 @@ class CheckBoxStructure:
             for ccol in columns_col:
                 (xmin2, ymin2, xmax2, ymax2, box_id2,col2,row2) = ccol
                 x_iou = get_iou((xmin1, xmax1), (xmin2, xmin2))
-                if box_id1 != box_id2 and x_iou >= self.x_iou_min:
+                if box_id1 != box_id2 and x_iou <= self.x_iou_min:
                     row1=row2+1
                     col1=col2
                     columns_row.append((xmin1, ymin1, xmax1, ymax1, box_id1,col1,row1))
 
         columns_col.extend(columns_row)
+        logger.info("ckbox len1:"+str(len(columns_col)))
         columns_col_dict = {}
         for i in range(len(a2)):
             columns_row_sort = {}
@@ -65,9 +66,7 @@ class CheckBoxStructure:
                     if box_id1 == a3[j][0]:
                         row1=j
                         columns_col_dict[box_id1] = (xmin1, ymin1, xmax1, ymax1, box_id1, col1, row1)
-
-        print ("ckboxes:"+str(len(columns_col_dict.keys())))
-
+        logger.info ("ckbox len2:"+str(len(columns_col_dict.keys())))
         for box1, i in zip(value, range(len(value))):
             (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1, is_label1, col1, row1, process_code1) = box1
             falg = False
