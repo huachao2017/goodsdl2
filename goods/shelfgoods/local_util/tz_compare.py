@@ -73,9 +73,12 @@ class Compare:
 
                 if good_col.process_code in code.filter_code[0]:
                     result = 0
-                if good_col.process_code in code.filter_code[1]:
+                elif good_col.process_code in code.filter_code[1]:
                     result = 1
-                if good_col.process_code in code.filter_code[2]:
+                elif good_col.process_code in code.filter_code[2]:
+                    result = 2
+                else:
+                    good_col.process_code = code.code_17
                     result = 2
                 if good_col.is_label  == 1:
                     result = good_col.result

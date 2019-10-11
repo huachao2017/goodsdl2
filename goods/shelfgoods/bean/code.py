@@ -30,6 +30,8 @@ code_13 = 13 # 阿里云没有比对上
 code_14 = 14 #阿里云没有搜索到
 code_15 = 15 #阿里云搜索时有错
 code_16 = 16 #陈列设计没有对上
+code_17 = 17 #未知错误 未对框生成col 和 row
+
 match_result={
     True:1,
     False:2,
