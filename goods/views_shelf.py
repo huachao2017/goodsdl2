@@ -395,16 +395,16 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
 
         # 需要计算层数
         boxes = []
+        # 新增的添加在第一条
+        boxes.append({
+            'xmin': xmin,
+            'ymin': ymin,
+            'xmax': xmax,
+            'ymax': ymax,
+            'level': -1,
+        })
         shelf_goods_list = shelf_image.shelf_image_goods.all()
         for shelf_goods in shelf_goods_list:
-            # 新增的添加在第一条
-            boxes.append({
-                'xmin': xmin,
-                'ymin': ymin,
-                'xmax': xmax,
-                'ymax': ymax,
-                'level': -1,
-            })
             boxes.append({
                 'level': shelf_goods.level,
                 'xmin': shelf_goods.xmin,

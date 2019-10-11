@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger("detect")
 class CheckBoxStructure:
     x_iou_min = 0.6  # 横向 偏差iou大于阈值  判定为一个列
-    y_iou_max = 0.2  # 且 纵向 偏差iou小于阈值  判定为一个列
+    x_iou_min2 = 0.2  # 横向 偏差iou大于阈值  判定为一个列
 
     none_col = 0.88  # 空列 左右的占两个框与该均值的 比  > 该阈值 认为中间存在空列
     gbx_ins=None
@@ -38,18 +38,19 @@ class CheckBoxStructure:
             (xmin1, ymin1, xmax1, ymax1, box_id1,result1,upc1,is_label1,col1,row1,process_code1) = a2[i][1]
             columns_col.append((xmin1, ymin1, xmax1, ymax1, box_id1,i,0))
         columns_row = []
+        logger.info("value" + str(len(value)))
         for box1, i in zip(value, range(len(value))):
             (xmin1, ymin1, xmax1, ymax1, box_id1,result1,upc1,is_label1,col1,row1,process_code1) = box1
             row1=None
             col1=None
             for ccol in columns_col:
                 (xmin2, ymin2, xmax2, ymax2, box_id2,col2,row2) = ccol
-                x_iou = get_iou((xmin1, xmax1), (xmin2, xmin2))
-                if box_id1 != box_id2 and x_iou >= self.x_iou_min:
-                    row1=row2+1
-                    col1=col2
-                    columns_row.append((xmin1, ymin1, xmax1, ymax1, box_id1,col1,row1))
-
+                if box_id1 != box_id2 :
+                    x_iou = get_iou((xmin1, xmax1), (xmin2, xmax2))
+                    if x_iou > self.x_iou_min:
+                        row1=row2+1
+                        col1=col2
+                        columns_row.append((xmin1, ymin1, xmax1, ymax1, box_id1,col1,row1))
         columns_col.extend(columns_row)
         columns_col_dict = {}
         for i in range(len(a2)):
@@ -65,9 +66,6 @@ class CheckBoxStructure:
                     if box_id1 == a3[j][0]:
                         row1=j
                         columns_col_dict[box_id1] = (xmin1, ymin1, xmax1, ymax1, box_id1, col1, row1)
-
-        print ("ckboxes:"+str(len(columns_col_dict.keys())))
-
         for box1, i in zip(value, range(len(value))):
             (xmin1, ymin1, xmax1, ymax1, box_id1, result1, upc1, is_label1, col1, row1, process_code1) = box1
             falg = False
@@ -94,15 +92,18 @@ class CheckBoxStructure:
                 gc_ins.is_label = is_label1
                 gc_ins.result = result1
             colmunboxes.append(gc_ins)
-
-
         return len(columns),colmunboxes
 
 def get_iou(x1,x2):
     (x1_min, x1_max) = x1
     (x2_min, x2_max) = x2
-    x_min = min(x1_min, x2_min)
-    x_max = max(x1_max, x2_max)
-    x_b = x_max - x_min
-    x_j = x1_max - x1_min + x2_max - x2_min - x_b
-    return float(x_j / (x_b + 0.001))
+    x_min1 = min(x1_min,x2_min)
+    x_max1 = max(x1_max,x2_max)
+    x_max2 = max(x1_min, x2_min)
+    x_min2 = min(x1_max, x2_max)
+    x_b = float(x_max1 - x_min1+0.001)
+    x_j = float(x_min2-x_max2)
+    return float(x_j/x_b)
+
+
+
