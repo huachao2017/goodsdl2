@@ -38,6 +38,7 @@ class CheckBoxStructure:
             (xmin1, ymin1, xmax1, ymax1, box_id1,result1,upc1,is_label1,col1,row1,process_code1) = a2[i][1]
             columns_col.append((xmin1, ymin1, xmax1, ymax1, box_id1,i,0))
         columns_row = []
+        logger.info("value" + str(len(value)))
         for box1, i in zip(value, range(len(value))):
             (xmin1, ymin1, xmax1, ymax1, box_id1,result1,upc1,is_label1,col1,row1,process_code1) = box1
             row1=None
