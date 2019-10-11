@@ -25,6 +25,9 @@ class CheckBoxStructure:
                 falg = False
                 for column in columns:
                     x_iou = get_iou((xmin1,xmax1),(column[0],column[2]))
+                    logger.info(box_id1)
+                    logger.info(column[4])
+                    logger.info(x_iou)
                     if x_iou > self.x_iou_min: # xiang tong
                         falg=True
                 if falg == False:
@@ -52,7 +55,7 @@ class CheckBoxStructure:
                     logger.info("boxid2: " + str(box_id2))
                     logger.info((xmin2, xmax2))
                     logger.info("x_iou: " + str(x_iou))
-                    if x_iou > self.x_iou_min2:
+                    if x_iou > self.x_iou_min:
                         row1=row2+1
                         col1=col2
                         columns_row.append((xmin1, ymin1, xmax1, ymax1, box_id1,col1,row1))
