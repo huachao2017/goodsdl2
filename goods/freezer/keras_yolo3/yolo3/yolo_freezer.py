@@ -30,8 +30,6 @@ config1.gpu_options.allow_growth=True   #不全部占满显存, 按需分配
 config1.gpu_options.per_process_gpu_memory_fraction = 0.3
 K.set_session(tf.Session(config=config1))
 
-global graph
-graph = tf.get_default_graph()
 # set_session(tf.Session(config=config1))
 logger = logging.getLogger("detect")
 gpu_num = config.yolov3_params['gpu_num']
@@ -61,9 +59,9 @@ class YOLO(object):
         self.__dict__.update(kwargs) # and update with user overrides
         self.class_names = self._get_class()
         self.anchors = self._get_anchors()
-
+        self.sess = K.get_session()
         self.boxes, self.scores, self.classes = None,None,None
-        # self.boxes, self.scores, self.classes = self.generate()
+        self.boxes, self.scores, self.classes = self.generate()
         label_map = label_map_util.load_labelmap(label_path)
         categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=1000,
                                                                     use_display_name=True)
@@ -84,12 +82,9 @@ class YOLO(object):
         return np.array(anchors).reshape(-1, 2)
 
     def generate(self):
-        with graph.as_default():
-            self.sess = K.get_session()
         model_path = os.path.expanduser(self.model_path)
         print(model_path)
         assert model_path.endswith('.h5'), 'Keras model or weights must be a .h5 file.'
-
         # Load model, or construct model and load weights.
         num_anchors = len(self.anchors)
         num_classes = len(self.class_names)
