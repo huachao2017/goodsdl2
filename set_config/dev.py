@@ -34,8 +34,17 @@ aliyun_instance2={
     "sleep_time" : 0.3,
 }
 
+baidu_ai_instance1={
+    "access_token" : "'24.04745574edc9ad57c433e093d8d7550c.2592000.1573275850.282335-17482885'",
+    "request_url" : "https://aip.baidubce.com/rest/2.0/image-classify/v1/realtime_search/product/",
+    "min_score" : 0.5,
+    "sleep_time" : 0.3,
+}
+
+
 ######################################common#####################################################################
 common_params={
     'freezer_check_yolov3_switch':True, # 冰柜yolo检测
     'aliyun_search_img_switch': True,# aliyun 以图搜图
+    'baidu_ai_search_img_switch': False,# 百度AI 以图搜图
 }

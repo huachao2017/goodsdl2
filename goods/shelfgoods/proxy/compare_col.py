@@ -4,7 +4,11 @@ import logging
 logger = logging.getLogger("detect")
 from set_config import config
 from goods.shelfgoods.imgsearch.aliyun.search import ImgSearch
+from goods.shelfgoods.imgsearch.baidu_ai.search import ImgSearch_02
 aliyun_search_img_switch = config.common_params['aliyun_search_img_switch']
+baidu_ai_search_img_switch = config.common_params['baidu_ai_search_img_switch']
+
+
 def process(check_box_ins,display_ins,shelf_img,with_in_upcs):
     logger.info("current level process compare_col ..................")
     ck_goodscolumn_inss = check_box_ins.gbx_ins.goodscolumns
@@ -32,8 +36,12 @@ def process(check_box_ins,display_ins,shelf_img,with_in_upcs):
                     continue
                 target_img = shelf_img[int(ck_box[1]):int(ck_box[3]), int(ck_box[0]):int(ck_box[2])]
                 ck_gcs.docompare = 1
-                if aliyun_search_img_switch:
-                    search_ins = ImgSearch()
+                if aliyun_search_img_switch or baidu_ai_search_img_switch:
+                    #要么两个都关，要么开一个
+                    if aliyun_search_img_switch:
+                        search_ins = ImgSearch()
+                    else:
+                        search_ins = ImgSearch_02()
                     upcs = search_ins.search_cvimg(target_img)
                     logger.info("ck_box box_id=%s,upc=%s,aliyun match upc=%s,ds=(%s,%s),ck=(%s,%s)" % (str(ck_gcs.box_id), str(ds_upc), str(upcs),str(ds_location_column), str(ds_location_row),str(ck_location_column),str(ck_location_row)))
                     if upcs != None and len(upcs)>0 and ds_upc in upcs:
