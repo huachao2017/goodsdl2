@@ -35,10 +35,11 @@ aliyun_instance2={
 }
 
 baidu_ai_instance1={
-    "access_token" : "'24.04745574edc9ad57c433e093d8d7550c.2592000.1573275850.282335-17482885'",
     "request_url" : "https://aip.baidubce.com/rest/2.0/image-classify/v1/realtime_search/product/",
     "min_score" : 0.5,
     "sleep_time" : 0.3,
+    "ak":"bBcxD1iD0yChCznvft3oR0sn",
+    "sk":"lL3AjqaCGvmpV077t9q96dihCY2xmgTm"
 }
 
 
