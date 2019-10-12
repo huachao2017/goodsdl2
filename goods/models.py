@@ -34,6 +34,7 @@ class ShelfGoods(models.Model):
     process_code = models.IntegerField(default=-1)
     col = models.IntegerField(default=-1)
     row = models.IntegerField(default=-1)
+    baidu_code = models.CharField(max_length=50,default='')
     create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
     update_time = models.DateTimeField('date updated', auto_now=True)
     def __str__(self):

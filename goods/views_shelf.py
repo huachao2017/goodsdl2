@@ -23,6 +23,7 @@ from goods.shelfgoods.service import tz_good_compare
 from goods.util import shelf_visualize
 from .serializers import *
 from goods.shelfgoods.imgsearch.aliyun.search import ImgSearch
+from goods.shelfgoods.imgsearch.baidu_ai.search import ImgSearch_02
 
 logger = logging.getLogger("django")
 
@@ -450,10 +451,15 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                     # 删除原来的样本
                     os.remove(old_sample_path)
                 serializer.instance.is_label = True
-                serializer.instance.upc = ''
+                # serializer.instance.upc = ''
                 serializer.instance.save()
                 img_search = ImgSearch()
                 img_search.delete_img(old_upc,str(serializer.instance.pk))
+
+                if serializer.instance.baidu_code != '':
+                    imgsearch_02 = ImgSearch_02()
+                    imgsearch_02.delete_img(serializer.instance.baidu_code)
+
 
         elif result == 0:
             # 计算upc
@@ -484,6 +490,12 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                 serializer.instance.save()
                 img_search = ImgSearch()
                 img_search.add_img(upc,str(serializer.instance.pk),sample_image_path)
+
+                imgsearch_02 = ImgSearch_02()
+                baidu_code = imgsearch_02.add_img(upc, str(serializer.instance.pk),sample_image_path)
+                if baidu_code is not None:
+                    serializer.instance.baidu_code = baidu_code
+                    serializer.instance.save()
             else:
                 logger.error('get_upc is None')
 
@@ -498,6 +510,10 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         else:
             image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.source)
         compare_ret = detect_compare(serializer.instance.shelf_image, image_path, need_detect=False, need_notify=True, label_goods=serializer.instance)
+        if result == 1:
+            serializer.instance.upc = ''
+            serializer.instance.save()
+
         return Response(compare_ret)
 
 
