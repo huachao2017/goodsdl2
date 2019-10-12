@@ -10,8 +10,8 @@ baidu_ai_instance = config.baidu_ai_instance1
 
 
 class ImgSearch_02:
+    debug = baidu_ai_instance['debug']
     request_url = baidu_ai_instance['request_url']
-    client = None
     min_score = baidu_ai_instance['min_score']
     sleep_time = baidu_ai_instance['sleep_time']
     ak = baidu_ai_instance['ak']
@@ -83,7 +83,7 @@ class ImgSearch_02:
                 request_.add_header('Content-Type', 'application/x-www-form-urlencoded')
                 response = request.urlopen(request_)
                 str_content = response.read().decode("utf-8")
-                # print(str_content)
+                print(str_content)
                 content = json.loads(str_content)
                 if 'error_code' in content:
                     logging.error(str_content)
@@ -109,7 +109,8 @@ class ImgSearch_02:
                 req.add_header('Content-Type', 'application/x-www-form-urlencoded')
                 response = request.urlopen(req)
                 content = response.read().decode("utf-8")
-                # print(content)
+                if self.debug:
+                    print(content)
                 content = json.loads(content)
                 results = content['result']
                 upcs = []
@@ -186,13 +187,11 @@ class ImgSearch_02:
 
 if __name__ == '__main__':
     demo = ImgSearch_02()
-    # demo.delete_img("1441064327,3222327728;1229152111,2089989172")
-    # demo.search_img("/Users/fangjin/Desktop/goodsdl2/goods/shelfgoods/imgsearch/baidu_ai/test/upc_test2/6902538005141_40779.jpg")
-    # demo.add_img(100,'3567_456',"/Users/86130/Desktop/upc_test2/6902538005141_40754.jpg")
 
-    img = cv2.imread("/Users/86130/Desktop/upc_test2/6902538005141_40754.jpg")
-    print(img.shape)
-    print(demo.add_cvimg(11111,11111,img))
+    # print(demo.add_img(100,'3567_456',"/Users/86130/Desktop/upc_test2/6902538005141_40754.jpg"))
+    # print(demo.delete_img("1441064327,3222327728;1161903065,2930872941"))
+    print(demo.search_img("/Users/86130/Desktop/upc_test2/6902538005141_40754.jpg"))
 
-    # token = demo.get_token()
-    # print(token)
+    # img = cv2.imread("/Users/86130/Desktop/upc_test2/6902538005141_40786.jpg")
+    # print(demo.add_cvimg(100,11111,img))
+
