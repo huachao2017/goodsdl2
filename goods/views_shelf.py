@@ -450,7 +450,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                     # 删除原来的样本
                     os.remove(old_sample_path)
                 serializer.instance.is_label = True
-                serializer.instance.upc = ''
+                # serializer.instance.upc = ''
                 serializer.instance.save()
                 img_search = ImgSearch()
                 img_search.delete_img(old_upc,str(serializer.instance.pk))
@@ -498,6 +498,10 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
         else:
             image_path = os.path.join(settings.MEDIA_ROOT, serializer.instance.shelf_image.source)
         compare_ret = detect_compare(serializer.instance.shelf_image, image_path, need_detect=False, need_notify=True, label_goods=serializer.instance)
+        if result == 1:
+            serializer.instance.upc = ''
+            serializer.instance.save()
+
         return Response(compare_ret)
 
 
