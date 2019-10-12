@@ -35,7 +35,7 @@ class ImgSearch:
     def add_img(self,upc,imgname,img_path):
         # 添加图片
         for i in range(1, 5):
-            time.sleep(self.sleep_time)
+
             try:
                 request = AddImageRequest.AddImageRequest()
                 request.set_endpoint(self.search_point)
@@ -52,6 +52,7 @@ class ImgSearch:
                 code = dict(demjson.decode(response))['Code']
                 return code
             except:
+                time.sleep(self.sleep_time)
                 continue
         return None
 
@@ -59,7 +60,6 @@ class ImgSearch:
         # 添加图片
 
         for i in range(1,5):
-            time.sleep(self.sleep_time)
             try:
                 request = AddImageRequest.AddImageRequest()
                 request.set_endpoint(self.search_point)
@@ -75,13 +75,13 @@ class ImgSearch:
                 code = dict(demjson.decode(response))['Code']
                 return code
             except:
+                time.sleep(self.sleep_time)
                 continue
         return None
     #若不指定imgname 参数，则删除upc下所有图片；若指定参数，删除upc+imgname指定的图片。
     def delete_img(self,upc,imgname=None):
 
         for i in range(1, 5):
-            time.sleep(self.sleep_time)
             try:
                 request = DeleteImageRequest.DeleteImageRequest()
                 request.set_endpoint(self.search_point)
@@ -96,12 +96,12 @@ class ImgSearch:
                 # 成功返回code == 0
                 return code
             except:
+                time.sleep(self.sleep_time)
                 continue
         return None
 
     def search_img(self,img_path):
         for i in range(1,5):
-            time.sleep(self.sleep_time)
             try:
                 request = SearchImageRequest.SearchImageRequest()
                 request.set_endpoint(self.search_point)
@@ -126,13 +126,12 @@ class ImgSearch:
                             upcs.append(ProductId)
                 return upcs
             except:
+                time.sleep(self.sleep_time)
                 continue
         return None
 
     def search_cvimg(self, cvimg):
-
         for i in range(1, 5):
-            time.sleep(self.sleep_time)
             try:
                 request = SearchImageRequest.SearchImageRequest()
                 request.set_endpoint(self.search_point)
@@ -155,6 +154,7 @@ class ImgSearch:
                             upcs.append(ProductId)
                 return upcs
             except:
+                time.sleep(self.sleep_time)
                 continue
         return None
 
