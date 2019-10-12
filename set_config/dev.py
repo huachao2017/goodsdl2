@@ -40,6 +40,7 @@ baidu_ai_instance1={
     "debug":True,
     "request_url" : "https://aip.baidubce.com/rest/2.0/image-classify/v1/realtime_search/product/",
     "min_score" : 0.4,
+    "min_score_top1":0.5,
     "sleep_time" : 0.3,
     # "ak":"bBcxD1iD0yChCznvft3oR0sn",
     "ak":"MpTnnbBdah9cwqGYIfb0rBuQ",

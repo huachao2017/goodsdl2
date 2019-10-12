@@ -5,7 +5,7 @@ import logging
 
 logger = logging.getLogger("detect")
 from set_config import config
-
+from goods.shelfgoods.bean import code
 baidu_ai_instance = config.baidu_ai_instance1
 
 
@@ -13,6 +13,7 @@ class ImgSearch_02:
     debug = baidu_ai_instance['debug']
     request_url = baidu_ai_instance['request_url']
     min_score = baidu_ai_instance['min_score']
+    min_score_top1 = baidu_ai_instance['min_score_top1']
     sleep_time = baidu_ai_instance['sleep_time']
     ak = baidu_ai_instance['ak']
     sk = baidu_ai_instance['sk']
@@ -166,6 +167,39 @@ class ImgSearch_02:
                 continue
         return None
 
+    def search_cvimg_top1(self, cvimg):
+        for i in range(1, 5):
+            try:
+                # cvimg = cv2.resize(cvimg, (200, 200))
+                img_encode = cv2.imencode('.jpg', cvimg)[1]
+                base64_data = base64.b64encode(img_encode)
+
+                params = {"image": base64_data}
+                params = parse.urlencode(params).encode("utf-8")
+                request_url = self.request_url + "search?access_token=" + self.get_token()
+                req = request.Request(url=request_url, data=params)
+                req.add_header('Content-Type', 'application/x-www-form-urlencoded')
+                response = request.urlopen(req)
+                content = response.read().decode("utf-8")
+                print(content)
+                content = json.loads(content)
+                results = content['result']
+                upc =None
+                for result in results:
+                    score = result["score"]
+                    if score > self.min_score_top1:
+                        try:
+                            upc=str(eval(result["brief"])["upc"])
+                        except:
+                            continue
+                    else:
+                        break
+                return upc,code.code_19
+            except Exception as err:
+                logging.error(err)
+                time.sleep(self.sleep_time)
+                continue
+        return None,code.code_20
     def get_token(self):
         for i in range(1, 5):
             try:
