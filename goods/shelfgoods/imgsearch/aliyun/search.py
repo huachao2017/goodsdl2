@@ -8,6 +8,7 @@ import logging
 logger = logging.getLogger("detect")
 import demjson
 from set_config import config
+from goods.shelfgoods.bean import code
 """
 用户登录名称 hslrj@1120470512142314.onaliyun.com
 登录密码 SU7yL1oDqicsAOT{Gsgo7}tIZ{oJcF?2
@@ -23,6 +24,7 @@ class ImgSearch:
     instance_name = aliyun_instance['instance_name']
     client = None
     min_score = aliyun_instance['min_score']
+    min_score_top1 = aliyun_instance['min_score_top1']
     search_point = aliyun_instance['search_point']
     sleep_time = aliyun_instance['sleep_time']
     def __init__(self):
@@ -158,3 +160,30 @@ class ImgSearch:
                 continue
         return None
 
+    def search_cvimg_top1(self, cvimg):
+        for i in range(1, 5):
+            try:
+                request = SearchImageRequest.SearchImageRequest()
+                request.set_endpoint(self.search_point)
+                request.set_InstanceName(self.instance_name)
+                img = cv2.resize(cvimg, (200, 200))
+                img_encode = cv2.imencode('.jpg', img)[1]
+                img_encode = base64.b64encode(img_encode)
+                request.set_PicContent(img_encode)
+                response = self.client.do_action_with_exception(request)
+                logger.info("aliyun search_img,response=" + str(response))
+                result = dict(demjson.decode(response))
+                upc = None
+                if result['Code'] == 0:
+                    sort_values = list(result['Auctions'])
+                    for value in sort_values:
+                        ProductId = dict(value)['ProductId']
+                        PicName = dict(value)['PicName']
+                        SortExprValues = str(dict(value)['SortExprValues'])
+                        if float(SortExprValues.split(";")[0]) > self.min_score_top1:
+                            upc = str(ProductId)
+                return upc,code.code_19
+            except:
+                time.sleep(self.sleep_time)
+                continue
+        return None,code.code_20

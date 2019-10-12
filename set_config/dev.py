@@ -20,6 +20,7 @@ aliyun_instance1={
     "region" : "cn-shanghai",
     "instance_name" : "hsimgsearch",
     "min_score" : 5,
+    "min_score_top1":5,
     "search_point": "imagesearch.cn-shanghai.aliyuncs.com",
     "sleep_time" : 0.3,
 }
@@ -30,6 +31,7 @@ aliyun_instance2={
     "region" : "cn-shanghai",
     "instance_name" : "hsimgsearch1",
     "min_score" : 5,
+    "min_score_top1": 5,
     "search_point": "imagesearch.cn-shanghai.aliyuncs.com",
     "sleep_time" : 0.3,
 }
