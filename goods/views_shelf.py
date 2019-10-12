@@ -23,6 +23,7 @@ from goods.shelfgoods.service import tz_good_compare
 from goods.util import shelf_visualize
 from .serializers import *
 from goods.shelfgoods.imgsearch.aliyun.search import ImgSearch
+from goods.shelfgoods.imgsearch.baidu_ai.search import ImgSearch_02
 
 logger = logging.getLogger("django")
 
@@ -455,6 +456,11 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                 img_search = ImgSearch()
                 img_search.delete_img(old_upc,str(serializer.instance.pk))
 
+                if serializer.instance.baidu_code != '':
+                    imgsearch_02 = ImgSearch_02()
+                    imgsearch_02.delete_img(serializer.instance.baidu_code)
+
+
         elif result == 0:
             # 计算upc
             upc = tz_good_compare.get_upc(
@@ -484,6 +490,12 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
                 serializer.instance.save()
                 img_search = ImgSearch()
                 img_search.add_img(upc,str(serializer.instance.pk),sample_image_path)
+
+                imgsearch_02 = ImgSearch_02()
+                baidu_code = imgsearch_02.add_img(upc, str(serializer.instance.pk),sample_image_path)
+                if baidu_code is not None:
+                    serializer.instance.baidu_code = baidu_code
+                    serializer.instance.save()
             else:
                 logger.error('get_upc is None')
 
