@@ -39,7 +39,7 @@ aliyun_instance2={
 baidu_ai_instance1={
     "debug":True,
     "request_url" : "https://aip.baidubce.com/rest/2.0/image-classify/v1/realtime_search/product/",
-    "min_score" : 0.5,
+    "min_score" : 0.4,
     "sleep_time" : 0.3,
     # "ak":"bBcxD1iD0yChCznvft3oR0sn",
     "ak":"MpTnnbBdah9cwqGYIfb0rBuQ",
@@ -51,6 +51,6 @@ baidu_ai_instance1={
 ######################################common#####################################################################
 common_params={
     'freezer_check_yolov3_switch':True, # 冰柜yolo检测
-    'aliyun_search_img_switch': True,# aliyun 以图搜图
-    'baidu_ai_search_img_switch': False,# 百度AI 以图搜图
+    'aliyun_search_img_switch': False,# aliyun 以图搜图
+    'baidu_ai_search_img_switch': True,# 百度AI 以图搜图
 }

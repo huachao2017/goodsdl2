@@ -22,7 +22,7 @@ class ImgSearch_02:
             try:
                 with open(img_path, 'rb') as f:
                     base64_data = base64.b64encode(f.read())
-                brief = "{'upc':%s, 'id':%s}" % (upc, imgname)
+                brief = "{'upc':%s, 'id':%s}" % (str(upc), str(imgname))
                 params = {"brief": brief, "image": base64_data}
                 params = parse.urlencode(params).encode("utf-8")
                 request_url = self.request_url + "add?access_token=" + self.get_token()
@@ -52,7 +52,7 @@ class ImgSearch_02:
                 img_encode = cv2.imencode('.jpg', cvimg)[1]
                 base64_data = base64.b64encode(img_encode)
 
-                brief = "{'upc':%s, 'id':%s}" % (upc, imgname)
+                brief = "{'upc':%s, 'id':%s}" % (str(upc), str(imgname))
                 params = {"brief": brief, "image": base64_data}
                 params = parse.urlencode(params).encode("utf-8")
                 request_url = self.request_url + "add?access_token=" + self.get_token()
@@ -119,7 +119,7 @@ class ImgSearch_02:
                     # print(score)
                     if score > self.min_score:
                         try:
-                            upcs.append(eval(result["brief"])["upc"])
+                            upcs.append(str(eval(result["brief"])["upc"]))
                         except:
                             continue
                     else:
@@ -154,7 +154,7 @@ class ImgSearch_02:
                     score = result["score"]
                     if score > self.min_score:
                         try:
-                            upcs.append(eval(result["brief"])["upc"])
+                            upcs.append(str(eval(result["brief"])["upc"]))
                         except:
                             continue
                     else:

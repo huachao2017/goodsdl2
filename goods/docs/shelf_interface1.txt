@@ -1,0 +1,179 @@
+以下接口参数错误返回400
+
+一、php请求ai接口
+1、一体化打分(get)：http://ai.aicvs.cn/api/shelf_score?picid=xx&picurl=xx&shopid=xx&displayid=xx&shelfid=xx&tlevel=xx&debug=0
+参数说明：
+picid：你们需要存一条图片记录，这条记录的id
+picurl：这条图片记录的原图地址
+shopid：商店id
+displayid：台账展示表(sf_taizhang_display)id
+shelfid：台账展示里面(display_goods_info)货架的shelf_id
+tlevel：该货架的总层数
+debug:0为产线环境，其他全为测试环境
+返回200：
+{
+    'score': 80                                -- 得分
+    "equal_cnt": 85                            -- 正确数量
+    "different_cnt": 22                        -- 错误数量
+    "unknown_cnt": 10                          -- 未知数量
+    'retpicurl':                               -- 识别照片
+}
+ai通知php接口,得分更新
+2、
+ 测试环境：http://alphataizhang.aicvs.cn/m/shelf/updateScore?picid=xxx&score=xxx&retpicurl=xxx&equal_cnt=1&different_cnt=2&unknown_cnt=3
+ 产线环境：http://taizhang.aicvs.cn/m/shelf/updateScore?picid=xxx&score=xxx&retpicurl=xxx&equal_cnt=1&different_cnt=2&unknown_cnt=3
+ 参数说明：
+   picid ：     上传图片记录的id
+   score ：     更新分数
+   retpicurl ： 识别图片地址
+   equal_cnt：  相同数量
+   different_cnt： 不同数量
+   unknown_cnt： 未知数量
+ 返回结果(json)：
+  { "status": 200, "message": "ok"}
+
+
+二、web界面接口
+0、获取原始图片(get)：http://ai.aicvs.cn/api/get_shelfimage?picid=xx
+返回200：
+{
+    "url":"aaa/bbb/ccc.jpg",              -- 返回矫正图片地址，需自行拼接域名
+    "width":600,                          -- 宽
+    "height":800,                         -- 高
+    "x1":800,                             -- 点1的x, 可能没有
+    "y1":800,                             -- 点1的y, 可能没有
+    "x2":800,                             -- 点2的x, 可能没有
+    "y2":800,                             -- 点2的y, 可能没有
+    "x3":800,                             -- 点3的x, 可能没有
+    "y3":800,                             -- 点3的y, 可能没有
+    "x4":800,                             -- 点4的x, 可能没有
+    "y4":800,                             -- 点4的y, 可能没有
+
+}
+
+1、矫正和检测图片(get)：http://ai.aicvs.cn/api/rectify_detect?picid=xx&x1=xx&y1=xx&x2=xx&y2=xx&x3=xx&y3=xx&x4=xx&y4=xx
+示例：http://ai.aicvs.cn/api/rectify_detect?picid=1&picurl=http://img.starft.com/dmstore/p/13&x1=0&y1=50&x2=706&y2=50&x3=0&y3=820&x4=706&y4=820
+返回200：
+
+
+2、获取识别详情(get)：http://ai.aicvs.cn/api/shelfimage_detail?picid=xx
+返回200：
+{
+    "recturl":"aaa/bbb/ccc.jpg",              -- 返回矫正图片地址，需自行拼接域名
+    "rectwidth":600,                          -- 宽
+    "rectheight":800,                         -- 高
+    "score": 85                               -- 得分
+    "equal_cnt": 85                           -- 正确数量
+    "different_cnt": 22                       -- 错误数量
+    "unknown_cnt": 10                         -- 未知数量
+    "displayurl":"http://lximages.xianlife.com/g1/1909/2711/5d8d7fb354141255.jpg",              -- 返回台账图片地址
+    "detail":
+    [
+        {
+            "boxid": 1,                       -- ai数据库对这个框的boxid
+            "xmin": 37,                       -- 左上角横坐标
+            "ymin": 116,                      -- 左上角纵坐标
+            "xmax": 855,                      -- 右下角横坐标
+            "ymax": 940                       -- 右下角纵坐标
+            "level": 1                        -- 层级，从0开始，从上往下
+            "upc": 'aaaa'                     -- upc
+            "result": 0                       -- 0:正确，1：错误，2：未知
+        },
+        {
+            "boxid": 2,                       -- ai数据库对这个框的boxid
+            "xmin": 37,                       -- 左上角横坐标
+            "ymin": 116,                      -- 左上角纵坐标
+            "xmax": 855,                      -- 右下角横坐标
+            "ymax": 940                       -- 右下角纵坐标
+            "level": 1                        -- 层级
+            "upc": 'aaaa'                     -- upc
+            "result": 0                       -- 0:正确，1：错误，2：未知
+        },
+    ]
+}
+
+3、提交接口(get)：http://ai.aicvs.cn/api/detect_shelfimage?picid=xx
+返回200：
+{
+    "score": 85                       -- 得分
+    "equal_cnt": 85                   -- 正确数量
+    "different_cnt": 22               -- 错误数量
+    "unknown_cnt": 10                 -- 未知数量
+    "detail":
+    [
+        {
+            "boxid": 1,                       -- ai数据库对这个框的boxid
+            "xmin": 37,                       -- 左上角横坐标
+            "ymin": 116,                      -- 左上角纵坐标
+            "xmax": 855,                      -- 右下角横坐标
+            "ymax": 940                       -- 右下角纵坐标
+            "level": 1                        -- 层级，从0开始，从上往下
+            "upc": 'aaaa'                     -- upc
+            "result": 0                       -- 0:正确，1：错误，2：未知
+        },
+        {
+            "boxid": 2,                       -- ai数据库对这个框的boxid
+            "xmin": 37,                       -- 左上角横坐标
+            "ymin": 116,                      -- 左上角纵坐标
+            "xmax": 855,                      -- 右下角横坐标
+            "ymax": 940                       -- 右下角纵坐标
+            "level": 1                        -- 层级
+            "upc": 'aaaa'                     -- upc
+            "result": 0                       -- 0:正确，1：错误，2：未知
+        },
+    ]
+}
+
+4、标定框增加接口(post)：http://ai.aicvs.cn/api/shelfgoods/
+post入参：
+picid  int
+xmin  int
+ymin  int
+xmax  int
+ymax  int
+返回201：
+{
+    'boxid':       1                   -- ai数据库对这个框的id
+}
+
+5、标定框标注接口(put)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
+put入参：
+xmin  int
+ymin  int
+xmax  int
+ymax  int
+result  int                             -- 0:正确，1：错误
+返回200
+{
+    "score": 85                       -- 得分
+    "equal_cnt": 85                   -- 正确数量
+    "different_cnt": 22               -- 错误数量
+    "unknown_cnt": 10                 -- 未知数量
+    "detail":
+    [
+        {
+            "boxid": 1,                       -- ai数据库对这个框的boxid
+            "xmin": 37,                       -- 左上角横坐标
+            "ymin": 116,                      -- 左上角纵坐标
+            "xmax": 855,                      -- 右下角横坐标
+            "ymax": 940                       -- 右下角纵坐标
+            "level": 1                        -- 层级，从0开始，从上往下
+            "upc": 'aaaa'                     -- upc
+            "result": 0                       -- 0:正确，1：错误，2：未知
+        },
+        {
+            "boxid": 2,                       -- ai数据库对这个框的boxid
+            "xmin": 37,                       -- 左上角横坐标
+            "ymin": 116,                      -- 左上角纵坐标
+            "xmax": 855,                      -- 右下角横坐标
+            "ymax": 940                       -- 右下角纵坐标
+            "level": 1                        -- 层级
+            "upc": 'aaaa'                     -- upc
+            "result": 0                       -- 0:正确，1：错误，2：未知
+        },
+    ]
+}
+
+6、删除标定框(delete)：http://ai.aicvs.cn/api/shelfgoods/111/ ## 111是指ai框id
+返回204
+
