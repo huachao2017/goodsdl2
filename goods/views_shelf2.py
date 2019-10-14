@@ -71,7 +71,7 @@ def detect_recognize(shelf_image, source_image_path):
             result = 1
         else:
             result = 0
-        shelf_goods = ShelfGoods.objects.create(
+        shelf_goods = ShelfGoods2.objects.create(
             shelf_image_id=shelf_image.pk,
             xmin=one_box['xmin'],
             ymin=one_box['ymin'],
