@@ -47,7 +47,7 @@ class NumpyEncoder(json.JSONEncoder):
         else:
             return super(NumpyEncoder, self).default(obj)
 
-def detect_recognize(self, shelf_image, source_image_path):
+def detect_recognize(shelf_image, source_image_path):
     # 检测框
     ret = []
     detector = shelfdetection.ShelfDetectorFactory.get_static_detector('shelf')
@@ -132,7 +132,7 @@ class CreateShelfImage(APIView):
             source=os.path.join(image_relative_dir, source_image_name),
         )
 
-        ret = self.detect_recognize(shelf_image, source_image_path)
+        ret = detect_recognize(shelf_image, source_image_path)
 
         logger.info('end detect:{},{}'.format(shopid, shelfid))
         return Response(goods.util.wrap_ret(ret), status=status.HTTP_200_OK)
