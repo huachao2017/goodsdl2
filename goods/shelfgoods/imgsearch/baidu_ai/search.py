@@ -190,6 +190,7 @@ class ImgSearch_02:
                     if score > self.min_score_top1:
                         try:
                             upc=str(eval(result["brief"])["upc"])
+                            break
                         except:
                             continue
                     else:
@@ -224,8 +225,8 @@ if __name__ == '__main__':
 
     # print(demo.add_img(100,'3567_456',"/Users/86130/Desktop/upc_test2/6902538005141_40754.jpg"))
     # print(demo.delete_img("1441064327,3222327728;1161903065,2930872941"))
-    print(demo.search_img("/Users/86130/Desktop/upc_test2/6902538005141_40754.jpg"))
+    # print(demo.search_cvimg_top1("/Users/86130/Desktop/upc_test2/002.png"))
 
-    # img = cv2.imread("/Users/86130/Desktop/upc_test2/6902538005141_40786.jpg")
-    # print(demo.add_cvimg(100,11111,img))
+    img = cv2.imread("/Users/86130/Desktop/upc_test2/6902538005141_40786.jpg")
+    print(demo.search_cvimg_top1(img))
 
