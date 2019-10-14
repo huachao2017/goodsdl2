@@ -5,10 +5,9 @@ from goods.shelfgoods.bean import code
 import logging
 logger = logging.getLogger("detect")
 # api  :  baidu  ali
-def search(xmin,ymin,xmax,ymax,img_file,api="baidu"):
+def search(xmin,ymin,xmax,ymax,cvimg,api="baidu"):
     try:
-        shelf_img = cv2.imread(img_file)
-        target_img = shelf_img[int(ymin):int(ymax), int(xmin):int(xmax)]
+        target_img = cvimg[int(ymin):int(ymax), int(xmin):int(xmax)]
         search_ins = None
         if api=='ali':
             search_ins = ImgSearch()

@@ -21,6 +21,6 @@ def get_upc(display_img_id,shelf_id,shelf_image_id,box_id):
     upc = upc_util.get_upc(display_img_id,shelf_id,shelf_image_id,box_id)
     return upc
 
-def search_upc_from_api(xmin,ymin,xmax,ymax,img_file,api="baidu"):
-    upc,process_code = search_upc.search(xmin,ymin,xmax,ymax,img_file,api="baidu")
+def search_upc_from_api(xmin,ymin,xmax,ymax,cvimg,api="baidu"):
+    upc,process_code = search_upc.search(xmin,ymin,xmax,ymax,cvimg,api="baidu")
     return upc,process_code
