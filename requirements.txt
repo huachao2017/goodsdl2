@@ -13,4 +13,4 @@ demjson
 django-cors-headers
 aliyun-python-sdk-core
 aliyun-python-sdk-imagesearch
-keras=2.2.4
+keras==2.2.4
