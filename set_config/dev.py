@@ -20,6 +20,7 @@ aliyun_instance1={
     "region" : "cn-shanghai",
     "instance_name" : "hsimgsearch",
     "min_score" : 5,
+    "min_score_top1":5,
     "search_point": "imagesearch.cn-shanghai.aliyuncs.com",
     "sleep_time" : 0.3,
 }
@@ -30,6 +31,7 @@ aliyun_instance2={
     "region" : "cn-shanghai",
     "instance_name" : "hsimgsearch1",
     "min_score" : 5,
+    "min_score_top1": 5,
     "search_point": "imagesearch.cn-shanghai.aliyuncs.com",
     "sleep_time" : 0.3,
 }
@@ -38,6 +40,7 @@ baidu_ai_instance1={
     "debug":True,
     "request_url" : "https://aip.baidubce.com/rest/2.0/image-classify/v1/realtime_search/product/",
     "min_score" : 0.4,
+    "min_score_top1":0.5,
     "sleep_time" : 0.3,
     # "ak":"bBcxD1iD0yChCznvft3oR0sn",
     "ak":"b2ZsQXxG6ecGN5nChySaFLoE",
