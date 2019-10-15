@@ -29,3 +29,16 @@ sqoop import  --connect jdbc:mysql://123.103.16.19:3300/dmstore  -username 'read
 
 5  增量导入
 sqoop import  --connect jdbc:mysql://123.103.16.19:3300/dmstore  -username 'readonly'  -password 'fxiSHEhui2018@)@)' --table shop_goods --hive-import --hive-table shop_goods -m 2 --fields-terminated-by "\0001" --incremental append --check-column CREATE_TIME --last-value '2019-10-15 00:00:00' ;
+
+6  测试导入数据 （2种命令行模式）
+hive:
+启动 hive :    任意目录下运行
+ hive
+select count(1) from (select distinct(upc) as upc1 from shop_goods) T;
+spark_shell （进入到spark安装 目录 bin下 ）:
+./spark-shell
+spark.sql("show databases").show(2)
+spark.sql("show tables").show(2)
+spark.sql("use default")
+spark.sql("select count(1) from (select distinct(upc) as upc1 from shop_goods) T").show(10)
+
