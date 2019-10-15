@@ -1,0 +1,44 @@
+
+sqoop常用命令
+
+线上mysql (online-erp):
+123.103.16.19
+3300
+readonly
+fxiSHEhui2018@)@)
+
+1、列出mysql数据库中的所有数据库
+ sqoop list-databases --connect jdbc:mysql://123.103.16.19:3300/ -username 'readonly'  -password 'fxiSHEhui2018@)@)'
+
+2、连接mysql并列出数据库中的表
+sqoop list-tables --connect  jdbc:mysql://123.103.16.19:3300/dmstore -username 'readonly'  -password 'fxiSHEhui2018@)@)'
+
+3、将关系型数据的表结构复制到hive中
+sqoop create-hive-table --connect jdbc:mysql://123.103.16.19:3300/dmstore --table shop_goods -username 'readonly'  -password 'fxiSHEhui2018@)@)' --hive-table shop_goods  --fields-terminated-by "\0001"  --lines-terminated-by "\n";
+参数说明：
+--fields-terminated-by "\0001"  是设置每列之间的分隔符，"\0001"是ASCII码中的1，它也是hive的默认行内分隔符， 而sqoop的默认行内分隔符为"，"
+--lines-terminated-by "\n"  设置的是每行之间的分隔符，此处为换行符，也是默认的分隔符；
+
+注意：只是复制表的结构，表中的内容没有复制
+
+4、将数据从关系数据库导入文件到hive表中
+sqoop import  --connect jdbc:mysql://123.103.16.19:3300/dmstore  -username 'readonly'  -password 'fxiSHEhui2018@)@)' --table shop_goods --hive-import --hive-table shop_goods -m 2 --fields-terminated-by "\0001" ;
+参数说明：
+ -m 2 表示由两个map作业执行；
+--fields-terminated-by "\0001"  需同创建hive表时保持一致；
+
+5  增量导入
+sqoop import  --connect jdbc:mysql://123.103.16.19:3300/dmstore  -username 'readonly'  -password 'fxiSHEhui2018@)@)' --table shop_goods --hive-import --hive-table shop_goods -m 2 --fields-terminated-by "\0001" --incremental append --check-column CREATE_TIME --last-value '2019-10-15 00:00:00' ;
+
+6  测试导入数据 （2种命令行模式）
+hive:
+启动 hive :    任意目录下运行
+ hive
+select count(1) from (select distinct(upc) as upc1 from shop_goods) T;
+spark_shell （进入到spark安装 目录 bin下 ）:
+./spark-shell
+spark.sql("show databases").show(2)
+spark.sql("show tables").show(2)
+spark.sql("use default")
+spark.sql("select count(1) from (select distinct(upc) as upc1 from shop_goods) T").show(10)
+

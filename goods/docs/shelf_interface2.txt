@@ -1,4 +1,5 @@
 1、检测图片接口(get)：http://ai.aicvs.cn/api/createshelfimage2?shopid=xx&shelfid=xx&picurl=xx&tlevel=xx
+示例：http://ai.aicvs.cn/api/createshelfimage2?shopid=1&shelfid=1&picurl=http://ai.aicvs.cn/media/images/shelf/201910/1017/rectify_773_DJ-008-91-001_0842.jpg&tlevel=4
 返回200：
 [
     {

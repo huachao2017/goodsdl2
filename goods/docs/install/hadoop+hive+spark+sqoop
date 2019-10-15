@@ -1,0 +1,334 @@
+1  安装jdk1.8
+yum install -y java-1.8.0-openjdk-devel.x86_64
+vi /etc/profile
+JAVA_HOME=/usr/lib/jvm/java-1.8.0
+JRE_HOME=$JAVA_HOME/jre
+PATH=$PATH:$JAVA_HOME/bin
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+export JAVA_HOME
+export JRE_HOME
+export PATH
+export CLASSPATH
+source /etc/profile
+
+2 安装hadoop
+vi /etc/hosts
+10.10.11.14  master
+[root@10-10-11-14 sbin]# hostname
+10-10-11-14
+[root@10-10-11-14 sbin]# hostname master
+
+配置无秘钥登录
+cd
+ssh-keygen  -t   rsa   -P  ''
+cd /root/.ssh/
+cat id_rsa.pub >> authorized_keys
+
+
+cd /data/opt/
+wget https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.7.7/hadoop-2.7.7.tar.gz
+wget http://mirror.bit.edu.cn/apache/hive/hive-2.3.6/apache-hive-2.3.6-bin.tar.gz
+
+
+vi  /etc/profile
+export HADOOP_HOME=/data/opt/hadoop2.7.7
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
+export PATH=.:${JAVA_HOME}/bin:${HADOOP_HOME}/bin:$PATH
+source /etc/profile
+
+vi /data/opt/hadoop-2.7.7/etc/hadoop/core-site.xml
+<configuration>
+   <property>
+        <name>hadoop.tmp.dir</name>
+        <value>/root/hadoop/tmp</value>
+        <description>Abase for other temporary directories.</description>
+   </property>
+   <property>
+        <name>fs.default.name</name>
+        <value>hdfs://master:9000</value>
+   </property>
+</configuration>
+
+
+vi /data/opt/hadoop-2.7.7/etc/hadoop/hadoop-env.sh
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0
+
+vi /data/opt/hadoop-2.7.7/etc/hadoop/hdfs-site.xml
+<property>
+   <name>dfs.name.dir</name>
+   <value>/root/hadoop/dfs/name</value>
+   <description>Path on the local filesystem where theNameNode stores the namespace and transactions logs persistently.</description>
+</property>
+<property>
+   <name>dfs.data.dir</name>
+   <value>/root/hadoop/dfs/data</value>
+   <description>Comma separated list of paths on the localfilesystem of a DataNode where it should store its blocks.</description>
+</property>
+<property>
+   <name>dfs.replication</name>
+   <value>2</value>
+</property>
+<property>
+      <name>dfs.permissions</name>
+      <value>false</value>
+      <description>need not permissions</description>
+</property>
+
+
+vi /data/opt/hadoop-2.7.7/etc/hadoop/mapred-site.xml
+<property>
+    <name>mapred.job.tracker</name>
+    <value>master:9001</value>
+</property>
+<property>
+      <name>mapred.local.dir</name>
+       <value>/root/hadoop/var</value>
+</property>
+<property>
+       <name>mapreduce.framework.name</name>
+       <value>yarn</value>
+</property>
+格式化：
+cd /data/opt/hadoop-2.7.7/bin
+./hadoop  namenode  -format
+
+cd /data/opt/hadoop-2.7.7/bin/
+
+./start-all.sh
+
+正常查看 ：(目前端口未开放)
+117.50.24.182:8088
+117.50.24.182:50070
+
+
+3   mysql  安装  （略）
+4   hive 安装
+ vi /etc/profile
+export HIVE_HOME=/data/opt/apache-hive-2.3.6-bin
+export HIVE_CONF_DIR=${HIVE_HOME}/conf
+export PATH=.:${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SPARK_HOME}/bin:${HADOOP_HOME}/bin:${ZK_HOME}/bin:${HBASE_HOME}/bin:${HIVE_HOME}/bin:$PATH
+source  /etc/profile
+
+mkdir /root/hive
+mkdir /root/hive/warehouse
+cd /data/opt/hadoop-2.7.7/bin
+hadoop fs -mkdir -p /root/hive/
+hadoop fs -mkdir -p /root/hive/warehouse
+hadoop fs -chmod 777 /root/hive/
+hadoop fs -chmod 777 /root/hive/warehouse
+cp hive-default.xml.template hive-site.xml
+vi  hive-site.xml
+编辑hive-site.xml文件，在 中添加:
+<!-- 指定HDFS中的hive仓库地址 -->
+  <property>
+    <name>hive.metastore.warehouse.dir</name>
+    <value>/root/hive/warehouse</value>
+  </property>
+
+<property>
+    <name>hive.exec.scratchdir</name>
+    <value>/root/hive</value>
+  </property>
+
+  <!-- 该属性为空表示嵌入模式或本地模式，否则为远程模式 -->
+  <property>
+    <name>hive.metastore.uris</name>
+    <value></value>
+  </property>
+
+<!-- 指定mysql的连接 -->
+ <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:mysql://127.0.0.1:3306/hive?createDatabaseIfNotExist=true&amp;characterEncoding=utf-8</value>
+    </property>
+<!-- 指定驱动类 -->
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>com.mysql.jdbc.Driver</value>
+    </property>
+   <!-- 指定用户名 -->
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>root</value>
+    </property>
+    <!-- 指定密码 -->
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>123456</value>
+    </property>
+    <property>
+   <name>hive.metastore.schema.verification</name>
+   <value>false</value>
+    <description>
+    </description>
+ </property>
+然后将配置文件中所有的
+${system:java.io.tmpdir}
+更改为 /opt/hive/tmp (如果没有该文件则创建)，
+并将此文件夹赋予读写权限，将
+${system:user.name}
+更改为 root
+
+
+ cp hive-env.sh.template hive-env.sh
+export  HADOOP_HOME=/data/opt/hadoop-2.7.7
+export  HIVE_CONF_DIR=/data/opt/apache-hive-2.3.6-bin/conf
+export  HIVE_AUX_JARS_PATH=/data/opt/apache-hive-2.3.6-bin/lib
+
+
+将mysql 的驱动包 上传到/data/opt/apache-hive-2.3.6-bin/lib
+mysql-connector-java-5.1.46.jar
+
+cd  /data/opt/apache-hive-2.3.6-bin/bin
+初始化数据库
+schematool  -initSchema -dbType mysql
+
+5 spark 安装
+https://spark.apache.org/downloads.html
+cd /usr/local/src/
+#wget http://mirror.bit.edu.cn/apache/spark/spark-2.3.3/spark-2.3.3-bin-hadoop2.6.tgz
+wget  https://archive.apache.org/dist/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz
+tar -zxvf spark-2.3.3-bin-hadoop2.6.tgz
+
+vi   /etc/profile
+export SPARK_HOME=/data/opt/spark-2.4.3-bin-hadoop2.7
+export PATH=$SPARK_HOME/bin:$PATH
+source /etc/profile
+
+spark配置，cd  conf
+mv spark-env.sh.template spark-env.sh
+vi  spark-env.sh
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0
+export SPARK_MASTER_HOST=10.10.11.14
+export SPARK_MASTER_PORT=7077
+export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/pyspark:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip:$PYTHONPATH
+
+mv slaves.template slaves
+
+mv spark-defaults.conf.template spark-defaults.conf
+vi spark-defaults.conf
+spark.master                       spark://10.10.11.14:7077
+
+配置spark 连接 hive
+1）拷贝hive的hive-site.xml文件到spark的conf目录下
+2）修改spark中hive-site.xml文件
+添加以下：
+<configuration>
+<property>
+  <name>hive.metastore.uris</name>
+ <value>thrift://localhost:9083</value>
+</property>
+</configuration>
+
+ 3) 启动 hive service
+nohup hive --service metastore &
+启动 spark-shell 或 spark-sql
+
+
+pip install py4j
+
+
+问题：
+EXCEPTION:Python in worker has different version 2.7 than that in driver 3.6
+vi  ~/.bash_profile
+
+export PYSPARK_PYTHON=/root/anaconda3/bin/python3.6
+export PYSPARK_DRIVER_PYTHON=/root/anaconda3/bin/python3.6
+
+source ~/.bash_profile
+
+
+sparksql  运行时  发现 驱动找不到 ：
+linux  spark 环境下： jar 目录下 。 拷贝 mysql 链接驱动 到里面
+在 vi spark-env.sh
+里面添加 ：
+
+export EXTRA_SPARK_CLASSPATH=/data/opt/spark-2.4.3-bin-hadoop2.7/jars/
+
+如果本地widows 下运行时 ， 依赖java 1.8 环境 。
+
+需要再： C:\Program Files\Java\jdk-8u111-windows\jre\lib\ext  里面把包 拷贝进去
+
+
+
+window  运行pyspark :
+window上运行spark程序出现
+java.io.IOException: (null) entry in command string: null chmod 0644
+
+下载hadoop.dll文件，拷贝到c:\windows\system32目录中即可
+百度云盘  python 里面  winutils-master.zip
+
+
+window 运行pyspark
+winutil.exe  找不到
+配置环境变量  HADOOP_HOME   选择 winutils-master.zip  其中一个版本
+并添加进path
+
+
+
+6   sqoop 安装
+wget  https://mirrors.tuna.tsinghua.edu.cn/apache/sqoop/1.4.7/sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz
+
+cd  /data/opt/sqoop-1.4.7.bin__hadoop-2.6.0/lib
+添加 mysql-connector-java-5.1.46.jar
+
+mv sqoop-1.4.7.bin__hadoop-2.6.0  sqoop-1.4.7
+vi  /etc/profile
+SQOOP_HOME=/data/opt/sqoop-1.4.7
+export PATH=.:${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SPARK_HOME}/bin:${HADOOP_HOME}/bin:${ZK_HOME}/bin:${HBASE_HOME}/bin:${HIVE_HOME}/bin:${SQOOP_HOME}/bin:$PATH
+
+cp sqoop-env-template.sh  sqoop-env.sh
+vi sqoop-env.sh
+export HADOOP_COMMON_HOME=/data/opt/hadoop-2.7.7
+export HADOOP_MAPRED_HOME=/data/opt/hadoop-2.7.7
+export HIVE_HOME=/data/opt/apache-hive-2.3.6-bin
+export HIVE_CONF_DIR=${HIVE_HOME}/conf
+export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HIVE_HOME/lib/*
+
+cd /data/opt/apache-hive-2.3.6-bin/lib
+cp libthrift-0.9.3.jar ../../hadoop-2.7.7/sqoop-1.4.7.bin__hadoop-2.6.0/lib/
+
+
+
+
+cd /usr/lib/jvm/java-1.8.0/jre/lib/security
+vi java.policy
+2.错误：main ERROR Could not register mbeans java.security.AccessControlException: access denied ("javax.management.MBeanTrustPermission" "register")
+解决方法：
+Just add the following lines to your java.policy file unter <JRE_HOME>/lib/security.
+grant {
+　　permission javax.management.MBeanTrustPermission "register";
+};
+
+3 java.lang.NoSuchMethodError: com.fasterxml.jackson.databind.ObjectMapper.readerFor(Ljava/lang/Class;)Lcom/fasterxml/jackson/databind/ObjectReader;
+将$SQOOP_HOME/lib/jackson*.jar 文件bak，再把$HIVE_HOME/lib/jackson*.jar 拷贝至 $SQOOP_HOME/lib 目录中，重新运行sqoop 作业，导入成功。
+
+4 The auxService:mapreduce_shuffle does not exist
+hadoop 下 ：
+yarn-site.xml
+<property>
+<name>yarn.nodemanager.aux-services</name>
+<value>mapreduce_shuffle</value>
+</property>
+<property>
+<name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
+<value>org.apache.hadoop.mapred.ShuffleHandler</value>
+</property>
+
+./stop-yarn.sh
+./start-yarn.sh
+
+5 Output directory hdfs://master:9000/user/root/shop_goods already exists
+hadoop fs -rm -r -skipTrash /user/root/shop_goods
+
+
+端口开放：
+3306  8088  50070 9000 9001 7077 8080
+*******************
+vi  /etc/sysconfig/iptables
+-A INPUT -p tcp -m tcp --dport 8088 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 50070 -j ACCEPT
+/etc/init.d/iptables restart
+*******************
+

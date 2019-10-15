@@ -47,58 +47,58 @@ class NumpyEncoder(json.JSONEncoder):
         else:
             return super(NumpyEncoder, self).default(obj)
 
-    def detect_recognize(self, shelf_image, source_image_path):
-        # 检测框
-        ret = []
-        detector = shelfdetection.ShelfDetectorFactory.get_static_detector('shelf')
-        step1_min_score_thresh = .5
-        detect_ret = detector.detect(source_image_path, step1_min_score_thresh=step1_min_score_thresh)
-        if len(detect_ret) > 0:
-            caculate_level(detect_ret, shelf_image.tlevel)
+def detect_recognize(shelf_image, source_image_path):
+    # 检测框
+    ret = []
+    detector = shelfdetection.ShelfDetectorFactory.get_static_detector('shelf')
+    step1_min_score_thresh = .5
+    detect_ret = detector.detect(source_image_path, step1_min_score_thresh=step1_min_score_thresh)
+    if len(detect_ret) > 0:
+        caculate_level(detect_ret, shelf_image.tlevel)
 
-        cvimg = cv2.imread(source_image_path)
-        for one_box in detect_ret:
-            # 识别商品
-            upc, process_code = tz_good_compare.search_upc_from_api(
-                one_box['xmin'],
-                one_box['ymin'],
-                one_box['xmax'],
-                one_box['ymax'],
-                cvimg
-            )
-            if upc is None:
-                upc = ''
-                result = 1
-            else:
-                result = 0
-            shelf_goods = ShelfGoods.objects.create(
-                shelf_image_id=shelf_image.pk,
-                xmin=one_box['xmin'],
-                ymin=one_box['ymin'],
-                xmax=one_box['xmax'],
-                ymax=one_box['ymax'],
-                level=one_box['level'],
-                upc=upc,
-                process_code=process_code,
-            )
-            ret.append({
-                'id': shelf_goods.pk,
-                'xmin': shelf_goods.xmin,
-                'ymin': shelf_goods.ymin,
-                'xmax': shelf_goods.xmax,
-                'ymax': shelf_goods.ymax,
-                'level': shelf_goods.level,
-                'upc': shelf_goods.upc,
-                'result': result,
-            })
-        if len(ret) > 0:
-            #生成识别图
-            result_image_name = shelf_visualize(ret, source_image_path)
-            image_relative_dir = os.path.split(shelf_image.source)[0]
-            shelf_image.resultsource = os.path.join(image_relative_dir, result_image_name)
+    cvimg = cv2.imread(source_image_path)
+    for one_box in detect_ret:
+        # 识别商品
+        upc, process_code = tz_good_compare.search_upc_from_api(
+            one_box['xmin'],
+            one_box['ymin'],
+            one_box['xmax'],
+            one_box['ymax'],
+            cvimg
+        )
+        if upc is None:
+            upc = ''
+            result = 1
+        else:
+            result = 0
+        shelf_goods = ShelfGoods2.objects.create(
+            shelf_image_id=shelf_image.pk,
+            xmin=one_box['xmin'],
+            ymin=one_box['ymin'],
+            xmax=one_box['xmax'],
+            ymax=one_box['ymax'],
+            level=one_box['level'],
+            upc=upc,
+            process_code=process_code,
+        )
+        ret.append({
+            'id': shelf_goods.pk,
+            'xmin': shelf_goods.xmin,
+            'ymin': shelf_goods.ymin,
+            'xmax': shelf_goods.xmax,
+            'ymax': shelf_goods.ymax,
+            'level': shelf_goods.level,
+            'upc': shelf_goods.upc,
+            'result': result,
+        })
+    if len(ret) > 0:
+        #生成识别图
+        result_image_name = shelf_visualize(ret, source_image_path)
+        image_relative_dir = os.path.split(shelf_image.source)[0]
+        shelf_image.resultsource = os.path.join(image_relative_dir, result_image_name)
 
-            shelf_image.save()
-        return ret
+        shelf_image.save()
+    return ret
 
 class CreateShelfImage(APIView):
 
@@ -132,7 +132,7 @@ class CreateShelfImage(APIView):
             source=os.path.join(image_relative_dir, source_image_name),
         )
 
-        ret = self.detect_recognize(shelf_image, source_image_path)
+        ret = detect_recognize(shelf_image, source_image_path)
 
         logger.info('end detect:{},{}'.format(shopid, shelfid))
         return Response(goods.util.wrap_ret(ret), status=status.HTTP_200_OK)
