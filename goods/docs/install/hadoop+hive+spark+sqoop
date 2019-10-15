@@ -208,9 +208,22 @@ mv slaves.template slaves
 
 mv spark-defaults.conf.template spark-defaults.conf
 vi spark-defaults.conf
-spark.master                     spark://192.168.1.60:7077
+spark.master                       spark://10.10.11.14:7077
 
+配置spark 连接 hive
+1）拷贝hive的hive-site.xml文件到spark的conf目录下
+2）修改spark中hive-site.xml文件
+添加以下：
+<configuration>
+<property>
+  <name>hive.metastore.uris</name>
+ <value>thrift://localhost:9083</value>
+</property>
+</configuration>
 
+ 3) 启动 hive service
+nohup hive --service metastore &
+启动 spark-shell 或 spark-sql
 
 
 pip install py4j
