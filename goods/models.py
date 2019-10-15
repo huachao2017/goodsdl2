@@ -40,6 +40,32 @@ class ShelfGoods(models.Model):
     def __str__(self):
         return '{}-{}:{}'.format(self.pk, self.upc, self.result)
 
+
+class ShelfImage2(models.Model):
+    shopid = models.IntegerField(default=0, db_index=True)
+    shelfid = models.IntegerField(default=0, db_index=True)
+    tlevel = models.IntegerField(default=0)
+    picurl = models.CharField(max_length=200, default='0')
+    source = models.CharField(max_length=200, default='')
+    resultsource = models.CharField(max_length=200, default='')
+    create_time = models.DateTimeField('date created', auto_now_add=True)
+    update_time = models.DateTimeField('date updated', auto_now=True)
+
+class ShelfGoods2(models.Model):
+    shelf_image = models.ForeignKey(ShelfImage2, related_name="shelf_image_goods", on_delete=models.CASCADE)
+    upc = models.CharField(max_length=20)
+    xmin = models.PositiveIntegerField(default=0)
+    ymin = models.PositiveIntegerField(default=0)
+    xmax = models.PositiveIntegerField(default=0)
+    ymax = models.PositiveIntegerField(default=0)
+    level = models.IntegerField(default=-1)
+    process_code = models.IntegerField(default=-1)
+    baidu_code = models.CharField(max_length=50,default='')
+    create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
+    update_time = models.DateTimeField('date updated', auto_now=True)
+    def __str__(self):
+        return '2_{}-{}:{}'.format(self.pk, self.upc, self.result)
+
 def image_upload_source(instance, filename):
     now = datetime.datetime.now()
     return '{}/{}/{}/{}/{}_{}_{}'.format(settings.DETECT_DIR_NAME, 'freezer', now.strftime('%Y%m'),

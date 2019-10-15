@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from goods.models import ShelfImage, ShelfGoods, FreezerImage
+from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage
 
 from django.conf import settings
 
@@ -53,6 +53,45 @@ class ShelfGoodsSerializer(serializers.ModelSerializer):
         model = ShelfGoods
         fields = ('pk', 'upc', 'xmin', 'ymin', 'xmax', 'ymax', 'level', 'row', 'col', 'result', 'is_label', 'process_code', 'baidu_code', 'create_time', 'update_time')
         read_only_fields = ('level', 'create_time', 'update_time')
+
+
+class ShelfImage2Serializer(serializers.ModelSerializer):
+    source_url = serializers.SerializerMethodField()
+    result_source_url = serializers.SerializerMethodField()
+    class Meta:
+        model = ShelfImage2
+        fields = ('pk', 'shopid', 'shelfid', 'picurl', 'tlevel', 'source_url', 'result_source_url',
+                  'create_time', 'update_time')
+        read_only_fields = ('create_time',)
+    def get_source_url(self, shelfImage):
+        request = self.context.get('request')
+        if shelfImage.source:
+            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
+                                                                   host=request.get_host(),
+                                                                   path=settings.MEDIA_URL,
+                                                                   visual=shelfImage.source)
+            return current_uri
+
+        else:
+            return None
+    def get_result_source_url(self, shelfImage):
+        request = self.context.get('request')
+        if shelfImage.resultsource:
+            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
+                                                                   host=request.get_host(),
+                                                                   path=settings.MEDIA_URL,
+                                                                   visual=shelfImage.resultsource)
+            return current_uri
+
+        else:
+            return None
+
+
+class ShelfGoods2Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShelfGoods2
+        fields = ('pk', 'upc', 'xmin', 'ymin', 'xmax', 'ymax', 'level', 'process_code', 'baidu_code', 'create_time', 'update_time')
+        read_only_fields = ('level','create_time',)
 
 
 class FreezerImageSerializer(serializers.ModelSerializer):
