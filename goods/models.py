@@ -79,3 +79,9 @@ class FreezerImage(models.Model):
     visual = models.URLField(max_length=200, default='')
     create_time = models.DateTimeField('date created', auto_now_add=True, db_index=True)
 
+class FirstGoodsSelection(models.Model):
+    shopid = models.IntegerField(db_index=True)
+    upc = models.CharField(max_length=20)
+    code = models.CharField(max_length=20)
+    predict_sales_amount = models.IntegerField()
+    template_shop_ids = models.CharField(max_length=100)
