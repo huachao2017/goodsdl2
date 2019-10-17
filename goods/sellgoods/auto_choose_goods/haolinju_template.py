@@ -27,7 +27,7 @@ def get_data():
     return tuple(data)
 
 def save_data(val):
-    conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='mysql ',
+    conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',
                            charset="utf8", port=3306, use_unicode=True)
     cursor = conn.cursor()
     sql = "insert into goods_firstgoodsselection(shop_id,template_shop_ids,upc,code,predict_sales_amount) values (%s,%s,%s,%s,%s)"
@@ -36,11 +36,13 @@ def save_data(val):
         cursor.executemany(sql, val)
         # 提交到数据库执行
         conn.commit()
+        print('ok')
     except:
         # 如果发生错误则回滚
         conn.rollback()
         # 关闭数据库连接
         conn.close()
+        print('error')
 
 
 
