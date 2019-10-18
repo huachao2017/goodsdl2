@@ -112,7 +112,7 @@ def get_min_max_stock_from_ucenter(shop_id):
 def get_max_sku(upcs_shelf_info,shelf_results,upc_results,upcs):
     shelf_depth_info = {}
     for shelf_row in shelf_results:
-        shelf_depth_info[shelf_row[0]] = shelf_row[3]
+        shelf_depth_info[str(shelf_row[0])] = shelf_row[3]
     upc_depth_info = {}
     for upc_row in upc_results:
         upc_depth_info[upc_row[0]] = upc_row[3]
