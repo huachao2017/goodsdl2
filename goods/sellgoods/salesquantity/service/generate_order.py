@@ -26,7 +26,7 @@ def generate():
                     upc_ordersales[upc] = (sale,sale,min_stock,max_stock,stock)
                 else:
                     upc_ordersales[upc] = (max_stock-stock,sale,min_stock,max_stock,stock)
-        shop_upc_ordersales[shop_id1] = upc_ordersales
+        shop_upc_ordersales[int(shop_id1)] = upc_ordersales
     # 保存mysql 订单表
     save_mysql_sales.save_oreder(shop_upc_ordersales)
     # 通知魔兽订单
