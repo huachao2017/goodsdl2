@@ -7,7 +7,9 @@ def get_predict_sales(shop_ids):
     mysql_ins = mysql_util.MysqlUtil(ai)
     sql = sales_quantity.sql_params["sales_ai"]
     exe_time = str(time.strftime('%Y-%m-%d', time.localtime()))
+    shop_ids = str(tuple(shop_ids))
     sql = sql.format(shop_ids,exe_time)
+    print (sql)
     results = mysql_ins.selectAll(sql)
 
     shop_ids = []

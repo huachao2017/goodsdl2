@@ -10,7 +10,7 @@ shellgoods_params={
     },
     'predict_shop_ids':'(3598)',
     "predict_ext_days":7,
-    'order_shop_ids': '(1284)'
+    'order_shop_ids': [1284]
 }
 #erp_online
 erp={

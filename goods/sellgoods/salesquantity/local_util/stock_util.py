@@ -7,11 +7,10 @@ import demjson
 erp = config.erp
 ucenter = config.ucenter
 def get_stock(shop_ids):
-    shop_ids = list(tuple(shop_ids))
     shop_id_info = {}
     for shop_id in shop_ids:
         upc_stock = get_stock_from_erp(shop_id)
-        upc_min_max=get_min_max_stock_from_ucenter()
+        upc_min_max=get_min_max_stock_from_ucenter(shop_id)
         upc_min_max_stock = {}
         for upc in upc_min_max:
             (min_stock,max_stock) = upc_min_max[upc]
