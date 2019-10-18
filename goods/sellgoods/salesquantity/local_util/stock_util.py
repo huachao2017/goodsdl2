@@ -93,10 +93,10 @@ def get_min_max_stock_from_ucenter(shop_id):
     shelf_results = mysql_ins.selectAll(sql3)
     sql4 = sales_quantity.sql_params["tz_upc"]
     if len(upcs) > 1:
-        sql4 = sql3.format(str(tuple(list(upcs.keys()))))
+        sql4 = sql4.format(str(tuple(list(upcs.keys()))))
     elif(len(upcs)==1):
         upcs_s = str("("+str('"')+upcs[0]+str('"')+")")
-        sql4 = sql3.format(upcs_s)
+        sql4 = sql4.format(upcs_s)
     print (sql4)
     print (str(tuple(list(upcs.keys()))))
     upc_results = mysql_ins.selectAll(sql4)
