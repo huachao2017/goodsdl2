@@ -78,10 +78,9 @@ def get_min_max_stock_from_ucenter(shop_id):
     upcs = {}
     upcs_shelf_info=[]
     shelf_ids = []
-    for result in results2:
-        shelf_info = result[1]
-        shelf_good_info = result[2]
-        upcs,upcs_shelf_info,shelf_ids = get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids)
+    shelf_good_info = results2[1]
+    shelf_info = results2[2]
+    upcs,upcs_shelf_info,shelf_ids = get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids)
     sql3 = sales_quantity.sql_params["tz_shelf"]
     sql3 = sql3.format(str(tuple(shelf_ids)))
     shelf_results = mysql_ins.selectAll(sql3)
