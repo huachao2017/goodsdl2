@@ -52,6 +52,7 @@ baidu_ai_instance1={
 shellgoods_params={
     "spark_context":"spark://10.10.11.14:7077",
     "online_model_name":"decision_tree",
+    "test_data_save_path":"/home/ai/data/predict_test/test3.txt",
     "regressor_model_path" : {
         "linear": "/home/ai/model/regressor/LinearRegressionModel",
         "decision_tree": "/home/ai/model/regressor/DecisionTreeRegressionModel",
