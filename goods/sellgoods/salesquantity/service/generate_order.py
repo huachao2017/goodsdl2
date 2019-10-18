@@ -51,9 +51,13 @@ def get_none_sales_features(shop_upc_stock,shop_upc_sales):
     day_sales = []
     for shop_id1 in shop_upc_stock:
         upc_stock = shop_upc_stock[shop_id1]
-        upc_sales = shop_upc_sales[shop_id1]
+        upc_sales = {}
+        if shop_id1 in list(shop_upc_sales.keys()):
+            upc_sales = shop_upc_sales[shop_id1]
         for upc in upc_stock:
-            sale = upc_sales[upc]
+            sale = None
+            if upc in list(upc_sales.keys()):
+                sale = upc_sales[upc]
             if sale is None:
                 # 送入预测模型预测销量
                 shop_ids.append(shop_id1)
