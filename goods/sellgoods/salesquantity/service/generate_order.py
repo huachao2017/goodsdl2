@@ -3,6 +3,7 @@ from goods.sellgoods.salesquantity.local_util import stock_util
 from goods.sellgoods.salesquantity.local_util import sales_util
 from goods.sellgoods.salesquantity.service import out_service
 from goods.sellgoods.salesquantity.local_util import save_mysql_sales
+from goods.sellgoods.salesquantity.local_util import erp_interface
 import time
 import datetime
 order_shop_ids = config.shellgoods_params['order_shop_ids']
@@ -29,7 +30,8 @@ def generate():
     # 保存mysql 订单表
     save_mysql_sales.save_oreder(shop_upc_ordersales)
     # 通知魔兽订单
-    #TODO
+    erp_interface.order_commit()
+    print ("erp_interface.order_commit success!")
 
 
 def get_none_sales_features(shop_upc_stock,shop_upc_sales):

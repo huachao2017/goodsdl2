@@ -26,6 +26,7 @@ def get_stock_from_erp(shop_id):
     mysql_ins = MysqlUtil(erp)
     sql = sales_quantity.sql_params["get_stock_erp"]
     sql = sql.format(shop_id)
+    print (sql)
     results = mysql_ins.selectAll(sql)
     stocks = []
     total_stocks = []
