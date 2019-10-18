@@ -29,7 +29,7 @@ def generate():
     # 保存mysql 订单表
     save_mysql_sales.save_oreder(shop_upc_ordersales)
     # 通知魔兽订单
-    
+
 
 
 def get_none_sales_features(shop_upc_stock,shop_upc_sales):
