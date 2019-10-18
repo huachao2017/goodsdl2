@@ -15,7 +15,7 @@ def get_nextday_sales(shop_ids,upcs,day,days_sales,days=predict_ext_days):
     end_time = str((datetime.datetime.strptime(day, "%Y-%m-%d")+ datetime.timedelta(days=1)).strftime("%Y-%m-%d"))
     mean_encode_ins = salves_ins.get_mean_encode(start_time,end_time)
     regressor_ins = regressor.Regressor()
-    dt_model = regressor_ins.load_model(regressor_model_path[online_model_name])
+    dt_model = regressor_ins.load_model(regressor_model_path[online_model_name]+str(day))
     predict_tmps = None
     predicts_info_ext = {}
     for i in range(1, days+1):
