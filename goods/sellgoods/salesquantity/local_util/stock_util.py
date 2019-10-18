@@ -86,7 +86,7 @@ def get_min_max_stock_from_ucenter(shop_id):
     if len(shelf_ids)>1:
         shelf_ids_s = str(tuple(shelf_ids))
     elif(len(shelf_ids)==1):
-        shelf_ids_s = str("("+shelf_ids[0]+")")
+        shelf_ids_s = str("("+str('"')+shelf_ids[0]+str('"')+")")
     sql3 = sql3.format(shelf_ids_s)
     print (sql3)
     print (str(tuple(shelf_ids)))
@@ -95,7 +95,7 @@ def get_min_max_stock_from_ucenter(shop_id):
     if len(upcs) > 1:
         sql4 = sql3.format(str(tuple(list(upcs.keys()))))
     elif(len(upcs)==1):
-        upcs_s = str("("+upcs[0]+")")
+        upcs_s = str("("+str('"')+upcs[0]+str('"')+")")
         sql4 = sql3.format(upcs_s)
     print (sql4)
     print (str(tuple(list(upcs.keys()))))
