@@ -47,8 +47,9 @@ sql_params={
     "get_stock_ucenter":"",
 
     "tz_sums1":"select  shop_id,count(taizhang_id)  from sf_shop_taizhang  where  shop_id in (select id from uc_shop where mch_shop_code = {0} ) group by shop_id",
-    
-    "tz_sums2":"select sf_taizhang_display.taizhang_id,sf_taizhang_display.display_goods_info,sf_taizhang_display.display_shelf_info from sf_taizhang_display where status = 2 and sf_taizhang_display.taizhang_id in ("
+
+    # TODO 未添加 状态  后续需要加入执行状态
+    "tz_sums2":"select sf_taizhang_display.taizhang_id,sf_taizhang_display.display_goods_info,sf_taizhang_display.display_shelf_info from sf_taizhang_display where sf_taizhang_display.taizhang_id in ("
                 " select sf_shop_taizhang.taizhang_id  from sf_shop_taizhang  where  shop_id in (select uc_shop.id from uc_shop where uc_shop.mch_shop_code = {0} )"
                         ") ",
 

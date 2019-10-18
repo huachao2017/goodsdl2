@@ -31,6 +31,15 @@ class MysqlUtil:
         #     uuid_list.append(str(row[0]))
         return results
 
+    def selectOne(self, sql):
+        cursor = self.conn.cursor(sql)
+        cursor.execute(sql)
+        # 获取所有记录列表
+        results = cursor.fetchone()
+        # for row in results:
+        #     uuid_list.append(str(row[0]))
+        return results
+
     def insert_many_sql(self,data,sql):
         cursor = self.cursor
         cursor.executemany(sql,data)

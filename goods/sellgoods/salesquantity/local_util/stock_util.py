@@ -49,29 +49,30 @@ def get_stock_from_erp(shop_id):
 def get_min_max_stock_from_ucenter(shop_id):
     print ("get_stock_from_ucenter")
     mysql_ins = MysqlUtil(ucenter)
-    sql1 = sales_quantity.sql_params["tz_sums1"]
-    sql1 = sql1.format(shop_id)
+    # sql1 = sales_quantity.sql_params["tz_sums1"]
+    # sql1 = sql1.format(shop_id)
     sql2 = sales_quantity.sql_params["tz_sums2"]
-    sql2 = sql1.format(shop_id)
-    results1 = mysql_ins.selectAll(sql1)
-    results2 = mysql_ins.selectAll(sql1)
-    if results1 is None or len(list(results1))<=0:
-        logger.info("shop 未关联台账")
-        return None
+    sql2 = sql2.format(shop_id)
+    # results1 = mysql_ins.selectAll(sql1)
+    results2 = mysql_ins.selectOne(sql2)
+    # if results1 is None or len(list(results1))<=0:
+    #     #     logger.info("shop 未关联台账")
+    #     #     return None
     if results2 is None or len(list(results2))<=0:
         logger.info("shop 未设计台账")
         return None
     shopid_tzsum = {}
     tzs = 0
-    for row in results1:
-        shop_id = row[0]
-        tzsum = row[1]
-        tzs += tzsum
-        shopid_tzsum[shop_id] = tzsum
-    tzsum_dis = len(list(results2))
-    if tzsum_dis != tzs:
-        logger.info("台账数据不一致，不执行获取最小库存和生成订单")
-        return None
+    # for row in results1:
+    #     shop_id = row[0]
+    #     tzsum = row[1]
+    #     tzs += tzsum
+    #     shopid_tzsum[shop_id] = tzsum
+    # tzsum_dis = len(list(results2))
+    # 去掉 该逻辑 作为执行条件
+    # if tzsum_dis != tzs:
+    #     logger.info("台账数据不一致，不执行获取最小库存和生成订单")
+    #     return None
     shelf_infos = []
     shelf_good_infos =[]
     upcs = {}
