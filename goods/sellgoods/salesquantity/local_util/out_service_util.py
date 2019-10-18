@@ -12,7 +12,8 @@ def get_nextday_sales(shop_ids,upcs,day,days_sales,days=predict_ext_days):
     salves_ins = salves_volume.Salves()
     sqlsc = salves_ins.sqlsc
     start_time = str((datetime.datetime.strptime(day, "%Y-%m-%d")+ datetime.timedelta(days=-30)).strftime("%Y-%m-%d"))
-    mean_encode_ins = salves_ins.get_mean_encode()
+    end_time = str((datetime.datetime.strptime(day, "%Y-%m-%d")+ datetime.timedelta(days=1)).strftime("%Y-%m-%d"))
+    mean_encode_ins = salves_ins.get_mean_encode(start_time,end_time)
     regressor_ins = regressor.Regressor()
     dt_model = regressor_ins.load_model(regressor_model_path[online_model_name])
     predict_tmps = None
