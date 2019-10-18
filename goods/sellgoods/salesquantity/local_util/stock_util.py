@@ -87,7 +87,7 @@ def get_min_max_stock_from_ucenter(shop_id):
         shelf_ids_s = str(tuple(shelf_ids))
     elif(len(shelf_ids)==1):
         shelf_ids_s = str("("+shelf_ids[0]+")")
-    sql3 = sql3.format()
+    sql3 = sql3.format(shelf_ids_s)
     print (sql3)
     print (str(tuple(shelf_ids)))
     shelf_results = mysql_ins.selectAll(sql3)
