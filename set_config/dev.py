@@ -61,7 +61,7 @@ shellgoods_params={
     },
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,
-    'order_shop_ids': [3598]
+    'order_shop_ids': [1284]
 }
 erp={
     "host":"123.103.16.19",
