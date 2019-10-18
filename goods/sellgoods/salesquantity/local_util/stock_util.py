@@ -14,7 +14,9 @@ def get_stock(shop_ids):
         upc_min_max_stock = {}
         for upc in upc_min_max:
             (min_stock,max_stock) = upc_min_max[upc]
-            stock = upc_stock[upc]
+            stock = None
+            if upc in list(upc_stock.keys()):
+                stock = upc_stock[upc]
             upc_min_max_stock[upc] = (min_stock,max_stock,stock)
         shop_id_info[shop_id] = upc_min_max_stock
     return shop_id_info
