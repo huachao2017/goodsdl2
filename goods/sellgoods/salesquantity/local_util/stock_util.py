@@ -83,9 +83,13 @@ def get_min_max_stock_from_ucenter(shop_id):
     upcs,upcs_shelf_info,shelf_ids = get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids)
     sql3 = sales_quantity.sql_params["tz_shelf"]
     sql3 = sql3.format(str(tuple(shelf_ids)))
+    print (sql3)
+    print (str(tuple(shelf_ids)))
     shelf_results = mysql_ins.selectAll(sql3)
     sql4 = sales_quantity.sql_params["tz_upc"]
     sql4 = sql3.format(str(tuple(list(upcs.keys()))))
+    print (sql4)
+    print (str(tuple(list(upcs.keys()))))
     upc_results = mysql_ins.selectAll(sql4)
     upcs_max = get_max_sku(upcs_shelf_info,shelf_results,upc_results,upcs)
     upc_min_max = {}
