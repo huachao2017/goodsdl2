@@ -1,9 +1,11 @@
 from goods.sellgoods.salesquantity.utils.mysql_util import MysqlUtil
 from goods.sellgoods.sql import sales_quantity
+from set_config import config
 import logging
 import demjson
 logger = logging.setLoggerClass("detect")
-
+erp = config.erp
+ucenter = config.ucenter
 def get_stock(shop_ids):
     shop_ids = list(tuple(shop_ids))
     shop_id_info = {}
@@ -21,7 +23,7 @@ def get_stock(shop_ids):
 
 # 从erp取库存数据
 def get_stock_from_erp(shop_id):
-    mysql_ins = MysqlUtil()
+    mysql_ins = MysqlUtil(erp)
     sql = sales_quantity.sql_params["get_stock_erp"]
     sql = sql.format(shop_id)
     results = mysql_ins.selectAll(sql)
@@ -46,7 +48,7 @@ def get_stock_from_erp(shop_id):
 # 从ucenter取台账库存数据
 def get_min_max_stock_from_ucenter(shop_id):
     print ("get_stock_from_ucenter")
-    mysql_ins = MysqlUtil()
+    mysql_ins = MysqlUtil(ucenter)
     sql1 = sales_quantity.sql_params["tz_sums1"]
     sql1 = sql1.format(shop_id)
     sql2 = sales_quantity.sql_params["tz_sums2"]

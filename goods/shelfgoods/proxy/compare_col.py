@@ -43,7 +43,7 @@ def process(check_box_ins,display_ins,shelf_img,with_in_upcs):
                     else:
                         search_ins = ImgSearch_02()
                     upcs = search_ins.search_cvimg(target_img)
-                    logger.info("ck_box box_id=%s,upc=%s,aliyun match upc=%s,ds=(%s,%s),ck=(%s,%s)" % (str(ck_gcs.box_id), str(ds_upc), str(upcs),str(ds_location_column), str(ds_location_row),str(ck_location_column),str(ck_location_row)))
+                    logger.info("ck_box box_id=%s,upc=%s,aliyun match upc=%s,ds=(%s,%s),ck=(%s,%s)" % (str(ck_gcs.box_id), str(ds_upc), str(upcs[0:10]),str(ds_location_column), str(ds_location_row),str(ck_location_column),str(ck_location_row)))
                     if upcs != None and len(upcs)>0 and ds_upc in upcs:
                         ck_gcs.compare_code = code.code_12
                         ck_gcs.compare_result = code.result_code[ck_gcs.compare_code]
