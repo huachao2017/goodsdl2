@@ -122,11 +122,20 @@ def get_max_sku(upcs_shelf_info,shelf_results,upc_results,upcs):
     for (upc,shelfid) in upcs_shelf_info:
         shelf_depth = shelf_depth_info[shelfid]
         upc_depth = upc_depth_info[upc]
-        upc_max_sums = int(shelf_depth/upc_depth)
+        upc_max_sums = None
+        if (upc_depth==0):
+            upc_max_sums = None
+        else:
+            upc_max_sums = int(shelf_depth/upc_depth)
         if upc not in list(upc_max.keys()):
             upc_max[upc] = upc_max_sums
         else:
-            upc_max[upc] += upc_max_sums
+            if upc_max[upc] is None:
+                if upc_max_sums is not None:
+                    upc_max[upc]=upc_max_sums
+            else:
+                if upc_max_sums is not None:
+                    upc_max[upc] += upc_max_sums
     return upc_max
 
 
