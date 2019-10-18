@@ -80,7 +80,7 @@ def get_min_max_stock_from_ucenter(shop_id):
     shelf_ids = []
     shelf_good_info = results2[1]
     shelf_info = results2[2]
-    upcs,upcs_shelf_info,shelf_ids = get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids)
+    upcs,upcs_shelf_info,shelf_ids = get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids,shelf_info)
     sql3 = sales_quantity.sql_params["tz_shelf"]
     shelf_ids_s = None
     if len(shelf_ids)>1:
@@ -91,6 +91,7 @@ def get_min_max_stock_from_ucenter(shop_id):
     print (sql3)
     print (str(tuple(shelf_ids)))
     shelf_results = mysql_ins.selectAll(sql3)
+    print (shelf_results[0])
     sql4 = sales_quantity.sql_params["tz_upc"]
     if len(upcs) > 1:
         sql4 = sql4.format(str(tuple(list(upcs.keys()))))
@@ -100,6 +101,7 @@ def get_min_max_stock_from_ucenter(shop_id):
     print (sql4)
     print (str(tuple(list(upcs.keys()))))
     upc_results = mysql_ins.selectAll(sql4)
+    print (upc_results[0])
     upcs_max = get_max_sku(upcs_shelf_info,shelf_results,upc_results,upcs)
     upc_min_max = {}
     for upc in upcs:
@@ -127,11 +129,12 @@ def get_max_sku(upcs_shelf_info,shelf_results,upc_results,upcs):
 
 
 #解析shelf_good_info 获取最小库存
-def get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids):
+def get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids,shelf_info):
     shelfs = list(demjson.decode(shelf_good_info))
+    shelfId = dict(demjson.decode(shelf_info))['shelf_id']
     for shelf in shelfs:
         shelf = dict(shelf)
-        shelfId = shelf['shelfId']
+        # shelfId = shelf['shelfId']
         if shelfId not in shelf_ids:
             shelf_ids.append(shelfId)
         layerArray = list(shelf["layerArray"])
