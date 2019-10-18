@@ -105,6 +105,8 @@ class ImgSearch_02:
                     base64_data = base64.b64encode(f.read())
 
                 params = {"image": base64_data}
+                # params = {"image": base64_data,"pn":"0","rn":"50"}
+
                 params = parse.urlencode(params).encode("utf-8")
                 request_url = self.request_url + "search?access_token=" + self.get_token()
                 req = request.Request(url=request_url, data=params)
@@ -142,6 +144,7 @@ class ImgSearch_02:
                 img_encode = cv2.imencode('.jpg', cvimg)[1]
                 base64_data = base64.b64encode(img_encode)
 
+                # params = {"image": base64_data,"pn":"0","rn":"50"}
                 params = {"image": base64_data}
                 params = parse.urlencode(params).encode("utf-8")
                 request_url = self.request_url + "search?access_token=" + self.get_token()
