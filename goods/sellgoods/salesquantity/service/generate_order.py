@@ -9,14 +9,20 @@ import datetime
 order_shop_ids = config.shellgoods_params['order_shop_ids']
 def generate():
     shop_upc_stock = stock_util.get_stock(order_shop_ids)
+    print ("shop_upc_stock")
+    print (shop_upc_stock)
     shop_upc_sales = sales_util.get_predict_sales(order_shop_ids)
+    print ("shop_upc_sales")
+    print (shop_upc_sales)
     shop_ids, upcs, yes_time, day_sales = get_none_sales_features(shop_upc_stock,shop_upc_sales)
     if len(upcs)>0:
         shop_upc_sales = get_predict_sales(shop_ids, upcs, yes_time, day_sales,shop_upc_sales)
     shop_upc_ordersales = {}
     for shop_id1 in shop_upc_stock:
         upc_stock = shop_upc_stock[shop_id1]
-        upc_sales = shop_upc_sales[shop_id1]
+        upc_sales = {}
+        if shop_id1 in list(shop_upc_sales.keys()):
+            upc_sales = shop_upc_sales[shop_id1]
         upc_ordersales = {}
         for upc in upc_stock:
             (min_stock,max_stock,stock) = upc_stock[upc]

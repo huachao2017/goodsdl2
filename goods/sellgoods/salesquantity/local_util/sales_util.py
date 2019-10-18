@@ -33,5 +33,5 @@ def get_predict_sales(shop_ids):
         for shop_id1,upc,predict_sale in zip(shop_ids,upcs,predict_sales):
             if shop_id == shop_id1:
                 upc_sales[upc] = predict_sale
-        shop_upc_sales[str(shop_id)] = upc_sales
+        shop_upc_sales[shop_id] = upc_sales
     return shop_upc_sales
