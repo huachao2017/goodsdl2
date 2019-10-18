@@ -44,7 +44,6 @@ sql_params={
     "get_stock_erp":"select stock,total_stock,upc,shop_id from shop_goods where shop_id = {0} ",
 
     ## min_sku max_sku from ucenter
-    "get_stock_ucenter":"",
 
     "tz_sums1":"select  shop_id,count(taizhang_id)  from sf_shop_taizhang  where  shop_id in (select id from uc_shop where mch_shop_code = {0} ) group by shop_id",
 

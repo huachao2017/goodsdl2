@@ -23,7 +23,7 @@ class MysqlUtil:
         self.conn.close()
 
     def selectAll(self, sql):
-        cursor = self.conn.cursor(sql)
+        cursor = self.cursor
         cursor.execute(sql)
         # 获取所有记录列表
         results = cursor.fetchall()
@@ -32,7 +32,7 @@ class MysqlUtil:
         return results
 
     def selectOne(self, sql):
-        cursor = self.conn.cursor(sql)
+        cursor = self.cursor
         cursor.execute(sql)
         # 获取所有记录列表
         results = cursor.fetchone()
