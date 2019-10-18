@@ -85,3 +85,28 @@ class FirstGoodsSelection(models.Model):
     code = models.CharField(max_length=20)
     predict_sales_amount = models.IntegerField()
     template_shop_ids = models.CharField(max_length=100)
+    mch_goods_code = models.CharField(max_length=100,default='')
+    mch_code = models.IntegerField(default=2)
+
+class ai_sales_goods(models.Model):
+    shopid = models.IntegerField()
+    class_three_id = models.IntegerField()
+    nextday_predict_sales = models.IntegerField()
+    next_day = models.CharField(max_length=32)
+    upc = models.CharField(max_length=20)
+    day = models.CharField(max_length=20)
+    day_sales = models.IntegerField()
+    nextdays_predict_sales = models.TextField()
+    day_week = models.IntegerField()
+    create_time = models.DateTimeField('date created', auto_now_add=True, db_index=True)
+
+class ai_sales_order(models.Model):
+    shopid = models.IntegerField()
+    upc = models.CharField(max_length=20)
+    order_sale = models.IntegerField() #订货量
+    predict_sale = models.IntegerField() #预测销量
+    min_stock = models.IntegerField() #最小库存
+    max_stock = models.IntegerField() #最大库存
+    stock = models.IntegerField() #真实库存
+    create_date = models.CharField(max_length=20)
+    create_time = models.DateTimeField('date created', auto_now_add=True, db_index=True)
