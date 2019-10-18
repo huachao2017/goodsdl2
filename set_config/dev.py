@@ -58,7 +58,9 @@ shellgoods_params={
         "gb_tree": "/home/ai/model/regressor/GBTRegressionModel",
         "random_forest": "/home/ai/model/regressor/RandomForestRegressionModel"
     },
-    "predict_shop_ids": (3598),
+    'predict_shop_ids':'(3598,1284)',
+    "predict_ext_days":7,
+    'order_shop_ids':'(1284)'
 }
 erp={
     "host":"123.103.16.19",

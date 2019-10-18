@@ -5,10 +5,10 @@ from goods.sellgoods.salesquantity.service import out_service
 from goods.sellgoods.salesquantity.local_util import save_mysql_sales
 import time
 import datetime
-predict_shop_ids = config.shellgoods_params['predict_shop_ids']
+order_shop_ids = config.shellgoods_params['order_shop_ids']
 def generate():
-    shop_upc_stock = stock_util.get_stock(predict_shop_ids)
-    shop_upc_sales = sales_util.get_predict_sales(predict_shop_ids)
+    shop_upc_stock = stock_util.get_stock(order_shop_ids)
+    shop_upc_sales = sales_util.get_predict_sales(order_shop_ids)
     shop_ids, upcs, yes_time, day_sales = get_none_sales_features(shop_upc_stock,shop_upc_sales)
     if len(upcs)>0:
         shop_upc_sales = get_predict_sales(shop_ids, upcs, yes_time, day_sales,shop_upc_sales)
@@ -29,7 +29,7 @@ def generate():
     # 保存mysql 订单表
     save_mysql_sales.save_oreder(shop_upc_ordersales)
     # 通知魔兽订单
-
+    #TODO
 
 
 def get_none_sales_features(shop_upc_stock,shop_upc_sales):
@@ -65,3 +65,5 @@ def get_predict_sales(shop_ids,upcs,yes_time,day_sales,shop_upc_sales):
             shop_upc_sales[shop_id1] = upcs_sales1
     return shop_upc_sales
 
+if __name__=='__main__':
+    generate()

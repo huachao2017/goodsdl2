@@ -9,7 +9,8 @@ shellgoods_params={
         "random_forest": "D:\\opt\\code\\model\\regressor\\RandomForestRegressionModel"
     },
     'predict_shop_ids':'(3598)',
-    "predict_ext_days":7
+    "predict_ext_days":7,
+    'order_shop_ids': '(1284)'
 }
 #erp_online
 erp={
