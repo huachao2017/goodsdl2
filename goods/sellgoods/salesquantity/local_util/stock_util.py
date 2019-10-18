@@ -1,9 +1,9 @@
 from goods.sellgoods.salesquantity.utils.mysql_util import MysqlUtil
 from goods.sellgoods.sql import sales_quantity
 from set_config import config
-import logging
+# import logging
 import demjson
-logger = logging.setLoggerClass("detect")
+# logger = logging.setLoggerClass("detect")
 erp = config.erp
 ucenter = config.ucenter
 def get_stock(shop_ids):
@@ -59,7 +59,7 @@ def get_min_max_stock_from_ucenter(shop_id):
     #     #     logger.info("shop 未关联台账")
     #     #     return None
     if results2 is None or len(list(results2))<=0:
-        logger.info("shop 未设计台账")
+        print("shop 未设计台账")
         return None
     shopid_tzsum = {}
     tzs = 0

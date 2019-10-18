@@ -66,7 +66,7 @@ shellgoods_params={
 erp={
     "host":"123.103.16.19",
     "port":3300,
-    "database":"goodsdl",
+    "database":"dmstore",
     "url":"jdbc:mysql://123.103.16.19:3300/dmstore",
     "driver":"com.mysql.jdbc.Driver",
     "user":"readonly",

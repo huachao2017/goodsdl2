@@ -41,10 +41,9 @@ sql_params={
                     "group by T2.t1_create_date,T2.t1_shop_id,T3.upc) tmp",
 
     ## stock from erp
-    "get_stock_erp":"select stock,total_stock,upc,shop_id from shop_goods where shop_id in {0} ",
+    "get_stock_erp":"select stock,total_stock,upc,shop_id from shop_goods where shop_id = {0} ",
 
     ## min_sku max_sku from ucenter
-    "get_stock_ucenter":"",
 
     "tz_sums1":"select  shop_id,count(taizhang_id)  from sf_shop_taizhang  where  shop_id in (select id from uc_shop where mch_shop_code = {0} ) group by shop_id",
 
@@ -56,6 +55,6 @@ sql_params={
     "tz_shelf":"select id,length,height,depth from sf_shelf where id in {0}",
     "tz_upc":"select upc,width,height,depth  from uc_merchant_goods where upc in {0}",
     # 读取销量数据表
-    "sales_ai":"select shopid,upc,nextday_predict_sales from goods_ai_sales_goods where shop_id in {0} and next_day = {1}",
+    "sales_ai":"select shopid,upc,nextday_predict_sales from goods_ai_sales_goods where shop_id = {0} and next_day = {1}",
 
 }
