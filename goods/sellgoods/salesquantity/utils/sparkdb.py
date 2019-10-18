@@ -2,10 +2,12 @@ from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql import SQLContext
 from set_config import config
+from pyspark.sql import HiveContext
+
 #
 # from sellgoods.sql import sales_quantity
 # spark_context = config.shellgoods_params['spark_context']
-db_context = config.db_context
+# db_context = config.db_context
 # db_context = config.db_context
 class SparkDb:
     def get_spark_context(self):
@@ -24,10 +26,18 @@ class SparkDb:
     def get_sparksql_context(self,sc):
         sqlContext = SQLContext(sc)
         return sqlContext
-    def  get_data_frame(self,sql,sqlContext):
+    def get_hivesql_context(self,sc):
+        hiveContext = HiveContext(sc)
+        return hiveContext
+    def  get_data_frame(self,sql,sqlContext,db_context):
         df = sqlContext.read.format("jdbc").options(url=db_context["url"],
                                                         driver=db_context["driver"],
                                                         # dbtable="(SELECT code,title,description FROM project) tmp",
                                                         dbtable=sql,
                                                         user=db_context["user"], password=db_context["password"]).load()
         return df
+
+    def get_data_frame_from_hive(self,sql,hiveContext):
+        df = hiveContext.sql(sql)
+        return df
+

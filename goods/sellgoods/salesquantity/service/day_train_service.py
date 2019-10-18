@@ -3,22 +3,24 @@ from goods.sellgoods.salesquantity.utils import salves_volume
 import os
 import shutil
 from set_config import config
+import time
 from goods.sellgoods.salesquantity.local_util import file_util
-
+from goods.sellgoods.salesquantity.local_util import save_mysql_sales
 regressor_model_path = config.shellgoods_params['regressor_model_path']
 test_data_save_path = config.shellgoods_params['test_data_save_path']
+predict_shop_ids = config.shellgoods_params['predict_shop_ids']
 salves_ins = salves_volume.Salves()
 regressor_ins = regressor.Regressor()
+from set_config import config
 import datetime
 def train_regressor(model_time):
-    # model_time = '2019-08-15'
-    # test_time = '2019-08-31 '
     model_t = datetime.datetime.strptime(model_time, "%Y-%m-%d")
-    test_time = str((model_t + datetime.timedelta(days=1)).strftime("%Y-%m-%d"))
+    test_time = str((model_t + datetime.timedelta(days=-1)).strftime("%Y-%m-%d"))
     mon_1 = str((datetime.datetime.strptime(test_time, "%Y-%m-%d")+ datetime.timedelta(days=-30)).strftime("%Y-%m-%d"))
-    end_d = str((datetime.datetime.strptime(test_time, "%Y-%m-%d")+ datetime.timedelta(days=2)).strftime("%Y-%m-%d"))
-    train_features,test_features,test_d = salves_ins.generate_features(mon_1,test_time,end_d)
+    # end_d = str((datetime.datetime.strptime(test_time, "%Y-%m-%d")+ datetime.timedelta(days=2)).strftime("%Y-%m-%d"))
+    train_features,test_features,test_d,MeanEncoder = salves_ins.generate_features_predict(mon_1,test_time,model_t,predict_shop_ids)
     sc = salves_ins.sc
+    sqlsc = salves_ins.sqlsc
     # # 决策树回归模型
     dt_model = regressor_ins.decision_tree_train(train_features)
     print("dt:" + str(dt_model))
@@ -32,15 +34,16 @@ def train_regressor(model_time):
     regressor_ins.save_model(model_path, dt_model)
     result = dt_model.transform(test_features)
     result = result.select('prediction')
-    test_d = test_d.select("shop_id","upc","ai_weekday","ai_day","ai_nextday","ai_day_nums","ai_next_nums")
-    file_util.save_test_dataRdd(test_d, result, test_path)
+    test_d = test_d.select("shop_id","upc","ai_weekday","ai_day","ai_next_day","ai_day_nums")
+    save_mysql_sales.save_df(test_d,result,dt_model,MeanEncoder,sqlsc)
+    # file_util.save_test_dataRdd(test_d, result, test_path)
     print("###########################################################")
 
 
 def train(n):
-    train_model_time = '2019-10-15'
+    exe_time = str(time.strftime('%Y-%m-%d', time.localtime()))
     for i in range(n):
-        model_time = str((datetime.datetime.strptime(train_model_time, "%Y-%m-%d") + datetime.timedelta(days=i)).strftime("%Y-%m-%d"))
+        model_time = str((datetime.datetime.strptime(exe_time, "%Y-%m-%d") + datetime.timedelta(days=i)).strftime("%Y-%m-%d"))
         print (model_time)
         train_regressor(model_time)
 

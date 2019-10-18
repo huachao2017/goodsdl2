@@ -3,7 +3,8 @@ from goods.sellgoods.salesquantity.utils import salves_volume
 import os
 import shutil
 from set_config import config
-from goods.sellgoods.salesquantity.utils import file_util
+from goods.sellgoods.salesquantity.local_util import file_util
+
 regressor_model_path = config.shellgoods_params['regressor_model_path']
 test_data_save_path = config.shellgoods_params['test_data_save_path']
 salves_ins = salves_volume.Salves()
@@ -44,7 +45,7 @@ def train_regressor():
     result = result.select('prediction')
     result = result.select("prediction")
     test_d = test_d.select("shop_id","upc","ai_weekday","ai_day","ai_nextday","ai_day_nums","ai_next_nums")
-    file_util.save_test_dataRdd(test_d,result,test_path)
+    file_util.save_test_dataRdd(test_d, result, test_path)
     print("###########################################################")
 
     # # 梯度提升树回归

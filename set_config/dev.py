@@ -48,7 +48,55 @@ baidu_ai_instance1={
     "sk":"IsVCiheGFSILn6j3vVag8hSrTEboKYDs"
 }
 
+######################################sellgoods#################################################################
+shellgoods_params={
+    "spark_context":"spark://10.10.11.14:7077",
+    "online_model_name":"decision_tree",
+    "regressor_model_path" : {
+        "linear": "/home/ai/model/regressor/LinearRegressionModel",
+        "decision_tree": "/home/ai/model/regressor/DecisionTreeRegressionModel",
+        "gb_tree": "/home/ai/model/regressor/GBTRegressionModel",
+        "random_forest": "/home/ai/model/regressor/RandomForestRegressionModel"
+    },
+    "predict_shop_ids": (3598),
+}
+erp={
+    "host":"123.103.16.19",
+    "port":3300,
+    "database":"goodsdl",
+    "url":"jdbc:mysql://123.103.16.19:3300/dmstore",
+    "driver":"com.mysql.jdbc.Driver",
+    "user":"readonly",
+    "password":"fxiSHEhui2018@)@)",
+}
 
+#ucenter_online
+ucenter = {
+    "host":"udb-ucenter-m-1.xianlife.top",
+    "port":3306,
+    "database":"center",
+    "url":"jdbc:mysql://udb-ucenter-m-1.xianlife.top:3306/center",
+    "driver":"com.mysql.jdbc.Driver",
+    "user":"fx_ro",
+    "password":"G8wN4RuZ2tJAuDa9",
+}
+
+#ai_onlline
+ai = {
+    "host":"10.19.68.63",
+    "port":3306,
+    "database":"goodsdl",
+    "url":"jdbc:mysql://123.103.16.19:3306/goodsdl",
+    "driver":"com.mysql.jdbc.Driver",
+    "user":"gpu_rw",
+    "password":"jyrMnQR1NdAKwgT4",
+}
+crontab_sqoop_import = {
+    "dmstore":{
+        "env_info":["123.103.16.19","3300","readonly","fxiSHEhui2018@)@)","dmstore"],
+        "tables":['shop_goods','payment','payment_detail']
+    }
+}
 ######################################common#####################################################################
 common_params={
     'freezer_check_yolov3_switch':True, # 冰柜yolo检测
