@@ -15,7 +15,7 @@ import pymysql,time
 # +                   "group by T2.t1_create_date,T2.t1_shop_id,T3.upc "
 # upc_data_sql.format()
 def get_data():
-    sql = "select sum(p.amount),g.upc,g.corp_classify_code from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '2019-10-14 00:00:00' and p.create_time < '2019-10-17 00:00:00' and p.shop_id=3598 group by g.upc order by sum(p.amount) desc;"
+    sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '2019-10-14 00:00:00' and p.create_time < '2019-10-17 00:00:00' and p.shop_id=3598 group by g.upc order by sum(p.amount) desc;"
     conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',
                            charset="utf8", port=3300, use_unicode=True)
     cursor = conn.cursor()
@@ -28,6 +28,7 @@ def get_data():
         list.append(result[1])
         list.append(result[2])
         list.append(int(result[0]))
+        list.append(result[3])
         if result[1] != '6901028062008':
             data.append(tuple(list))
 
@@ -41,7 +42,7 @@ def choose_goods(data,ratio=0.7):
     result = []
     goods_dict ={}
     for d in data:
-        code = d[0]
+        code = d[3]
         upc = d[1]
         first = code[:2]
         if not d in goods_dict:
@@ -62,37 +63,36 @@ def choose_goods(data,ratio=0.7):
                 l = len(upcs)
                 if l > 2:
                     m = int(l*ratio)
-                    upcs.sort(key=lambda x: x[2], reverse=True)
+                    upcs.sort(key=lambda x: x[4], reverse=True)    #基于销量排序
                     result += upcs[:m]
                 else:
                     tem.extend(upcs)
-            tem.sort(key=lambda x: x[2], reverse=True)
+            tem.sort(key=lambda x: x[4], reverse=True)
             n = int(len(tem)*ratio)
             result += tem[:n]
 
-    result.sort(key=lambda x: x[2], reverse=True)
+    result.sort(key=lambda x: x[4], reverse=True)
     return result
 
 
 
 
-def save_data(val):
+def save_data(data):
     conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
-    # conn = pymysql.connect('117.50.97.22', 'gpu_ro', password='T4ynbXrbHXC0gVKv', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
     cursor = conn.cursor()
     # sql = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount) values (%s,%s,%s,%s,%s)"
-    update_sql = "update goods_firstgoodsselection set code={} where upc={}"
-    for i in val:
-        cursor.executemany(update_sql.format(i[3],i[2]))
+    update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
+    for i in data:
+        cursor.executemany(update_sql.format(i[5],i[2]))
         conn.commit()
-        time.sleep(1)
-        break
+        time.sleep(0.5)
+
 
 
 
     # try:
     # 执行sql语句
-    # cursor.executemany(sql, val)
+    # cursor.executemany(sql, data)
     # conn.commit()
     print('ok')
     # except:
@@ -108,10 +108,10 @@ if __name__ == '__main__':
 
     a = get_data()
     print(a)
-    # b = choose_goods(a)
+    b = choose_goods(a)
 
     # print(b)
     # print(len(a))
     # print(len(b))
 
-    save_data(a)
+    # save_data(a)
