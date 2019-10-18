@@ -77,8 +77,8 @@ erp={
 ucenter = {
     "host":"udb-ucenter-m-1.xianlife.top",
     "port":3306,
-    "database":"center",
-    "url":"jdbc:mysql://udb-ucenter-m-1.xianlife.top:3306/center",
+    "database":"ucenter",
+    "url":"jdbc:mysql://udb-ucenter-m-1.xianlife.top:3306/ucenter",
     "driver":"com.mysql.jdbc.Driver",
     "user":"fx_ro",
     "password":"G8wN4RuZ2tJAuDa9",
