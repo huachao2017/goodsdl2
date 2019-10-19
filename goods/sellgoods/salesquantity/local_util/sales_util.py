@@ -2,12 +2,19 @@ from set_config import config
 from goods.sellgoods.salesquantity.utils import mysql_util
 from goods.sellgoods.sql import sales_quantity
 import time
-erp = config.erp_dev
+ai = config.ai
 def get_predict_sales(shop_ids):
-    mysql_ins = mysql_util.MysqlUtil(erp)
+    mysql_ins = mysql_util.MysqlUtil(ai)
     sql = sales_quantity.sql_params["sales_ai"]
     exe_time = str(time.strftime('%Y-%m-%d', time.localtime()))
+    exe_time = str("'"+exe_time+"'")
+    if len(shop_ids) == 1:
+        shop_ids = str("( "+str(shop_ids[0])+" )")
+    elif(len(shop_ids) > 1):
+        shop_ids = str(tuple(shop_ids))
+
     sql = sql.format(shop_ids,exe_time)
+    print (sql)
     results = mysql_ins.selectAll(sql)
 
     shop_ids = []

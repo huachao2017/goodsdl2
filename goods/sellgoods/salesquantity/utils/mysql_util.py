@@ -23,10 +23,19 @@ class MysqlUtil:
         self.conn.close()
 
     def selectAll(self, sql):
-        cursor = self.conn.cursor(sql)
+        cursor = self.cursor
         cursor.execute(sql)
         # 获取所有记录列表
         results = cursor.fetchall()
+        # for row in results:
+        #     uuid_list.append(str(row[0]))
+        return results
+
+    def selectOne(self, sql):
+        cursor = self.cursor
+        cursor.execute(sql)
+        # 获取所有记录列表
+        results = cursor.fetchone()
         # for row in results:
         #     uuid_list.append(str(row[0]))
         return results
@@ -41,7 +50,9 @@ if __name__=='__main__':
     mysql_ins = MysqlUtil(config.erp_dev)
     # data =  [(3220, 0, 155936, "1111111111111111111111")]
     # mysql_ins.insert_many(data)
-    sql = "insert into ai_sales_goods (shop_id,upc,day_week,day,day_sales,next_day,nextday_predict_sales,nextdays_predict_sales) value(%s,%s,%s,%s,%s,%s,%s,%s)"
-
-    data = [('3598','20449896','5','2019-10-18',100,'2019-10-19',200,'[2,3,4,5,6,7,8]')]
-    mysql_ins.insert_many_sql(data,sql)
+    # sql = "insert into ai_sales_goods (shop_id,upc,day_week,day,day_sales,next_day,nextday_predict_sales,nextdays_predict_sales) value(%s,%s,%s,%s,%s,%s,%s,%s)"
+    #
+    # data = [('3598','20449896','5','2019-10-18',100,'2019-10-19',200,'[2,3,4,5,6,7,8]')]
+    # mysql_ins.insert_many_sql(data,sql)
+    results = mysql_ins.selectAll("select shop_id from shop_goods")
+    print (results)

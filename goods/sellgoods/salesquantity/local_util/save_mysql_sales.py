@@ -4,7 +4,7 @@ from pyspark.ml.feature import VectorAssembler
 from set_config import config
 from goods.sellgoods.salesquantity.utils import mysql_util
 import time
-erp = config.erp_dev
+ai = config.ai
 predict_ext_days = config.shellgoods_params['predict_ext_days']
 def save_df(data_frame,label,model,mean_encode_ins,sqlsc):
     data = []
@@ -49,8 +49,8 @@ def save_df(data_frame,label,model,mean_encode_ins,sqlsc):
         print ("shop_id,upc,ai_weekday,ai_day,ai_day_nums,ai_nextday,predict,predicts")
         print (shop_id,upc,ai_weekday,ai_day,ai_day_nums,ai_nextday,predict,str(predicts1))
         data.append((shop_id,upc,ai_weekday,ai_day,ai_day_nums,ai_nextday,predict,str(predicts1)))
-    mysql_ins = mysql_util.MysqlUtil(erp)
-    sql = "insert into ai_sales_goods (shop_id,upc,day_week,day,day_sales,next_day,nextday_predict_sales,nextdays_predict_sales) value(%s,%s,%s,%s,%s,%s,%s,%s)"
+    mysql_ins = mysql_util.MysqlUtil(ai)
+    sql = "insert into goods_ai_sales_goods (shopid,upc,day_week,day,day_sales,next_day,nextday_predict_sales,nextdays_predict_sales) value(%s,%s,%s,%s,%s,%s,%s,%s)"
     print(sql)
     print (data[0])
     mysql_ins.insert_many_sql(data,sql)
@@ -94,8 +94,8 @@ def  save_oreder(shop_upc_ordersales):
         for upc in upc_ordersales:
             (order_sale, predict_sale, min_stock, max_stock, stock) = upc_ordersales[upc]
             data.append((shop_id,upc,order_sale, predict_sale, min_stock, max_stock, stock,exe_time))
-    mysql_ins = mysql_util.MysqlUtil(erp)
-    sql = "insert into ai_order_goods (shop_id,upc,order_sale, predict_sale, min_stock, max_stock, stock,create_date) value(%s,%s,%s,%s,%s,%s,%s,%s)"
+    mysql_ins = mysql_util.MysqlUtil(ai)
+    sql = "insert into goods_ai_sales_order (shopid,upc,order_sale, predict_sale, min_stock, max_stock, stock,create_date) value(%s,%s,%s,%s,%s,%s,%s,%s)"
     print(sql)
     print(data[0])
     mysql_ins.insert_many_sql(data, sql)

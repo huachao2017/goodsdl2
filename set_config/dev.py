@@ -52,18 +52,21 @@ baidu_ai_instance1={
 shellgoods_params={
     "spark_context":"spark://10.10.11.14:7077",
     "online_model_name":"decision_tree",
+    "test_data_save_path":"/home/ai/data/predict_test/test3.txt",
     "regressor_model_path" : {
         "linear": "/home/ai/model/regressor/LinearRegressionModel",
         "decision_tree": "/home/ai/model/regressor/DecisionTreeRegressionModel",
         "gb_tree": "/home/ai/model/regressor/GBTRegressionModel",
         "random_forest": "/home/ai/model/regressor/RandomForestRegressionModel"
     },
-    "predict_shop_ids": (3598),
+    'predict_shop_ids':'(3598,1284)',
+    "predict_ext_days":7,
+    'order_shop_ids': [1284]
 }
 erp={
     "host":"123.103.16.19",
     "port":3300,
-    "database":"goodsdl",
+    "database":"dmstore",
     "url":"jdbc:mysql://123.103.16.19:3300/dmstore",
     "driver":"com.mysql.jdbc.Driver",
     "user":"readonly",
@@ -74,8 +77,8 @@ erp={
 ucenter = {
     "host":"udb-ucenter-m-1.xianlife.top",
     "port":3306,
-    "database":"center",
-    "url":"jdbc:mysql://udb-ucenter-m-1.xianlife.top:3306/center",
+    "database":"ucenter",
+    "url":"jdbc:mysql://udb-ucenter-m-1.xianlife.top:3306/ucenter",
     "driver":"com.mysql.jdbc.Driver",
     "user":"fx_ro",
     "password":"G8wN4RuZ2tJAuDa9",
