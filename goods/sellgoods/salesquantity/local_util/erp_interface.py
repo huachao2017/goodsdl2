@@ -36,8 +36,12 @@ def order_commit():
                 "number":one_order.order_sale
             })
         json_info = json.dumps(order_data)
+        print(json_info)
         data = bytes(json_info, 'utf8')
         request = urllib.request.Request(url=url.format(erp_shopid), data=data, headers=headers)
 
         response = urllib.request.urlopen(request)
         print(response.read().decode())
+
+if __name__ == "__main__":
+    order_commit()
