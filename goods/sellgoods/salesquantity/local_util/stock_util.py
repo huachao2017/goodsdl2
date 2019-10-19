@@ -103,7 +103,6 @@ def get_min_max_stock_from_ucenter(shop_id):
     print (sql4)
     print (str(tuple(list(upcs.keys()))))
     upc_results = mysql_ins.selectAll(sql4)
-    print (upc_results[0])
     upcs_max = get_max_sku(upcs_shelf_info,shelf_results,upc_results,upcs)
     upc_min_max = {}
     for upc in upcs:
@@ -162,11 +161,12 @@ def get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids,shelf_info):
                         good.keys()) or "height" not in list(good.keys()):
                     continue
                 upc = good['goods_upc']
-                upcs_shelf_info.append((upc,shelfId))
-                if upc not in list(upcs.keys()):
-                    upcs[upc] = 1
-                else:
-                    upcs[upc] = upcs[upc]+1
+                if upc != 'undefined' and upc != '' :
+                    upcs_shelf_info.append((upc, shelfId))
+                    if upc not in list(upcs.keys()) :
+                        upcs[upc] = 1
+                    else:
+                        upcs[upc] = upcs[upc]+1
     return upcs,upcs_shelf_info,shelf_ids
 
 
