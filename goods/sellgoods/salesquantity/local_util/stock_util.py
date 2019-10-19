@@ -57,6 +57,8 @@ def get_min_max_stock_from_ucenter(shop_id):
     if results2 is None or len(list(results2))<=0:
         print("shop 未设计台账")
         return None
+
+    print ("len(results2)"+str(len(results2)))
     shelf_good_infos =[]
     shelf_infos = []
     for row2 in results2:
