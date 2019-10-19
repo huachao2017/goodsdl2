@@ -40,19 +40,33 @@ class MysqlUtil:
         #     uuid_list.append(str(row[0]))
         return results
 
+    def delete_sql(self,sql):
+        cursor = self.cursor
+        cursor.execute(sql)
+        cursor.connection.commit()
+        # cursor.close()
+        # self.conn.close()
+
     def insert_many_sql(self,data,sql):
         cursor = self.cursor
         cursor.executemany(sql,data)
         cursor.connection.commit()
-        cursor.close()
-        self.conn.close()
+        # cursor.close()
+        # self.conn.close()
 if __name__=='__main__':
     mysql_ins = MysqlUtil(config.erp_dev)
     # data =  [(3220, 0, 155936, "1111111111111111111111")]
     # mysql_ins.insert_many(data)
-    # sql = "insert into ai_sales_goods (shop_id,upc,day_week,day,day_sales,next_day,nextday_predict_sales,nextdays_predict_sales) value(%s,%s,%s,%s,%s,%s,%s,%s)"
-    #
-    # data = [('3598','20449896','5','2019-10-18',100,'2019-10-19',200,'[2,3,4,5,6,7,8]')]
-    # mysql_ins.insert_many_sql(data,sql)
-    results = mysql_ins.selectAll("select shop_id from shop_goods")
-    print (results)
+    sql = "insert into ai_sales_goods (shop_id,upc,day_week,day,day_sales,next_day,nextday_predict_sales,nextdays_predict_sales) value(%s,%s,%s,%s,%s,%s,%s,%s)"
+
+    del_sql = "delete from ai_sales_goods where next_day = {0}"
+
+    data = [('3598','20449896','5','2019-10-18',100,'2019-10-19',200,'[2,3,4,5,6,7,8]')]
+    del_sql = del_sql.format(data[0][5])
+    mysql_ins.delete_sql(del_sql)
+    print ("del predict sucess")
+    mysql_ins.insert_many_sql(data,sql)
+    print ("insert predict sucess")
+    mysql_ins.cursor.close()
+    mysql_ins.conn.close()
+
