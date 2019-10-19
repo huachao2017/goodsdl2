@@ -53,7 +53,7 @@ sql_params={
                         ") ",
 
     "tz_shelf":"select id,length,height,depth from sf_shelf where id in {0}",
-    "tz_upc":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where mch_goods_code in {0}",
+    "tz_upc":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where upc != '' and mch_goods_code in {0}",
     # 读取销量数据表
     "sales_ai":"select shopid,upc,nextday_predict_sales from goods_ai_sales_goods where shopid in {0} and next_day = {1}",
 
