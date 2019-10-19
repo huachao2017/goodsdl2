@@ -75,9 +75,12 @@ def get_min_max_stock_from_ucenter(shop_id):
             return None
         sql4 = sql4.format(code_s)
     print (sql4)
+
+    print ("mch_goods_codes:"+str(len(set(mch_goods_codes))))
+    print ("mch_goods_codes"+str(set(mch_goods_codes)))
     upc_results = mysql_ins.selectAll(sql4)
     upc_min_nums, code_upc = get_min_sku_upc(upc_results,mch_goods_codes)
-
+    print("upc_min_nums:" + str(len(list(upc_min_nums.keys()))))
     upcs_max_nums = get_max_sku(code_upc,mch_goods_shelf_info)
     upc_min_max = {}
     for upc in upc_min_nums:
