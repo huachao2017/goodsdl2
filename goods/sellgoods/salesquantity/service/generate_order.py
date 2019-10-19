@@ -52,6 +52,8 @@ def generate(salves_ins=None,MeanEncoder=None):
                                     if max_stock-stock != 0:
                                         upc_ordersales[upc] = (max_stock-stock,sale,min_stock,max_stock,stock)
         shop_upc_ordersales[int(shop_id1)] = upc_ordersales
+    print ("shop_upc_ordersales:")
+    print (shop_upc_ordersales)
     if len(list(shop_upc_ordersales.keys())) > 0:
         # 保存mysql 订单表
         save_mysql_sales.save_oreder(shop_upc_ordersales)
