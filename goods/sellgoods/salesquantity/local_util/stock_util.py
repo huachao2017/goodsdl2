@@ -91,7 +91,11 @@ def get_min_max_stock_from_ucenter(shop_id):
     if len(shelf_ids)>1:
         shelf_ids_s = str(tuple(shelf_ids))
     elif(len(shelf_ids)==1):
+        if shelf_ids[0] == '':
+            print ("get shelf_id is error")
+            return None
         shelf_ids_s = str("("+shelf_ids[0]+")")
+
     sql3 = sql3.format(shelf_ids_s)
     print (sql3)
     print (str(tuple(shelf_ids)))
@@ -151,16 +155,16 @@ def get_min_sku(shelf_good_infos,upcs,upcs_shelf_info,shelf_ids,shelf_infos):
     shelfs = []
     for shelf_good_info in shelf_good_infos:
         shelfs.append(dict(list(demjson.decode(shelf_good_info))[0]))
-    shelf_ids = []
+    shelfIds = []
     for shelf_info in shelf_infos:
         shelfid = dict(demjson.decode(shelf_info))['shelf_id']
-        shelf_ids.append(shelfid)
+        shelfIds.append(shelfid)
         if shelfid not in shelf_ids:
             shelf_ids.append(shelfid)
     lens = len(shelf_ids)
     for i in range(lens):
         shelf = dict(shelfs[i])
-        shelf_id = shelf_ids[i]
+        shelf_id = shelfIds[i]
         layerArray = list(shelf["layerArray"])
         floor_num = len(layerArray)
         floor = range(floor_num)
