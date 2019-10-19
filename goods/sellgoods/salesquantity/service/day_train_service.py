@@ -39,7 +39,7 @@ def train_regressor(model_time):
     save_mysql_sales.save_df(test_d,result,dt_model,MeanEncoder,sqlsc)
     # file_util.save_test_dataRdd(test_d, result, test_path)
     print ("generate  order")
-    generate_order.generate()
+    generate_order.generate(salves_ins=salves_ins,MeanEncoder=MeanEncoder)
     print("###########################################################")
 
 

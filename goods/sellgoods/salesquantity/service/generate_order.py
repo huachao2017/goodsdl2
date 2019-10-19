@@ -7,7 +7,7 @@ from goods.sellgoods.salesquantity.local_util import erp_interface
 import time
 import datetime
 order_shop_ids = config.shellgoods_params['order_shop_ids']
-def generate():
+def generate(salves_ins=None,MeanEncoder=None):
     shop_upc_stock = stock_util.get_stock(order_shop_ids)
     print ("shop_upc_stock")
     print (shop_upc_stock)
@@ -16,7 +16,7 @@ def generate():
     print (shop_upc_sales)
     shop_ids, upcs, yes_time, day_sales = get_none_sales_features(shop_upc_stock,shop_upc_sales)
     if len(upcs)>0:
-        shop_upc_sales = get_predict_sales(shop_ids, upcs, yes_time, day_sales,shop_upc_sales)
+        shop_upc_sales = get_predict_sales(shop_ids, upcs, yes_time, day_sales,shop_upc_sales,salves_ins,MeanEncoder)
     shop_upc_ordersales = {}
     for shop_id1 in shop_upc_stock:
         upc_stock = shop_upc_stock[shop_id1]
@@ -55,7 +55,7 @@ def generate():
         print ("erp_interface.order_commit success!")
 
 
-def get_none_sales_features(shop_upc_stock,shop_upc_sales):
+def get_none_sales_features(shop_upc_stock,shop_upc_sales,salves_ins,MeanEncoder):
     # 没有销量的特征信息
     shop_ids = []
     upcs = []
@@ -79,8 +79,8 @@ def get_none_sales_features(shop_upc_stock,shop_upc_sales):
                 upcs.append(upc)
                 day_sales.append(0)
     return shop_ids,upcs,yes_time,day_sales
-def get_predict_sales(shop_ids,upcs,yes_time,day_sales,shop_upc_sales):
-    predicts_info = out_service.get_nextday_sales(shop_ids,upcs,yes_time,day_sales)
+def get_predict_sales(shop_ids,upcs,yes_time,day_sales,shop_upc_sales,salves_ins,MeanEncoder):
+    predicts_info = out_service.get_nextday_sales(shop_ids,upcs,yes_time,day_sales,salves_ins,MeanEncoder)
     shop_ids = []
     data = []
     for predict_info in predicts_info:
