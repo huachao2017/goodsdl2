@@ -119,7 +119,7 @@ def get_max_sku(code_upc,mch_goods_shelf_info):
             if mch_goods_code == key:
                 (upc,depth) = code_upc[key]
                 if float(depth) != 0.0:
-                    max_nums = int(shelf_depth/depth)
+                    max_nums = int(float(shelf_depth)/float(depth))
                     if upc not in (list(upc_max_nums.keys())):
                         upc_max_nums[upc] = max_nums
                     else:
@@ -151,10 +151,6 @@ def get_min_sku(shelf_good_infos,shelf_infos):
             fl_goods = list(fl_goods)
             for good in fl_goods:
                 good = dict(good)
-                if "goods_upc" not in list(good.keys()) or "top" not in list(
-                        good.keys()) or "left" not in list(good.keys()) or "width" not in list(
-                        good.keys()) or "height" not in list(good.keys()):
-                    continue
                 mch_goods_code = good['mch_goods_code']
                 if str(mch_goods_code) != 'undefined' and str(mch_goods_code) != '' :
                     mch_goods_shelf_info.append((mch_goods_code, shelf_id_info[0],shelf_id_info[1]))
