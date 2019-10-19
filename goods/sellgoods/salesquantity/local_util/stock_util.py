@@ -140,16 +140,17 @@ def get_min_sku(shelf_good_infos,shelf_infos):
     mch_goods_codes = []
     mch_goods_shelf_info=[]
     for shelf_good_info in shelf_good_infos:
-        for shelf_kk in list(demjson.decode(shelf_good_info)):
-            shelfs.append(shelf_kk)
-        # shelfs.append(dict(list(demjson.decode(shelf_good_info))[0]))
+        # for shelf_kk in list(demjson.decode(shelf_good_info)):
+        #     shelfs.append(shelf_kk)
+        shelfs.append(dict(list(demjson.decode(shelf_good_info))[0]))
     shelf_ids_info = []
     for shelf_info in shelf_infos:
         shelfid = dict(demjson.decode(shelf_info))['shelf_id']
         depth = dict(demjson.decode(shelf_info))['depth']
-        shelf_ids_info = [(shelfid,depth)]
+        shelf_ids_info.append((shelfid,depth))
     lens = len(shelf_ids_info)
     print ("货架个数："+str(lens))
+    print(len(shelfs))
     for i in range(lens):
         shelf = dict(shelfs[i])
         shelf_id_info = shelf_ids_info[i]
