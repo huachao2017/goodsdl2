@@ -70,7 +70,7 @@ class Salves:
     def get_predict_feature(self,MeanEncoder,end_time1,end_time2,shop_ids=None):
         print ("get_predict_feature")
         if shop_ids is not None:
-            sql = sales_quantity.sql_params['upc_data_sql_predict'].format(end_time1,end_time2,end_time1,end_time2)
+            sql = sales_quantity.sql_params['upc_data_sql_predict'].format(end_time1,end_time2,end_time1,end_time2,shop_ids)
         else:
             sql = sales_quantity.sql_params['upc_data_sql_test'].format(end_time1, end_time2, end_time1, end_time2)
         sql_dataf = self.get_data_from_mysql(sql)

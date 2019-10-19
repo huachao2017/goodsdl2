@@ -81,16 +81,34 @@ def get_none_sales_features(shop_upc_stock,shop_upc_sales):
     return shop_ids,upcs,yes_time,day_sales
 def get_predict_sales(shop_ids,upcs,yes_time,day_sales,shop_upc_sales):
     predicts_info = out_service.get_nextday_sales(shop_ids,upcs,yes_time,day_sales)
+    shop_ids = []
+    data = []
     for predict_info in predicts_info:
         shop_id = predict_info['shop_id']
         upc = predict_info['upc']
         nextday_sale = predict_info['predict_day_sales'][0]
-        for shop_id1 in shop_upc_sales:
-            upcs_sales1 =  shop_upc_sales[shop_id1]
-            if shop_id == shop_id1:
-                if upc not in list(upcs_sales1):
-                    upcs_sales1 [upc] = nextday_sale
-            shop_upc_sales[shop_id1] = upcs_sales1
+        if shop_id in list(shop_upc_sales.keys()):
+            for shop_id1 in shop_upc_sales:
+                upcs_sales1 =  shop_upc_sales[shop_id1]
+                if shop_id == shop_id1:
+                    if upc not in list(upcs_sales1):
+                        upcs_sales1 [upc] = nextday_sale
+                shop_upc_sales[shop_id1] = upcs_sales1
+        else:
+            shop_ids.append(shop_id)
+            data.append((shop_id,upc,nextday_sale))
+
+    if len(shop_ids) > 0 :
+        for shop_id in list(set(shop_ids)):
+            upc_sale = {}
+            for (shop_id1,upc,nextday_sale) in data:
+                if shop_id1 == shop_id:
+                    if upc not in list(upc_sale.keys()):
+                        upc_sale[upc] = nextday_sale
+                    else:
+                        sms  = upc_sale[upc]
+                        upc_sale[upc] = sms+nextday_sale
+            shop_upc_sales[shop_id] = upc_sale
     return shop_upc_sales
 
 if __name__=='__main__':
