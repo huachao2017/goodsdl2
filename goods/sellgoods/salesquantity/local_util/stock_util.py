@@ -7,15 +7,16 @@ import demjson
 erp = config.erp
 ucenter = config.ucenter
 def get_stock(shop_ids):
-    shop_ids = list(tuple(shop_ids))
     shop_id_info = {}
     for shop_id in shop_ids:
         upc_stock = get_stock_from_erp(shop_id)
-        upc_min_max=get_min_max_stock_from_ucenter()
+        upc_min_max=get_min_max_stock_from_ucenter(shop_id)
         upc_min_max_stock = {}
         for upc in upc_min_max:
             (min_stock,max_stock) = upc_min_max[upc]
-            stock = upc_stock[upc]
+            stock = None
+            if upc in list(upc_stock.keys()):
+                stock = upc_stock[upc]
             upc_min_max_stock[upc] = (min_stock,max_stock,stock)
         shop_id_info[shop_id] = upc_min_max_stock
     return shop_id_info
@@ -26,6 +27,7 @@ def get_stock_from_erp(shop_id):
     mysql_ins = MysqlUtil(erp)
     sql = sales_quantity.sql_params["get_stock_erp"]
     sql = sql.format(shop_id)
+    print (sql)
     results = mysql_ins.selectAll(sql)
     stocks = []
     total_stocks = []
@@ -78,16 +80,30 @@ def get_min_max_stock_from_ucenter(shop_id):
     upcs = {}
     upcs_shelf_info=[]
     shelf_ids = []
-    for result in results2:
-        shelf_info = result[1]
-        shelf_good_info = result[2]
-        upcs,upcs_shelf_info,shelf_ids = get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids)
+    shelf_good_info = results2[1]
+    shelf_info = results2[2]
+    upcs,upcs_shelf_info,shelf_ids = get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids,shelf_info)
     sql3 = sales_quantity.sql_params["tz_shelf"]
-    sql3 = sql3.format(str(tuple(shelf_ids)))
+    shelf_ids_s = None
+    if len(shelf_ids)>1:
+        shelf_ids_s = str(tuple(shelf_ids))
+    elif(len(shelf_ids)==1):
+        shelf_ids_s = str("("+shelf_ids[0]+")")
+    sql3 = sql3.format(shelf_ids_s)
+    print (sql3)
+    print (str(tuple(shelf_ids)))
     shelf_results = mysql_ins.selectAll(sql3)
+    print (shelf_results[0])
     sql4 = sales_quantity.sql_params["tz_upc"]
-    sql4 = sql3.format(str(tuple(list(upcs.keys()))))
+    if len(upcs) > 1:
+        sql4 = sql4.format(str(tuple(list(upcs.keys()))))
+    elif(len(upcs)==1):
+        upcs_s = str("("+str('"')+upcs[0]+str('"')+")")
+        sql4 = sql4.format(upcs_s)
+    print (sql4)
+    print (str(tuple(list(upcs.keys()))))
     upc_results = mysql_ins.selectAll(sql4)
+    print (upc_results[0])
     upcs_max = get_max_sku(upcs_shelf_info,shelf_results,upc_results,upcs)
     upc_min_max = {}
     for upc in upcs:
@@ -98,28 +114,40 @@ def get_min_max_stock_from_ucenter(shop_id):
 def get_max_sku(upcs_shelf_info,shelf_results,upc_results,upcs):
     shelf_depth_info = {}
     for shelf_row in shelf_results:
-        shelf_depth_info[shelf_row[0]] = shelf_row[3]
+        shelf_depth_info[str(shelf_row[0])] = shelf_row[3]
     upc_depth_info = {}
     for upc_row in upc_results:
         upc_depth_info[upc_row[0]] = upc_row[3]
     upc_max={}
+    print (shelf_depth_info)
+    print (upcs_shelf_info)
     for (upc,shelfid) in upcs_shelf_info:
         shelf_depth = shelf_depth_info[shelfid]
         upc_depth = upc_depth_info[upc]
-        upc_max_sums = int(shelf_depth/upc_depth)
+        upc_max_sums = None
+        if (upc_depth==0):
+            upc_max_sums = None
+        else:
+            upc_max_sums = int(shelf_depth/upc_depth)
         if upc not in list(upc_max.keys()):
             upc_max[upc] = upc_max_sums
         else:
-            upc_max[upc] += upc_max_sums
+            if upc_max[upc] is None:
+                if upc_max_sums is not None:
+                    upc_max[upc]=upc_max_sums
+            else:
+                if upc_max_sums is not None:
+                    upc_max[upc] += upc_max_sums
     return upc_max
 
 
 #解析shelf_good_info 获取最小库存
-def get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids):
+def get_min_sku(shelf_good_info,upcs,upcs_shelf_info,shelf_ids,shelf_info):
     shelfs = list(demjson.decode(shelf_good_info))
+    shelfId = dict(demjson.decode(shelf_info))['shelf_id']
     for shelf in shelfs:
         shelf = dict(shelf)
-        shelfId = shelf['shelfId']
+        # shelfId = shelf['shelfId']
         if shelfId not in shelf_ids:
             shelf_ids.append(shelfId)
         layerArray = list(shelf["layerArray"])
