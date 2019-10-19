@@ -87,16 +87,18 @@ def get_min_max_stock_from_ucenter(shop_id):
         shelf_info = row2[2]
     upcs,upcs_shelf_info,shelf_ids = get_min_sku(shelf_good_infos,upcs,upcs_shelf_info,shelf_ids,shelf_infos)
     sql3 = sales_quantity.sql_params["tz_shelf"]
-    shelf_ids_s = None
     if len(shelf_ids)>1:
         shelf_ids_s = str(tuple(shelf_ids))
+        sql3 = sql3.format(shelf_ids_s)
     elif(len(shelf_ids)==1):
         if shelf_ids[0] == '':
             print ("get shelf_id is error")
             return None
         shelf_ids_s = str("("+shelf_ids[0]+")")
-
-    sql3 = sql3.format(shelf_ids_s)
+        if shelf_ids_s == '()':
+            print("get shelf_id1 is error")
+            return None
+        sql3 = sql3.format(shelf_ids_s)
     print (sql3)
     print (str(tuple(shelf_ids)))
     shelf_results = mysql_ins.selectAll(sql3)
@@ -108,7 +110,10 @@ def get_min_max_stock_from_ucenter(shop_id):
         if list(upcs.keys())[0] == '':
             print ("get uc_merchant_goods error , upc = None")
             return None
-        upcs_s = str("("+"' "+list(upcs.keys())[0]+" '"+")")
+        upcs_s = str("("+"'"+list(upcs.keys())[0]+"'"+")")
+        if upcs_s == '()':
+            print("get uc_merchant_goods error1 , upc = None")
+            return None
         sql4 = sql4.format(upcs_s)
     print (sql4)
     print (str(tuple(list(upcs.keys()))))
