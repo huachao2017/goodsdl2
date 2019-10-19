@@ -78,6 +78,7 @@ def get_min_max_stock_from_ucenter(shop_id):
 
     print ("mch_goods_codes:"+str(len(set(mch_goods_codes))))
     print ("mch_goods_codes"+str(set(mch_goods_codes)))
+    print ("mch_goods_shelf_info:"+str(mch_goods_shelf_info))
     upc_results = mysql_ins.selectAll(sql4)
     upc_min_nums, code_upc = get_min_sku_upc(upc_results,mch_goods_codes)
     print("upc_min_nums:" + str(len(list(upc_min_nums.keys()))))
@@ -146,6 +147,7 @@ def get_min_sku(shelf_good_infos,shelf_infos):
         depth = dict(demjson.decode(shelf_info))['depth']
         shelf_ids_info = [(shelfid,depth)]
     lens = len(shelf_ids_info)
+    print ("货架个数："+str(lens))
     for i in range(lens):
         shelf = dict(shelfs[i])
         shelf_id_info = shelf_ids_info[i]
