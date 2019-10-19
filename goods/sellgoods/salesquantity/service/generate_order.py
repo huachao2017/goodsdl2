@@ -7,6 +7,7 @@ from goods.sellgoods.salesquantity.local_util import erp_interface
 import time
 import datetime
 order_shop_ids = config.shellgoods_params['order_shop_ids']
+order_shop_isfirst = config.shellgoods_params['order_shop_isfirst']
 def generate(salves_ins=None,MeanEncoder=None):
     shop_upc_stock = stock_util.get_stock(order_shop_ids)
     print ("shop_upc_stock")
@@ -14,9 +15,9 @@ def generate(salves_ins=None,MeanEncoder=None):
     shop_upc_sales = sales_util.get_predict_sales(order_shop_ids)
     print ("shop_upc_sales")
     print (shop_upc_sales)
-    shop_ids, upcs, yes_time, day_sales = get_none_sales_features(shop_upc_stock,shop_upc_sales)
-    if len(upcs)>0:
-        shop_upc_sales = get_predict_sales(shop_ids, upcs, yes_time, day_sales,shop_upc_sales,salves_ins,MeanEncoder)
+    # shop_ids, upcs, yes_time, day_sales = get_none_sales_features(shop_upc_stock,shop_upc_sales)
+    # if len(upcs)>0:
+    #     shop_upc_sales = get_predict_sales(shop_ids, upcs, yes_time, day_sales,shop_upc_sales,salves_ins,MeanEncoder)
     shop_upc_ordersales = {}
     for shop_id1 in shop_upc_stock:
         upc_stock = shop_upc_stock[shop_id1]
@@ -37,15 +38,19 @@ def generate(salves_ins=None,MeanEncoder=None):
                 max_stock =  3
             if stock is None or stock < 0:
                 stock = 0
-            if sale is None:
-                sale = 0
-            if min_stock is not None and max_stock is not None and stock is not None and sale is not None:
-                if max_stock-stock > sale:
-                    if sale != 0 :
-                        upc_ordersales[upc] = (sale,sale,min_stock,max_stock,stock)
-                else:
-                    if max_stock-stock != 0:
-                        upc_ordersales[upc] = (max_stock-stock,sale,min_stock,max_stock,stock)
+
+            if min_stock is not None and max_stock is not None and stock is not None:
+                for (shop_id3,isfir) in order_shop_isfirst:
+                    if shop_id3 == shop_id1:
+                        if isfir:
+                            upc_ordersales[upc] = max_stock-min_stock
+                        else:
+                            if sale is not None :
+                                if max_stock-stock > sale:
+                                    upc_ordersales[upc] = (sale,sale,min_stock,max_stock,stock)
+                                else:
+                                    if max_stock-stock != 0:
+                                        upc_ordersales[upc] = (max_stock-stock,sale,min_stock,max_stock,stock)
         shop_upc_ordersales[int(shop_id1)] = upc_ordersales
     if len(list(shop_upc_ordersales.keys())) > 0:
         # 保存mysql 订单表
@@ -112,4 +117,5 @@ def get_predict_sales(shop_ids,upcs,yes_time,day_sales,shop_upc_sales,salves_ins
     return shop_upc_sales
 
 if __name__=='__main__':
+
     generate()
