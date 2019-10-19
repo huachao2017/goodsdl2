@@ -23,6 +23,8 @@ def generate():
         upc_sales = {}
         if shop_id1 in list(shop_upc_sales.keys()):
             upc_sales = shop_upc_sales[shop_id1]
+        if len(list(upc_sales.keys())) < 1:
+            continue
         upc_ordersales = {}
         for upc in upc_stock:
             (min_stock,max_stock,stock) = upc_stock[upc]
@@ -45,11 +47,12 @@ def generate():
                     if max_stock-stock != 0:
                         upc_ordersales[upc] = (max_stock-stock,sale,min_stock,max_stock,stock)
         shop_upc_ordersales[int(shop_id1)] = upc_ordersales
-    # 保存mysql 订单表
-    save_mysql_sales.save_oreder(shop_upc_ordersales)
-    # 通知魔兽订单
-    erp_interface.order_commit()
-    print ("erp_interface.order_commit success!")
+    if len(list(shop_upc_ordersales.keys())) > 0:
+        # 保存mysql 订单表
+        save_mysql_sales.save_oreder(shop_upc_ordersales)
+        # 通知魔兽订单
+        erp_interface.order_commit()
+        print ("erp_interface.order_commit success!")
 
 
 def get_none_sales_features(shop_upc_stock,shop_upc_sales):
