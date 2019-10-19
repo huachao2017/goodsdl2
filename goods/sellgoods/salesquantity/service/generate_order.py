@@ -26,19 +26,24 @@ def generate():
         upc_ordersales = {}
         for upc in upc_stock:
             (min_stock,max_stock,stock) = upc_stock[upc]
-            sale = upc_sales[upc]
+            sale = None
+            if upc in list(upc_sales.keys()):
+                sale = upc_sales[upc]
             if min_stock is None:
                 min_stock = 1
             if max_stock is None:
                 max_stock =  3
             if stock is None or stock < 0:
                 stock = 0
-
+            if sale == None:
+                sale = 0
             if min_stock is not None and max_stock is not None and stock is not None and sale is not None:
                 if max_stock-stock > sale:
-                    upc_ordersales[upc] = (sale,sale,min_stock,max_stock,stock)
+                    if sale != 0 :
+                        upc_ordersales[upc] = (sale,sale,min_stock,max_stock,stock)
                 else:
-                    upc_ordersales[upc] = (max_stock-stock,sale,min_stock,max_stock,stock)
+                    if max_stock-stock != 0:
+                        upc_ordersales[upc] = (max_stock-stock,sale,min_stock,max_stock,stock)
         shop_upc_ordersales[int(shop_id1)] = upc_ordersales
     # 保存mysql 订单表
     save_mysql_sales.save_oreder(shop_upc_ordersales)
@@ -80,7 +85,8 @@ def get_predict_sales(shop_ids,upcs,yes_time,day_sales,shop_upc_sales):
         for shop_id1 in shop_upc_sales:
             upcs_sales1 =  shop_upc_sales[shop_id1]
             if shop_id == shop_id1:
-                upcs_sales1 [upc] = nextday_sale
+                if upc not in list(upcs_sales1):
+                    upcs_sales1 [upc] = nextday_sale
             shop_upc_sales[shop_id1] = upcs_sales1
     return shop_upc_sales
 
