@@ -55,7 +55,7 @@ def generate(salves_ins=None,MeanEncoder=None):
         print ("erp_interface.order_commit success!")
 
 
-def get_none_sales_features(shop_upc_stock,shop_upc_sales,salves_ins,MeanEncoder):
+def get_none_sales_features(shop_upc_stock,shop_upc_sales):
     # 没有销量的特征信息
     shop_ids = []
     upcs = []
