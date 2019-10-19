@@ -98,7 +98,7 @@ def get_min_max_stock_from_ucenter(shop_id):
     if len(upcs) > 1:
         sql4 = sql4.format(str(tuple(list(upcs.keys()))))
     elif(len(upcs)==1):
-        upcs_s = str("("+str('"')+upcs[0]+str('"')+")")
+        upcs_s = str("("+"' "+upcs[0]+" '"+")")
         sql4 = sql4.format(upcs_s)
     print (sql4)
     print (str(tuple(list(upcs.keys()))))
