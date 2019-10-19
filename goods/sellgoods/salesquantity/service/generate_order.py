@@ -37,7 +37,7 @@ def generate():
                 max_stock =  3
             if stock is None or stock < 0:
                 stock = 0
-            if sale == None:
+            if sale is None:
                 sale = 0
             if min_stock is not None and max_stock is not None and stock is not None and sale is not None:
                 if max_stock-stock > sale:
