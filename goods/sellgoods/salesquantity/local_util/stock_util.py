@@ -51,125 +51,99 @@ def get_stock_from_erp(shop_id):
 def get_min_max_stock_from_ucenter(shop_id):
     print ("get_stock_from_ucenter")
     mysql_ins = MysqlUtil(ucenter)
-    # sql1 = sales_quantity.sql_params["tz_sums1"]
-    # sql1 = sql1.format(shop_id)
     sql2 = sales_quantity.sql_params["tz_sums2"]
     sql2 = sql2.format(shop_id)
-    # results1 = mysql_ins.selectAll(sql1)
     results2 = mysql_ins.selectAll(sql2)
-    # if results1 is None or len(list(results1))<=0:
-    #     #     logger.info("shop 未关联台账")
-    #     #     return None
     if results2 is None or len(list(results2))<=0:
         print("shop 未设计台账")
         return None
-    shopid_tzsum = {}
-    tzs = 0
-    # for row in results1:
-    #     shop_id = row[0]
-    #     tzsum = row[1]
-    #     tzs += tzsum
-    #     shopid_tzsum[shop_id] = tzsum
-    # tzsum_dis = len(list(results2))
-    # 去掉 该逻辑 作为执行条件
-    # if tzsum_dis != tzs:
-    #     logger.info("台账数据不一致，不执行获取最小库存和生成订单")
-    #     return None
-    shelf_infos = []
     shelf_good_infos =[]
-    upcs = {}
-    upcs_shelf_info=[]
-    shelf_ids = []
-    shelf_good_infos = []
     shelf_infos = []
     for row2 in results2:
         shelf_good_info = row2[1]
+        shelf_good_infos.append(shelf_good_info)
         shelf_info = row2[2]
-    upcs,upcs_shelf_info,shelf_ids = get_min_sku(shelf_good_infos,upcs,upcs_shelf_info,shelf_ids,shelf_infos)
-    sql3 = sales_quantity.sql_params["tz_shelf"]
-    if len(shelf_ids)>1:
-        shelf_ids_s = str(tuple(shelf_ids))
-        sql3 = sql3.format(shelf_ids_s)
-    elif(len(shelf_ids)==1):
-        if shelf_ids[0] == '':
-            print ("get shelf_id is error")
-            return None
-        shelf_ids_s = str("("+shelf_ids[0]+")")
-        if shelf_ids_s == '()':
-            print("get shelf_id1 is error")
-            return None
-        sql3 = sql3.format(shelf_ids_s)
-    print (sql3)
-    print (str(tuple(shelf_ids)))
-    shelf_results = mysql_ins.selectAll(sql3)
-    print (shelf_results[0])
+        shelf_infos.append(shelf_info)
+    mch_goods_codes, mch_goods_shelf_info = get_min_sku(shelf_good_infos,shelf_infos)
     sql4 = sales_quantity.sql_params["tz_upc"]
-    if len(upcs) > 1:
-        sql4 = sql4.format(str(tuple(list(upcs.keys()))))
-    elif(len(upcs)==1):
-        if list(upcs.keys())[0] == '':
-            print ("get uc_merchant_goods error , upc = None")
-            return None
-        upcs_s = str("("+"'"+list(upcs.keys())[0]+"'"+")")
-        if upcs_s == '()':
+    if len(mch_goods_codes) > 1:
+        sql4 = sql4.format(str(tuple(list(set(mch_goods_codes)))))
+    elif(len(mch_goods_codes)==1):
+        code_s = str("("+mch_goods_codes[0]+")")
+        if code_s == '()':
             print("get uc_merchant_goods error1 , upc = None")
             return None
-        sql4 = sql4.format(upcs_s)
+        sql4 = sql4.format(code_s)
     print (sql4)
-    print (str(tuple(list(upcs.keys()))))
     upc_results = mysql_ins.selectAll(sql4)
-    upcs_max = get_max_sku(upcs_shelf_info,shelf_results,upc_results,upcs)
+    upc_min_nums, code_upc = get_min_sku_upc(upc_results,mch_goods_codes)
+
+    upcs_max_nums = get_max_sku(code_upc,mch_goods_shelf_info)
     upc_min_max = {}
-    for upc in upcs:
-        upc_min_max[upc] = (upcs[upc],upcs_max[upc])
+    for upc in upc_min_nums:
+        if upc in list(upcs_max_nums.keys()):
+            upc_min_max[upc] = (upc_min_nums[upc],upcs_max_nums[upc])
+        else:
+            upc_min_max[upc] = (upc_min_nums[upc], None)
     return upc_min_max
 
-
-def get_max_sku(upcs_shelf_info,shelf_results,upc_results,upcs):
-    shelf_depth_info = {}
-    for shelf_row in shelf_results:
-        shelf_depth_info[str(shelf_row[0])] = shelf_row[3]
-    upc_depth_info = {}
-    for upc_row in upc_results:
-        upc_depth_info[upc_row[0]] = upc_row[3]
-    upc_max={}
-    print (shelf_depth_info)
-    print (upcs_shelf_info)
-    for (upc,shelfid) in upcs_shelf_info:
-        shelf_depth = shelf_depth_info[shelfid]
-        upc_depth = upc_depth_info[upc]
-        upc_max_sums = None
-        if (upc_depth==0):
-            upc_max_sums = None
-        else:
-            upc_max_sums = int(shelf_depth/upc_depth)
-        if upc not in list(upc_max.keys()):
-            upc_max[upc] = upc_max_sums
-        else:
-            if upc_max[upc] is None:
-                if upc_max_sums is not None:
-                    upc_max[upc]=upc_max_sums
+def get_min_sku_upc(upc_results,mch_goods_codes):
+    code_upc = {}
+    for row in upc_results:
+        code = row[0]
+        upc = row[1]
+        depth = row[4]
+        code_upc[code] = (upc,depth)
+    upc_min_nums = {}
+    for code in mch_goods_codes:
+        if code in list(code_upc.keys()):
+            (upc,depth) = code_upc[code]
+            if upc not in list(upc_min_nums.keys()):
+                upc_min_nums[upc] = 1
             else:
-                if upc_max_sums is not None:
-                    upc_max[upc] += upc_max_sums
-    return upc_max
+                nums = upc_min_nums[upc]
+                nums+=1
+                upc_min_nums[upc] =  nums
+    return upc_min_nums , code_upc
+
+
+
+
+
+
+def get_max_sku(code_upc,mch_goods_shelf_info):
+    upc_max_nums = {}
+    for mch_goods_code in mch_goods_shelf_info:
+        (mch_goods_code, shelf_id, shelf_depth) = mch_goods_code
+        for key in code_upc:
+            if mch_goods_code == key:
+                (upc,depth) = code_upc[key]
+                if float(depth) != 0.0:
+                    max_nums = int(shelf_depth/depth)
+                    if upc not in (list(upc_max_nums.keys())):
+                        upc_max_nums[upc] = max_nums
+                    else:
+                        nums = upc_max_nums[upc]
+                        upc_max_nums[upc] = nums+1
+    return upc_max_nums
 
 
 #解析shelf_good_info 获取最小库存
-def get_min_sku(shelf_good_infos,upcs,upcs_shelf_info,shelf_ids,shelf_infos):
+def get_min_sku(shelf_good_infos,shelf_infos):
     shelfs = []
+    mch_goods_codes = []
+    mch_goods_shelf_info=[]
     for shelf_good_info in shelf_good_infos:
         shelfs.append(dict(list(demjson.decode(shelf_good_info))[0]))
-    shelfIds = []
+    shelf_ids_info = []
     for shelf_info in shelf_infos:
         shelfid = dict(demjson.decode(shelf_info))['shelf_id']
-        shelfIds.append(shelfid)
-        if shelfid not in shelf_ids:
-            shelf_ids.append(shelfid)
-    lens = len(shelf_ids)
+        depth = dict(demjson.decode(shelf_info))['depth']
+        shelf_ids_info = [(shelfid,depth)]
+    lens = len(shelf_ids_info)
     for i in range(lens):
         shelf = dict(shelfs[i])
-        shelf_id = shelfIds[i]
+        shelf_id_info = shelf_ids_info[i]
         layerArray = list(shelf["layerArray"])
         floor_num = len(layerArray)
         floor = range(floor_num)
@@ -181,14 +155,11 @@ def get_min_sku(shelf_good_infos,upcs,upcs_shelf_info,shelf_ids,shelf_infos):
                         good.keys()) or "left" not in list(good.keys()) or "width" not in list(
                         good.keys()) or "height" not in list(good.keys()):
                     continue
-                upc = good['goods_upc']
-                if upc != 'undefined' and upc != '' :
-                    upcs_shelf_info.append((upc, shelf_id))
-                    if upc not in list(upcs.keys()) :
-                        upcs[upc] = 1
-                    else:
-                        upcs[upc] = upcs[upc]+1
-    return upcs,upcs_shelf_info,shelf_ids
+                mch_goods_code = good['mch_goods_code']
+                if str(mch_goods_code) != 'undefined' and str(mch_goods_code) != '' :
+                    mch_goods_shelf_info.append((mch_goods_code, shelf_id_info[0],shelf_id_info[1]))
+                    mch_goods_codes.append(mch_goods_code)
+    return mch_goods_codes,mch_goods_shelf_info
 
 
 
