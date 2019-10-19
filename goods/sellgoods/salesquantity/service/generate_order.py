@@ -27,6 +27,13 @@ def generate():
         for upc in upc_stock:
             (min_stock,max_stock,stock) = upc_stock[upc]
             sale = upc_sales[upc]
+            if min_stock is None:
+                min_stock = 1
+            if max_stock is None:
+                max_stock =  3
+            if stock is None or stock < 0:
+                stock = 0
+
             if min_stock is not None and max_stock is not None and stock is not None and sale is not None:
                 if max_stock-stock > sale:
                     upc_ordersales[upc] = (sale,sale,min_stock,max_stock,stock)
