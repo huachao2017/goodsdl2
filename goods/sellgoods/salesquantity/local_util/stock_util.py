@@ -137,7 +137,9 @@ def get_min_sku(shelf_good_infos,shelf_infos):
     mch_goods_codes = []
     mch_goods_shelf_info=[]
     for shelf_good_info in shelf_good_infos:
-        shelfs.append(dict(list(demjson.decode(shelf_good_info))[0]))
+        for shelf_kk in list(demjson.decode(shelf_good_info)):
+            shelfs.append(shelf_kk)
+        # shelfs.append(dict(list(demjson.decode(shelf_good_info))[0]))
     shelf_ids_info = []
     for shelf_info in shelf_infos:
         shelfid = dict(demjson.decode(shelf_info))['shelf_id']
