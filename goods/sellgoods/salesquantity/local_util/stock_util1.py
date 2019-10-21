@@ -150,8 +150,11 @@ def get_min_sku(shelf_good_infos,shelf_infos,tz_ids,mysql_ins):
                     upc_result = mysql_ins.selectOne(sql_upc_depth)
                     if upc_result is not None:
                         upc1_depth = upc_result[4]
+                        upc1_weight = upc_result[2]
                         upc1 = upc_result[1]
                         if upc == upc1:
+                            if float(upc1_depth) == 0.0:
+                                upc1_depth = upc1_weight
                             upcs_shelf_info.append((str(upc), shelf_id_info[0],shelf_id_info[1],upc1_depth))
                             upcs.append(str(upc))
                         else:
