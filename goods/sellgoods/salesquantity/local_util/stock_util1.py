@@ -125,16 +125,12 @@ def get_min_sku(shelf_good_infos,shelf_infos,tz_ids,mysql_ins):
         depth = dict(demjson.decode(shelf_info))['depth']
         shelf_ids_info.append((shelfid,depth))
     lens = len(shelf_ids_info)
-
-
-
     for i in range(lens):
         tz_id = tz_ids[i]
         # 获取 mch_id 上家id
         sql_mch_id = sales_quantity.sql_params["tz_mch_id"]
         sql_mch_id = sql_mch_id.format(tz_id)
         result = mysql_ins.selectOne(sql_mch_id)
-        print (result)
         mch_id = result[0]
         shelf = dict(shelfs[i])
         shelf_id_info = shelf_ids_info[i]
@@ -150,6 +146,7 @@ def get_min_sku(shelf_good_infos,shelf_infos,tz_ids,mysql_ins):
                 if str(upc) != 'undefined' and str(upc) != '' :
                     sql_upc_depth = sales_quantity.sql_params["upc_mch_code"]
                     sql_upc_depth = sql_upc_depth.format(upc,mch_id,mch_goods_code)
+                    print (sql_upc_depth)
                     upc_result = mysql_ins.selectOne(sql_upc_depth)
                     upc1_depth = upc_result[4]
                     upc1 = upc_result[1]
