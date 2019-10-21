@@ -148,11 +148,16 @@ def get_min_sku(shelf_good_infos,shelf_infos,tz_ids,mysql_ins):
                     sql_upc_depth = sql_upc_depth.format(upc,mch_id,mch_goods_code)
                     print (sql_upc_depth)
                     upc_result = mysql_ins.selectOne(sql_upc_depth)
-                    upc1_depth = upc_result[4]
-                    upc1 = upc_result[1]
-                    if upc == upc1:
-                        upcs_shelf_info.append((str(upc), shelf_id_info[0],shelf_id_info[1],upc1_depth))
-                        upcs.append(str(upc))
+                    if upc_result is not None:
+                        upc1_depth = upc_result[4]
+                        upc1 = upc_result[1]
+                        if upc == upc1:
+                            upcs_shelf_info.append((str(upc), shelf_id_info[0],shelf_id_info[1],upc1_depth))
+                            upcs.append(str(upc))
+                        else:
+                            print ("upc select one error !!!!  failed     "+sql_upc_depth)
+                            upcs_shelf_info.append((str(upc), shelf_id_info[0], shelf_id_info[1], 0))
+                            upcs.append(str(upc))
     return upcs,upcs_shelf_info
 
 
