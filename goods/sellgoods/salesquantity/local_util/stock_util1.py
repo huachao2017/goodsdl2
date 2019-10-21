@@ -62,29 +62,17 @@ def get_min_max_stock_from_ucenter(shop_id):
     print ("len(results2)"+str(len(results2)))
     shelf_good_infos =[]
     shelf_infos = []
+    tz_ids = []
     for row2 in results2:
+        tz_ids.append(row2[0])
         shelf_good_info = row2[1]
         shelf_good_infos.append(shelf_good_info)
         shelf_info = row2[2]
         shelf_infos.append(shelf_info)
-    upcs, upcs_shelf_infos = get_min_sku(shelf_good_infos,shelf_infos)
-
-
+    upcs, upcs_shelf_infos = get_min_sku(shelf_good_infos,shelf_infos,tz_ids,mysql_ins)
     print ("upcs:"+str(len(list(set(upcs)))))
-    upc_min_nums = get_min_sku_upc(upcs)
-
-    sql4 = sales_quantity.sql_params["tz_upc1"]
-    if len(list(set(upcs))) > 1:
-        sql4 = sql4.format(str(tuple(list(set(upcs)))))
-    elif(len(list(set(upcs)))==1):
-        code_s = str("("+"'"+list(set(upcs))[0]+"'"+")")
-        if code_s == '('')':
-            print("get uc_merchant_goods error1 , upc = None")
-            return None
-        sql4 = sql4.format(code_s)
-    print (sql4)
-    upc_results = mysql_ins.selectAll(sql4)
-    upcs_max_nums = get_max_sku(list(set(upcs)),upcs_shelf_infos,upc_results)
+    upc_min_nums = get_min_sku_upc(list(set(upcs)))
+    upcs_max_nums = get_max_sku_upc(list(set(upcs)),upcs_shelf_infos)
     upc_min_max = {}
     for upc in upc_min_nums:
         if upc in list(upcs_max_nums.keys()):
@@ -95,7 +83,7 @@ def get_min_max_stock_from_ucenter(shop_id):
 
 def get_min_sku_upc(upcs):
     upc_mins = {}
-    for upc in list(set(upcs)):
+    for upc in upcs:
        upc_mins[upc]=0
     for upc in upc_mins:
         i = 0
@@ -105,35 +93,25 @@ def get_min_sku_upc(upcs):
         upc_mins[upc] = i
     return upc_mins
 
-
-
-
-
-
-def get_max_sku(upcs_set,upcs_shelf_info,upc_results):
+def get_max_sku_upc(upcs_set,upcs_shelf_info):
     upc_max_nums = {}
     for upc in  upcs_set:
         upc_max_nums[upc] = 0
-    upcs_depth = {}
-    for upc_row in upc_results:
-        upc = upc_row[1]
-        depth = upc_row[4]
-        upcs_depth[str(upc)] = depth
     for upc in upc_max_nums:
         i = 0
         for upc_info in upcs_shelf_info:
-            (upc1, shelf_id, shelf_depth) = upc_info
+            (upc1, shelf_id, shelf_depth,upc_depth) = upc_info
             if upc1 == upc:
                 max_nums = 0
-                if  upc1 in list(upcs_depth.keys()) and float(upcs_depth[upc1]) != 0.0:
-                    max_nums = int(float(shelf_depth) / float(upcs_depth[upc1]))
+                if float(upc_depth) != 0.0:
+                    max_nums = int(float(shelf_depth) / float(upc_depth))
                 i+=max_nums
         upc_max_nums[upc] = i
     return upc_max_nums
 
 
 #解析shelf_good_info 获取upcs 和 upc shelf shelf_depth
-def get_min_sku(shelf_good_infos,shelf_infos):
+def get_min_sku(shelf_good_infos,shelf_infos,tz_ids,mysql_ins):
     shelfs = []
     upcs = []
     upcs_shelf_info=[]
@@ -147,7 +125,17 @@ def get_min_sku(shelf_good_infos,shelf_infos):
         depth = dict(demjson.decode(shelf_info))['depth']
         shelf_ids_info.append((shelfid,depth))
     lens = len(shelf_ids_info)
+
+
+
     for i in range(lens):
+        tz_id = tz_ids[i]
+        # 获取 mch_id 上家id
+        sql_mch_id = sales_quantity.sql_params["tz_mch_id"]
+        sql_mch_id = sql_mch_id.format(tz_id)
+        result = mysql_ins.selectOne(sql_mch_id)
+        print (result)
+        mch_id = result[0]
         shelf = dict(shelfs[i])
         shelf_id_info = shelf_ids_info[i]
         layerArray = list(shelf["layerArray"])
@@ -157,11 +145,17 @@ def get_min_sku(shelf_good_infos,shelf_infos):
             fl_goods = list(fl_goods)
             for good in fl_goods:
                 good = dict(good)
-                # mch_goods_code = good['mch_goods_code']
+                mch_goods_code = good['mch_goods_code']
                 upc = good['goods_upc']
                 if str(upc) != 'undefined' and str(upc) != '' :
-                    upcs_shelf_info.append((str(upc), shelf_id_info[0],shelf_id_info[1]))
-                    upcs.append(str(upc))
+                    sql_upc_depth = sales_quantity.sql_params["upc_mch_code"]
+                    sql_upc_depth = sql_upc_depth.format(upc,mch_id,mch_goods_code)
+                    upc_result = mysql_ins.selectOne(sql_upc_depth)
+                    upc1_depth = upc_result[4]
+                    upc1 = upc_result[1]
+                    if upc == upc1:
+                        upcs_shelf_info.append((str(upc), shelf_id_info[0],shelf_id_info[1],upc1_depth))
+                        upcs.append(str(upc))
     return upcs,upcs_shelf_info
 
 
