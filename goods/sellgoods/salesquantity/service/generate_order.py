@@ -63,8 +63,8 @@ def generate(salves_ins=None,MeanEncoder=None):
         # 保存mysql 订单表
         save_mysql_sales.save_oreder(shop_upc_ordersales)
         # 通知魔兽订单
-        #erp_interface.order_commit()
-        #print ("erp_interface.order_commit success!")
+        erp_interface.order_commit()
+        print ("erp_interface.order_commit success!")
 
 
 def get_none_sales_features(shop_upc_stock,shop_upc_sales):
