@@ -58,7 +58,7 @@ sql_params={
     "tz_upc":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where upc != '' and mch_goods_code in {0}",
     "tz_upc1":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where upc != '' and upc in {0} order by upc,depth",
 
-    "upc_mch_code":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where upc != '' and upc = {0} and mch_id = {1} and mch_goods_code = {3}",
+    "upc_mch_code":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where upc != '' and upc = {0} and mch_id = {1} and mch_goods_code = {2}",
     # 读取销量数据表
     "sales_ai":"select shopid,upc,nextday_predict_sales from goods_ai_sales_goods where shopid in {0} and next_day = {1}",
 
