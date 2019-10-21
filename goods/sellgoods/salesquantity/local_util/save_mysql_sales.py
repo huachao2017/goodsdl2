@@ -96,17 +96,18 @@ def get_ext_predict_day(shop_ids,upcs,ai_nextday,model,mean_encode_ins,predicts,
 
 def  save_oreder(shop_upc_ordersales):
     exe_time = str(time.strftime('%Y-%m-%d', time.localtime()))
+    exe_time1 = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     data = []
     for shop_id in shop_upc_ordersales:
         upc_ordersales = shop_upc_ordersales[shop_id]
         for upc in upc_ordersales:
             (order_sale, predict_sale, min_stock, max_stock, stock) = upc_ordersales[upc]
-            data.append((shop_id,upc,order_sale, predict_sale, min_stock, max_stock, stock,exe_time))
+            data.append((shop_id,upc,order_sale, predict_sale, min_stock, max_stock, stock,exe_time,exe_time1))
     mysql_ins = mysql_util.MysqlUtil(ai)
 
     del_sql = "delete from goods_ai_sales_order where create_date = {0}"
     del_sql = del_sql.format("'"+exe_time+"'")
-    sql = "insert into goods_ai_sales_order (shopid,upc,order_sale, predict_sale, min_stock, max_stock, stock,create_date) value(%s,%s,%s,%s,%s,%s,%s,%s)"
+    sql = "insert into goods_ai_sales_order (shopid,upc,order_sale, predict_sale, min_stock, max_stock, stock,create_date,create_time) value(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     print(sql)
     print(data[0])
     mysql_ins.delete_sql(del_sql)
