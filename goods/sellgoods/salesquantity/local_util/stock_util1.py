@@ -161,7 +161,7 @@ def get_min_sku(shelf_good_infos,shelf_infos):
             for good in fl_goods:
                 good = dict(good)
                 # mch_goods_code = good['mch_goods_code']
-                upc = good['upc']
+                upc = good['goods_upc']
                 if str(upc) != 'undefined' and str(upc) != '' :
                     upcs_shelf_info.append((upc, shelf_id_info[0],shelf_id_info[1]))
                     upcs.append(upc)
