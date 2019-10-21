@@ -126,11 +126,11 @@ def get_max_sku(upcs_set,upcs_shelf_info,upc_results):
         for upc_info in upcs_shelf_info:
             (upc1, shelf_id, shelf_depth) = upc_info
             if upc1 == upc:
-                if float(shelf_depth) != 0.0:
-                    max_nums = 0
-                    if upc1 in list(upcs_depth.keys()):
-                        max_nums = int(float(upcs_depth[upc1]) / float(shelf_depth))
-                    i+=max_nums
+                max_nums = 0
+                if float(shelf_depth) != 0.0 and upc1 in list(upcs_depth.keys()):
+                    print ("************************************************")
+                    max_nums = int(float(upcs_depth[upc1]) / float(shelf_depth))
+                i+=max_nums
         upc_max_nums[upc] = i
     return upc_max_nums
 
