@@ -118,7 +118,9 @@ def get_max_sku(upcs_set,upcs_shelf_info,upc_results):
     for upc_row in upc_results:
         upc = upc_row[1]
         depth = upc_row[4]
-        upcs_depth[upc] = depth
+        upcs_depth[str(upc)] = depth
+    print ("upcs_depth:")
+    print (upcs_depth)
     for upc in upc_max_nums:
         i = 0
         for upc_info in upcs_shelf_info:
@@ -163,8 +165,8 @@ def get_min_sku(shelf_good_infos,shelf_infos):
                 # mch_goods_code = good['mch_goods_code']
                 upc = good['goods_upc']
                 if str(upc) != 'undefined' and str(upc) != '' :
-                    upcs_shelf_info.append((upc, shelf_id_info[0],shelf_id_info[1]))
-                    upcs.append(upc)
+                    upcs_shelf_info.append((str(upc), shelf_id_info[0],shelf_id_info[1]))
+                    upcs.append(str(upc))
     return upcs,upcs_shelf_info
 
 
