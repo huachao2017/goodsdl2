@@ -46,13 +46,15 @@ def generate(salves_ins=None,MeanEncoder=None):
                             if max_stock - min_stock <= 0 :
                                 upc_ordersales[upc] = (max_stock,0,min_stock,max_stock,stock)
                             else:
-                                upc_ordersales[upc] = (max_stock-stock,0,min_stock,max_stock,stock)
+                                if max_stock-stock > 0 :
+                                    upc_ordersales[upc] = (max_stock-stock,0,min_stock,max_stock,stock)
+
                         else:
                             if sale is not None :
                                 if max_stock-stock > sale:
                                     upc_ordersales[upc] = (sale,sale,min_stock,max_stock,stock)
                                 else:
-                                    if max_stock-stock != 0:
+                                    if max_stock-stock > 0:
                                         upc_ordersales[upc] = (max_stock-stock,sale,min_stock,max_stock,stock)
         shop_upc_ordersales[int(shop_id1)] = upc_ordersales
     print ("shop_upc_ordersales:")
