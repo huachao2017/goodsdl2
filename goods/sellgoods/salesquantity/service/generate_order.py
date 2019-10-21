@@ -1,5 +1,5 @@
 from set_config import config
-from goods.sellgoods.salesquantity.local_util import stock_util
+from goods.sellgoods.salesquantity.local_util import stock_util1
 from goods.sellgoods.salesquantity.local_util import sales_util
 from goods.sellgoods.salesquantity.service import out_service
 from goods.sellgoods.salesquantity.local_util import save_mysql_sales
@@ -9,7 +9,7 @@ import datetime
 order_shop_ids = config.shellgoods_params['order_shop_ids']
 order_shop_isfirst = config.shellgoods_params['order_shop_isfirst']
 def generate(salves_ins=None,MeanEncoder=None):
-    shop_upc_stock = stock_util.get_stock(order_shop_ids)
+    shop_upc_stock = stock_util1.get_stock(order_shop_ids)
     print ("shop_upc_stock")
     print (shop_upc_stock)
     shop_upc_sales = sales_util.get_predict_sales(order_shop_ids)
