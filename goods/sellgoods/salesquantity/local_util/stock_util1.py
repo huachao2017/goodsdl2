@@ -119,8 +119,6 @@ def get_max_sku(upcs_set,upcs_shelf_info,upc_results):
         upc = upc_row[1]
         depth = upc_row[4]
         upcs_depth[str(upc)] = depth
-    print ("upcs_depth:")
-    print (upcs_depth)
     for upc in upc_max_nums:
         i = 0
         for upc_info in upcs_shelf_info:
@@ -128,7 +126,6 @@ def get_max_sku(upcs_set,upcs_shelf_info,upc_results):
             if upc1 == upc:
                 max_nums = 0
                 if float(shelf_depth) != 0.0 and upc1 in list(upcs_depth.keys()):
-                    print ("************************************************")
                     max_nums = int(float(shelf_depth) / float(upcs_depth[upc1]))
                 i+=max_nums
         upc_max_nums[upc] = i
@@ -150,8 +147,6 @@ def get_min_sku(shelf_good_infos,shelf_infos):
         depth = dict(demjson.decode(shelf_info))['depth']
         shelf_ids_info.append((shelfid,depth))
     lens = len(shelf_ids_info)
-    print ("货架个数："+str(lens))
-    print(len(shelfs))
     for i in range(lens):
         shelf = dict(shelfs[i])
         shelf_id_info = shelf_ids_info[i]
