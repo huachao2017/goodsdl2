@@ -130,6 +130,16 @@ DATABASES = {
         'PORT': '3300',
         'CHARSET': 'utf8',
         'COLLATION': 'utf8_general_ci',
+    },
+    'erp': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'dmstore',
+        'USER': 'diamond_ro',
+        'PASSWORD': 'IW2MPdRYeliKdgue',
+        'HOST': 'udb-diamond-m-1.xianlife.top',
+        'PORT': '3306',
+        'CHARSET': 'utf8',
+        'COLLATION': 'utf8_general_ci',
     }
 }
 # else:
