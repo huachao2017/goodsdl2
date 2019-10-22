@@ -133,7 +133,7 @@ DATABASES = {
     },
     'erp': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dmstore',
+        'NAME': 'ls_diamond',
         'USER': 'diamond_ro',
         'PASSWORD': 'IW2MPdRYeliKdgue',
         'HOST': 'udb-diamond-m-1.xianlife.top',
