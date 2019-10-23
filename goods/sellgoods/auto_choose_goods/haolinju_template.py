@@ -19,10 +19,10 @@ origin_choose = ((1284, '3598', '6921168558049', '050203', 9900, 2026210), (1284
 # +                   "where T3.upc != '' and  T3.upc != '0' "
 # +                   "group by T2.t1_create_date,T2.t1_shop_id,T3.upc "
 # upc_data_sql.format()
-def get_data(target,template_shop_id):
+def get_data(target,template_shop_id,days=25):
     now = datetime.datetime.now()
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
-    week_ago = (now - datetime.timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')
+    week_ago = (now - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
     # print(now_date,week_ago)
     # sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '2019-10-14 00:00:00' and p.create_time < '2019-10-17 00:00:00' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
     sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
@@ -45,6 +45,10 @@ def get_data(target,template_shop_id):
 
     print('first:',len(data))
     conn.close()
+
+    for i in data:
+        i[4] = round(i[4]/days)
+    print(data)
     return data
 
 def choose_goods(data,ratio=0.99):
@@ -103,7 +107,7 @@ def check_order(data):
     for i in data:
         upcs.append(i[2])
     upcs = tuple(upcs)
-    print(1111,upcs)
+    # print(1111,upcs)
 
 
     conn = pymysql.connect('10.19.68.63', 'diamond_rw', password='iMZBbBwxJZ7LUW7p', database='ls_diamond', charset="utf8",
@@ -126,8 +130,9 @@ def check_order(data):
         if j[2] in order_upc:
             result.append(j)
 
-    print('third_order_checked',len(result),len(order_yes))
-    print('order_yes',order_yes)
+    print('order_yes', len(order_yes))
+    print('third_order_checked',len(result))
+
     return result
 
 
@@ -146,7 +151,7 @@ def save_data(data):
     insert_sql = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code) values (%s,%s,%s,%s,%s,2,%s)"
     # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
 
-    cursor.executemany(insert_sql, upc_tuple[:1])
+    cursor.executemany(insert_sql, upc_tuple[:])
     conn.commit()
 
     # for i in data:
@@ -209,4 +214,7 @@ if __name__ == '__main__':
     # save_data(c)
 
     c = check_order(b)
-    save_data(c)
+    # save_data(c)
+
+
+
