@@ -108,5 +108,9 @@ class ai_sales_order(models.Model):
     min_stock = models.IntegerField() #最小库存
     max_stock = models.IntegerField() #最大库存
     stock = models.IntegerField() #真实库存
+    multiple = models.IntegerField(default=0) #ms步长
+    start_sum = models.IntegerField(default=0) #起订量
+    start_min = models.IntegerField(default=0) #下限
+    start_max = models.IntegerField(default=0) #上限
     create_date = models.CharField(max_length=20)
     create_time = models.DateTimeField('date created', auto_now_add=True, db_index=True)
