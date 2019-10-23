@@ -62,8 +62,9 @@ shellgoods_params={
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,
     'order_shop_ids': [1284],
-    'order_shop_isfirst':[(1284,False)]
+    'order_shop_isfirst':[(1284,True)]
 }
+# dmstore erp
 erp={
     "host":"123.103.16.19",
     "port":3300,
@@ -72,6 +73,17 @@ erp={
     "driver":"com.mysql.jdbc.Driver",
     "user":"readonly",
     "password":"fxiSHEhui2018@)@)",
+}
+
+# ms erp
+ms={
+    "host": "10.19.68.63",
+    "port": 3306,
+    "database": "ls_diamond",
+    "url": "jdbc:mysql://10.19.68.63:3306/ls_diamond",
+    "driver": "com.mysql.jdbc.Driver",
+    "user": "diamond_ro",
+    "password": "IW2MPdRYeliKdgue",
 }
 
 #ucenter_online

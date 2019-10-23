@@ -61,5 +61,10 @@ sql_params={
     "upc_mch_code":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where upc != '' and upc = {0} and mch_id = {1} and mch_goods_code = {2}",
     # 读取销量数据表
     "sales_ai":"select shopid,upc,nextday_predict_sales from goods_ai_sales_goods where shopid in {0} and next_day = {1}",
+    # 获取摩售shop_id   dmstore
+    "ms_get_shop":"select erp_shop_id from erp_shop_related where shop_id = {0}",
+
+    #获取摩售 对应upc 的 起订量 和 步长
+    "ms_get_start_num":"select ms_sku_relation.multiple,ms_sku_relation.start_sum from ms_sku_relation where ms_sku_relation.sku_id in (select ls_sku.sku_id from ls_sku where ls_sku.model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))",
 
 }

@@ -4,6 +4,8 @@ from goods.sellgoods.salesquantity.local_util import sales_util
 from goods.sellgoods.salesquantity.service import out_service
 from goods.sellgoods.salesquantity.local_util import save_mysql_sales
 from goods.sellgoods.salesquantity.local_util import erp_interface
+from goods.sellgoods.salesquantity.local_util import start_order_util
+from goods.sellgoods.salesquantity.proxy import order_rule
 import time
 import datetime
 order_shop_ids = config.shellgoods_params['order_shop_ids']
@@ -29,6 +31,7 @@ def generate(salves_ins=None,MeanEncoder=None):
         upc_ordersales = {}
         for upc in upc_stock:
             (min_stock,max_stock,stock) = upc_stock[upc]
+            multiple,start_sum = start_order_util.start_order(shop_id1,upc)
             sale = None
             if upc in list(upc_sales.keys()):
                 sale = upc_sales[upc]
@@ -38,24 +41,18 @@ def generate(salves_ins=None,MeanEncoder=None):
                 max_stock =  3
             if stock is None or stock < 0:
                 stock = 0
+            if multiple is None:
+                multiple = 1
+            if start_sum is None:
+                start_sum = 1
 
             if min_stock is not None and max_stock is not None and stock is not None:
                 for (shop_id3,isfir) in order_shop_isfirst:
                     if shop_id3 == shop_id1:
-                        if isfir:
-                            if max_stock - min_stock <= 0 :
-                                upc_ordersales[upc] = (max_stock,0,min_stock,max_stock,stock)
-                            else:
-                                if max_stock-stock > 0 :
-                                    upc_ordersales[upc] = (max_stock-stock,0,min_stock,max_stock,stock)
-
-                        else:
-                            if sale is not None :
-                                if max_stock-stock > sale:
-                                    upc_ordersales[upc] = (sale,sale,min_stock,max_stock,stock)
-                                else:
-                                    if max_stock-stock > 0:
-                                        upc_ordersales[upc] = (max_stock-stock,sale,min_stock,max_stock,stock)
+                        # 首次订单规则
+                        upc_ordersales = order_rule.rule_isAndNotFir(max_stock,min_stock,stock,upc_ordersales,upc,sale,multiple,start_sum,isfir=isfir)
+        # 最小起订量规则 和 上限  下限规则
+        upc_ordersales = order_rule.rule_start_sum(upc_ordersales)
         shop_upc_ordersales[int(shop_id1)] = upc_ordersales
     print ("shop_upc_ordersales:")
     print (shop_upc_ordersales)
@@ -124,5 +121,4 @@ def get_predict_sales(shop_ids,upcs,yes_time,day_sales,shop_upc_sales,salves_ins
     return shop_upc_sales
 
 if __name__=='__main__':
-
     generate()
