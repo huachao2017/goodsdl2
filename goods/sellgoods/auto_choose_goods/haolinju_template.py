@@ -125,8 +125,9 @@ def check_order(data):
     for j in data:
         if j[2] in order_upc:
             result.append(j)
+
     print('third_order_checked',len(result),len(order_yes))
-    # print('result',result)
+    print('order_yes',order_yes)
     return result
 
 
