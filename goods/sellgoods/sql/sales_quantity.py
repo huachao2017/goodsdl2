@@ -61,6 +61,9 @@ sql_params={
     "upc_mch_code":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where upc != '' and upc = {0} and mch_id = {1} and mch_goods_code = {2}",
     # 读取销量数据表
     "sales_ai":"select shopid,upc,nextday_predict_sales from goods_ai_sales_goods where shopid in {0} and next_day = {1}",
+
+    # 根据订货门店id  查询供货商id
+    "ms_get_ghs_id": "select a.authorized_shop_id from ms_relation as a WHERE a.is_authorized_shop_id={0} and a.status=1",
     # 获取摩售shop_id   dmstore
     "ms_get_shop":"select erp_shop_id from erp_shop_related where shop_id = {0}",
 
