@@ -44,15 +44,13 @@ def save_df(data_frame,label,model,mean_encode_ins,sqlsc):
         for key in predicts_info:
              predicts_e.append(predicts_info[key][i])
         predicts_ext.append(predicts_e)
-
+    exe_time1 = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     for shop_id,upc,ai_weekday,ai_day,ai_day_nums,ai_nextday,predict,predicts1 in zip(shop_ids,upcs,ai_weekdays,ai_days,ai_day_numss,ai_nextdays,predict_next_days,predicts_ext):
-        print ("shop_id,upc,ai_weekday,ai_day,ai_day_nums,ai_nextday,predict,predicts")
-        print (shop_id,upc,ai_weekday,ai_day,ai_day_nums,ai_nextday,predict,str(predicts1))
-        data.append((shop_id,upc,ai_weekday,ai_day,ai_day_nums,ai_nextday,predict,str(predicts1)))
+        data.append((shop_id,upc,ai_weekday,ai_day,ai_day_nums,ai_nextday,predict,str(predicts1),str(exe_time1)))
     mysql_ins = mysql_util.MysqlUtil(ai)
     del_sql = "delete from goods_ai_sales_goods where next_day = {0}"
     del_sql = del_sql.format("'"+data[0][5]+"'")
-    sql = "insert into goods_ai_sales_goods (shopid,upc,day_week,day,day_sales,next_day,nextday_predict_sales,nextdays_predict_sales) value(%s,%s,%s,%s,%s,%s,%s,%s)"
+    sql = "insert into goods_ai_sales_goods (shopid,upc,day_week,day,day_sales,next_day,nextday_predict_sales,nextdays_predict_sales,create_time) value(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     print(sql)
     print (data[0])
     mysql_ins.delete_sql(del_sql)
@@ -96,17 +94,18 @@ def get_ext_predict_day(shop_ids,upcs,ai_nextday,model,mean_encode_ins,predicts,
 
 def  save_oreder(shop_upc_ordersales):
     exe_time = str(time.strftime('%Y-%m-%d', time.localtime()))
+    exe_time1 = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     data = []
     for shop_id in shop_upc_ordersales:
         upc_ordersales = shop_upc_ordersales[shop_id]
         for upc in upc_ordersales:
             (order_sale, predict_sale, min_stock, max_stock, stock) = upc_ordersales[upc]
-            data.append((shop_id,upc,order_sale, predict_sale, min_stock, max_stock, stock,exe_time))
+            data.append((shop_id,upc,order_sale, predict_sale, min_stock, max_stock, stock,exe_time,exe_time1))
     mysql_ins = mysql_util.MysqlUtil(ai)
 
     del_sql = "delete from goods_ai_sales_order where create_date = {0}"
     del_sql = del_sql.format("'"+exe_time+"'")
-    sql = "insert into goods_ai_sales_order (shopid,upc,order_sale, predict_sale, min_stock, max_stock, stock,create_date) value(%s,%s,%s,%s,%s,%s,%s,%s)"
+    sql = "insert into goods_ai_sales_order (shopid,upc,order_sale, predict_sale, min_stock, max_stock, stock,create_date,create_time) value(%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     print(sql)
     print(data[0])
     mysql_ins.delete_sql(del_sql)

@@ -47,13 +47,18 @@ sql_params={
 
     "tz_sums1":"select  shop_id,count(taizhang_id)  from sf_shop_taizhang  where  shop_id in (select id from uc_shop where mch_shop_code = {0} ) group by shop_id",
 
+
     # TODO 未添加 状态  后续需要加入执行状态
     "tz_sums2":"select sf_taizhang_display.taizhang_id,sf_taizhang_display.display_goods_info,sf_taizhang_display.display_shelf_info from sf_taizhang_display where sf_taizhang_display.taizhang_id in ("
                 " select sf_shop_taizhang.taizhang_id  from sf_shop_taizhang  where  shop_id in (select uc_shop.id from uc_shop where uc_shop.mch_shop_code = {0} )"
                         ") ",
 
+    "tz_mch_id":"select mch_id from sf_shop_taizhang where taizhang_id = {0}",
     "tz_shelf":"select id,length,height,depth from sf_shelf where id in {0}",
     "tz_upc":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where upc != '' and mch_goods_code in {0}",
+    "tz_upc1":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where upc != '' and upc in {0} order by upc,depth",
+
+    "upc_mch_code":"select mch_goods_code,upc,width,height,depth  from uc_merchant_goods where upc != '' and upc = {0} and mch_id = {1} and mch_goods_code = {2}",
     # 读取销量数据表
     "sales_ai":"select shopid,upc,nextday_predict_sales from goods_ai_sales_goods where shopid in {0} and next_day = {1}",
 
