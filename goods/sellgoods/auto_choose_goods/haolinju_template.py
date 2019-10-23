@@ -19,7 +19,7 @@ origin_choose = ((1284, '3598', '6921168558049', '050203', 9900, 2026210), (1284
 # +                   "where T3.upc != '' and  T3.upc != '0' "
 # +                   "group by T2.t1_create_date,T2.t1_shop_id,T3.upc "
 # upc_data_sql.format()
-def get_data(target,template_shop_id,days=25):
+def get_data(target,template_shop_id,days=26):
     now = datetime.datetime.now()
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
     week_ago = (now - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
@@ -48,7 +48,7 @@ def get_data(target,template_shop_id,days=25):
 
     for i in data:
         i[4] = round(i[4]/days)
-    print(data)
+    # print(data)
     return data
 
 def choose_goods(data,ratio=0.99):
