@@ -94,11 +94,11 @@ def choose_goods(data,ratio=0.99):
     # print('筛完后:',result)
     print('second:',len(result))
 
-    print(result)
+    # print(result)
     return result
 
 def check_order(data):
-    print(1000,data)
+    # print(1000,data)
     upcs = []
     for i in data:
         upcs.append(i[2])
@@ -125,8 +125,8 @@ def check_order(data):
     for j in data:
         if j[2] in order_upc:
             result.append(j)
-    print('third_order_checked',len(result))
-    print('result',result)
+    print('third_order_checked',len(result),len(order_yes))
+    # print('result',result)
     return result
 
 
