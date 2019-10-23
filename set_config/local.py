@@ -34,6 +34,16 @@ erp_dev={
     "password":"UQrwsfpVZ12pvv24",
 }
 
+ms={
+    "host": "10.19.68.63",
+    "port": 3306,
+    "database": "ls_diamond",
+    "url": "jdbc:mysql://10.19.68.63:3306/ls_diamond",
+    "driver": "com.mysql.jdbc.Driver",
+    "user": "diamond_ro",
+    "password": "IW2MPdRYeliKdgue",
+}
+
 #ucenter_online
 ucenter = {
     "host":"udb-ucenter-m-1.xianlife.top",

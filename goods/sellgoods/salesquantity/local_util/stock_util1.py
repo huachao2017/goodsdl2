@@ -162,6 +162,7 @@ def get_min_sku(shelf_good_infos,shelf_infos,tz_ids,mysql_ins):
                             upcs_shelf_info.append((str(upc), shelf_id_info[0], shelf_id_info[1], 0))
                             upcs.append(str(upc))
                     else:
+                        print ("upc select one error !!!!  failed "+sql_upc_depth)
                         upcs_shelf_info.append((str(upc), shelf_id_info[0], shelf_id_info[1], 0))
                         upcs.append(str(upc))
                 else:
