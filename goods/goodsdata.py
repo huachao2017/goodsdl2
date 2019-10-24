@@ -1,7 +1,7 @@
 import json
 import django
 import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings_public")
 django.setup()
 from django.db import connections
 
@@ -13,7 +13,28 @@ def get_shop_shelfs(shopid, need_goods=False):
     :param need_goods: 是否需要返回商品相关信息
     :return:返回一个Shop对象
     """
-    return DataShop(0)
+
+    data_shop = DataShop(shopid)
+    cursor = connections['ucenter'].cursor()
+    # 获取台账系统的uc_shopid
+    cursor.execute('select id, mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
+    (uc_shopid, mch_id) = cursor.fetchone()
+
+    # 获取台账
+    # TODO 需要获取商店台账可放的品类
+    cursor.execute('select t.id, t.shelf_id from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}'.format(uc_shopid))
+    taizhangs = cursor.fetchall()
+    for taizhang in taizhangs:
+        taizhang_id = taizhang[0]
+        shelf_id = taizhang[1]
+        cursor.execute('select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}'.format(shelf_id))
+        (shelf_no, length, height, depth) = cursor.fetchone()
+        data_shelf = DataShelf(shelf_no,length,height,depth)
+        data_shop.add_data_shelf(data_shelf)
+
+    cursor.close()
+
+    return data_shop
 
 def get_raw_goods_info(upcs):
     """
@@ -35,27 +56,18 @@ class DataShop():
         self.data_shelfs.append(data_shelf)
 
 class DataShelf():
-    def __init__(self, type, width, height, deepth):
+    def __init__(self, type, length, height, depth):
         self.type = type
-        self.width = width
-        self.deepth = height
-        self.deep = deepth
+        self.length = length
+        self.height = height
+        self.depth = depth
         self.data_levels = []
 
-    def add_data_level(self,data_level):
-        self.data_levels.append(data_level)
-
-class DataLevel():
-    def __init__(self, type, width, height, deepth):
-        self.type = type
-        self.width = width
-        self.height = height
-        self.deepth = deepth
 
 class DataGoods():
-    def __init__(self,upc, code, width, height, deepth):
+    def __init__(self,upc, code, width, height, depth):
         self.upc = upc
         self.code = code
         self.width = width
         self.height = height
-        self.deepth = deepth
+        self.depth = depth
