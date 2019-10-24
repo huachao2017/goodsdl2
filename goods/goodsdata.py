@@ -69,7 +69,11 @@ class DataShop():
         self.data_shelfs.append(data_shelf)
 
     def __str__(self):
-        return '{}:{}'.format(self.shopid,self.data_shelfs)
+        ret = '{}:[\n'.format(self.shopid)
+        for data_shelf in self.data_shelfs:
+            ret += str(data_shelf)
+            ret += '\n]'
+        return ret
 
 class DataShelf():
     def __init__(self, type, length, height, depth):
@@ -102,3 +106,4 @@ if __name__ == "__main__":
     print(data_shop)
 
     ret = get_raw_goods_info(1284,[2029926,2028227])
+    print(ret)
