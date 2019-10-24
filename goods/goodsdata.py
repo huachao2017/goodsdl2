@@ -6,15 +6,16 @@ django.setup()
 from django.db import connections
 
 
-def get_shop_shelfs(shopid):
+def get_shop_shelfs(shopid, need_goods=False):
     """
-    获取商店的所有货架，及每个货架的每个层的参数信息
+    获取商店的所有货架，及每个货架的每个层的参数信息，如果need_goods则需连带商品数据信息，否则不带商品数据信息
     :param shopid: fx系统的商店id
+    :param need_goods: 是否需要返回商品相关信息
     :return:返回一个Shop对象
     """
     return DataShop(0)
 
-def get_goods_info(upcs):
+def get_raw_goods_info(upcs):
     """
     根据upc列表获取每个upc的类别、长宽高
     :param upcs:
