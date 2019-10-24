@@ -72,7 +72,8 @@ class DataShop():
         ret = '{}:[\n'.format(self.shopid)
         for data_shelf in self.data_shelfs:
             ret += str(data_shelf)
-            ret += '\n]'
+            ret += '\n'
+        ret += ']'
         return ret
 
 class DataShelf():
