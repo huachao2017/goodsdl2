@@ -54,7 +54,7 @@ def get_raw_goods_info(shopid, mch_codes):
         (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
         cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={};".format(upc, mch_code))
         (corp_classify_code) = cursor_dmstore.fetchone()
-        ret[mch_code] = DataGoods(upc, corp_classify_code, spec, volume, width, height, depth)
+        ret[mch_code] = DataGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth)
 
     cursor.close()
     cursor_dmstore.close()
@@ -68,6 +68,9 @@ class DataShop():
     def add_data_shelf(self, data_shelf):
         self.data_shelfs.append(data_shelf)
 
+    def __str__(self):
+        return '{}:{}'.format(self.shopid,self.data_shelfs)
+
 class DataShelf():
     def __init__(self, type, length, height, depth):
         self.type = type
@@ -76,9 +79,13 @@ class DataShelf():
         self.depth = depth
         self.data_levels = []
 
+    def __str__(self):
+        return '{},{},{},{}:{}'.format(self.type,self.length,self.height,self.depth,self.data_levels)
+
 
 class DataGoods():
-    def __init__(self,upc, corp_classify_code, spec, volume, width, height, depth):
+    def __init__(self, mch_code, upc, corp_classify_code, spec, volume, width, height, depth):
+        self.mch_code = mch_code
         self.upc = upc
         self.corp_classify_code = corp_classify_code
         self.spec = spec
@@ -86,3 +93,12 @@ class DataGoods():
         self.width = width
         self.height = height
         self.depth = depth
+
+    def __str__(self):
+        return '{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth)
+
+if __name__ == "__main__":
+    data_shop = get_shop_shelfs(1284, need_goods=False)
+    print(data_shop)
+
+    ret = get_raw_goods_info(1284,[2029926,2028227])
