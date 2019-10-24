@@ -41,9 +41,9 @@ def get_raw_goods_info(shopid, mch_codes):
     根据upc列表获取每个upc的类别、长宽高
     :param shopid: fx系统的商店id
     :param mch_codes:
-    :return:返回一个map，类似{upc1:goods1,upc2:goods2}，goods1和goods2都是一个goods对象
+    :return:返回一个DataGoods对象的列表
     """
-    ret = {}
+    ret = []
     cursor = connections['ucenter'].cursor()
     cursor_dmstore = connections['dmstore'].cursor()
     # 获取台账系统的uc_shopid
@@ -54,7 +54,7 @@ def get_raw_goods_info(shopid, mch_codes):
         (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
         cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={};".format(upc, mch_code))
         (corp_classify_code) = cursor_dmstore.fetchone()
-        ret[mch_code] = DataGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth)
+        ret.append(DataGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth))
 
     cursor.close()
     cursor_dmstore.close()
@@ -81,10 +81,9 @@ class DataShelf():
         self.length = length
         self.height = height
         self.depth = depth
-        self.data_levels = []
 
     def __str__(self):
-        return '{},{},{},{}:{}'.format(self.type,self.length,self.height,self.depth,self.data_levels)
+        return '{},{},{},{}'.format(self.type,self.length,self.height,self.depth)
 
 
 class DataGoods():
@@ -106,4 +105,4 @@ if __name__ == "__main__":
     print(data_shop)
 
     ret = get_raw_goods_info(1284,[2029926,2028227])
-    print(ret)
+    print("\n".join(str(i) for i in ret))
