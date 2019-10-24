@@ -22,12 +22,12 @@ def get_shop_shelfs(shopid, need_goods=False):
 
     # 获取台账
     # TODO 需要获取商店台账可放的品类
-    cursor.execute('select t.id, t.shelf_id from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}'.format(uc_shopid))
+    cursor.execute("select t.id, t.shelf_id from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(uc_shopid))
     taizhangs = cursor.fetchall()
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
         shelf_id = taizhang[1]
-        cursor.execute('select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}'.format(shelf_id))
+        cursor.execute("select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(shelf_id))
         (shelf_no, length, height, depth) = cursor.fetchone()
         data_shelf = DataShelf(shelf_no,length,height,depth)
         data_shop.add_data_shelf(data_shelf)
@@ -36,15 +36,28 @@ def get_shop_shelfs(shopid, need_goods=False):
 
     return data_shop
 
-def get_raw_goods_info(upcs):
+def get_raw_goods_info(shopid, mch_codes):
     """
     根据upc列表获取每个upc的类别、长宽高
-    :param upcs:
+    :param shopid: fx系统的商店id
+    :param mch_codes:
     :return:返回一个map，类似{upc1:goods1,upc2:goods2}，goods1和goods2都是一个goods对象
     """
     ret = {}
-    for upc in upcs:
-        ret[upc] = DataGoods(upc, '',0,0,0)
+    cursor = connections['ucenter'].cursor()
+    cursor_dmstore = connections['dmstore'].cursor()
+    # 获取台账系统的uc_shopid
+    cursor.execute("select id, mch_id from uc_shop where mch_shop_code = {}".format(shopid))
+    (uc_shopid, mch_id) = cursor.fetchone()
+    for mch_code in mch_codes:
+        cursor.execute("select id, upc,width,height,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
+        (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
+        cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={};".format(upc, mch_code))
+        (corp_classify_code) = cursor_dmstore.fetchone()
+        ret[mch_code] = DataGoods(upc, corp_classify_code, spec, volume, width, height, depth)
+
+    cursor.close()
+    cursor_dmstore.close()
     return ret
 
 class DataShop():
@@ -65,9 +78,11 @@ class DataShelf():
 
 
 class DataGoods():
-    def __init__(self,upc, code, width, height, depth):
+    def __init__(self,upc, corp_classify_code, spec, volume, width, height, depth):
         self.upc = upc
-        self.code = code
+        self.corp_classify_code = corp_classify_code
+        self.spec = spec
+        self.volume = volume
         self.width = width
         self.height = height
         self.depth = depth
