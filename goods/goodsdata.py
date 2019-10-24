@@ -53,7 +53,7 @@ def get_raw_goods_info(shopid, mch_codes):
         cursor.execute("select id, upc, spec, volume, width,height,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
         (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
         cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={};".format(upc, mch_code))
-        (corp_classify_code) = cursor_dmstore.fetchone()
+        (corp_classify_code,) = cursor_dmstore.fetchone()
         ret.append(DataGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth))
 
     cursor.close()
