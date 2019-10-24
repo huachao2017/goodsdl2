@@ -50,7 +50,7 @@ def get_raw_goods_info(shopid, mch_codes):
     cursor.execute("select id, mch_id from uc_shop where mch_shop_code = {}".format(shopid))
     (uc_shopid, mch_id) = cursor.fetchone()
     for mch_code in mch_codes:
-        cursor.execute("select id, upc,width,height,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
+        cursor.execute("select id, upc, spec, volume, width,height,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
         (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
         cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={};".format(upc, mch_code))
         (corp_classify_code) = cursor_dmstore.fetchone()
