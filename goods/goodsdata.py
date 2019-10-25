@@ -6,12 +6,11 @@ django.setup()
 from django.db import connections
 
 
-def get_shop_shelfs(shopid, need_goods=False):
+def get_shop_shelfs(shopid):
     """
-    获取商店的所有货架，及每个货架的每个层的参数信息，如果need_goods则需连带商品数据信息，否则不带商品数据信息
+    获取商店的所有货架及货架的相关信息
     :param shopid: fx系统的商店id
-    :param need_goods: 是否需要返回商品相关信息
-    :return:返回一个Shop对象
+    :return:返回一个DataShop对象
     """
 
     data_shop = DataShop(shopid)
