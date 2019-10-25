@@ -1,3 +1,10 @@
+"""
+这是选品、陈列、订货所需要的数据接口程序
+接口包括：
+1、get_shop_shelfs：陈列设计前获取货架信息
+2、get_raw_goods_info：陈列设计前获取商品信息
+3、get_shop_shelf_goods：订货前获取陈列信息
+"""
 import json
 import django
 import os
@@ -28,7 +35,7 @@ def get_shop_shelfs(shopid):
         shelf_id = taizhang[1]
         cursor.execute("select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(shelf_id))
         (shelf_no, length, height, depth) = cursor.fetchone()
-        data_shelf = DataShelf(shelf_no,length,height,depth)
+        data_shelf = DataShelf(taizhang_id, shelf_id, shelf_no,length,height,depth)
         data_shop.add_data_shelf(data_shelf)
 
     cursor.close()
@@ -59,6 +66,35 @@ def get_raw_goods_info(shopid, mch_codes):
     cursor_dmstore.close()
     return ret
 
+def get_shop_shelf_goods(shopid):
+    """
+    获取商店的所有货架及货架上的商品信息
+    :param shopid: fx系统的商店id
+    :return:返回一个DataShop对象
+    """
+
+    data_shop = DataShop(shopid)
+    cursor = connections['ucenter'].cursor()
+    # 获取台账系统的uc_shopid
+    cursor.execute('select id, mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
+    (uc_shopid, mch_id) = cursor.fetchone()
+
+    # 获取台账
+    cursor.execute("select t.id, t.shelf_id from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(uc_shopid))
+    taizhangs = cursor.fetchall()
+    for taizhang in taizhangs:
+        taizhang_id = taizhang[0]
+        shelf_id = taizhang[1]
+        cursor.execute("select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(shelf_id))
+        (shelf_no, length, height, depth) = cursor.fetchone()
+        data_shelf = DataShelf(taizhang_id, shelf_id, shelf_no,length,height,depth)
+        data_shop.add_data_shelf(data_shelf)
+
+    cursor.close()
+
+    return data_shop
+
+
 class DataShop():
     def __init__(self, shopid):
         self.shopid = shopid
@@ -76,14 +112,16 @@ class DataShop():
         return ret
 
 class DataShelf():
-    def __init__(self, type, length, height, depth):
+    def __init__(self, taizhang_id, shelf_id, type, length, height, depth):
+        self.taizhang_id = taizhang_id
+        self.shelf_id = shelf_id
         self.type = type
         self.length = length
         self.height = height
         self.depth = depth
 
     def __str__(self):
-        return '{},{},{},{}'.format(self.type,self.length,self.height,self.depth)
+        return '{},{},{},{},{},{}'.format(self.taizhang_id,self.shelf_id,self.type,self.length,self.height,self.depth)
 
 
 class DataGoods():
