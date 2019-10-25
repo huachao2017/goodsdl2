@@ -101,7 +101,7 @@ class DataGoods():
         return '{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth)
 
 if __name__ == "__main__":
-    data_shop = get_shop_shelfs(1284, need_goods=False)
+    data_shop = get_shop_shelfs(1284)
     print(data_shop)
 
     ret = get_raw_goods_info(1284,[2029926,2028227])
