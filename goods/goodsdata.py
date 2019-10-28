@@ -110,7 +110,7 @@ def get_shop_shelf_goods(shopid):
                 level = level_array[i]
                 goods_level_array = goods_array[i]
                 #floor_type 1：普通陈列 2：挂层
-                data_level = DataLevel(level['floor_type'],round(float(level['width'])),round(float(level['height'])),round(float(level['depth'])))
+                data_level = DataLevel(level['floor_type'],int(level['height']),int(level['depth']))
                 data_shelf.add_data_level(data_level)
                 for goods in goods_level_array:
                     cursor.execute(
@@ -165,9 +165,8 @@ class DataShelf():
         return ret
 
 class DataLevel():
-    def __init__(self, type, width, height, depth):
+    def __init__(self, type, height, depth):
         self.type = type
-        self.length = width
         self.height = height
         self.depth = depth
         self.data_goods_array = []
@@ -176,7 +175,7 @@ class DataLevel():
         self.data_goods_array.append(data_goods)
 
     def __str__(self):
-        ret = '\t\t{},{},{},{}'.format(self.type, self.length, self.height, self.depth)
+        ret = '\t\t{},{},{},{}'.format(self.type, self.height, self.depth)
         if len(self.data_goods_array)>0:
             ret += ':[\n'
             for data_goods in self.data_goods_array:
