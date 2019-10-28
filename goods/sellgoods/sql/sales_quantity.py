@@ -49,7 +49,7 @@ sql_params={
 
 
     # TODO 未添加 状态  后续需要加入执行状态
-    "tz_sums2":"select sf_taizhang_display.taizhang_id,sf_taizhang_display.display_goods_info,sf_taizhang_display.display_shelf_info from sf_taizhang_display where sf_taizhang_display.approval_status=1 and sf_taizhang_display.status in(1,2) and sf_taizhang_display.taizhang_id in ("
+    "tz_sums2":"select sf_taizhang_display.taizhang_id,sf_taizhang_display.display_goods_info,sf_taizhang_display.display_shelf_info from sf_taizhang_display where sf_taizhang_display.approval_status=1 and sf_taizhang_display.status = 2 and sf_taizhang_display.taizhang_id in ("
                 " select sf_shop_taizhang.taizhang_id  from sf_shop_taizhang  where  shop_id in (select uc_shop.id from uc_shop where uc_shop.mch_shop_code = {0} )"
                         ") ",
 
