@@ -113,8 +113,11 @@ def get_shop_shelf_goods(shopid):
                 data_level = DataLevel(level['floor_type'],round(float(level['width'])),round(float(level['height'])),round(float(level['depth'])))
                 data_shelf.add_data_level(data_level)
                 for goods in goods_level_array:
-                    data_goods = DataGoods(goods['mch_goods_code'], goods['goods_upc'], int(goods['width']), int(goods['height']),
-                                           int(goods['depth']))
+                    cursor.execute(
+                        "select id, upc, spec, volume, width,height,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                            mch_id, goods['mch_goods_code']))
+                    (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
+                    data_goods = DataGoods(goods['mch_goods_code'], upc, width, height, depth)
                     data_level.add_data_goods(data_goods)
 
     cursor.close()
