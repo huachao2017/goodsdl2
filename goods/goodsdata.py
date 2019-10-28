@@ -110,7 +110,7 @@ def get_shop_shelf_goods(shopid):
                 level = level_array[i]
                 goods_level_array = goods_array[i]
                 #floor_type 1：普通陈列 2：挂层
-                data_level = DataLevel(level['floor_type'],int(level['width']),int(level['height']),int(level['depth']))
+                data_level = DataLevel(level['floor_type'],round(float(level['width'])),round(float(level['height'])),round(float(level['depth'])))
                 data_shelf.add_data_level(data_level)
                 for goods in goods_level_array:
                     data_goods = DataGoods(goods['mch_goods_code'], goods['goods_upc'], int(goods['width']), int(goods['height']),
