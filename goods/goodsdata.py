@@ -82,7 +82,7 @@ def get_shop_shelf_goods(shopid):
     (uc_shopid, mch_id) = cursor.fetchone()
 
     # 获取台账
-    cursor.execute("select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and and st.shop_id = {}".format(uc_shopid))
+    cursor.execute("select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and st.shop_id = {}".format(uc_shopid))
     taizhangs = cursor.fetchall()
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
