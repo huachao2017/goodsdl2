@@ -49,7 +49,7 @@ sql_params={
 
 
     # TODO 未添加 状态  后续需要加入执行状态
-    "tz_sums2":"select sf_taizhang_display.taizhang_id,sf_taizhang_display.display_goods_info,sf_taizhang_display.display_shelf_info from sf_taizhang_display where sf_taizhang_display.taizhang_id in ("
+    "tz_sums2":"select sf_taizhang_display.taizhang_id,sf_taizhang_display.display_goods_info,sf_taizhang_display.display_shelf_info from sf_taizhang_display where sf_taizhang_display.approval_status=1 and sf_taizhang_display.status in(1,2) and sf_taizhang_display.taizhang_id in ("
                 " select sf_shop_taizhang.taizhang_id  from sf_shop_taizhang  where  shop_id in (select uc_shop.id from uc_shop where uc_shop.mch_shop_code = {0} )"
                         ") ",
 
@@ -69,5 +69,11 @@ sql_params={
 
     #获取摩售 对应upc 的 起订量 和 步长
     "ms_get_start_num":"select ms_sku_relation.multiple,ms_sku_relation.start_sum from ms_sku_relation where ms_sku_relation.status=1 and ms_sku_relation.sku_id in (select ls_sku.sku_id from ls_sku where ls_sku.model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))",
+
+
+    # 获取所有陈列
+    "get_all_display":"select id, taizhang_id, display_goods_info,display_shelf_info from sf_taizhang_display",
+
+
 
 }
