@@ -175,7 +175,7 @@ class DataLevel():
         self.data_goods_array.append(data_goods)
 
     def __str__(self):
-        ret = '\t\t{},{},{},{}'.format(self.type, self.height, self.depth)
+        ret = '\t\t{},{},{}'.format(self.type, self.height, self.depth)
         if len(self.data_goods_array)>0:
             ret += ':[\n'
             for data_goods in self.data_goods_array:
