@@ -161,7 +161,7 @@ class DataShelf():
                 ret += str(data_level)
                 ret += '\n'
             ret += ']'
-        return
+        return ret
 
 class DataLevel():
     def __init__(self, type, width, height, depth):
