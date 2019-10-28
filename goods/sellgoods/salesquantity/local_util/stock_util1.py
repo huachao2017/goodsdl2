@@ -146,7 +146,7 @@ def get_min_sku(shelf_good_infos,shelf_infos,tz_ids,mysql_ins):
                 if str(upc) != 'undefined' and str(upc) != '' :
                     sql_upc_depth = sales_quantity.sql_params["upc_mch_code"]
                     sql_upc_depth = sql_upc_depth.format(upc,mch_id,mch_goods_code)
-                    # print (sql_upc_depth)
+                    print (sql_upc_depth)
                     upc_result = mysql_ins.selectOne(sql_upc_depth)
                     if upc_result is not None:
                         upc1_depth = upc_result[4]
