@@ -136,7 +136,6 @@ class DataShop():
     def __str__(self):
         ret = '{}:[\n'.format(self.shopid)
         for data_shelf in self.data_shelfs:
-            ret += '\t'
             ret += str(data_shelf)
             ret += '\n'
         ret += ']'
@@ -156,14 +155,13 @@ class DataShelf():
         self.data_levels.append(data_level)
 
     def __str__(self):
-        ret = '{},{},{},{},{},{}'.format(self.taizhang_id, self.shelf_id, self.type, self.length, self.height, self.depth)
+        ret = '\t{},{},{},{},{},{}'.format(self.taizhang_id, self.shelf_id, self.type, self.length, self.height, self.depth)
         if len(self.data_levels)>0:
             ret += ':[\n'
             for data_level in self.data_levels:
-                ret += '\t'
                 ret += str(data_level)
                 ret += '\n'
-            ret += ']'
+            ret += '\t]'
         return ret
 
 class DataLevel():
@@ -178,14 +176,13 @@ class DataLevel():
         self.data_goods_array.append(data_goods)
 
     def __str__(self):
-        ret = '{},{},{},{}'.format(self.type, self.length, self.height, self.depth)
+        ret = '\t\t{},{},{},{}'.format(self.type, self.length, self.height, self.depth)
         if len(self.data_goods_array)>0:
             ret += ':[\n'
             for data_goods in self.data_goods_array:
-                ret += '\t'
                 ret += str(data_goods)
                 ret += '\n'
-            ret += ']'
+            ret += '\t\t]'
         return ret
 
 class DataGoods():
@@ -197,7 +194,7 @@ class DataGoods():
         self.depth = depth
 
     def __str__(self):
-        return '{},{},{},{},{}'.format(self.mch_code,self.upc,self.width,self.height,self.depth)
+        return '\t\t\t{},{},{},{},{}'.format(self.mch_code,self.upc,self.width,self.height,self.depth)
 
 class DataRawGoods():
     def __init__(self, mch_code, upc, corp_classify_code, spec, volume, width, height, depth):
