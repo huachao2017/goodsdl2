@@ -1,8 +1,13 @@
+from set_config import config
+# 生成自动陈列
+shelf_display = config.shellgoods_params['shelf_display']
+def generate_displays(shopids_isfir=None):
+    if shopids_isfir == None:
+        for (shop_id,isfir) in shelf_display:
+            shopids_isfir.append((shop_id,isfir))
 
-#
-def generate_displays(shop_ids):
-    # 获取门店下的 货架信息 从ucenter
-    print ("do")
-    # 获取门店下的 首次订单商品信息 从订单表
+    for (shop_id, isfir) in shelf_display:
+        print (shop_id)
+        
 
 

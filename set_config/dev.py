@@ -62,7 +62,8 @@ shellgoods_params={
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,
     'order_shop_ids': [1284],
-    'order_shop_isfirst':[(1284,False)]
+    'order_shop_isfirst':[(1284,False)],
+    'shelf_display':[(1284,True)],
 
 }
 # dmstore erp
