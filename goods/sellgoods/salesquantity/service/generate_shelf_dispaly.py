@@ -8,6 +8,6 @@ def generate_displays(shopids_isfir=None):
 
     for (shop_id, isfir) in shelf_display:
         print (shop_id)
-        
+
 
 
