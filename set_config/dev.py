@@ -1,15 +1,16 @@
 #########################################YOLOV3-freezer##################################################################
 yolov3_params={
+    # last ep3408-loss42.201-val_loss42.072.h5 10:30 before
     'good_model_path' :'/home/ai/model/freezer/ep3408-loss42.201-val_loss42.072.h5',
     'anchors_path' :'./goods/freezer/keras_yolo3/model_data/yolo_anchors.txt',
     'classes_path' : './goods/freezer/keras_yolo3/model_data/voc_classes.txt',
     'label_path':'./goods/freezer/keras_yolo3/model_data/goods_label_map.pbtxt',
-    'score' :0.25,
+    'score' :0.23,
     'iou' :0.45,
     'model_image_size' : (416, 416),
     'gpu_num' : 1,
     "diff_switch_iou":(True,0.6),
-    "single_switch_iou_minscore":(True,0.0,0.3)
+    "single_switch_iou_minscore":(True,0.0,0.28)
 }
 
 #########################################shelf_good##################################################################
@@ -62,7 +63,13 @@ shellgoods_params={
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,
     'order_shop_ids': [1284],
-    'order_shop_isfirst':[(1284,False)]
+    'order_shop_isfirst':[(1284,False)],
+    'shelf_display':[(1284,True)],
+    "shelf_display_maxitems":20, # 排列单个货架最大循环次数
+    "shelf_levels_max":20,# 货架的最高层数
+    "shelf_level_start_height":10,# 货架最底层起始高度 cm
+    'shelf_level_redundancy_height':8,# 商品与上一层的 冗余高度 cm
+    'shelf_top_level_height':20, #最顶层货架的高度距货架最高的 距离限制  cm
 
 }
 # dmstore erp

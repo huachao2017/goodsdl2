@@ -27,5 +27,5 @@ def start_order(dmstore_shop_id,upc):
         result1 = ms_ins.selectOne(ms_get_start_num) # 步长 ，起订量
         return result1[0],result1[1]
     except:
-        print ("get data from ms error!")
+        print ("get data from ms upc error! dmstore_shop_id="+str(dmstore_shop_id) + ", upc = "+str(upc))
         return None, None
