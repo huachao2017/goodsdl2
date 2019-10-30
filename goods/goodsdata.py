@@ -13,40 +13,45 @@ django.setup()
 from django.db import connections
 
 
-def get_shop_shelfs(shopid):
+def get_raw_shop_shelfs(shopid):
     """
-    获取商店的所有货架及货架的相关信息
+    获取商店的所有货架及货架的相关信息，该方法在陈列时用
     :param shopid: fx系统的商店id
-    :return:返回一个DataShop对象
+    :return:返回一个DataRawShelf对象列表
     """
 
-    data_shop = DataShop(shopid)
+    ret = []
     cursor = connections['ucenter'].cursor()
     # 获取台账系统的uc_shopid
     cursor.execute('select id, mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
     (uc_shopid, mch_id) = cursor.fetchone()
 
     # 获取台账
-    # TODO 需要获取商店台账可放的品类
     cursor.execute("select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(uc_shopid))
     taizhangs = cursor.fetchall()
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
         shelf_id = taizhang[1]
         count = taizhang[2]
+        # 获取商店台账可放的品类
+        try:
+            cursor.execute("select associated_catids from sf_taizhang_display where taizhang_id = {} and status in (0,1) and approval_status = 0".format(taizhang_id))
+            (associated_catids,) = cursor.fetchone()
+        except:
+            print('获取台账陈列失败：{}！'.format(taizhang_id))
+            associated_catids = None
         cursor.execute("select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(shelf_id))
         (shelf_no, length, height, depth) = cursor.fetchone()
-        for i in range(count):
-            data_shelf = DataShelf(taizhang_id, shelf_id, shelf_no,length,height,depth)
-            data_shop.add_data_shelf(data_shelf)
+        data_raw_shelf = DataRawShelf(taizhang_id, shelf_id, shelf_no,count, length,height,depth,associated_catids)
+        ret.append(data_raw_shelf)
 
     cursor.close()
 
-    return data_shop
+    return ret
 
 def get_raw_goods_info(shopid, mch_codes):
     """
-    根据upc列表获取每个upc的类别、长宽高
+    根据upc列表获取每个upc的类别、长宽高，该方法在陈列时用
     :param shopid: fx系统的商店id
     :param mch_codes:
     :return:返回一个DataRawGoods对象的列表
@@ -54,35 +59,71 @@ def get_raw_goods_info(shopid, mch_codes):
     ret = []
     cursor = connections['ucenter'].cursor()
     cursor_dmstore = connections['dmstore'].cursor()
+    cursor_erp = connections['erp'].cursor()
+
     # 获取台账系统的uc_shopid
     cursor.execute("select id, mch_id from uc_shop where mch_shop_code = {}".format(shopid))
     (uc_shopid, mch_id) = cursor.fetchone()
+
+    # 获取erp系统的erp_shopid
+    try:
+        cursor_dmstore.execute("select erp_shop_id from erp_shop_related where erp_shop_type = 0 and shop_id = {}".format(shopid))
+        (erp_shop_id,) = cursor_dmstore.fetchone()
+
+        # 获取erp系统的供应商id TODO 需要处理多个供应商
+        cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_shop_id))
+        (authorized_shop_id,) = cursor_erp.fetchone()
+    except:
+        print('找不到供应商:{}！'.format(shopid))
+        authorized_shop_id = None
+
     for mch_code in mch_codes:
-        cursor.execute("select id, upc, spec, volume, width,height,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
-        (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
+        # 获取商品属性
+        cursor.execute("select id, upc, spec, volume, width,height,depth,is_superimpose from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
+        (goods_id, upc, spec, volume, width, height, depth,is_superimpose) = cursor.fetchone()
+
+        # 获取分类码
         cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={};".format(upc, mch_code))
         (corp_classify_code,) = cursor_dmstore.fetchone()
-        ret.append(DataRawGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth))
+
+        if authorized_shop_id is not None:
+            try:
+                # 获取起订量
+                # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
+                cursor_erp.execute("select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(authorized_shop_id, upc))
+                (sku_id,) = cursor_erp.fetchone()
+                cursor_erp.execute("select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(sku_id))
+                (start_sum,multiple) = cursor_erp.fetchone()
+            except:
+                print('Erp找不到商品:{}！'.format(upc))
+                start_sum = 0
+                multiple = 0
+        else:
+            start_sum = 0
+            multiple = 0
+
+        ret.append(DataRawGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth,is_superimpose, start_sum,multiple))
 
     cursor.close()
     cursor_dmstore.close()
+    cursor_erp.close()
     return ret
 
 def get_shop_shelf_goods(shopid):
     """
-    获取商店的所有货架及货架上的商品信息
+    获取商店的所有货架及货架上的商品信息，该方法在订货时用
     :param shopid: fx系统的商店id
-    :return:返回一个DataShop对象
+    :return:返回DataShelf列表
     """
 
-    data_shop = DataShop(shopid)
+    ret = []
     cursor = connections['ucenter'].cursor()
     # 获取台账系统的uc_shopid
     cursor.execute('select id, mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
     (uc_shopid, mch_id) = cursor.fetchone()
 
     # 获取台账 TODO 只能获取店相关的台账，不能获取商家相关的台账
-    cursor.execute("select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and st.shop_id = {}".format(uc_shopid))
+    cursor.execute("select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status in (1,2) and td.approval_status=1 and st.shop_id = {}".format(uc_shopid))
     taizhangs = cursor.fetchall()
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
@@ -105,7 +146,7 @@ def get_shop_shelf_goods(shopid):
             level_array = shelf_dict[shelfId]
             goods_array = goods_array_dict[shelfId]
             data_shelf = DataShelf(taizhang_id, shelf_id, shelf_no, length, height, depth)
-            data_shop.add_data_shelf(data_shelf)
+            ret.append(data_shelf)
             for i in range(len(level_array)):
                 level = level_array[i]
                 goods_level_array = goods_array[i]
@@ -122,23 +163,22 @@ def get_shop_shelf_goods(shopid):
 
     cursor.close()
 
-    return data_shop
+    return ret
 
 
-class DataShop():
-    def __init__(self, shopid):
-        self.shopid = shopid
-        self.data_shelfs = []
-
-    def add_data_shelf(self, data_shelf):
-        self.data_shelfs.append(data_shelf)
+class DataRawShelf():
+    def __init__(self, taizhang_id, shelf_id, type, count, length, height, depth, associated_catids):
+        self.taizhang_id = taizhang_id
+        self.shelf_id = shelf_id
+        self.type = type
+        self.count = count
+        self.length = length
+        self.height = height
+        self.depth = depth
+        self.associated_catids = associated_catids
 
     def __str__(self):
-        ret = '{}:[\n'.format(self.shopid)
-        for data_shelf in self.data_shelfs:
-            ret += str(data_shelf)
-            ret += '\n'
-        ret += ']'
+        ret = '{},{},{},{},{},{},{},{}'.format(self.taizhang_id, self.shelf_id, self.type, self.count, self.length, self.height, self.depth, self.associated_catids)
         return ret
 
 class DataShelf():
@@ -155,13 +195,13 @@ class DataShelf():
         self.data_levels.append(data_level)
 
     def __str__(self):
-        ret = '\t{},{},{},{},{},{}'.format(self.taizhang_id, self.shelf_id, self.type, self.length, self.height, self.depth)
+        ret = '{},{},{},{},{},{}'.format(self.taizhang_id, self.shelf_id, self.type, self.length, self.height, self.depth)
         if len(self.data_levels)>0:
             ret += ':[\n'
             for data_level in self.data_levels:
                 ret += str(data_level)
                 ret += '\n'
-            ret += '\t]'
+            ret += ']'
         return ret
 
 class DataLevel():
@@ -175,13 +215,13 @@ class DataLevel():
         self.data_goods_array.append(data_goods)
 
     def __str__(self):
-        ret = '\t\t{},{},{}'.format(self.type, self.height, self.depth)
+        ret = '\t{},{},{}'.format(self.type, self.height, self.depth)
         if len(self.data_goods_array)>0:
             ret += ':[\n'
             for data_goods in self.data_goods_array:
                 ret += str(data_goods)
                 ret += '\n'
-            ret += '\t\t]'
+            ret += '\t]'
         return ret
 
 class DataGoods():
@@ -193,10 +233,10 @@ class DataGoods():
         self.depth = depth
 
     def __str__(self):
-        return '\t\t\t{},{},{},{},{}'.format(self.mch_code,self.upc,self.width,self.height,self.depth)
+        return '\t\t{},{},{},{},{}'.format(self.mch_code,self.upc,self.width,self.height,self.depth)
 
 class DataRawGoods():
-    def __init__(self, mch_code, upc, corp_classify_code, spec, volume, width, height, depth):
+    def __init__(self, mch_code, upc, corp_classify_code, spec, volume, width, height, depth, is_superimpose, start_sum, multiple):
         self.mch_code = mch_code
         self.upc = upc
         self.corp_classify_code = corp_classify_code
@@ -205,16 +245,23 @@ class DataRawGoods():
         self.width = width
         self.height = height
         self.depth = depth
+        self.is_superimpose = is_superimpose # 1可叠放，2不可叠放
+        self.start_sum = start_sum
+        self.multiple = multiple
 
     def __str__(self):
-        return '{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth)
+        return '{},{},{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth,self.is_superimpose,self.start_sum,self.multiple)
 
 if __name__ == "__main__":
-    data_shop = get_shop_shelfs(1284)
-    print(data_shop)
+    ret = get_raw_shop_shelfs(1284)
+    for data_raw_shelf in ret:
+        print(str(data_raw_shelf))
+        print('\n')
 
-    ret = get_raw_goods_info(1284,[2029926,2028227])
+    ret = get_raw_goods_info(1284,[2036329,2036330])
     print("\n".join(str(i) for i in ret))
 
-    data_shop_goods = get_shop_shelf_goods(1284)
-    print(data_shop_goods)
+    ret = get_shop_shelf_goods(1284)
+    for data_shelf in ret:
+        print(str(data_shelf))
+        print('\n')
