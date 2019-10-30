@@ -38,7 +38,7 @@ def get_raw_shop_shelfs(shopid):
             cursor.execute("select associated_catids from sf_taizhang_display where taizhang_id = {} and status in (0,1) and approval_status = 0".format(taizhang_id))
             (associated_catids,) = cursor.fetchone()
         except:
-            print('获取台账成列失败：{}！'.format(taizhang_id))
+            print('获取台账陈列失败：{}！'.format(taizhang_id))
             associated_catids = None
         cursor.execute("select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(shelf_id))
         (shelf_no, length, height, depth) = cursor.fetchone()
@@ -79,8 +79,8 @@ def get_raw_goods_info(shopid, mch_codes):
 
     for mch_code in mch_codes:
         # 获取商品属性
-        cursor.execute("select id, upc, spec, volume, width,height,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
-        (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
+        cursor.execute("select id, upc, spec, volume, width,height,depth,is_superimpose from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
+        (goods_id, upc, spec, volume, width, height, depth,is_superimpose) = cursor.fetchone()
 
         # 获取分类码
         cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={};".format(upc, mch_code))
@@ -102,7 +102,7 @@ def get_raw_goods_info(shopid, mch_codes):
             start_sum = 0
             multiple = 0
 
-        ret.append(DataRawGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth,start_sum,multiple))
+        ret.append(DataRawGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth,is_superimpose, start_sum,multiple))
 
     cursor.close()
     cursor_dmstore.close()
@@ -236,7 +236,7 @@ class DataGoods():
         return '\t\t{},{},{},{},{}'.format(self.mch_code,self.upc,self.width,self.height,self.depth)
 
 class DataRawGoods():
-    def __init__(self, mch_code, upc, corp_classify_code, spec, volume, width, height, depth, start_sum, multiple):
+    def __init__(self, mch_code, upc, corp_classify_code, spec, volume, width, height, depth, is_superimpose, start_sum, multiple):
         self.mch_code = mch_code
         self.upc = upc
         self.corp_classify_code = corp_classify_code
@@ -245,11 +245,12 @@ class DataRawGoods():
         self.width = width
         self.height = height
         self.depth = depth
+        self.is_superimpose = is_superimpose # 1可叠放，2不可叠放
         self.start_sum = start_sum
         self.multiple = multiple
 
     def __str__(self):
-        return '{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth,self.start_sum,self.multiple)
+        return '{},{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth,self.is_superimpose,self.start_sum,self.multiple)
 
 if __name__ == "__main__":
     ret = get_raw_shop_shelfs(1284)
