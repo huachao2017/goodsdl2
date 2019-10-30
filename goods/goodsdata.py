@@ -250,7 +250,7 @@ class DataRawGoods():
         self.multiple = multiple
 
     def __str__(self):
-        return '{},{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth,self.is_superimpose,self.start_sum,self.multiple)
+        return '{},{},{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth,self.is_superimpose,self.start_sum,self.multiple)
 
 if __name__ == "__main__":
     ret = get_raw_shop_shelfs(1284)
