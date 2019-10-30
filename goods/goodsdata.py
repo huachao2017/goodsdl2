@@ -27,7 +27,7 @@ def get_raw_shop_shelfs(shopid):
     (uc_shopid, mch_id) = cursor.fetchone()
 
     # 获取台账
-    cursor.execute("select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=1 and st.shop_id = {}".format(uc_shopid))
+    cursor.execute("select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(uc_shopid))
     taizhangs = cursor.fetchall()
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
