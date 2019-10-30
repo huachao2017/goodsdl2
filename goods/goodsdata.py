@@ -54,15 +54,36 @@ def get_raw_goods_info(shopid, mch_codes):
     ret = []
     cursor = connections['ucenter'].cursor()
     cursor_dmstore = connections['dmstore'].cursor()
+    cursor_erp = connections['erp'].cursor()
+
     # 获取台账系统的uc_shopid
     cursor.execute("select id, mch_id from uc_shop where mch_shop_code = {}".format(shopid))
     (uc_shopid, mch_id) = cursor.fetchone()
+
+    # 获取erp系统的erp_shopid
+    cursor_dmstore.execute("select erp_shop_id from erp_shop_related where erp_shop_type = 0 and shop_id = {}".format(shopid))
+    (erp_shop_id,) = cursor.fetchone()
+
+    # 获取erp系统的供应商id TODO 需要处理多个供应商
+    cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and a.status=1".format(erp_shop_id))
+    (authorized_shop_id,) = cursor.fetchone()
     for mch_code in mch_codes:
+        # 获取商品属性
         cursor.execute("select id, upc, spec, volume, width,height,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
         (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
+
+        # 获取分类码
         cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={};".format(upc, mch_code))
         (corp_classify_code,) = cursor_dmstore.fetchone()
-        ret.append(DataRawGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth))
+
+        # 获取起订量
+        # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
+        cursor_erp.execute("select prod_id from ls_prod where shop_id = {} and model_id = '{}'".format(authorized_shop_id, upc))
+        (prod_id,) = cursor.fetchone()
+        cursor_erp.execute("select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{}' and prod_id = '{}'".format(upc,prod_id))
+        (start_sum,multiple) = cursor.fetchone()
+
+        ret.append(DataRawGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth,start_sum,multiple))
 
     cursor.close()
     cursor_dmstore.close()
@@ -196,7 +217,7 @@ class DataGoods():
         return '\t\t\t{},{},{},{},{}'.format(self.mch_code,self.upc,self.width,self.height,self.depth)
 
 class DataRawGoods():
-    def __init__(self, mch_code, upc, corp_classify_code, spec, volume, width, height, depth):
+    def __init__(self, mch_code, upc, corp_classify_code, spec, volume, width, height, depth, start_sum, multiple):
         self.mch_code = mch_code
         self.upc = upc
         self.corp_classify_code = corp_classify_code
@@ -205,9 +226,11 @@ class DataRawGoods():
         self.width = width
         self.height = height
         self.depth = depth
+        self.start_sum = start_sum
+        self.multiple = multiple
 
     def __str__(self):
-        return '{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth)
+        return '{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth,self.start_sum,self.multiple)
 
 if __name__ == "__main__":
     data_shop = get_shop_shelfs(1284)
