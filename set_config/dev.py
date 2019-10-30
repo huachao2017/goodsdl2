@@ -1,7 +1,7 @@
 #########################################YOLOV3-freezer##################################################################
 yolov3_params={
     # last ep3408-loss42.201-val_loss42.072.h5 10:30 before
-    'good_model_path' :'/home/ai/model/freezer/ep3128-loss42.435-val_loss46.546.h5',
+    'good_model_path' :'/home/ai/model/freezer/ep3408-loss42.201-val_loss42.072.h5',
     'anchors_path' :'./goods/freezer/keras_yolo3/model_data/yolo_anchors.txt',
     'classes_path' : './goods/freezer/keras_yolo3/model_data/voc_classes.txt',
     'label_path':'./goods/freezer/keras_yolo3/model_data/goods_label_map.pbtxt',
