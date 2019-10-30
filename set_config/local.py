@@ -13,6 +13,10 @@ shellgoods_params={
     'order_shop_ids': [1284],
     'order_shop_isfirst':[(1284,True)],
     'shelf_display': [(1284, True)],
+    "shelf_display_maxitems":20,
+    "shelf_levels_max":20,# 货架的最高层数
+    "shelf_level_start_height":10,# 货架最底层起始高度
+    'shelf_top_level_height': 20,  # 最顶层货架的高度距货架最高的 距离限制  cm
 }
 #erp_online
 erp={

@@ -4,5 +4,5 @@ class Shelf:
     width = None
     height = None
     depth = None
-    levels = None 
+    levels = None
     goods = None

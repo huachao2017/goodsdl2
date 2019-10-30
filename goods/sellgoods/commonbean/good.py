@@ -15,4 +15,5 @@ class Good:
     sale_num = None  #销量
     start_num = None  #最小起订量
     good_scale = None # 刻度
+    display_code = None # 陈列分类code
 
