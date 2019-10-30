@@ -251,7 +251,7 @@ if __name__ == "__main__":
     data_shop = get_shop_shelfs(1284)
     print(data_shop)
 
-    ret = get_raw_goods_info(1284,[2029926,2028227])
+    ret = get_raw_goods_info(1284,[2036329,2036330])
     print("\n".join(str(i) for i in ret))
 
     data_shop_goods = get_shop_shelf_goods(1284)
