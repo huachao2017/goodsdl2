@@ -85,7 +85,7 @@ def get_raw_goods_info(shopid, mch_codes):
             try:
                 # 获取起订量
                 # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
-                cursor_erp.execute("select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(authorized_shop_id, upc))
+                cursor_erp.execute("select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(authorized_shop_id, upc))
                 (sku_id,) = cursor_erp.fetchone()
                 cursor_erp.execute("select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(sku_id))
                 (start_sum,multiple) = cursor_erp.fetchone()
