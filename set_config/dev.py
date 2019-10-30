@@ -1,15 +1,16 @@
 #########################################YOLOV3-freezer##################################################################
 yolov3_params={
-    'good_model_path' :'/home/ai/model/freezer/ep3408-loss42.201-val_loss42.072.h5',
+    # last ep3408-loss42.201-val_loss42.072.h5 10:30 before
+    'good_model_path' :'/home/ai/model/freezer/ep3128-loss42.435-val_loss46.546.h5',
     'anchors_path' :'./goods/freezer/keras_yolo3/model_data/yolo_anchors.txt',
     'classes_path' : './goods/freezer/keras_yolo3/model_data/voc_classes.txt',
     'label_path':'./goods/freezer/keras_yolo3/model_data/goods_label_map.pbtxt',
-    'score' :0.25,
+    'score' :0.23,
     'iou' :0.45,
     'model_image_size' : (416, 416),
     'gpu_num' : 1,
     "diff_switch_iou":(True,0.6),
-    "single_switch_iou_minscore":(True,0.0,0.3)
+    "single_switch_iou_minscore":(True,0.0,0.28)
 }
 
 #########################################shelf_good##################################################################
