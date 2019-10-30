@@ -163,7 +163,7 @@ def get_shop_shelf_goods(shopid):
 
     cursor.close()
 
-    return data_shop
+    return ret
 
 
 class DataRawShelf():
@@ -252,11 +252,15 @@ class DataRawGoods():
         return '{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth,self.start_sum,self.multiple)
 
 if __name__ == "__main__":
-    data_shop = get_raw_shop_shelfs(1284)
-    print(data_shop)
+    ret = get_raw_shop_shelfs(1284)
+    for data_raw_shelf in ret:
+        print(str(data_raw_shelf))
+        print('\n')
 
     ret = get_raw_goods_info(1284,[2036329,2036330])
     print("\n".join(str(i) for i in ret))
 
-    data_shop_goods = get_shop_shelf_goods(1284)
-    print(data_shop_goods)
+    ret = get_shop_shelf_goods(1284)
+    for data_shelf in ret:
+        print(str(data_shelf))
+        print('\n')
