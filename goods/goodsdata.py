@@ -66,7 +66,7 @@ def get_raw_goods_info(shopid, mch_codes):
         (erp_shop_id,) = cursor_dmstore.fetchone()
 
         # 获取erp系统的供应商id TODO 需要处理多个供应商
-        cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and a.status=1".format(erp_shop_id))
+        cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_shop_id))
         (authorized_shop_id,) = cursor_erp.fetchone()
     except:
         print('找不到供应商:{}！'.format(shopid))
