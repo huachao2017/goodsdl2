@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage
-
+from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,GoodsImage
+import os
 from django.conf import settings
 
 
@@ -109,6 +109,52 @@ class FreezerImageSerializer(serializers.ModelSerializer):
                                                            host=request.get_host(),
                                                            path=settings.MEDIA_URL,
                                                            visual=freezerImage.visual)
+            return current_uri
+
+        else:
+            return None
+
+class GoodsImageSerializer(serializers.ModelSerializer):
+
+    rgb_source_url = serializers.SerializerMethodField()
+    depth_source_url = serializers.SerializerMethodField()
+    output_url = serializers.SerializerMethodField()
+    class Meta:
+        model = GoodsImage
+        fields = ('pk', 'rgb_source', 'rgb_source_url', 'depth_source', 'depth_source_url', 'output_url', 'table_z', 'result', 'create_time')
+        read_only_fields = ('result','create_time',)
+
+    def get_rgb_source_url(self, goodsImage):
+        request = self.context.get('request')
+        if goodsImage.rgb_source:
+            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
+                                                                   host=request.get_host(),
+                                                                   path=settings.MEDIA_URL,
+                                                                   visual=goodsImage.rgb_source)
+            return current_uri
+
+        else:
+            return None
+    def get_depth_source_url(self, goodsImage):
+        request = self.context.get('request')
+        if goodsImage.depth_source:
+            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
+                                                                   host=request.get_host(),
+                                                                   path=settings.MEDIA_URL,
+                                                                   visual=goodsImage.depth_source)
+            return current_uri
+
+        else:
+            return None
+
+    def get_output_url(self, goodsImage):
+        request = self.context.get('request')
+        if goodsImage.rgb_source:
+            image_dir, image_name = os.path.split(str(goodsImage.rgb_source))
+            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
+                                                                   host=request.get_host(),
+                                                                   path=settings.MEDIA_URL,
+                                                                   visual=os.path.join(image_dir,'_output_{}'.format(image_name)))
             return current_uri
 
         else:

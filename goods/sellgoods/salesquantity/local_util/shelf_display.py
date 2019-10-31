@@ -1,5 +1,6 @@
 from goods.sellgoods.commonbean.level import Level
 from goods.sellgoods.salesquantity.proxy import display_rule
+from goods.sellgoods.commonbean.good import GoodDisplay
 import math
 from set_config import config
 shelf_display_maxitems = config.shellgoods_params['shelf_display_maxitems']
@@ -11,18 +12,20 @@ shelf_top_level_none_width = config.shellgoods_params['shelf_top_level_none_widt
 def generate(shop_id,isfir=False):
     shop_ins = api_get_shop(shop_id)
     shop_id = shop_ins.shop_id
-    shelfs = shop_ins.shelfs
-    for shelf_ins in shelfs:
-        shelf_goods = shelf_ins.goods
-        shelf_goods = get_dispaly_code(shelf_goods)
-        # 排序规则
-        # shelf_goods = display_rule.sort_display_code(shelf_goods) #陈列分类  TODO 需要等加入陈列分类后测试 加入
-        shelf_goods = display_rule.sort_good_height(shelf_goods) #商品高度
-        shelf_goods = display_rule.sort_good_volume(shelf_goods) #商品体积
-        # 上架商品
-        shelf_ins = put_good_to_shelf(shelf_ins,shelf_goods)
-        # 计算上架后的货架 根据level冗余宽度 填充商品
-        shelf_ins = put_none_level_good_to_shelf(shelf_ins)
+    taizhangid_to_shelfs = shop_ins.taizhangid_to_shelf
+    taizhangid_to_goods = shop_ins.taizhangid_to_goods_array
+    for tzid in taizhangid_to_shelfs:
+        shelfs = taizhangid_to_shelfs[tzid]
+        shelf_goods = taizhangid_to_goods[tzid]
+        for shelf_ins in shelfs:
+            # 排序规则
+            shelf_goods = display_rule.sort_display_code(shelf_goods) #陈列分类  TODO 需要等加入陈列分类后测试 加入
+            shelf_goods = display_rule.sort_good_height(shelf_goods) #商品高度
+            shelf_goods = display_rule.sort_good_volume(shelf_goods) #商品体积
+            # 上架商品
+            shelf_ins = put_good_to_shelf(shelf_ins,shelf_goods)
+            # 计算上架后的货架 根据level冗余宽度 填充商品
+            shelf_ins = put_none_level_good_to_shelf(shelf_ins)
     return  shop_ins
 
 def put_none_level_good_to_shelf(shelf_ins):
@@ -40,7 +43,7 @@ def put_none_level_good_to_shelf(shelf_ins):
 
 
 
-
+# 上商品到货架
 def put_good_to_shelf(shelf_ins,shelf_goods):
     put_shelf_goods = shelf_goods.copy()
     try_flag = False
@@ -86,8 +89,9 @@ def put_good_to_shelf(shelf_ins,shelf_goods):
             print("do..............")
             continue
     shelf_ins.levels = end_shelf_levels
-    return shelf_ins
+    return shelf_ins,put_shelf_goods
 
+# 上商品到层
 def put_good_to_level(level_ins,shelf_goods):
     new_shelf_goods = []
     put_flag = True
@@ -122,25 +126,40 @@ def put_good_to_level(level_ins,shelf_goods):
     level_ins.level_height = level_heights[-1]
     return level_ins,new_shelf_goods
 
+# 上商品
 def put_good(level_ins,shelf_good):
     col = 0
-    # 获取摆放初始坐标
+    left = 0
+    top = 0
+    # 获取摆放初始坐标 和 左顶点信息
     if level_ins.goods == None or len(level_ins.goods) == 0:
         col = 0
     else:
         col = level_ins.goods[-1].col + 1
+        for level_good in level_ins.goods:
+            width = level_good.width
+            for good_display_ins in level_good.gooddisplay_inss:
+                if good_display_ins.dep == 0 and good_display_ins.row == 0 :
+                    left += (good_display_ins.left +width)
+
+    if shelf_good.gooddisplay_inss == None or len(shelf_good.gooddisplay_inss) <1:
+        shelf_good.gooddisplay_inss = []
     for i in range(shelf_good.display_num):
         # 先摆列方向  TODO 未考虑冗余
         col_nums = int(math.ceil(float(shelf_good.faces / shelf_good.stack_rows)))
         for j in range(col_nums):
             # 再摆行方向
-            if shelf_good.isstacking:
-                for k in range(shelf_good.stack_rows):
+            if shelf_good.is_superimpose:
+                for k in range(shelf_good.superimpose_rows):
                     # 再摆深方向  TODO 未考虑冗余
                     for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
-                        shelf_good.col =col + i
-                        shelf_good.row = j
-                        shelf_good.dep = l
+                        gdins = GoodDisplay()
+                        gdins.col =col + i
+                        gdins.row = j
+                        gdins.dep = l
+                        gdins.left = left+i*shelf_good.width
+                        gdins.top = top + j*shelf_good.height
+                        shelf_good.gooddisplay_inss.append(gdins)
         level_ins.goods.append(shelf_good)
     # 更新 层的剩余宽度
     level_ins.level_none_good_width = level_ins.width - get_level_goods_col_sum(level_ins)
@@ -222,8 +241,9 @@ def api_get_dispaly_code(upc):
 # 入参：neighbour_cls_three_code 最近邻商品的三级code
 #       level_cls_three_codes 当前层所含有的三级code列表
 #       level_none_good_width  当前层 陈列中空置的宽度
+#       kd 上次取商品的刻度
 # 返回： good 对象列表   sellgoods 下 commonbean 下
-def api_get_level_none_good(shop_id,shelf_id,neighbour_cls_three_code,level_cls_three_codes,level_none_good_width):
+def api_get_level_none_good(shop_id,tz_id,neighbour_cls_three_code,level_cls_three_codes,level_none_good_width,kd=None):
     # TODO
     print ("do ..................")
 
@@ -233,7 +253,7 @@ def api_get_level_none_good(shop_id,shelf_id,neighbour_cls_three_code,level_cls_
 #       shelf_id 货架id
 
 # 返回： good 对象列表   sellgoods 下 commonbean 下
-def api_get_shelf_goods(shop_id,shelf_id,kd_value=None):
+def api_get_shelf_goods(shop_id,tz_id,kd_value=None,kd=None):
     # TODO
     print("do ..................")
 
