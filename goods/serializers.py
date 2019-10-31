@@ -121,7 +121,7 @@ class GoodsImageSerializer(serializers.ModelSerializer):
     output_url = serializers.SerializerMethodField()
     class Meta:
         model = GoodsImage
-        fields = ('pk', 'rgb_source', 'depth_source', 'output_url', 'table_z', 'result', 'create_time')
+        fields = ('pk', 'rgb_source', 'rgb_source_url', 'depth_source', 'depth_source_url', 'output_url', 'table_z', 'result', 'create_time')
         read_only_fields = ('result','create_time',)
 
     def get_rgb_source_url(self, goodsImage):
