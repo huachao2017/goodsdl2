@@ -13,10 +13,11 @@ django.setup()
 from django.db import connections
 
 
-def get_raw_shop_shelfs(shopid):
+def get_raw_shop_shelfs(shopid, tz_id = None):
     """
     获取商店的所有货架及货架的相关信息，该方法在陈列时用
     :param shopid: fx系统的商店id
+    :param tz_id: 台账系统的台账id
     :return:返回一个DataRawShelf对象列表
     """
 
@@ -27,7 +28,12 @@ def get_raw_shop_shelfs(shopid):
     (uc_shopid, mch_id) = cursor.fetchone()
 
     # 获取台账
-    cursor.execute("select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(uc_shopid))
+    if tz_id is None:
+        cursor.execute("select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(uc_shopid))
+    else:
+        cursor.execute(
+            "select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
+                uc_shopid, tz_id))
     taizhangs = cursor.fetchall()
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
@@ -175,7 +181,10 @@ class DataRawShelf():
         self.length = length
         self.height = height
         self.depth = depth
-        self.associated_catids = associated_catids
+        if associated_catids is None or associated_catids == '':
+            self.associated_catids = []
+        else:
+            self.associated_catids = associated_catids.split(',')
 
     def __str__(self):
         ret = '{},{},{},{},{},{},{},{}'.format(self.taizhang_id, self.shelf_id, self.type, self.count, self.length, self.height, self.depth, self.associated_catids)
