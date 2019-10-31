@@ -125,7 +125,7 @@ class GoodsImageSerializer(serializers.ModelSerializer):
 
     def get_rgb_source_url(self, goodsImage):
         request = self.context.get('request')
-        if goodsImage.source:
+        if goodsImage.rgb_source:
             current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
                                                                    host=request.get_host(),
                                                                    path=settings.MEDIA_URL,
@@ -136,7 +136,7 @@ class GoodsImageSerializer(serializers.ModelSerializer):
             return None
     def get_depth_source_url(self, goodsImage):
         request = self.context.get('request')
-        if goodsImage.resultsource:
+        if goodsImage.depth_source:
             current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
                                                                    host=request.get_host(),
                                                                    path=settings.MEDIA_URL,
