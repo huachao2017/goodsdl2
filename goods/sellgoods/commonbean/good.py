@@ -32,3 +32,5 @@ class GoodDisplay:
     col = None  # 在level上的列
     row = None  # 行
     dep = None  # 深度方向上的列
+    top = None
+    left = None
