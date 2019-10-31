@@ -150,7 +150,7 @@ class GoodsImageSerializer(serializers.ModelSerializer):
     def get_output_url(self, goodsImage):
         request = self.context.get('request')
         if goodsImage.rgb_source:
-            image_dir, image_name = os.path.split(goodsImage.rgb_source.path)
+            image_dir, image_name = os.path.split(str(goodsImage.rgb_source))
             current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
                                                                    host=request.get_host(),
                                                                    path=settings.MEDIA_URL,
