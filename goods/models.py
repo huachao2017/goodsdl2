@@ -114,3 +114,15 @@ class ai_sales_order(models.Model):
     start_max = models.IntegerField(default=0) #上限
     create_date = models.CharField(max_length=20)
     create_time = models.DateTimeField('date created', auto_now_add=True, db_index=True)
+
+def goods_image_upload_source(instance, filename):
+    now = datetime.datetime.now()
+    return '{}/{}/{}/{}/{}_{}_{}'.format(settings.DETECT_DIR_NAME, 'goodsWH', now.strftime('%Y%m'),
+                                         now.strftime('%d%H'), now.strftime('%M%S'), str(now.time()), filename)
+
+class GoodsImage(models.Model):
+    rgb_source = models.ImageField(max_length=200, upload_to=goods_image_upload_source)
+    depth_source = models.ImageField(max_length=200, upload_to=goods_image_upload_source)
+    table_z = models.IntegerField(default=0)
+    result = models.TextField()
+    create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
