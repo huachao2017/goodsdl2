@@ -223,46 +223,24 @@ def get_level(shelf_levels,shelf_height,shelf_width,shelf_depth):
 
 
 
-# 获取商品陈列分类
-def get_dispaly_code(shelf_goods):
-    # TODO 调用api
-    return shelf_goods
 
 # 接口1
-# 获取陈列分类
-# 入参 upcs   商品的upcs 列表
-# 返回： [{"upc":code},{"upc":code}]
-def api_get_dispaly_code(upc):
+# 获取每层的填充商品，补充陈列
+# 入参：neighbour_good 最近邻商品的三级code
+#       level_goods 当前层所含有的三级code列表
+#       level_diff_width  当前层 陈列中空置的宽度
+# 返回： good 对象列表   sellgoods 下 commonbean 下
+def api_get_level_none_good(taizhang,neighbour_good,level_goods,level_diff_width=None):
     # TODO
     print ("do ..................")
 
 # 接口2
-# 获取每层的填充商品，补充陈列
-# 入参：neighbour_cls_three_code 最近邻商品的三级code
-#       level_cls_three_codes 当前层所含有的三级code列表
-#       level_none_good_width  当前层 陈列中空置的宽度
-#       kd 上次取商品的刻度
-# 返回： good 对象列表   sellgoods 下 commonbean 下
-def api_get_level_none_good(shop_id,tz_id,neighbour_cls_three_code,level_cls_three_codes,level_none_good_width,kd=None):
-    # TODO
-    print ("do ..................")
+# 重新计算所需刻度的商品列表
+# 入参：taizhang  对象
+#       shelf_diff_width 宽度超出或缺少的，超出为负，缺少为正
 
-# 接口3
-#获取带刻度的商品列表
-# 入参：shop_id  门店id
-#       shelf_id 货架id
-
-# 返回： good 对象列表   sellgoods 下 commonbean 下
-def api_get_shelf_goods(shop_id,tz_id,kd_value=None,kd=None):
+# 返回： True/False True为有更新，False为无更新
+def api_get_shelf_goods(taizhang,shelf_diff_width=None):
     # TODO
     print("do ..................")
 
-
-
-#接口4  获取shop对象
-# 入参： shop_id
-# 入参： isfir 是否首次生成 陈列  如果是：使用好邻居的推荐销量  否：使用线上该店的真实销量
-# 返回： shop 对象  sellgoods 下 commonbean 下
-def api_get_shop(shop_id,isfir=False):
-    # TODO
-    print("do ..................")
