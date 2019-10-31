@@ -357,8 +357,8 @@ class Contour_3d:
             mask_rgb_img = self.rgb_img
 
         concate_minrectes = self._find_2d_minrect()
-        # if self.debug_type > 1:
-        #     print('{}'.format(len(concate_minrectes)))
+        if self.debug_type > 1:
+            print('{}'.format(len(concate_minrectes)))
 
         if self.debug_type > 1 and len(concate_minrectes)>0:
             drawing_contours = np.zeros(mask_rgb_img.shape, np.uint8)

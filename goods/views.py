@@ -81,7 +81,7 @@ class GoodsImageViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.R
         headers = self.get_success_headers(serializer.data)
 
         z_deviation = 0 #10 # 60 # 10
-        detect = Contour_3d(serializer.instance.rgb_source.path, serializer.instance.depth_source.path, serializer.instance.table_z-z_deviation)
+        detect = Contour_3d(serializer.instance.rgb_source.path, serializer.instance.depth_source.path, serializer.instance.table_z-z_deviation,debug_type=2)
         min_rectes, z, boxes = detect.find_contour(False)
 
         time1 = time.time()
