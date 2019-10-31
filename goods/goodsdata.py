@@ -240,17 +240,21 @@ class DataRawGoods():
         self.mch_code = mch_code
         self.upc = upc
         self.corp_classify_code = corp_classify_code
+        self.display_code = corp_classify_code # FIXME 需要修订为真实陈列分类
         self.spec = spec
         self.volume = volume
         self.width = width
         self.height = height
         self.depth = depth
-        self.is_superimpose = is_superimpose # 1可叠放，2不可叠放
+        if is_superimpose is None or is_superimpose == 2:
+            self.is_superimpose = False # 1可叠放，2不可叠放
+        else:
+            self.is_superimpose = True
         self.start_sum = start_sum
         self.multiple = multiple
 
     def __str__(self):
-        return '{},{},{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.spec,self.volume,self.width,self.height,self.depth,self.is_superimpose,self.start_sum,self.multiple)
+        return '{},{},{},{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.display_code,self.spec,self.volume,self.width,self.height,self.depth,self.is_superimpose,self.start_sum,self.multiple)
 
 if __name__ == "__main__":
     ret = get_raw_shop_shelfs(1284)
