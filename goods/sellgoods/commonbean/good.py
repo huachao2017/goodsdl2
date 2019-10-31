@@ -1,4 +1,5 @@
 class Good:
+    gooddisplay_inss = None # 商品陈列对象 列表
     upc = None
     name = None
     mch_good_code = None
