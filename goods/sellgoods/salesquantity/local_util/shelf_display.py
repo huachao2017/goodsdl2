@@ -2,6 +2,7 @@ from goods.sellgoods.commonbean.level import Level
 from goods.sellgoods.salesquantity.proxy import display_rule
 from goods.sellgoods.commonbean.good import GoodDisplay
 import math
+from goods.sellgoods.auto_display import service_for_display
 from set_config import config
 tz_display_maxitems = config.shellgoods_params['shelf_display_maxitems']
 shelf_levels_max = config.shellgoods_params['shelf_levels_max']
@@ -10,13 +11,15 @@ shelf_level_redundancy_height = config.shellgoods_params['shelf_level_redundancy
 shelf_top_level_height = config.shellgoods_params['shelf_top_level_height']
 shelf_top_level_none_width = config.shellgoods_params['shelf_top_level_none_width']
 def generate(tz_ins):
+    """
+     :param tz 对象
+     :return:
+     """
     # 上架商品到tz
     put_good_to_tz(tz_ins)
-
     for shelf_ins in tz_ins.shelfs:
         # 计算上架后的货架 根据level冗余宽度 填充商品
         put_none_level_good_to_shelf(tz_ins,shelf_ins)
-    return  tz_ins
 
 def put_none_level_good_to_shelf(tz_ins,shelf_ins):
     levels = shelf_ins.levels
@@ -75,7 +78,8 @@ def put_good_to_tz(tz_ins):
         if try_flag: # 层多于 货架物理层数
             # TODO 调用api 重新获取商品信息 需要传入变化的刻度
             print ("do..............")
-            is_update_flag = api_get_shelf_goods(tz_ins,(0-width_kedu_sum))
+            is_update_flag = service_for_display.update_mark_goods_array(tz_ins, 0-width_kedu_sum)
+            # is_update_flag = api_get_shelf_goods(tz_ins,(0-width_kedu_sum))
             if is_update_flag == False:
                 break
             continue
@@ -88,7 +92,8 @@ def put_good_to_tz(tz_ins):
             level_end_width_kedu_sum = get_level_kedu(end_shelf_levels[-1])
             # TODO 调用api 重新获取商品信息 需要传入变化的刻度
             print("do..............")
-            is_update_flag = api_get_shelf_goods(tz_ins, (0 + level_end_width_kedu_sum))
+            is_update_flag = service_for_display.update_mark_goods_array(tz_ins, 0 + level_end_width_kedu_sum)
+            # is_update_flag = api_get_shelf_goods(tz_ins, 0 + level_end_width_kedu_sum)
             if is_update_flag == False:
                 break
             continue
