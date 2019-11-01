@@ -55,6 +55,16 @@ def generate_displays(uc_shopid, tz_id):
                 good.second_cls_code = corp_classify_code[0:4]
                 good.third_cls_code = corp_classify_code
             else:
+                good.first_cls_code = 0
+                good.second_cls_code = 0
+                good.third_cls_code = 0
+                print('corp_classify_code error: {}'.format(corp_classify_code))
+
+            # 陈列分类code TODO
+            if len(str(data_raw_goods.display_code)) == 6:
+                good.display_code = data_raw_goods.display_code
+            else:
+                good.display_code = 0
                 print('corp_classify_code error: {}'.format(corp_classify_code))
 
             good.name = data_raw_goods.goods_name
@@ -64,7 +74,6 @@ def generate_displays(uc_shopid, tz_id):
             good.height = data_raw_goods.height
             good.depth = data_raw_goods.depth
             good.start_num = data_raw_goods.start_sum
-            good.display_code = data_raw_goods.display_code # 陈列分类code
             good.fitting_rows = 1 # 需要挂放几行
             good.is_superimpose = data_raw_goods.is_superimpose
             good.isfitting = data_raw_goods.is_suspension
