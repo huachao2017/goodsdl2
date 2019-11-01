@@ -38,7 +38,7 @@ def put_good_to_tz(tz_ins):
     try_flag = False
     for i in range(tz_display_maxitems):
         shelfs = tz_ins.shelfs
-        tz_goods = tz_ins.caculate_goods_array
+        tz_goods = tz_ins.claculate_goods_array
         shelf_goods = display_rule.sort_display_code(tz_goods)  # 陈列分类  TODO 需要等加入陈列分类后测试 加入
         shelf_goods = display_rule.sort_good_height(shelf_goods)  # 商品高度
         shelf_goods = display_rule.sort_good_volume(shelf_goods)  # 商品体积
