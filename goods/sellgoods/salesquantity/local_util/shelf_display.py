@@ -21,12 +21,16 @@ def generate(tz_ins):
         # 计算上架后的货架 根据level冗余宽度 填充商品
         put_none_level_good_to_shelf(tz_ins,shelf_ins)
 
-def put_none_level_good_to_shelf(tz_ins,shelf_ins):
-    levels = shelf_ins.levels
-    for level_ins in levels:
-        # TODO 调用api  填充商品
-        goods_inss = api_get_level_none_good(tz_ins,level_ins.goods[-1],level_ins.goods,level_ins.level_none_good_width)
-        put_good_to_level(level_ins,goods_inss)
+def put_none_level_good_to_shelf(tz_ins):
+    # 返回 [shelf_id,level_id,[good_ins]]
+    # TODO 调用api  填充商品
+    shelf_goods_list = api_get_level_none_good(tz_ins)
+    for shelf_ins in tz_ins.shelfs:
+        for level_ins in shelf_ins.levels:
+            for (shelf_id,level_id,good_inss) in shelf_goods_list:
+                if shelf_ins.shelf_id == shelf_id and level_ins.level_id == level_id:
+                    put_good(level_ins,good_inss)
+                    
 
 
 # 上商品到货架
@@ -267,7 +271,7 @@ def get_level(shelf_levels,shelf_height,shelf_width,shelf_depth,isAlter=False):
 #       level_goods 当前层所含有的三级code列表
 #       level_diff_width  当前层 陈列中空置的宽度
 # 返回： good 对象列表   sellgoods 下 commonbean 下
-def api_get_level_none_good(taizhang,neighbour_good,level_goods,level_diff_width=None):
+def api_get_level_none_good(taizhang):
     # TODO
     print ("do ..................")
 
