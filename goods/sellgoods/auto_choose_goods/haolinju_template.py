@@ -61,7 +61,7 @@ def get_data(target,template_shop_id,days=27):
 
     for i in data:
         i[4] = round(i[4]/days)
-    print(data)
+    # print(data)
     return data
 
 def choose_goods(data,ratio=0.99):

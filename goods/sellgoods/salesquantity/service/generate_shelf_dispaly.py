@@ -7,8 +7,8 @@ from goods.sellgoods.commonbean.taizhang import Taizhang
 from goods.sellgoods.commonbean.shelf import Shelf
 from goods.sellgoods.commonbean.good import Good
 from goods.goodsdata import get_raw_shop_shelfs,get_raw_goods_info
-from goods.sellgoods.auto_choose_goods.out_service_api import goods_sort,caculate_goods_info
-# 生成自动陈列
+from goods.sellgoods.auto_choose_goods.out_service_api import goods_sort,calculate_goods_info
+# 生成自动陈列l
 # shelf_display = config.shellgoods_params['shelf_display']
 
 def generate_displays(uc_shopid, tz_id):
