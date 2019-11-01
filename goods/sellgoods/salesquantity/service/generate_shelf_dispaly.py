@@ -63,7 +63,7 @@ def generate_displays(uc_shopid, tz_id):
         goods.width = data_raw_goods.width
         goods.height = data_raw_goods.height
         goods.depth = data_raw_goods.depth
-        goods.start_num = data_raw_goods.start_num
+        goods.start_num = data_raw_goods.start_sum
         goods.display_code = data_raw_goods.display_code # 陈列分类code
         goods.fitting_rows = 1 # 需要挂放几行
         goods.is_superimpose = data_raw_goods.is_superimpose
