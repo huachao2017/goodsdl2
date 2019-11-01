@@ -11,23 +11,23 @@ def goods_sort(middle_list,shop_id = 1284):
     根据输入的中类列表进行选品的排序，排序时权衡了类别和销售额因素
     :param middle_list:商品中类的列表
     :param shop_id:商店id，默认时普天店
-    :return:mch的列表
+    :return:mch和销售额的列表
     """
     goods_to_sort = ShelfGoodsSort(middle_list)
     list = goods_to_sort.main()
     result = []
     for i in list:
-        result.append(i[5])
+        result.append((i[5],i[4]))
     return result
 
-def caculate_goods_info(taizhang):
+def calculate_goods_info(taizhang):
     """
     计算商品的属性
     比如： 最终陈列量、单品刻度宽度、 faces数, 总刻度等
     :param taizhang:
     :return:
     """
-    caculate_goods(taizhang)
+    calculate_goods(taizhang)
 
 def update_mark_goods_array(taizhang,shelf_diff_width):
     """
@@ -38,7 +38,7 @@ def update_mark_goods_array(taizhang,shelf_diff_width):
     """
     update_mark_goods_array(taizhang,shelf_diff_width)
 
-def shelf_gap_choose_goods(taizhang,neighbour_good,level_goods,level_diff_width=None):
+def shelf_gap_choose_goods(taizhang):
     """
     货架的缝隙进行商品填充
     # 入参：neighbour_good 最近邻商品的三级code
