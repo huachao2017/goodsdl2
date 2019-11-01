@@ -111,9 +111,9 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
             put_flag = True  # 商品放置 是否
             need_good_weight = 0
             if shelf_good.is_superimpose:
-                need_good_weight = math.ceil(float(shelf_good.faces / shelf_good.superimpose_rows)) * shelf_good.width
+                need_good_weight = math.ceil(float(shelf_good.faces_num / shelf_good.superimpose_rows)) * shelf_good.width
             else: # TODO 这里对于 盒放的商品 没有做处理
-                need_good_weight = shelf_good.faces * shelf_good.width
+                need_good_weight = shelf_good.faces_num * shelf_good.width
 
             # 优先放置前面没有放满的层
             if put_flag:
@@ -186,7 +186,7 @@ def put_good(level_ins,shelf_good):
         shelf_good.gooddisplay_inss = []
     for i in range(shelf_good.display_num):
         # 先摆列方向  TODO 未考虑冗余
-        col_nums = int(math.ceil(float(shelf_good.faces / shelf_good.superimpose_rows)))
+        col_nums = int(math.ceil(float(shelf_good.faces_num / shelf_good.superimpose_rows)))
         for j in range(col_nums):
             # 再摆行方向
             if shelf_good.is_superimpose:
