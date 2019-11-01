@@ -90,8 +90,12 @@ def get_raw_goods_info(uc_shopid, mch_codes):
         (goods_id, goods_name, tz_display_img, upc, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
 
         # 获取分类码
-        cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={};".format(upc, mch_code))
-        (corp_classify_code,) = cursor_dmstore.fetchone()
+        try:
+            cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={}".format(upc, mch_code))
+            (corp_classify_code,) = cursor_dmstore.fetchone()
+        except:
+            print('dmstore找不到商品:{}-{}！'.format(upc, mch_code))
+            corp_classify_code = None
 
         if authorized_shop_id is not None:
             try:
