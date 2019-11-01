@@ -13,21 +13,27 @@ django.setup()
 from django.db import connections
 
 
-def get_raw_shop_shelfs(shopid):
+def get_raw_shop_shelfs(uc_shopid, tz_id = None):
     """
     获取商店的所有货架及货架的相关信息，该方法在陈列时用
-    :param shopid: fx系统的商店id
+    :param uc_shopid: 台账系统的商店id
+    :param tz_id: 台账系统的台账id
     :return:返回一个DataRawShelf对象列表
     """
 
     ret = []
     cursor = connections['ucenter'].cursor()
-    # 获取台账系统的uc_shopid
-    cursor.execute('select id, mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
-    (uc_shopid, mch_id) = cursor.fetchone()
+    # 获取fx系统的shopid,台账系统的商家mch_id
+    cursor.execute("select mch_shop_code,mch_id from uc_shop where id = {}".format(uc_shopid))
+    (shopid, mch_id) = cursor.fetchone()
 
     # 获取台账
-    cursor.execute("select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(uc_shopid))
+    if tz_id is None:
+        cursor.execute("select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(uc_shopid))
+    else:
+        cursor.execute(
+            "select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
+                uc_shopid, tz_id))
     taizhangs = cursor.fetchall()
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
@@ -49,21 +55,22 @@ def get_raw_shop_shelfs(shopid):
 
     return ret
 
-def get_raw_goods_info(shopid, mch_codes):
+def get_raw_goods_info(uc_shopid, mch_codes):
     """
     根据upc列表获取每个upc的类别、长宽高，该方法在陈列时用
-    :param shopid: fx系统的商店id
+    :param uc_shopid: 台账系统的商店id
+    :param mch_id: 台账系统的商家id
     :param mch_codes:
-    :return:返回一个DataRawGoods对象的列表
+    :return:返回一个DataRawGoods对象的map,key为mch_code
     """
-    ret = []
+    ret = {}
     cursor = connections['ucenter'].cursor()
     cursor_dmstore = connections['dmstore'].cursor()
     cursor_erp = connections['erp'].cursor()
 
-    # 获取台账系统的uc_shopid
-    cursor.execute("select id, mch_id from uc_shop where mch_shop_code = {}".format(shopid))
-    (uc_shopid, mch_id) = cursor.fetchone()
+    # 获取fx系统的shopid,台账系统的商家mch_id
+    cursor.execute("select mch_shop_code,mch_id from uc_shop where id = {}".format(uc_shopid))
+    (shopid, mch_id) = cursor.fetchone()
 
     # 获取erp系统的erp_shopid
     try:
@@ -102,7 +109,7 @@ def get_raw_goods_info(shopid, mch_codes):
             start_sum = 0
             multiple = 0
 
-        ret.append(DataRawGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth,is_superimpose, start_sum,multiple))
+        ret[mch_code] = DataRawGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth,is_superimpose, start_sum,multiple)
 
     cursor.close()
     cursor_dmstore.close()
@@ -175,7 +182,10 @@ class DataRawShelf():
         self.length = length
         self.height = height
         self.depth = depth
-        self.associated_catids = associated_catids
+        if associated_catids is None or associated_catids == '':
+            self.associated_catids = []
+        else:
+            self.associated_catids = associated_catids.split(',')
 
     def __str__(self):
         ret = '{},{},{},{},{},{},{},{}'.format(self.taizhang_id, self.shelf_id, self.type, self.count, self.length, self.height, self.depth, self.associated_catids)
