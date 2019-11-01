@@ -48,12 +48,20 @@ def update_mark_goods_array(taizhang,change_total_width):
     #
     # if change_total_width > 0:
     #     pass
+    old_mark = taizhang.last_twidth
+    new_mark = None
     tem = []
-    taizhang.last_twidth += change_total_width
     for mark,good in taizhang.twidth_to_goods:
-        if mark < taizhang.last_twidth:
+        if mark < taizhang.last_twidth + change_total_width:
             tem.append(good)
+            new_mark = mark
+
     taizhang.calculate_goods_array = tem
+    if old_mark == new_mark:
+        return False
+    else:
+        taizhang.last_twidth = new_mark
+        return True
 
 def shelf_gap_choose_goods(taizhang,neighbour_good,level_goods,level_diff_width=None):
     """
