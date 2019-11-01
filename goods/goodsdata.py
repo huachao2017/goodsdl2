@@ -87,7 +87,7 @@ def get_raw_goods_info(uc_shopid, mch_codes):
     for mch_code in mch_codes:
         # 获取商品属性
         cursor.execute("select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
-        (goods_id, goods_name, tz_display_img, upc, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
+        (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
 
         # 获取分类码
         try:
