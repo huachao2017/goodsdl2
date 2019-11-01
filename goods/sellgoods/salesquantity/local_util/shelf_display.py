@@ -110,8 +110,8 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
     for shelf_good in shelf_goods:
             put_flag = True  # 商品放置 是否
             need_good_weight = 0
-            if shelf_good.isstacking:
-                need_good_weight = math.ceil(float(shelf_good.faces / shelf_good.stack_rows)) * shelf_good.width
+            if shelf_good.is_superimpose:
+                need_good_weight = math.ceil(float(shelf_good.faces / shelf_good.superimpose_rows)) * shelf_good.width
             else: # TODO 这里对于 盒放的商品 没有做处理
                 need_good_weight = shelf_good.faces * shelf_good.width
 
@@ -135,8 +135,8 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
     for level_good in level_ins.goods:
         height = 0
         if level_good.dep == 0 :
-            if level_good.isstacking :
-                height =  level_good.stack_rows * level_good.height + shelf_level_redundancy_height
+            if level_good.is_superimpose :
+                height =  level_good.superimpose_rows * level_good.height + shelf_level_redundancy_height
             else:
                 height = level_good.height + shelf_level_redundancy_height
         level_heights.append(height)
@@ -186,7 +186,7 @@ def put_good(level_ins,shelf_good):
         shelf_good.gooddisplay_inss = []
     for i in range(shelf_good.display_num):
         # 先摆列方向  TODO 未考虑冗余
-        col_nums = int(math.ceil(float(shelf_good.faces / shelf_good.stack_rows)))
+        col_nums = int(math.ceil(float(shelf_good.faces / shelf_good.superimpose_rows)))
         for j in range(col_nums):
             # 再摆行方向
             if shelf_good.is_superimpose:
