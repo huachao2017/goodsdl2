@@ -36,12 +36,13 @@ def generate_displays(uc_shopid, tz_id):
     # caculate_goods_array 李树、华超
     # 李树：输入参数中类的list，mch_goods_code列表，返回一个mch_goods_code列表
     simple_goods_list = goods_sort(taizhang.associated_catids)
+    print(simple_goods_list)
     taizhang.calculate_goods_array = []
     mch_codes = []
     for simple_goods in simple_goods_list:
         good = Good()
         good.mch_good_code = simple_goods[0]
-        good.sale_account = simple_goods[1]
+        # good.sale_account = simple_goods[1]
         taizhang.calculate_goods_array.append(good)
         mch_codes.append(good.mch_good_code)
 
