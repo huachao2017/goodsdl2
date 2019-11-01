@@ -1,6 +1,7 @@
 class Taizhang:
     tz_id=None
     shelfs = []
+    associated_catids = None
     caculate_goods_array = [] # 每次计算完更新，李树
 
     twidth_to_goods = {}
