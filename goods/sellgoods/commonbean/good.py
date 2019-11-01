@@ -5,6 +5,7 @@ class Good:
     #初始化数据
     mch_good_code = None
     sale_num = None  # TODO 预测销量
+    sale_account = None # 预测销售额
 
     #数据信息
     upc = None

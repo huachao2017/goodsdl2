@@ -2,6 +2,7 @@ from set_config import config
 from goods.sellgoods.salesquantity.local_util import shelf_display
 from goods.sellgoods.commonbean.taizhang import Taizhang
 from goods.sellgoods.commonbean.shelf import Shelf
+from goods.sellgoods.commonbean.good import Good
 from goods.goodsdata import get_raw_shop_shelfs,get_raw_goods_info
 from goods.sellgoods.auto_choose_goods.out_service_api import goods_sort,caculate_goods_info
 # 生成自动陈列
@@ -29,14 +30,19 @@ def generate_displays(uc_shopid, tz_id):
         taizhang.associated_catids = raw_shelf.associated_catids # FIXME
         taizhang.shelfs.append(shelf)
 
-    goods_list = goods_sort(taizhang.associated_catids)
     # caculate_goods_array 李树、华超
     # 李树：输入参数中类的list，mch_goods_code列表，返回一个mch_goods_code列表
-    # 华超：根据上一步生成caculate_goods_array，将所有goods的数据信息填入
-
+    simple_goods_list = goods_sort(taizhang.associated_catids)
+    taizhang.caculate_goods_array = []
     mch_codes = []
-    for goods in taizhang.caculate_goods_array:
-        mch_codes.append(goods.mch_good_code)
+    for simple_goods in simple_goods_list:
+        good = Good()
+        good.mch_good_code = simple_goods[0]
+        good.sale_account = simple_goods[1]
+        taizhang.caculate_goods_array.append(good)
+        mch_codes.append(good.mch_good_code)
+
+    # 华超：根据上一步生成caculate_goods_array，将所有goods的数据信息填入
     mch_cods_to_data_law_goods = get_raw_goods_info(uc_shopid,mch_codes)
     for goods in taizhang.caculate_goods_array:
         data_law_goods = mch_cods_to_data_law_goods[goods.mch_good_code]
