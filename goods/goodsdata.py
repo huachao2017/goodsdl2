@@ -283,7 +283,7 @@ if __name__ == "__main__":
         print('\n')
 
     ret = get_raw_goods_info(806,[2036329,2036330])
-    print("\n".join(str(i) for i in ret))
+    print("\n".join(str(i) for i in ret.items()))
 
     # ret = get_shop_shelf_goods(1284)
     # for data_shelf in ret:
