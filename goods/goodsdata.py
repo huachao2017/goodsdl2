@@ -262,14 +262,14 @@ class DataRawGoods():
         self.width = width
         self.height = height
         self.depth = depth
-        if is_superimpose is None or is_superimpose == 2:
-            self.is_superimpose = False # 1可叠放，2不可叠放
+        if is_superimpose == 1:
+            self.is_superimpose = True # 1可叠放，2不可叠放
         else:
-            self.is_superimpose = True
-        if is_suspension is None or is_suspension == 2:
-            self.is_suspension = False # 1可挂放，2不可挂放
+            self.is_superimpose = False
+        if is_suspension == 1:
+            self.is_suspension = True # 1可挂放，2不可挂放
         else:
-            self.is_suspension = True
+            self.is_suspension = False
         self.start_sum = start_sum
         self.multiple = multiple
 
