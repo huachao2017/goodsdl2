@@ -2,18 +2,20 @@ class Good:
     #陈列信息
     gooddisplay_inss = None # 商品陈列对象 列表
 
-    #数据信息
+    #初始化数据
+    mch_id = None
     upc = None
     name = None
     mch_good_code = None
-    mch_id = None
+    sale_num = None  #预测销量
+
+    #数据信息
     first_cls_code = None
     second_cls_code = None
     third_cls_code = None
     width = None
     height = None
     depth = None
-    sale_num = None  #预测销量
     start_num = None  #最小起订量
     display_code = None # 陈列分类code
     isfitting = None # 是否需要挂放
