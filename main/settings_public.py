@@ -188,6 +188,7 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+UC_PIC_HOST = 'http://lximages.xianlife.com/'
 DATASET_DIR_NAME = 'dataset'
 DETECT_DIR_NAME = 'images'
 
