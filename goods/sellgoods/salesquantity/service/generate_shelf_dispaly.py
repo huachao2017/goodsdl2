@@ -6,7 +6,7 @@ from goods.sellgoods.commonbean.good import Good
 from goods.goodsdata import get_raw_shop_shelfs,get_raw_goods_info
 from goods.sellgoods.auto_choose_goods.out_service_api import goods_sort,caculate_goods_info
 # 生成自动陈列
-shelf_display = config.shellgoods_params['shelf_display']
+# shelf_display = config.shellgoods_params['shelf_display']
 
 def generate_displays(uc_shopid, tz_id):
     """
@@ -27,7 +27,7 @@ def generate_displays(uc_shopid, tz_id):
             raw_shelf.height,
             raw_shelf.depth
         )
-        taizhang.associated_catids = raw_shelf.associated_catids # FIXME
+        taizhang.associated_catids = raw_shelf.associated_catids
         taizhang.shelfs.append(shelf)
 
     # caculate_goods_array 李树、华超
@@ -43,10 +43,10 @@ def generate_displays(uc_shopid, tz_id):
         mch_codes.append(good.mch_good_code)
 
     # 华超：根据上一步生成caculate_goods_array，将所有goods的数据信息填入
-    mch_cods_to_data_law_goods = get_raw_goods_info(uc_shopid,mch_codes)
+    mch_cods_to_data_raw_goods = get_raw_goods_info(uc_shopid,mch_codes)
     for goods in taizhang.caculate_goods_array:
-        data_law_goods = mch_cods_to_data_law_goods[goods.mch_good_code]
-        corp_classify_code = data_law_goods.corp_classify_code
+        data_raw_goods = mch_cods_to_data_raw_goods[goods.mch_good_code]
+        corp_classify_code = data_raw_goods.corp_classify_code
         if len(str(corp_classify_code)) == 6:
             goods.first_cls_code = corp_classify_code[0:2]
             goods.second_cls_code = corp_classify_code[0:4]
@@ -54,14 +54,17 @@ def generate_displays(uc_shopid, tz_id):
         else:
             print('corp_classify_code error: {}'.format(corp_classify_code))
 
-        goods.width = data_law_goods.width
-        goods.height = data_law_goods.height
-        goods.depth = data_law_goods.depth
-        goods.start_num = data_law_goods.start_num
-        goods.display_code = data_law_goods.display_code # 陈列分类code
-        goods.isfitting = None # TODO 是否需要挂放
+        goods.name = data_raw_goods.goods_name
+        goods.upc = data_raw_goods.upc
+        goods.icon = data_raw_goods.tz_display_img
+        goods.width = data_raw_goods.width
+        goods.height = data_raw_goods.height
+        goods.depth = data_raw_goods.depth
+        goods.start_num = data_raw_goods.start_num
+        goods.display_code = data_raw_goods.display_code # 陈列分类code
         goods.fitting_rows = 1 # 需要挂放几行
-        goods.is_superimpose = data_law_goods.is_superimpose
+        goods.is_superimpose = data_raw_goods.is_superimpose
+        goods.isfitting = data_raw_goods.is_suspension
         goods.superimpose_rows = 2 # 叠放几行
 
 

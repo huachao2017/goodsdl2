@@ -86,8 +86,8 @@ def get_raw_goods_info(uc_shopid, mch_codes):
 
     for mch_code in mch_codes:
         # 获取商品属性
-        cursor.execute("select id, upc, spec, volume, width,height,depth,is_superimpose from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
-        (goods_id, upc, spec, volume, width, height, depth,is_superimpose) = cursor.fetchone()
+        cursor.execute("select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
+        (goods_id, goods_name, tz_display_img, upc, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
 
         # 获取分类码
         cursor_dmstore.execute("select corp_classify_code from goods where upc = '{}' and corp_goods_id={};".format(upc, mch_code))
@@ -109,7 +109,7 @@ def get_raw_goods_info(uc_shopid, mch_codes):
             start_sum = 0
             multiple = 0
 
-        ret[mch_code] = DataRawGoods(mch_code, upc, corp_classify_code, spec, volume, width, height, depth,is_superimpose, start_sum,multiple)
+        ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,is_superimpose,is_suspension, start_sum,multiple)
 
     cursor.close()
     cursor_dmstore.close()
@@ -246,9 +246,11 @@ class DataGoods():
         return '\t\t{},{},{},{},{}'.format(self.mch_code,self.upc,self.width,self.height,self.depth)
 
 class DataRawGoods():
-    def __init__(self, mch_code, upc, corp_classify_code, spec, volume, width, height, depth, is_superimpose, start_sum, multiple):
+    def __init__(self, mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth, is_superimpose,is_suspension, start_sum, multiple):
         self.mch_code = mch_code
+        self.goods_name = goods_name
         self.upc = upc
+        self.tz_display_img = tz_display_img
         self.corp_classify_code = corp_classify_code
         self.display_code = corp_classify_code # FIXME 需要修订为真实陈列分类
         self.spec = spec
@@ -260,22 +262,26 @@ class DataRawGoods():
             self.is_superimpose = False # 1可叠放，2不可叠放
         else:
             self.is_superimpose = True
+        if is_suspension is None or is_suspension == 2:
+            self.is_suspension = False # 1可挂放，2不可挂放
+        else:
+            self.is_suspension = True
         self.start_sum = start_sum
         self.multiple = multiple
 
     def __str__(self):
-        return '{},{},{},{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.upc,self.corp_classify_code,self.display_code,self.spec,self.volume,self.width,self.height,self.depth,self.is_superimpose,self.start_sum,self.multiple)
+        return '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(self.mch_code,self.goods_name,self.upc,self.tz_display_img,self.corp_classify_code,self.display_code,self.spec,self.volume,self.width,self.height,self.depth,self.is_superimpose,self.is_suspension,self.start_sum,self.multiple)
 
 if __name__ == "__main__":
-    ret = get_raw_shop_shelfs(1284)
+    ret = get_raw_shop_shelfs(806)
     for data_raw_shelf in ret:
         print(str(data_raw_shelf))
         print('\n')
 
-    ret = get_raw_goods_info(1284,[2036329,2036330])
+    ret = get_raw_goods_info(806,[2036329,2036330])
     print("\n".join(str(i) for i in ret))
 
-    ret = get_shop_shelf_goods(1284)
-    for data_shelf in ret:
-        print(str(data_shelf))
-        print('\n')
+    # ret = get_shop_shelf_goods(1284)
+    # for data_shelf in ret:
+    #     print(str(data_shelf))
+    #     print('\n')
