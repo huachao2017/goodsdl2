@@ -46,6 +46,8 @@ def generate_displays(uc_shopid, tz_id):
         mch_codes.append(good.mch_good_code)
 
     # 华超：根据上一步生成caculate_goods_array，将所有goods的数据信息填入
+    print(uc_shopid)
+    print(mch_codes)
     mch_cods_to_data_raw_goods = get_raw_goods_info(uc_shopid,mch_codes)
     for goods in taizhang.calculate_goods_array:
         data_raw_goods = mch_cods_to_data_raw_goods[goods.mch_good_code]

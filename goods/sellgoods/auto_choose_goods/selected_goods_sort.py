@@ -255,7 +255,6 @@ class ShelfGoodsSort():
 
     def get_all_data(self):
         all_data = get_data(1284,'3598')
-        print('a')
         return all_data
 
     def run(self, r=0.5, m=2, ave_ratio=1.5):
