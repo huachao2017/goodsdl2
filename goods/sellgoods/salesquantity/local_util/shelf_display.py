@@ -30,7 +30,7 @@ def put_none_level_good_to_shelf(tz_ins):
             for (shelf_id,level_id,good_inss) in shelf_goods_list:
                 if shelf_ins.shelf_id == shelf_id and level_ins.level_id == level_id:
                     put_good(level_ins,good_inss)
-                    
+
 
 
 # 上商品到货架
