@@ -23,6 +23,9 @@ sdb = sparkdb.SparkDb()
 
 
 class Sales:
+    """
+    利用spark进行数据的读取
+    """
     sc = None
     sqlsc = None
     ss = None
@@ -39,9 +42,9 @@ class Sales:
 
 
 
-class HandleData:
+class HandleData():
 
-    sql = "select p.shop_id,g.upc,sum(p.amount),p.create_time from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '2019-10-16 00:00:00' group by g.upc,p.shop_id order by sum(p.amount) desc;"
+    sql = "select p.shop_id,g.upc,sum(p.amount) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '2019-10-16 00:00:00' group by g.upc,p.shop_id order by sum(p.amount) desc limit 30;"
     conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',
                            charset="utf8", port=3300, use_unicode=True)
 
@@ -58,7 +61,8 @@ class HandleData:
         # return data[:500]
 
         data_df = pd.read_sql(self.sql, self.conn)
-        pickle.dump(data_df, open("item_user_rate_time.txt", "wb"))
+        data_df.to_csv("user_item_rate.csv",header=False,index=False)
+        # pickle.dump(data_df, open("item_user_rate_time.txt", "wb"))
 
         return data_df
 
