@@ -6,17 +6,18 @@ from goods.sellgoods.auto_choose_goods.selected_goods_sort import *
 from goods.sellgoods.auto_display.service_for_display import *
 # from goods.sellgoods.commonbean.taizhang import *
 
-def goods_sort(middle_list):
+def goods_sort(middle_list,shop_id = 1284):
     """
     根据输入的中类列表进行选品的排序，排序时权衡了类别和销售额因素
-    :param middle_list:
-    :return:
+    :param middle_list:商品中类的列表
+    :param shop_id:商店id，默认时普天店
+    :return:mch的列表
     """
     goods_to_sort = ShelfGoodsSort(middle_list)
     list = goods_to_sort.main()
     result = []
     for i in list:
-        result.append((i[5],i[4]))
+        result.append(i[5])
     return result
 
 def caculate_goods_info(taizhang):
@@ -28,22 +29,22 @@ def caculate_goods_info(taizhang):
     """
     caculate_goods(taizhang)
 
-def update_mark_goods_array(taizhang,change_total_width):
+def update_mark_goods_array(taizhang,shelf_diff_width):
     """
     计算货架的商品刻度
-    :param taizhang:
-    :param change_total_width: 正数代表要加品，负数时减品
+    :param taizhang: 对象
+    :param shelf_diff_width 宽度超出或缺少的，超出为负，缺少为正
     :return:
     """
-    update_mark_goods_array(taizhang,change_total_width)
+    update_mark_goods_array(taizhang,shelf_diff_width)
 
-def shelf_gap_choose_goods(taizhang,gap_width,neighbour_cls_three_code):
+def shelf_gap_choose_goods(taizhang,neighbour_good,level_goods,level_diff_width=None):
     """
     货架的缝隙进行商品填充
-    :param taizhang:
-    :param gap_width: 缝隙的宽度
-    :param neighbour_cls_three_code: 缝隙旁边的小类
-    :return:
+    # 入参：neighbour_good 最近邻商品的三级code
+    #      level_goods 当前层所含有的三级code列表
+    #      level_diff_width  当前层 陈列中空置的宽度
+    :return:good对象的列表
     """
     pass
 
