@@ -3,13 +3,14 @@ class Good:
     gooddisplay_inss = None # 商品陈列对象 列表
 
     #初始化数据
-    mch_id = None
-    upc = None
-    name = None
     mch_good_code = None
-    sale_num = None  #预测销量
+    sale_num = None  # TODO 预测销量
+    sale_account = None # 预测销售额
 
     #数据信息
+    upc = None
+    name = None
+    icon = None
     first_cls_code = None
     second_cls_code = None
     third_cls_code = None
