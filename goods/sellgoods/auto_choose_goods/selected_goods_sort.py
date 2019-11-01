@@ -264,7 +264,7 @@ class ShelfGoodsSort():
         cursor = connections['default'].cursor()
         cursor.execute(sql)
         all_data = cursor.fetchall()
-        print('haha',all_data)
+        print('goods_len',len(all_data))
         # all_data = get_data(1284,'3598')
         return all_data
 
