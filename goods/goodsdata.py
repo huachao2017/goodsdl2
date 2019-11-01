@@ -89,8 +89,12 @@ def get_raw_goods_info(uc_shopid, mch_codes):
 
     for mch_code in mch_codes:
         # 获取商品属性
-        cursor.execute("select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
-        (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
+        try:
+            cursor.execute("select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
+            (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
+        except:
+            print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
+            continue
 
         # 获取分类码
         try:
@@ -109,7 +113,7 @@ def get_raw_goods_info(uc_shopid, mch_codes):
                 cursor_erp.execute("select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(sku_id))
                 (start_sum,multiple) = cursor_erp.fetchone()
             except:
-                print('Erp找不到商品:{}！'.format(upc))
+                print('Erp找不到商品:{}-{}！'.format(upc, mch_code))
                 start_sum = 0
                 multiple = 0
         else:
