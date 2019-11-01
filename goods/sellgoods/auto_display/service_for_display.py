@@ -1,47 +1,13 @@
 
 import math
+import collections
 # from goods.goodsdata import *
 # from goods.sellgoods.auto_display.drink_display import upc_statistics
 
-def get_shop_selected_goods(shop_id):
-    data = []
-    return data
-
-# 接口2  （李树）
-# 获取每层的填充商品，补充陈列
-# 入参：neighbour_cls_three_code 最近邻商品的三级code
-#       level_cls_three_codes 当前层所含有的三级code列表
-#       level_none_good_width  当前层 陈列中空置的宽度
-# 返回： good 对象列表   sellgoods 下 commonbean 下
-def api_get_level_none_good(shop_id,shelf_id,neighbour_cls_three_code,level_cls_three_codes,level_none_good_width):
-    # TODO
-    print ("do ..................")
-
-
-
-# 接口3  （李树）
-#获取带刻度的商品列表
-# 入参：shop_id  门店id
-#       shelf_id 货架id
-
-# 返回： good 对象列表   sellgoods 下 commonbean 下
-def api_get_mark_goods(taizhang,shelf_id,kd_value=None):
-    # TODO
-    pass
-
-
-
-
-
-
-#接口4    （李树）
-#接口4  获取shop对象
-# 入参： shop_id
-# 入参： isfir 是否首次生成 陈列  如果是：使用好邻居的推荐销量  否：使用线上该店的真实销量
-# 返回： shop 对象  sellgoods 下 commonbean 下
 def calculate_goods(taizhang):
     # TODO
-    twidth_to_goods = {}
+
+    twidth_to_goods = collections.OrderedDict()
     mark = 0
     shelf_depth = taizhang.shelfs[0].depth
     for good in taizhang.calculate_goods_array:
