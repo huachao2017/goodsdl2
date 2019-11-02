@@ -24,7 +24,7 @@ def calculate_goods(taizhang):
         mark += good.good_scale
         twidth_to_goods[mark] = (good,0)     # 第二个代表该品在货架上已经摆过的face数
         # twidth_to_goods[good.mch_good_code] = mark
-    time.sleep(10000)
+    # time.sleep(10000)
 
     taizhang.twidth_to_goods = twidth_to_goods
     taizhang.last_twidth = mark
@@ -154,7 +154,7 @@ def shelf_gap_choose_goods(taizhang):
             for k, v in taizhang.twidth_to_goods.items():
                 if k > taizhang.last_twidth:  # 在已选择商品的刻度之后
                     for good in level.goods:
-                        # print("third_02")
+                        print("third_02")
                         if good.third_cls_code == v[0].third_cls_code:   # 和这层任一商品同属一个小类
 
                             if v[1] > 0:   # 该商品被陈列过
