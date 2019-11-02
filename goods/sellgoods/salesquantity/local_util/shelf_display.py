@@ -150,10 +150,11 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
             need_good_weight = shelf_good.faces_num * shelf_good.width
         # 优先放置前面没有放满的上两层
         if flag:
+            print("level_id , level_none_good_width,need_good_weight =  %s,%s,%s" % (
+                str(level_ins.level_id), str(level_ins.level_none_good_width), str(need_good_weight)))
             fl1 = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
             if fl1:
                 continue
-            print ("level_id , level_none_good_width,need_good_weight =  %s,%s,%s"%(str(level_ins.level_id),str(level_ins.level_none_good_width),str(need_good_weight)))
             if (level_ins.goods == None or len(level_ins.goods) < 1) or (need_good_weight <= level_ins.level_none_good_width): #如果层上没有商品 或者 满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
                 put_good(level_ins,shelf_good)
             else:
@@ -244,8 +245,10 @@ def get_level_goods_col_sum(level_ins):
     goods_width  = 0
     for level_good in  level_ins.goods:
         for gooddisplay_ins in level_good.gooddisplay_inss:
+            good_width = 0
             if gooddisplay_ins.row == 0 and gooddisplay_ins.dep == 0 :
-                goods_width+=level_good.width
+                good_width+=level_good.width
+        goods_width += good_width
     return goods_width
 
 
