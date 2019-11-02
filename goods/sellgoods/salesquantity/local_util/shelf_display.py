@@ -61,11 +61,12 @@ def put_good_to_tz(tz_ins):
             if shelf_levels == None :
                 shelf_levels=[]
             if isAlter == False:  #不是最后一个货架
-                flag,put_shelf_goods = put_none_last_shelf(shelf_levels, shelf_height, shelf_width, shelf_depth, put_shelf_goods)
+                flag,put_shelf_goods,shelf_levels = put_none_last_shelf(shelf_levels, shelf_height, shelf_width, shelf_depth, put_shelf_goods)
                 if flag :
                     return
             else:
-                try_flag, width_kedu_sum,end_shelf_height,end_shelf_levels = put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag)
+                try_flag, width_kedu_sum,end_shelf_height,end_shelf_levels,shelf_levels = put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag)
+            shelf_ins.levels = shelf_levels
         if try_flag: # 层多于 货架物理层数
             # TODO 调用api 重新获取商品信息 需要传入变化的刻度
             print ("do..............")
@@ -107,7 +108,7 @@ def put_none_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_sh
         else:
             print ("选品不够 ，未摆满货架 ...... ")
             flag = True
-    return flag,put_shelf_goods
+    return flag,put_shelf_goods,shelf_levels
 
 # 上架到最后一个货架
 def put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag):
@@ -127,7 +128,7 @@ def put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_g
             width_kedu_sum += get_level_kedu(level_ins)
     end_shelf_height = shelf_height
     end_shelf_levels = shelf_levels
-    return try_flag,width_kedu_sum,end_shelf_height,end_shelf_levels
+    return try_flag,width_kedu_sum,end_shelf_height,end_shelf_levels,shelf_levels
 
 # 上商品到层
 def put_good_to_level(level_ins,shelf_goods,shelf_levels):
