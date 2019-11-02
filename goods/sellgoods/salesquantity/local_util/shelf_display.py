@@ -273,7 +273,7 @@ def get_level(shelf_levels,shelf_height,shelf_width,shelf_depth,isAlter=False):
         for level_ins in shelf_levels:
             if level_ins.level_id == level_ids[-1]:
                 level_start_height = level_ins.level_height + level_ins.level_start_height
-        if shelf_height - level_start_height < shelf_top_level_height:  # 小于距离限制，产生新层
+        if shelf_height - level_start_height > shelf_top_level_height:  # 小于距离限制，产生新层
             level_id = level_ids[-1]+1
             level_ins = Level()
             level_ins.level_id = level_id
