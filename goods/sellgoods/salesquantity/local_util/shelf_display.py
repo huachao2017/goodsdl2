@@ -173,7 +173,6 @@ def put_good(level_ins,shelf_good):
     if level_ins.goods == None or len(level_ins.goods) == 0:
         col = 0
     else:
-        col = level_ins.goods[-1].col + 1
         for level_good in level_ins.goods:
             width = level_good.width
             for good_display_ins in level_good.gooddisplay_inss:
