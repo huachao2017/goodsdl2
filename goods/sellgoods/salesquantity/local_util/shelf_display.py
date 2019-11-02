@@ -21,7 +21,7 @@ def generate(tz_ins):
     for shelf_ins in tz_ins.shelfs:
         # 计算上架后的货架 根据level冗余宽度 填充商品
         for level_ins in shelf_ins.levels:
-            print ("level_id , sum "+str((level_ins.level_id,len(level_ins.goods))))
+            print ("shelf_id,level_id , sum "+str((shelf_ins.shelf_id,level_ins.level_id,len(level_ins.goods))))
     put_none_level_good_to_shelf(tz_ins)
 
 def put_none_level_good_to_shelf(tz_ins):
