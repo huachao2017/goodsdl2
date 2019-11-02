@@ -26,6 +26,7 @@ class Taizhang:
         :return:
         shelf_id:xx
         [
+            level_id:xx
             height:xx
             goods:[
             mch_goods_code:
