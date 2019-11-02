@@ -223,14 +223,18 @@ def put_good_many_level(level_ins,shelf_good):
     col_row_deps = get_col_row_dep(shelf_good, level_ins, True)
     for i in range(shelf_good.display_num):
         gdins = GoodDisplay()
-        (col1, row, dep) = col_row_deps[i]
-        gdins.left = left + col1 * shelf_good.width
-        gdins.top = top + row * shelf_good.height
-        gdins.col = col + col1
-        gdins.row = row
-        gdins.dep = dep
-        if gdins.row != None or gdins.row != -1:
-            shelf_good.gooddisplay_inss.append(gdins)
+        if i <= len(col_row_deps) - 1:
+            (col1, row, dep) = col_row_deps[i]
+            gdins.left = left + col1 * shelf_good.width
+            gdins.top = top + row * shelf_good.height
+            gdins.col = col + col1
+            gdins.row = row
+            gdins.dep = dep
+            if gdins.row != None or gdins.row != -1:
+                shelf_good.gooddisplay_inss.append(gdins)
+        else:
+            #TODO 计算问题 导致
+            print ("shelf_good"+str(i))
     if level_ins.goods == None:
         level_ins.goods = []
     yu_shelf_good = copy.deepcopy(shelf_good)
@@ -271,7 +275,7 @@ def put_good(level_ins,shelf_good):
     col_row_deps = get_col_row_dep(shelf_good, level_ins, False)
     for i in range(shelf_good.display_num):
         gdins = GoodDisplay()
-        if i < len(col_row_deps) -1:
+        if i <= len(col_row_deps) -1:
             (col1,row,dep) = col_row_deps[i]
             gdins.left = left + col1 * shelf_good.width
             gdins.top = top + row * shelf_good.height
