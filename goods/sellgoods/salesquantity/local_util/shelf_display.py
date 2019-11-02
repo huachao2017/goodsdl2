@@ -193,7 +193,7 @@ def put_good(level_ins,shelf_good):
 
 def get_level_height(level_ins):
     level_height_end = 0
-    for level_good in level_ins:
+    for level_good in level_ins.goods:
         for gooddisplay_ins in level_good.gooddisplay_inss:
             if gooddisplay_ins.dep == 0 :
                 level_height = 0
