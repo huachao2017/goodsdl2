@@ -106,30 +106,25 @@ def put_good_to_tz(tz_ins):
 # 上商品到层
 def put_good_to_level(level_ins,shelf_goods,shelf_levels):
     new_shelf_goods = []
-
+    flag = True
     for shelf_good in shelf_goods:
-            put_flag = True  # 商品放置 是否
-            need_good_weight = 0
-            if shelf_good.is_superimpose:
-                need_good_weight = math.ceil(float(shelf_good.faces_num / shelf_good.superimpose_rows)) * shelf_good.width
-            else: # TODO 这里对于 盒放的商品 没有做处理
-                need_good_weight = shelf_good.faces_num * shelf_good.width
-            # 优先放置前面没有放满的上两层
-            if put_flag:
-                shelf_levels = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
-            print ("level_id , level_none_good_width =  %s,%s"%(str(level_ins.level_id),str(level_ins.level_none_good_width)))
-            if need_good_weight <= level_ins.level_none_good_width and put_flag: #满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
+        need_good_weight = 0
+        if shelf_good.is_superimpose:
+            need_good_weight = math.ceil(float(shelf_good.faces_num / shelf_good.superimpose_rows)) * shelf_good.width
+        else: # TODO 这里对于 盒放的商品 没有做处理
+            need_good_weight = shelf_good.faces_num * shelf_good.width
+        # 优先放置前面没有放满的上两层
+        if flag:
+            shelf_levels = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
+            print ("level_id , level_none_good_width,need_good_weight =  %s,%s,%s"%(str(level_ins.level_id),str(level_ins.level_none_good_width),str(need_good_weight)))
+            if (level_ins.goods == None or len(level_ins.goods) < 1) or (need_good_weight <= level_ins.level_none_good_width): #如果层上没有商品 或者 满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
                 put_good(level_ins,shelf_good)
-            elif need_good_weight >= level_ins.level_width: # 如果所需要的商品总宽度 大于 整个层宽
-                if level_ins.goods == None or len(level_ins.goods) < 1:  # 层上没有任何商品， 则放置商品
-                    put_good(level_ins, shelf_good)
-                else:
-                    put_flag = False
             else:
-                put_flag = False
-                # 出现放不下 ，把该商品 移到上一层
-            if put_flag == False:
+                flag = False
                 new_shelf_goods.append(shelf_good)
+        else:
+            new_shelf_goods.append(shelf_good)
+
     return new_shelf_goods
 
 
