@@ -25,7 +25,7 @@ def generate(tz_ins):
             good_ins.height = 20
         if good_ins.depth == 0 or good_ins.depth==None:
             good_ins.depth = 20
-    
+
     put_good_to_tz(tz_ins)
     print("tz.kedu2 " + str(tz_ins.last_twidth))
     for shelf_ins in tz_ins.shelfs:
@@ -50,6 +50,13 @@ def put_none_level_good_to_shelf(tz_ins):
 def put_good_to_tz(tz_ins):
     try_flag = False
     for i in range(tz_display_maxitems):
+        for good_ins in tz_ins.calculate_goods_array:
+            if good_ins.width == 0 or good_ins.width == None:
+                good_ins.width = 20
+            if good_ins.height == 0 or good_ins.height == None:
+                good_ins.height = 20
+            if good_ins.depth == 0 or good_ins.depth == None:
+                good_ins.depth = 20
         print("try display nums = "+str(i))
         shelfs = tz_ins.shelfs
         tz_goods = tz_ins.calculate_goods_array
