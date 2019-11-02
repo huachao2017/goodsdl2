@@ -332,8 +332,9 @@ def get_level_height(level_ins):
     level_height_end = 0
     for level_good in level_ins.goods:
         for gooddisplay_ins in level_good.gooddisplay_inss:
-            print ("gooddisplay_ins.dep = "+str(gooddisplay_ins.dep)+",level_good.height"+str(level_good.height))
             if gooddisplay_ins.dep == 0 :
+                print(
+                    "gooddisplay_ins.dep = " + str(gooddisplay_ins.dep) + ",level_good.height" + str(level_good.height))
                 level_height = 0
                 if level_good.is_superimpose :
                     level_height = level_good.superimpose_rows * level_good.height
@@ -348,8 +349,8 @@ def get_level_goods_col_sum(level_ins):
     for level_good in  level_ins.goods:
         good_width = 0
         for gooddisplay_ins in level_good.gooddisplay_inss:
-            print("gooddisplay_ins.dep = " + str(gooddisplay_ins.dep) + ",level_good.width" + str(level_good.width))
             if gooddisplay_ins.row == 0 and gooddisplay_ins.dep == 0 :
+                print("gooddisplay_ins.dep = " + str(gooddisplay_ins.dep) + ",level_good.width" + str(level_good.width))
                 good_width+=level_good.width
         goods_width += good_width
     return goods_width
