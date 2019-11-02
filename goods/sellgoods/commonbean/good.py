@@ -36,6 +36,8 @@ class Good:
     display_num = None # 最终陈列量
     good_scale = None # 单品刻度宽度
     faces_num = None # faces 数
+    one_face_most_goods_num = None # 单face最多的商品数
+
 
 class GoodDisplay:
     col = None  # 在level上的列
@@ -43,3 +45,4 @@ class GoodDisplay:
     dep = None  # 深度方向上的列
     top = None
     left = None
+
