@@ -118,6 +118,8 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
             # 优先放置前面没有放满的层
             if put_flag:
                 shelf_levels = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
+
+            print ("level_id , level_none_good_width =  %s,%s"%(str(level_ins.level_id),str(level_ins.level_none_good_width)))
             if need_good_weight <= level_ins.level_none_good_width and put_flag: #满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
                 level_ins = put_good(level_ins,shelf_good)
             elif need_good_weight >= level_ins.level_width: # 如果所需要的商品总宽度 大于 整个层宽
