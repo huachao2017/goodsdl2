@@ -152,9 +152,9 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
         if flag:
             print("level_id , level_none_good_width,need_good_weight =  %s,%s,%s" % (
                 str(level_ins.level_id), str(level_ins.level_none_good_width), str(need_good_weight)))
-            fl1 = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
-            if fl1:
-                continue
+            # fl1 = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
+            # if fl1:
+            #     continue
             if (level_ins.goods == None or len(level_ins.goods) < 1) or (need_good_weight <= level_ins.level_none_good_width): #如果层上没有商品 或者 满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
                 put_good(level_ins,shelf_good)
             else:
@@ -186,7 +186,7 @@ def put_good_to_last_second(shelf_good,shelf_levels,need_good_weight):
 
 
 
-    # 上商品
+# 上商品
 def put_good(level_ins,shelf_good):
     col = 0
     left = 0
@@ -226,6 +226,8 @@ def put_good(level_ins,shelf_good):
     level_ins.level_none_good_width = level_ins.level_width - get_level_goods_col_sum(level_ins)
     # 更新层的高度
     level_ins.level_height = get_level_height(level_ins)
+    print("level_id , level_none_good_width,single_good_weight =  %s,%s,%s" % (
+        str(level_ins.level_id), str(level_ins.level_none_good_width), str(shelf_good.width)))
 
 def get_level_height(level_ins):
     level_height_end = 0
