@@ -236,7 +236,11 @@ def put_good_many_level(level_ins,shelf_good):
                     # 再摆深方向  TODO 未考虑冗余
                     for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
                         gdins.dep = l
-        if gdins.row != None:
+            else:
+                row = 0
+                for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
+                    gdins.dep = l
+        if gdins.row != None and gdins.col != None and gdins.dep != None :
             shelf_good.gooddisplay_inss.append(gdins)
             if level_ins.goods == None:
                 level_ins.goods = []
@@ -295,6 +299,10 @@ def put_good(level_ins,shelf_good):
                     # 再摆深方向  TODO 未考虑冗余
                     for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
                         gdins.dep = l
+            else:
+                row = 0
+                for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
+                    gdins.dep = l
         if gdins.row != None:
             shelf_good.gooddisplay_inss.append(gdins)
             if level_ins.goods == None:
