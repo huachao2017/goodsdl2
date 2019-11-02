@@ -71,7 +71,7 @@ def put_good_to_tz(tz_ins):
             shelf_ins.levels = shelf_levels
         if try_flag: # 层多于 货架物理层数
             # TODO 调用api 重新获取商品信息 需要传入变化的刻度
-            print ("do..............")
+            print ("max true level do..............")
             is_update_flag = service_for_display.update_mark_goods_array(tz_ins, 0-width_kedu_sum)
             # is_update_flag = api_get_shelf_goods(tz_ins,(0-width_kedu_sum))
             if is_update_flag == False:
@@ -79,20 +79,23 @@ def put_good_to_tz(tz_ins):
             else:
                 continue
         # 判断最顶层的 剩余商品的宽度值   如果该值 小于一定阈值 且重试次数大于5  结束重试
-        if try_flag == False and end_shelf_height-end_shelf_levels[-1].level_start_height <= shelf_top_level_height and i > 5:
+        elif end_shelf_height != None and end_shelf_height-end_shelf_levels[-1].level_start_height <= shelf_top_level_height and i > 5:
             if end_shelf_levels[-1].level_none_good_width < shelf_top_level_none_width:
                 break
-        elif try_flag == False and end_shelf_height-end_shelf_levels[-1].level_start_height > shelf_top_level_height: # 层少于 货架物理层数
+        elif end_shelf_height != None and end_shelf_height-end_shelf_levels[-1].level_start_height > shelf_top_level_height: # 层少于 货架物理层数
             # 用最后一层的刻度信息
             level_end_width_kedu_sum = get_level_kedu(end_shelf_levels[-1])
             # TODO 调用api 重新获取商品信息 需要传入变化的刻度
-            print("do..............")
+            print("min true level do..............")
             is_update_flag = service_for_display.update_mark_goods_array(tz_ins, 0 + level_end_width_kedu_sum)
             # is_update_flag = api_get_shelf_goods(tz_ins, 0 + level_end_width_kedu_sum)
             if is_update_flag == False:
                 break
             else:
                 continue
+        else:
+            continue
+
     return tz_ins
 
 
