@@ -19,7 +19,7 @@ def generate(tz_ins):
     put_good_to_tz(tz_ins)
     for shelf_ins in tz_ins.shelfs:
         # 计算上架后的货架 根据level冗余宽度 填充商品
-        put_none_level_good_to_shelf(tz_ins,shelf_ins)
+        put_none_level_good_to_shelf(tz_ins)
 
 def put_none_level_good_to_shelf(tz_ins):
     # 返回 [shelf_id,level_id,[good_ins]]
@@ -60,7 +60,7 @@ def put_good_to_tz(tz_ins):
                 if level_ins == None:
                     break
                 else:
-                    level_ins, put_shelf_goods = put_good_to_level(level_ins, put_shelf_goods,shelf_levels)
+                    put_shelf_goods = put_good_to_level(level_ins, put_shelf_goods,shelf_levels)
                     shelf_levels.append(level_ins)
             else:
                 end_shelf_height = shelf_height
@@ -68,7 +68,7 @@ def put_good_to_tz(tz_ins):
                     if put_shelf_goods != None and len(put_shelf_goods)>0 :
                         level_ins = get_level(shelf_levels,shelf_height,shelf_width,shelf_depth,isAlter=isAlter)
                         if level_ins != None :
-                            level_ins,put_shelf_goods = put_good_to_level(level_ins,put_shelf_goods,shelf_levels)
+                            put_shelf_goods = put_good_to_level(level_ins,put_shelf_goods,shelf_levels)
                             shelf_levels.append(level_ins)
                     else: # 没有摆放商品时 ，摆放结束
                         break
@@ -115,16 +115,16 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
             else: # TODO 这里对于 盒放的商品 没有做处理
                 need_good_weight = shelf_good.faces_num * shelf_good.width
 
-            # 优先放置前面没有放满的层
+            # 优先放置前面没有放满的上两层
             if put_flag:
                 shelf_levels = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
 
             print ("level_id , level_none_good_width =  %s,%s"%(str(level_ins.level_id),str(level_ins.level_none_good_width)))
             if need_good_weight <= level_ins.level_none_good_width and put_flag: #满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
-                level_ins = put_good(level_ins,shelf_good)
+                put_good(level_ins,shelf_good)
             elif need_good_weight >= level_ins.level_width: # 如果所需要的商品总宽度 大于 整个层宽
                 if level_ins.goods == None or len(level_ins.goods) < 1:  # 层上没有任何商品， 则放置商品
-                    level_ins = put_good(level_ins, shelf_good)
+                    put_good(level_ins, shelf_good)
                 else:
                     put_flag = False
             else:
@@ -144,7 +144,7 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
         level_heights.append(height)
     level_heights.sort()
     level_ins.level_height = level_heights[-1]
-    return level_ins,new_shelf_goods
+    return new_shelf_goods
 
 
 def put_good_to_last_second(shelf_good,shelf_levels,need_good_weight):
@@ -157,15 +157,11 @@ def put_good_to_last_second(shelf_good,shelf_levels,need_good_weight):
         level_ins1 = shelf_levels[-1]
 
     if level_ins1 != None and need_good_weight <= level_ins1.level_none_good_width:  # 满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
-        level_ins1 = put_good(level_ins1, shelf_good)
-        shelf_levels[-1] = level_ins1
-        return shelf_levels
+        put_good(level_ins1, shelf_good)
     elif level_ins2 != None and  need_good_weight <= level_ins2.level_none_good_width: #满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
         level_ins2 = put_good(level_ins2, shelf_good)
         shelf_levels[-2] = level_ins2
-        return shelf_levels
-    else:
-        return shelf_levels
+
 
 
     # 上商品
@@ -205,7 +201,6 @@ def put_good(level_ins,shelf_good):
         level_ins.goods.append(shelf_good)
     # 更新 层的剩余宽度
     level_ins.level_none_good_width = level_ins.width - get_level_goods_col_sum(level_ins)
-    return level_ins
 
 
 def get_level_goods_col_sum(level_ins):
@@ -233,6 +228,7 @@ def get_level(shelf_levels,shelf_height,shelf_width,shelf_depth,isAlter=False):
         level_ins.level_width = shelf_width
         level_ins.level_depth = shelf_depth
         level_ins.level_start_height = shelf_level_start_height
+        level_ins.level_none_good_width = shelf_width
         return level_ins
     else:
         level_ids = []
@@ -252,6 +248,7 @@ def get_level(shelf_levels,shelf_height,shelf_width,shelf_depth,isAlter=False):
             level_ins.level_width = shelf_width
             level_ins.level_depth = shelf_depth
             level_ins.level_start_height = level_start_height
+            level_ins.level_none_good_width = shelf_width
             return level_ins
         elif isAlter: # 不产生新层 改为也产生新层 只是新层打上标记 不可用  只有最后一个货架有逻辑层
             level_id = level_ids[-1] + 1
@@ -261,6 +258,7 @@ def get_level(shelf_levels,shelf_height,shelf_width,shelf_depth,isAlter=False):
             level_ins.level_width = shelf_width
             level_ins.level_depth = shelf_depth
             level_ins.level_start_height = level_start_height
+            level_ins.level_none_good_width = shelf_width
         else: #如果不是最后一个货架 ， 不产生新层
             return None
 
