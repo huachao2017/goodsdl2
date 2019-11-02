@@ -239,15 +239,12 @@ def put_good_many_level(level_ins,shelf_good):
     level_ins.goods.append(shelf_good)
     sum_width = get_level_goods_col_sum(level_ins)
     max_height = get_level_height(level_ins)
-    print(len(level_ins.goods))
-    print(sum_width)
-    print(max_height)
     # 更新 层的剩余宽度
     level_ins.level_none_good_width = level_ins.level_width - sum_width
     # 更新层的高度
     level_ins.level_height = max_height
-    print("level_id , level_none_good_width,single_good_weight =  %s,%s,%s" % (
-        str(level_ins.level_id), str(level_ins.level_none_good_width), str(shelf_good.width)))
+    # print("level_id , level_none_good_width,single_good_weight =  %s,%s,%s" % (
+    #     str(level_ins.level_id), str(level_ins.level_none_good_width), str(shelf_good.width)))
     return yu_shelf_good
 
 
@@ -285,20 +282,11 @@ def put_good(level_ins,shelf_good):
     level_ins.goods.append(shelf_good)
     sum_width = get_level_goods_col_sum(level_ins)
     max_height = get_level_height(level_ins)
-    print(len(level_ins.goods))
-    print(sum_width)
-    print(max_height)
-    # if sum_width ==0  or max_height == 0:
-    #     return False
-    # 更新 层的剩余宽度
-    # print (get_level_goods_col_sum(level_ins))
     level_ins.level_none_good_width = level_ins.level_width - sum_width
     # 更新层的高度
-    # print (get_level_height(level_ins))
     level_ins.level_height = max_height
-    print("level_id , level_none_good_width,single_good_weight =  %s,%s,%s" % (
-        str(level_ins.level_id), str(level_ins.level_none_good_width), str(shelf_good.width)))
-    # return True
+    # print("level_id , level_none_good_width,single_good_weight =  %s,%s,%s" % (
+    #     str(level_ins.level_id), str(level_ins.level_none_good_width), str(shelf_good.width)))
 
 
 def get_col_row_dep(shelf_good,level_ins):

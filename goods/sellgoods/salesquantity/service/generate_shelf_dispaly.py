@@ -111,6 +111,9 @@ def print_taizhang(taizhang,image_dir):
 if __name__ == "__main__":
     taizhang = generate_displays(806,1142)
     # print(taizhang)
+    import os
+    with open("1.txt","w") as f:
+        f.write(str(taizhang.__str__()))
     image_dir = '/home/src/goodsdl2/media/images/taizhang/{}'.format(taizhang.tz_id)
     from pathlib import Path
     if Path(image_dir).exists():
