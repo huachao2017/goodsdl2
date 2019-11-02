@@ -222,7 +222,7 @@ def put_good_many_level(level_ins,shelf_good):
         shelf_good.gooddisplay_inss = []
     for i in range(shelf_good.display_num):
         gdins = GoodDisplay()
-        col1, row, dep = get_col_row_dep(shelf_good, level_ins)
+        col1, row, dep = get_col_row_dep(shelf_good, level_ins,True)
         gdins.left = left + col1 * shelf_good.width
         gdins.top = top + row * shelf_good.height
         gdins.col = col + col1
@@ -269,7 +269,7 @@ def put_good(level_ins,shelf_good):
         shelf_good.gooddisplay_inss = []
     for i in range(shelf_good.display_num):
         gdins = GoodDisplay()
-        col1,row,dep = get_col_row_dep(shelf_good,level_ins)
+        col1,row,dep = get_col_row_dep(shelf_good,level_ins,False)
         gdins.left = left + col1 * shelf_good.width
         gdins.top = top + row * shelf_good.height
         gdins.col =col + col1
@@ -289,17 +289,23 @@ def put_good(level_ins,shelf_good):
     #     str(level_ins.level_id), str(level_ins.level_none_good_width), str(shelf_good.width)))
 
 
-def get_col_row_dep(shelf_good,level_ins):
+def get_col_row_dep(shelf_good,level_ins,flag):
     col_nums = 0
     row_nums = 0
     dep_nums = 0
     # 先摆列方向  TODO 未考虑冗余
     if shelf_good.is_superimpose:
-        col_nums = int(math.ceil(float(shelf_good.faces_num / shelf_good.superimpose_rows)))
+        if flag:
+            col_nums = int(math.floor(float(level_ins.level_width / shelf_good.width)))
+        else:
+            col_nums = int(math.ceil(float(shelf_good.faces_num / shelf_good.superimpose_rows)))
         row_nums = shelf_good.superimpose_rows
         dep_nums = int(math.floor(float(level_ins.level_depth) / shelf_good.depth))
     else:
-        col_nums = int(shelf_good.faces_num)
+        if flag:
+            col_nums = int(math.floor(float(level_ins.level_width / shelf_good.width)))
+        else:
+            col_nums = int(shelf_good.faces_num)
         row_nums = 1
         dep_nums = int(math.floor(float(level_ins.level_depth) / shelf_good.depth))
 
@@ -308,8 +314,8 @@ def get_col_row_dep(shelf_good,level_ins):
     else:
         if shelf_good.gooddisplay_inss[-1].col < col_nums-1:
             col = shelf_good.gooddisplay_inss[-1].col + 1
-            row = 0
-            dep = 0
+            row = shelf_good.gooddisplay_inss[-1].row
+            dep = shelf_good.gooddisplay_inss[-1].dep
             return col,row,dep
         elif shelf_good.gooddisplay_inss[-1].row < row_nums -1 :
             col = shelf_good.gooddisplay_inss[-1].col
