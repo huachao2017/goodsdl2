@@ -250,9 +250,11 @@ def put_good_many_level(level_ins,shelf_good):
     shelf_good.display_num = len(shelf_good.gooddisplay_inss)
     yu_shelf_good.display_num = int(yu_value)
     level_ins.goods.append(shelf_good)
-    print(len(level_ins.goods))
     sum_width = get_level_goods_col_sum(level_ins)
     max_height = get_level_height(level_ins)
+    print(len(level_ins.goods))
+    print(sum_width)
+    print(max_height)
     # 更新 层的剩余宽度
     level_ins.level_none_good_width = level_ins.level_width - sum_width
     # 更新层的高度
@@ -309,10 +311,11 @@ def put_good(level_ins,shelf_good):
     if level_ins.goods == None:
         level_ins.goods = []
     level_ins.goods.append(shelf_good)
-
-    print (len(level_ins.goods))
     sum_width = get_level_goods_col_sum(level_ins)
     max_height = get_level_height(level_ins)
+    print(len(level_ins.goods))
+    print(sum_width)
+    print(max_height)
     # if sum_width ==0  or max_height == 0:
     #     return False
     # 更新 层的剩余宽度
