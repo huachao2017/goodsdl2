@@ -53,7 +53,8 @@ def put_good_to_tz(tz_ins):
         end_shelf_height = None
         width_kedu_sum = 0
         for shelf_ins,cnt in zip(shelfs,range(len(shelfs))):
-            print("display shelf_num  = " + str(cnt))
+            print("display shelf_num= " + str((cnt,len(shelfs))))
+            print ("shelf_ins.height: "+str(shelf_ins.height))
             isAlter = False # 是不是最后一个货架
             if cnt == len(shelfs)-1:
                 isAlter = True
