@@ -207,8 +207,9 @@ def put_good(level_ins,shelf_good):
 def get_level_goods_col_sum(level_ins):
     goods_width  = 0
     for level_good in  level_ins.goods:
-        if level_good.row == 0 and level_good.dep == 0 :
-            goods_width+=level_good.width
+        for gooddisplay_ins in level_good.gooddisplay_inss:
+            if gooddisplay_ins.row == 0 and gooddisplay_ins.dep == 0 :
+                goods_width+=level_good.width
     return goods_width
 
 
@@ -216,9 +217,10 @@ def get_level_goods_col_sum(level_ins):
 def get_level_kedu(level_ins):
     face_kedu = 0
     for good_ins in level_ins.goods:
-        if good_ins.dep == 0 :
-            ## TODO 可以考虑加冗余 宽度  这里暂时未加冗余
-            face_kedu+=good_ins.width
+        for gooddisplay_ins in good_ins.gooddisplay_inss:
+            if gooddisplay_ins.dep == 0 :
+                ## TODO 可以考虑加冗余 宽度  这里暂时未加冗余
+                face_kedu+=good_ins.width
     return face_kedu
 
 def get_level(shelf_levels,shelf_height,shelf_width,shelf_depth,isAlter=False):
