@@ -88,7 +88,7 @@ def shelf_gap_choose_goods(taizhang):
         if k > taizhang.last_twidth:          # 在已选择商品的刻度之后
             for shelf in taizhang.shelfs:
                 for level in shelf.levels:
-                    print('first')
+                    # print('first')
                     if level.goods[-1].third_cls_code == v[0].third_cls_code:   # 和旁边最近的同属一个小类
                         if level.temp_gap > v[0].good_scale:  # 缝隙比商品不拆分的情况下的宽要宽
                             result_list.append((shelf.shelf_id,level.level_id,v[0]))
@@ -103,7 +103,7 @@ def shelf_gap_choose_goods(taizhang):
             for shelf in taizhang.shelfs:
                 for level in shelf.levels:
                     for good in level.goods:
-                        print("second")
+                        # print("second")
                         if good.third_cls_code == v[0].third_cls_code:   # 和这层任一商品同属一个小类
                             if level.temp_gap > v[0].good_scale:  # 剩下的缝隙比商品不拆分的情况下的宽要宽
                                 if not v[0] in goods_list:
@@ -121,7 +121,7 @@ def shelf_gap_choose_goods(taizhang):
         for level in shelf.levels:
             # 拆的情况下，最近邻商品同小类
             for k, v in taizhang.twidth_to_goods.items():
-                print('third')
+                # print('third')
                 if k > taizhang.last_twidth:  # 在已选择商品的刻度之后
                     if level.goods[-1].third_cls_code == v[0].third_cls_code:  # 和旁边最近的同属一个小类
                         if v[1] > 0:   # 该商品被陈列过
@@ -152,7 +152,7 @@ def shelf_gap_choose_goods(taizhang):
             for k, v in taizhang.twidth_to_goods.items():
                 if k > taizhang.last_twidth:  # 在已选择商品的刻度之后
                     for good in level.goods:
-                        print("third_02")
+                        # print("third_02")
                         if good.third_cls_code == v[0].third_cls_code:   # 和这层任一商品同属一个小类
 
                             if v[1] > 0:   # 该商品被陈列过
