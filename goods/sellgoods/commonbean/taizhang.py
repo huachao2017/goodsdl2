@@ -39,7 +39,7 @@ class Taizhang:
         """
         ret = ''
         for shelf in self.shelfs:
-            ret += shelf.shelf_id
+            ret += str(shelf.shelf_id)
             ret += '\n[\n'
             for level in shelf.levels:
                 ret += '\theight:{}\n'.format(level.level_height)
