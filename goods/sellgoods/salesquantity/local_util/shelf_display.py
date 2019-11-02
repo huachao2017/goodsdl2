@@ -17,7 +17,7 @@ def generate(tz_ins):
      """
     # 上架商品到tz
     put_good_to_tz(tz_ins)
-    tz_ins.__str__()
+    print (tz_ins.__str__())
     for shelf_ins in tz_ins.shelfs:
         # 计算上架后的货架 根据level冗余宽度 填充商品
         put_none_level_good_to_shelf(tz_ins)

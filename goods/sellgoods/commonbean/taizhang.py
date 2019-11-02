@@ -42,6 +42,7 @@ class Taizhang:
             ret += str(shelf.shelf_id)
             ret += '\n[\n'
             for level in shelf.levels:
+                ret += '\tlevel_id:{}\n'.format(level.level_id)
                 ret += '\theight:{}\n'.format(level.level_height)
                 ret += '\tgoods:[\n'
                 for good in level.goods:
