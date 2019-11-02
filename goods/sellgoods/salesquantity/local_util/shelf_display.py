@@ -29,7 +29,7 @@ def generate(tz_ins):
 def put_none_level_good_to_shelf(tz_ins):
     # 返回 [shelf_id,level_id,[good_ins]]
     # TODO 调用api  填充商品
-    shelf_goods_list = api_get_level_none_good(tz_ins)
+    shelf_goods_list = service_for_display.shelf_gap_choose_goods(tz_ins)
     for shelf_ins in tz_ins.shelfs:
         for level_ins in shelf_ins.levels:
             for (shelf_id,level_id,good_inss) in shelf_goods_list:
