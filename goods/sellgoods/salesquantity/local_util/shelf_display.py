@@ -2,6 +2,7 @@ from goods.sellgoods.commonbean.level import Level
 from goods.sellgoods.salesquantity.proxy import display_rule
 from goods.sellgoods.commonbean.good import GoodDisplay
 import math
+import copy
 from goods.sellgoods.auto_display import service_for_display
 from set_config import config
 tz_display_maxitems = config.shellgoods_params['shelf_display_maxitems']
@@ -245,7 +246,7 @@ def put_good_many_level(level_ins,shelf_good):
 
     if level_ins.goods == None:
         level_ins.goods = []
-    yu_shelf_good = shelf_good.deepcopy()
+    yu_shelf_good = copy.deepcopy(shelf_good)
     yu_value = shelf_good.display_num - len(shelf_good.gooddisplay_inss)
     shelf_good.display_num = len(shelf_good.gooddisplay_inss)
     yu_shelf_good.display_num = int(yu_value)
