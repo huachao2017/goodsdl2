@@ -222,27 +222,14 @@ def put_good_many_level(level_ins,shelf_good):
         shelf_good.gooddisplay_inss = []
     for i in range(shelf_good.display_num):
         gdins = GoodDisplay()
-        # 先摆列方向  TODO 未考虑冗余
-        col_nums = int(math.ceil(float( level_ins.level_width/ shelf_good.width)))
-        for j in range(col_nums):
-            gdins.col = col + j
-            gdins.left = left + j * shelf_good.width
-            # 再摆行方向
-            if shelf_good.is_superimpose:
-                for k in range(shelf_good.superimpose_rows):
-                    gdins.row = k
-                    gdins.top = top + k * shelf_good.height
-                    # 再摆深方向  TODO 未考虑冗余
-                    for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
-                        gdins.dep = l
-            else:
-                gdins.row = 0
-                for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
-                    gdins.dep = l
-        if gdins.row != None and gdins.col != None and gdins.dep != None :
+        col1, row, dep = get_col_row_dep(shelf_good, level_ins)
+        gdins.left = left + col1 * shelf_good.width
+        gdins.top = top + row * shelf_good.height
+        gdins.col = col + col1
+        gdins.row = row
+        gdins.dep = dep
+        if gdins.row != None or gdins.row != -1:
             shelf_good.gooddisplay_inss.append(gdins)
-
-
     if level_ins.goods == None:
         level_ins.goods = []
     yu_shelf_good = copy.deepcopy(shelf_good)
@@ -285,28 +272,13 @@ def put_good(level_ins,shelf_good):
         shelf_good.gooddisplay_inss = []
     for i in range(shelf_good.display_num):
         gdins = GoodDisplay()
-        col_nums = 0
-        # 先摆列方向  TODO 未考虑冗余
-        if shelf_good.is_superimpose:
-            col_nums = int(math.ceil(float(shelf_good.faces_num / shelf_good.superimpose_rows)))
-        else:
-            col_nums = int(shelf_good.faces_num)
-        for j in range(col_nums):
-            gdins.col = col + j
-            gdins.left = left + j * shelf_good.width
-            # 再摆行方向
-            if shelf_good.is_superimpose:
-                for k in range(shelf_good.superimpose_rows):
-                    gdins.row = k
-                    gdins.top = top + k * shelf_good.height
-                    # 再摆深方向  TODO 未考虑冗余
-                    for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
-                        gdins.dep = l
-            else:
-                gdins.row = 0
-                for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
-                    gdins.dep = l
-        if gdins.row != None:
+        col1,row,dep = get_col_row_dep(shelf_good,level_ins)
+        gdins.left = left + col1 * shelf_good.width
+        gdins.top = top + row * shelf_good.height
+        gdins.col =col + col1
+        gdins.row = row
+        gdins.dep = dep
+        if gdins.row != None or gdins.row != -1:
             shelf_good.gooddisplay_inss.append(gdins)
     if level_ins.goods == None:
         level_ins.goods = []
@@ -327,6 +299,45 @@ def put_good(level_ins,shelf_good):
     print("level_id , level_none_good_width,single_good_weight =  %s,%s,%s" % (
         str(level_ins.level_id), str(level_ins.level_none_good_width), str(shelf_good.width)))
     # return True
+
+
+def get_col_row_dep(shelf_good,level_ins):
+    col_nums = 0
+    row_nums = 0
+    dep_nums = 0
+    # 先摆列方向  TODO 未考虑冗余
+    if shelf_good.is_superimpose:
+        col_nums = int(math.ceil(float(shelf_good.faces_num / shelf_good.superimpose_rows)))
+        row_nums = shelf_good.superimpose_rows
+        dep_nums = int(math.floor(float(level_ins.level_depth) / shelf_good.depth))
+    else:
+        col_nums = int(shelf_good.faces_num)
+        row_nums = 1
+        dep_nums = int(math.floor(float(level_ins.level_depth) / shelf_good.depth))
+
+    if shelf_good.gooddisplay_inss == None or len(shelf_good.gooddisplay_inss) == 0 :
+        return 0,0,0
+    else:
+        if shelf_good.gooddisplay_inss[-1].col < col_nums-1:
+            col = shelf_good.gooddisplay_inss[-1].col + 1
+            row = 0
+            dep = 0
+            return col,row,dep
+        elif shelf_good.gooddisplay_inss[-1].row < row_nums -1 :
+            col = shelf_good.gooddisplay_inss[-1].col
+            row = shelf_good.gooddisplay_inss[-1].row + 1
+            dep =  shelf_good.gooddisplay_inss[-1].dep
+            return col, row, dep
+        elif shelf_good.gooddisplay_inss[-1].dep < dep_nums - 1:
+            col = shelf_good.gooddisplay_inss[-1].col
+            row = shelf_good.gooddisplay_inss[-1].row
+            dep = shelf_good.gooddisplay_inss[-1].dep + 1
+            return col, row, dep
+        else:
+            return -1, -1, -1
+
+
+
 
 def get_level_height(level_ins):
     level_height_end = 0
