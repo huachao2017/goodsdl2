@@ -64,7 +64,7 @@ def put_good_to_tz(tz_ins):
                 if flag :
                     return
             else:
-                try_flag, width_kedu_sum = put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag)
+                try_flag, width_kedu_sum,end_shelf_height,end_shelf_levels = put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag)
         if try_flag: # 层多于 货架物理层数
             # TODO 调用api 重新获取商品信息 需要传入变化的刻度
             print ("do..............")
@@ -72,7 +72,8 @@ def put_good_to_tz(tz_ins):
             # is_update_flag = api_get_shelf_goods(tz_ins,(0-width_kedu_sum))
             if is_update_flag == False:
                 break
-            continue
+            else:
+                continue
         # 判断最顶层的 剩余商品的宽度值   如果该值 小于一定阈值 且重试次数大于5  结束重试
         if try_flag == False and end_shelf_height-end_shelf_levels[-1].level_start_height <= shelf_top_level_height and i > 5:
             if end_shelf_levels[-1].level_none_good_width < shelf_top_level_none_width:
@@ -86,7 +87,8 @@ def put_good_to_tz(tz_ins):
             # is_update_flag = api_get_shelf_goods(tz_ins, 0 + level_end_width_kedu_sum)
             if is_update_flag == False:
                 break
-            continue
+            else:
+                continue
     return tz_ins
 
 
@@ -107,7 +109,7 @@ def put_none_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_sh
     return flag,put_shelf_goods
 
 # 上架到最后一个货架
-def put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag):
+def put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag,end_shelf_height,end_shelf_levels):
     width_kedu_sum = 0
     for j in range(shelf_levels_max):
         if put_shelf_goods != None and len(put_shelf_goods) > 0:
@@ -122,7 +124,9 @@ def put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_g
             try_flag = True
             # 获取 未生效层 总刻度宽度
             width_kedu_sum += get_level_kedu(level_ins)
-    return try_flag,width_kedu_sum
+    end_shelf_height = shelf_height
+    end_shelf_levels = shelf_levels
+    return try_flag,width_kedu_sum,end_shelf_height,end_shelf_levels
 
 # 上商品到层
 def put_good_to_level(level_ins,shelf_goods,shelf_levels):
