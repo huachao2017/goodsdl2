@@ -15,10 +15,13 @@ def calculate_goods(taizhang):
         print("width,height,depth:",good.width,good.height,good.depth)
         # good.display_num = max(good.sale_num*2,good.start_num)
         good.display_num = good.start_num
-        one_face_goods_number = int(shelf_depth/good.depth)
+        good.one_face_most_goods_num = int(shelf_depth/good.depth)
         if good.is_superimpose:   # 可叠放
-            one_face_goods_number = one_face_goods_number*good.superimpose_rows
-        good.faces_num = max(good.display_num/one_face_goods_number,1)
+            good.one_face_most_goods_num = good.one_face_most_goods_num*good.superimpose_rows
+
+        t = good.display_num/good.one_face_most_goods_num
+        good.faces_num = max(math.ceil(t),1)       # math.ceil()进一法
+
 
         good.good_scale = good.faces_num*good.width
         mark += good.good_scale
