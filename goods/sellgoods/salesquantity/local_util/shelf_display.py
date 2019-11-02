@@ -312,20 +312,30 @@ def get_col_row_dep(shelf_good,level_ins,flag):
     if shelf_good.gooddisplay_inss == None or len(shelf_good.gooddisplay_inss) == 0 :
         return 0,0,0
     else:
-        if shelf_good.gooddisplay_inss[-1].col < col_nums-1:
-            col = shelf_good.gooddisplay_inss[-1].col + 1
-            row = shelf_good.gooddisplay_inss[-1].row
-            dep = shelf_good.gooddisplay_inss[-1].dep
-            return col,row,dep
-        elif shelf_good.gooddisplay_inss[-1].row < row_nums -1 :
-            col = shelf_good.gooddisplay_inss[-1].col
-            row = shelf_good.gooddisplay_inss[-1].row + 1
-            dep =  shelf_good.gooddisplay_inss[-1].dep
+        cols = []
+        rows = []
+        deps = []
+        for gooddisplay_ins in shelf_good.gooddisplay_inss:
+            if gooddisplay_ins.row == 0 and gooddisplay_ins.dep == 0 :
+                cols.append(gooddisplay_ins.col)
+            if  gooddisplay_ins.col == 0 and gooddisplay_ins.dep == 0 :
+                rows.append(gooddisplay_ins.row)
+            if gooddisplay_ins.row == 0 and gooddisplay_ins.col == 0 :
+                deps.append(gooddisplay_ins.dep)
+        if deps[-1] < dep_nums - 1:
+            col = cols[-1]
+            row = rows[-1]
+            dep = deps[-1] + 1
             return col, row, dep
-        elif shelf_good.gooddisplay_inss[-1].dep < dep_nums - 1:
-            col = shelf_good.gooddisplay_inss[-1].col
-            row = shelf_good.gooddisplay_inss[-1].row
-            dep = shelf_good.gooddisplay_inss[-1].dep + 1
+        elif rows[-1] < row_nums - 1:
+            col = cols[-1]
+            row = rows[-1] + 1
+            dep = deps[0]
+            return col, row, dep
+        elif cols[-1] < col_nums -1:
+            col = cols[-1]+1
+            row = rows[0]
+            dep = deps[0]
             return col, row, dep
         else:
             return -1, -1, -1
