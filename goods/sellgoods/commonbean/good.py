@@ -14,9 +14,9 @@ class Good:
     first_cls_code = None
     second_cls_code = None
     third_cls_code = None
-    width = 20
-    height = width
-    depth = width
+    width = None
+    height = None
+    depth = None
     start_num = None  #最小起订量
     display_code = None # 陈列分类code
     isfitting = None # 是否需要挂放
