@@ -1,7 +1,7 @@
 
 import math
 import collections
-import copy
+import copy,time
 # from goods.goodsdata import *
 # from goods.sellgoods.auto_display.drink_display import upc_statistics
 
@@ -24,6 +24,8 @@ def calculate_goods(taizhang):
         mark += good.good_scale
         twidth_to_goods[mark] = (good,0)     # 第二个代表该品在货架上已经摆过的face数
         # twidth_to_goods[good.mch_good_code] = mark
+    time.sleep(10000)
+
     taizhang.twidth_to_goods = twidth_to_goods
     taizhang.last_twidth = mark
 
