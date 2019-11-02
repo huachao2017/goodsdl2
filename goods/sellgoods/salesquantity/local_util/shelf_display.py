@@ -245,7 +245,7 @@ def put_good_many_level(level_ins,shelf_good):
 
     if level_ins.goods == None:
         level_ins.goods = []
-    yu_shelf_good = shelf_good.copy()
+    yu_shelf_good = shelf_good.deepcopy()
     yu_value = shelf_good.display_num - len(shelf_good.gooddisplay_inss)
     shelf_good.display_num = len(shelf_good.gooddisplay_inss)
     yu_shelf_good.display_num = int(yu_value)
