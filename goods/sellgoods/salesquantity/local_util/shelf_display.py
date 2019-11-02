@@ -206,7 +206,6 @@ def put_good_many_level(level_ins,shelf_good):
     col = 0
     left = 0
     top = 0
-    good_sum1 = 0
     print(shelf_good.faces_num)
     # 获取摆放初始坐标 和 左顶点信息
     if level_ins.goods == None or len(level_ins.goods) == 0:
@@ -242,21 +241,25 @@ def put_good_many_level(level_ins,shelf_good):
                     gdins.dep = l
         if gdins.row != None and gdins.col != None and gdins.dep != None :
             shelf_good.gooddisplay_inss.append(gdins)
-            if level_ins.goods == None:
-                level_ins.goods = []
-            level_ins.goods.append(shelf_good)
-    good_sum2 = len(level_ins.goods)
-    shelf_good.display_num = good_sum2-good_sum1
+
+
+    if level_ins.goods == None:
+        level_ins.goods = []
+    yu_shelf_good = shelf_good.copy()
+    yu_value = shelf_good.display_num - len(shelf_good.gooddisplay_inss)
+    shelf_good.display_num = len(shelf_good.gooddisplay_inss)
+    yu_shelf_good.display_num = int(yu_value)
+
+    level_ins.goods.append(shelf_good)
     sum_width = get_level_goods_col_sum(level_ins)
     max_height = get_level_height(level_ins)
-
     # 更新 层的剩余宽度
     level_ins.level_none_good_width = level_ins.level_width - sum_width
     # 更新层的高度
     level_ins.level_height = max_height
     print("level_id , level_none_good_width,single_good_weight =  %s,%s,%s" % (
         str(level_ins.level_id), str(level_ins.level_none_good_width), str(shelf_good.width)))
-
+    return yu_shelf_good
 
 
 
@@ -305,9 +308,9 @@ def put_good(level_ins,shelf_good):
                     gdins.dep = l
         if gdins.row != None:
             shelf_good.gooddisplay_inss.append(gdins)
-            if level_ins.goods == None:
-                level_ins.goods = []
-            level_ins.goods.append(shelf_good)
+    if level_ins.goods == None:
+        level_ins.goods = []
+    level_ins.goods.append(shelf_good)
     sum_width = get_level_goods_col_sum(level_ins)
     max_height = get_level_height(level_ins)
     # if sum_width ==0  or max_height == 0:
