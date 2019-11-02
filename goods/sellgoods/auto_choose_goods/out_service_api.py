@@ -46,7 +46,8 @@ def shelf_gap_choose_goods(taizhang):
     #      level_diff_width  当前层 陈列中空置的宽度
     :return:good对象的列表
     """
-    pass
+    result_list = shelf_gap_choose_goods(taizhang)
+    return result_list
 
 
 if __name__ == '__main__':
