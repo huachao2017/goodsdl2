@@ -206,11 +206,13 @@ def put_good_many_level(level_ins,shelf_good):
     col = 0
     left = 0
     top = 0
-    good_sum1 = len(level_ins.goods)
+    good_sum1 = 0
+    print(shelf_good.faces_num)
     # 获取摆放初始坐标 和 左顶点信息
     if level_ins.goods == None or len(level_ins.goods) == 0:
         col = 0
     else:
+        good_sum1 = len(level_ins.goods)
         for level_good in level_ins.goods:
             width = level_good.width
             for good_display_ins in level_good.gooddisplay_inss:
@@ -234,10 +236,11 @@ def put_good_many_level(level_ins,shelf_good):
                     # 再摆深方向  TODO 未考虑冗余
                     for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
                         gdins.dep = l
-        shelf_good.gooddisplay_inss.append(gdins)
-        if level_ins.goods == None:
-            level_ins.goods = []
-        level_ins.goods.append(shelf_good)
+        if gdins.row != None:
+            shelf_good.gooddisplay_inss.append(gdins)
+            if level_ins.goods == None:
+                level_ins.goods = []
+            level_ins.goods.append(shelf_good)
     good_sum2 = len(level_ins.goods)
     shelf_good.display_num = good_sum2-good_sum1
     sum_width = get_level_goods_col_sum(level_ins)
@@ -259,6 +262,8 @@ def put_good(level_ins,shelf_good):
     col = 0
     left = 0
     top = 0
+    print (shelf_good.faces_num)
+
     # 获取摆放初始坐标 和 左顶点信息
     if level_ins.goods == None or len(level_ins.goods) == 0:
         col = 0
@@ -273,8 +278,12 @@ def put_good(level_ins,shelf_good):
         shelf_good.gooddisplay_inss = []
     for i in range(shelf_good.display_num):
         gdins = GoodDisplay()
+        col_nums = 0
         # 先摆列方向  TODO 未考虑冗余
-        col_nums = int(math.ceil(float(shelf_good.faces_num / shelf_good.superimpose_rows)))
+        if shelf_good.is_superimpose:
+            col_nums = int(math.ceil(float(shelf_good.faces_num / shelf_good.superimpose_rows)))
+        else:
+            col_nums = int(shelf_good.faces_num)
         for j in range(col_nums):
             gdins.col = col + j
             gdins.left = left + j * shelf_good.width
@@ -286,10 +295,11 @@ def put_good(level_ins,shelf_good):
                     # 再摆深方向  TODO 未考虑冗余
                     for l in range(int(math.floor(level_ins.level_depth / shelf_good.depth))):
                         gdins.dep = l
-        shelf_good.gooddisplay_inss.append(gdins)
-        if level_ins.goods == None:
-            level_ins.goods = []
-        level_ins.goods.append(shelf_good)
+        if gdins.row != None:
+            shelf_good.gooddisplay_inss.append(gdins)
+            if level_ins.goods == None:
+                level_ins.goods = []
+            level_ins.goods.append(shelf_good)
     sum_width = get_level_goods_col_sum(level_ins)
     max_height = get_level_height(level_ins)
     # if sum_width ==0  or max_height == 0:
