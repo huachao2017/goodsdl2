@@ -112,5 +112,8 @@ if __name__ == "__main__":
     taizhang = generate_displays(806,1142)
     # print(taizhang)
     image_dir = '/home/src/goodsdl2/media/images/taizhang/{}'.format(taizhang.tz_id)
+    from pathlib import Path
+    if Path(image_dir).exists():
+        os.removedirs(image_dir)
     os.makedirs(image_dir)
     print_taizhang(taizhang, image_dir)
