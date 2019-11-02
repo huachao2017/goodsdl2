@@ -136,11 +136,12 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
     level_heights = []
     for level_good in level_ins.goods:
         height = 0
-        if level_good.dep == 0 :
-            if level_good.is_superimpose :
-                height =  level_good.superimpose_rows * level_good.height + shelf_level_redundancy_height
-            else:
-                height = level_good.height + shelf_level_redundancy_height
+        for good_display_ins in level_good.gooddisplay_inss:
+            if good_display_ins.dep == 0 :
+                if level_good.is_superimpose :
+                    height =  level_good.superimpose_rows * level_good.height + shelf_level_redundancy_height
+                else:
+                    height = level_good.height + shelf_level_redundancy_height
         level_heights.append(height)
     level_heights.sort()
     level_ins.level_height = level_heights[-1]

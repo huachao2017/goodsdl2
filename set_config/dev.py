@@ -68,7 +68,7 @@ shellgoods_params={
     "shelf_display_maxitems":20, # 排列单个货架最大循环次数
     "shelf_levels_max":20000,# 货架的最高层数
     "shelf_level_start_height":0,# 货架最底层起始高度 cm
-    'shelf_level_redundancy_height':8,# 商品与上一层的 冗余高度 cm
+    'shelf_level_redundancy_height':5,# 商品与上一层的 冗余高度 cm
     'shelf_top_level_height':20, #最顶层货架的高度距货架最高的 距离限制  cm
     'shelf_top_level_none_width': 20,#最顶层没有商品的宽度 小于该值 结束重新选品
 
