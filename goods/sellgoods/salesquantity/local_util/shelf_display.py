@@ -220,9 +220,10 @@ def put_good_many_level(level_ins,shelf_good):
                     col = good_display_ins.col + 1
     if shelf_good.gooddisplay_inss == None or len(shelf_good.gooddisplay_inss) <1:
         shelf_good.gooddisplay_inss = []
+    col_row_deps = get_col_row_dep(shelf_good, level_ins, True)
     for i in range(shelf_good.display_num):
         gdins = GoodDisplay()
-        col1, row, dep = get_col_row_dep(shelf_good, level_ins,True)
+        (col1, row, dep) = col_row_deps[i]
         gdins.left = left + col1 * shelf_good.width
         gdins.top = top + row * shelf_good.height
         gdins.col = col + col1
@@ -267,9 +268,10 @@ def put_good(level_ins,shelf_good):
                     col = good_display_ins.col + 1
     if shelf_good.gooddisplay_inss == None or len(shelf_good.gooddisplay_inss) <1:
         shelf_good.gooddisplay_inss = []
+    col_row_deps = get_col_row_dep(shelf_good, level_ins, False)
     for i in range(shelf_good.display_num):
         gdins = GoodDisplay()
-        col1,row,dep = get_col_row_dep(shelf_good,level_ins,False)
+        (col1,row,dep) = col_row_deps[i]
         gdins.left = left + col1 * shelf_good.width
         gdins.top = top + row * shelf_good.height
         gdins.col =col + col1
@@ -308,37 +310,13 @@ def get_col_row_dep(shelf_good,level_ins,flag):
             col_nums = int(shelf_good.faces_num)
         row_nums = 1
         dep_nums = int(math.floor(float(level_ins.level_depth) / shelf_good.depth))
+    col_row_deps = []
+    for dep in dep_nums:
+        for row in row_nums:
+            for col in col_nums:
+                col_row_deps.append((col,row,col))
+    return col_row_deps
 
-    if shelf_good.gooddisplay_inss == None or len(shelf_good.gooddisplay_inss) == 0 :
-        return 0,0,0
-    else:
-        cols = []
-        rows = []
-        deps = []
-        for gooddisplay_ins in shelf_good.gooddisplay_inss:
-            if gooddisplay_ins.row == 0 and gooddisplay_ins.dep == 0 :
-                cols.append(gooddisplay_ins.col)
-            if  gooddisplay_ins.col == 0 and gooddisplay_ins.dep == 0 :
-                rows.append(gooddisplay_ins.row)
-            if gooddisplay_ins.row == 0 and gooddisplay_ins.col == 0 :
-                deps.append(gooddisplay_ins.dep)
-        if deps[-1] < dep_nums - 1:
-            col = cols[-1]
-            row = rows[-1]
-            dep = deps[-1] + 1
-            return col, row, dep
-        elif rows[-1] < row_nums - 1:
-            col = cols[-1]
-            row = rows[-1] + 1
-            dep = deps[0]
-            return col, row, dep
-        elif cols[-1] < col_nums -1:
-            col = cols[-1]+1
-            row = rows[0]
-            dep = deps[0]
-            return col, row, dep
-        else:
-            return -1, -1, -1
 
 
 
