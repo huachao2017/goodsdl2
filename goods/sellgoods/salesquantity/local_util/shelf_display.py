@@ -154,18 +154,19 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
 def put_good_to_last_second(shelf_good,shelf_levels,need_good_weight):
     level_ins1 = None
     level_ins2 = None
+    print (shelf_levels)
     if shelf_levels != None and len(shelf_levels) > 1:
         level_ins1 = shelf_levels[-1]
         level_ins2 = shelf_levels[-2]
     elif   shelf_levels != None and len(shelf_levels) == 1:
         level_ins1 = shelf_levels[-1]
-
     if level_ins1 != None and need_good_weight <= level_ins1.level_none_good_width:  # 满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
         put_good(level_ins1, shelf_good)
         return True
     elif level_ins2 != None and  need_good_weight <= level_ins2.level_none_good_width: #满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
         put_good(level_ins2, shelf_good)
         return True
+    return False
 
 
 
