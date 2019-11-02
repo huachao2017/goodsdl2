@@ -162,7 +162,7 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
 def put_good_to_last_second(shelf_good,shelf_levels,need_good_weight):
     level_ins1 = None
     level_ins2 = None
-    print (shelf_levels)
+    # print (shelf_levels)
     if shelf_levels != None and len(shelf_levels) > 1:
         level_ins1 = shelf_levels[-1]
         level_ins2 = shelf_levels[-2]
