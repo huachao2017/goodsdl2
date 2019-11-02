@@ -244,8 +244,8 @@ def get_level_height(level_ins):
 def get_level_goods_col_sum(level_ins):
     goods_width  = 0
     for level_good in  level_ins.goods:
+        good_width = 0
         for gooddisplay_ins in level_good.gooddisplay_inss:
-            good_width = 0
             if gooddisplay_ins.row == 0 and gooddisplay_ins.dep == 0 :
                 good_width+=level_good.width
         goods_width += good_width
