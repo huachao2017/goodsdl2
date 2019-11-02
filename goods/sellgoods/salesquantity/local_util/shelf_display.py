@@ -37,6 +37,7 @@ def put_none_level_good_to_shelf(tz_ins):
 def put_good_to_tz(tz_ins):
     try_flag = False
     for i in range(tz_display_maxitems):
+        print("try display nums = "+str(i))
         shelfs = tz_ins.shelfs
         tz_goods = tz_ins.calculate_goods_array
         shelf_goods = display_rule.sort_display_code(tz_goods)  # 陈列分类  TODO 需要等加入陈列分类后测试 加入
@@ -47,6 +48,7 @@ def put_good_to_tz(tz_ins):
         end_shelf_height = None
         width_kedu_sum = 0
         for shelf_ins,cnt in zip(shelfs,range(len(shelfs))):
+            print("display shelf_num  = " + str(cnt))
             isAlter = False # 是不是最后一个货架
             if cnt == len(shelfs)-1:
                 isAlter = True
@@ -54,31 +56,15 @@ def put_good_to_tz(tz_ins):
             shelf_width = shelf_ins.width
             shelf_height = shelf_ins.height
             shelf_depth = shelf_ins.depth
-            shelf_levels = []
+            shelf_levels = shelf_ins.levels
+            if shelf_levels == None :
+                shelf_levels=[]
             if isAlter == False:  #不是最后一个货架
-                level_ins = get_level(shelf_levels, shelf_height, shelf_width, shelf_depth, isAlter=isAlter)
-                if level_ins == None:
-                    break
-                else:
-                    put_shelf_goods = put_good_to_level(level_ins, put_shelf_goods,shelf_levels)
-                    shelf_levels.append(level_ins)
+                flag,put_shelf_goods = put_none_last_shelf(shelf_levels, shelf_height, shelf_width, shelf_depth, put_shelf_goods)
+                if flag :
+                    return
             else:
-                end_shelf_height = shelf_height
-                for j in range(shelf_levels_max):
-                    if put_shelf_goods != None and len(put_shelf_goods)>0 :
-                        level_ins = get_level(shelf_levels,shelf_height,shelf_width,shelf_depth,isAlter=isAlter)
-                        if level_ins != None :
-                            put_shelf_goods = put_good_to_level(level_ins,put_shelf_goods,shelf_levels)
-                            shelf_levels.append(level_ins)
-                    else: # 没有摆放商品时 ，摆放结束
-                        break
-                for level_ins in shelf_levels:
-                    if level_ins.isTrue == False:
-                        try_flag = True
-                        # 获取 未生效层 总刻度宽度
-                        width_kedu_sum += get_level_kedu(level_ins)
-                end_shelf_levels = shelf_levels
-            shelf_ins.levels = shelf_levels
+                try_flag, width_kedu_sum = put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag)
         if try_flag: # 层多于 货架物理层数
             # TODO 调用api 重新获取商品信息 需要传入变化的刻度
             print ("do..............")
@@ -103,6 +89,41 @@ def put_good_to_tz(tz_ins):
             continue
     return tz_ins
 
+
+# 上架到非最后一个货架
+def put_none_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods):
+    flag = False # 摆放结束的标志
+    for j in range(shelf_levels_max):
+        if put_shelf_goods != None and len(put_shelf_goods) > 0:
+            level_ins = get_level(shelf_levels, shelf_height, shelf_width, shelf_depth, isAlter=False)
+            if level_ins == None:
+                break
+            else:
+                put_shelf_goods = put_good_to_level(level_ins, put_shelf_goods, shelf_levels)
+                shelf_levels.append(level_ins)
+        else:
+            print ("选品不够 ，未摆满货架 ...... ")
+            flag = True
+    return flag,put_shelf_goods
+
+# 上架到最后一个货架
+def put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag):
+    width_kedu_sum = 0
+    for j in range(shelf_levels_max):
+        if put_shelf_goods != None and len(put_shelf_goods) > 0:
+            level_ins = get_level(shelf_levels, shelf_height, shelf_width, shelf_depth, isAlter=True)
+            if level_ins != None:
+                put_shelf_goods = put_good_to_level(level_ins, put_shelf_goods, shelf_levels)
+                shelf_levels.append(level_ins)
+        else:  # 没有摆放商品时 ，摆放结束
+            break
+    for level_ins in shelf_levels:
+        if level_ins.isTrue == False:
+            try_flag = True
+            # 获取 未生效层 总刻度宽度
+            width_kedu_sum += get_level_kedu(level_ins)
+    return try_flag,width_kedu_sum
+
 # 上商品到层
 def put_good_to_level(level_ins,shelf_goods,shelf_levels):
     new_shelf_goods = []
@@ -115,7 +136,9 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
             need_good_weight = shelf_good.faces_num * shelf_good.width
         # 优先放置前面没有放满的上两层
         if flag:
-            shelf_levels = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
+            fl1 = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
+            if fl1:
+                continue
             print ("level_id , level_none_good_width,need_good_weight =  %s,%s,%s"%(str(level_ins.level_id),str(level_ins.level_none_good_width),str(need_good_weight)))
             if (level_ins.goods == None or len(level_ins.goods) < 1) or (need_good_weight <= level_ins.level_none_good_width): #如果层上没有商品 或者 满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
                 put_good(level_ins,shelf_good)
@@ -139,9 +162,11 @@ def put_good_to_last_second(shelf_good,shelf_levels,need_good_weight):
 
     if level_ins1 != None and need_good_weight <= level_ins1.level_none_good_width:  # 满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
         put_good(level_ins1, shelf_good)
+        return True
     elif level_ins2 != None and  need_good_weight <= level_ins2.level_none_good_width: #满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
-        level_ins2 = put_good(level_ins2, shelf_good)
-        shelf_levels[-2] = level_ins2
+        put_good(level_ins2, shelf_good)
+        return True
+
 
 
 
