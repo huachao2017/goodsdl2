@@ -109,7 +109,7 @@ def put_none_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_sh
     return flag,put_shelf_goods
 
 # 上架到最后一个货架
-def put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag,end_shelf_height,end_shelf_levels):
+def put_last_shelf(shelf_levels,shelf_height,shelf_width,shelf_depth,put_shelf_goods,try_flag):
     width_kedu_sum = 0
     for j in range(shelf_levels_max):
         if put_shelf_goods != None and len(put_shelf_goods) > 0:
