@@ -238,8 +238,10 @@ def put_good(level_ins,shelf_good):
             level_ins.goods = []
         level_ins.goods.append(shelf_good)
     # 更新 层的剩余宽度
+    print (get_level_goods_col_sum(level_ins))
     level_ins.level_none_good_width = level_ins.level_width - get_level_goods_col_sum(level_ins)
     # 更新层的高度
+    print (get_level_height(level_ins))
     level_ins.level_height = get_level_height(level_ins)
     print("level_id , level_none_good_width,single_good_weight =  %s,%s,%s" % (
         str(level_ins.level_id), str(level_ins.level_none_good_width), str(shelf_good.width)))
