@@ -18,6 +18,14 @@ def generate(tz_ins):
     # 上架商品到tz
 
     print ("tz.kedu1 "+str(tz_ins.last_twidth))
+    for good_ins in tz_ins.calculate_goods_array:
+        if good_ins.width == 0 or good_ins.width==None:
+            good_ins.width = 20
+        if good_ins.height == 0 or good_ins.height==None:
+            good_ins.height = 20
+        if good_ins.depth == 0 or good_ins.depth==None:
+            good_ins.depth = 20
+    
     put_good_to_tz(tz_ins)
     print("tz.kedu2 " + str(tz_ins.last_twidth))
     for shelf_ins in tz_ins.shelfs:
@@ -29,7 +37,7 @@ def generate(tz_ins):
 def put_none_level_good_to_shelf(tz_ins):
     # 返回 [shelf_id,level_id,[good_ins]]
     # TODO 调用api  填充商品
-    shelf_goods_list = api_get_level_none_good(tz_ins)
+    shelf_goods_list = service_for_display.shelf_gap_choose_goods(tz_ins)
     for shelf_ins in tz_ins.shelfs:
         for level_ins in shelf_ins.levels:
             for (shelf_id,level_id,good_inss) in shelf_goods_list:
@@ -152,9 +160,9 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
         if flag:
             print("level_id , level_none_good_width,need_good_weight =  %s,%s,%s" % (
                 str(level_ins.level_id), str(level_ins.level_none_good_width), str(need_good_weight)))
-            # fl1 = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
-            # if fl1:
-            #     continue
+            fl1 = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
+            if fl1:
+                continue
             if (level_ins.goods == None or len(level_ins.goods) < 1) or (need_good_weight <= level_ins.level_none_good_width): #如果层上没有商品 或者 满足摆放条件 层上剩余宽度 > 摆放当前upc 所需宽度 摆放商品
                 put_good(level_ins,shelf_good)
             else:

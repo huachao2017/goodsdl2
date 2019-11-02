@@ -110,7 +110,7 @@ def print_taizhang(taizhang,image_dir):
 
 if __name__ == "__main__":
     taizhang = generate_displays(806,1142)
-    print(taizhang)
+    # print(taizhang)
     image_dir = '/home/src/goodsdl2/media/images/taizhang/{}'.format(taizhang.tz_id)
     os.makedirs(image_dir)
     print_taizhang(taizhang, image_dir)
