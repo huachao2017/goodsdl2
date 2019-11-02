@@ -202,8 +202,7 @@ def put_good(level_ins,shelf_good):
             level_ins.goods = []
         level_ins.goods.append(shelf_good)
     # 更新 层的剩余宽度
-    level_ins.level_none_good_width = level_ins.width - get_level_goods_col_sum(level_ins)
-
+    level_ins.level_none_good_width = level_ins.level_width - get_level_goods_col_sum(level_ins)
 
 def get_level_goods_col_sum(level_ins):
     goods_width  = 0
