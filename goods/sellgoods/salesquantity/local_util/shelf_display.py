@@ -198,6 +198,8 @@ def put_good(level_ins,shelf_good):
                         gdins.left = left+i*shelf_good.width
                         gdins.top = top + j*shelf_good.height
                         shelf_good.gooddisplay_inss.append(gdins)
+        if level_ins.goods == None:
+            level_ins.goods = []
         level_ins.goods.append(shelf_good)
     # 更新 层的剩余宽度
     level_ins.level_none_good_width = level_ins.width - get_level_goods_col_sum(level_ins)
