@@ -16,8 +16,10 @@ def generate(tz_ins):
      :return:
      """
     # 上架商品到tz
-    put_good_to_tz(tz_ins)
 
+    print ("tz.kedu1 "+str(tz_ins.last_twidth))
+    put_good_to_tz(tz_ins)
+    print("tz.kedu2 " + str(tz_ins.last_twidth))
     for shelf_ins in tz_ins.shelfs:
         # 计算上架后的货架 根据level冗余宽度 填充商品
         for level_ins in shelf_ins.levels:
