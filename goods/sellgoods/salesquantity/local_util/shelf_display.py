@@ -202,7 +202,7 @@ def put_good_to_last_second(shelf_good,shelf_levels,need_good_weight):
     return False
 
 # 商品夸层时 上商品
-def put_good_many_level(level_ins,shelf_good,shelf_width):
+def put_good_many_level(level_ins,shelf_good):
     col = 0
     left = 0
     top = 0
