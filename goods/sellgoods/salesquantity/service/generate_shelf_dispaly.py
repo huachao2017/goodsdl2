@@ -117,7 +117,6 @@ if __name__ == "__main__":
         f.write(str(taizhang.__str__()))
     image_dir = '/home/src/goodsdl2/media/images/taizhang/{}'.format(taizhang.tz_id)
     from pathlib import Path
-    if Path(image_dir).exists():
-        os.removedirs(image_dir)
-    os.makedirs(image_dir)
+    if not Path(image_dir).exists():
+        os.makedirs(image_dir)
     print_taizhang(taizhang, image_dir)
