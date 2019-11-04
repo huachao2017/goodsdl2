@@ -105,11 +105,12 @@ def print_taizhang(taizhang,image_dir):
                 level_start_height = level.level_start_height
                 for good in level.goods:
                     for gooddisplay in good.gooddisplay_inss:
-                        point1 = (gooddisplay.left,gooddisplay.top+level_start_height)
-                        point2 = (gooddisplay.left+good.width,gooddisplay.top+level_start_height+good.height)
-                        cv2.rectangle(image,point1,point2,(0,0,255),2)
-                        txt_point = (gooddisplay.left,gooddisplay.top+level_start_height-int(good.height/2))
-                        cv2.putText(image, '{}'.format(good.mch_good_code),txt_point, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
+                        if gooddisplay.dep == 0:
+                            point1 = (gooddisplay.left,gooddisplay.top+level_start_height)
+                            point2 = (gooddisplay.left+good.width,gooddisplay.top+level_start_height+good.height)
+                            cv2.rectangle(image,point1,point2,(0,0,255),2)
+                            txt_point = (gooddisplay.left,gooddisplay.top+level_start_height+int(good.height/2))
+                            cv2.putText(image, '{}'.format(good.mch_good_code),txt_point, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
         cv2.imwrite(image_path,image)
 
 if __name__ == "__main__":
