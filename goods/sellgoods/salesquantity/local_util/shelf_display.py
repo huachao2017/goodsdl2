@@ -216,7 +216,7 @@ def put_good_many_level(level_ins,shelf_good):
             width = level_good.width
             for good_display_ins in level_good.gooddisplay_inss:
                 if good_display_ins.dep == 0 and good_display_ins.row == 0 :
-                    left += (good_display_ins.left +width)
+                    left +=  width
                     col = good_display_ins.col + 1
     if shelf_good.gooddisplay_inss == None or len(shelf_good.gooddisplay_inss) <1:
         shelf_good.gooddisplay_inss = []
