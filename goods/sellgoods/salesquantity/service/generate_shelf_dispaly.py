@@ -92,6 +92,9 @@ def generate_displays(uc_shopid, tz_id):
 
 def print_taizhang(taizhang,image_dir):
     index = 0
+
+    # import PIL.ImageFont as ImageFont
+    #     fontText = ImageFont.truetype("font/simsun.ttc", 12, encoding="utf-8")
     for shelf in taizhang.shelfs:
         index += 1
         image_path = os.path.join(image_dir,'{}.jpg'.format(index))
@@ -103,10 +106,10 @@ def print_taizhang(taizhang,image_dir):
                 for good in level.goods:
                     for gooddisplay in good.gooddisplay_inss:
                         point1 = (gooddisplay.left,gooddisplay.top+level_start_height)
-                        point2 = (gooddisplay.left+good.width,gooddisplay.top+level_start_height-good.height)
+                        point2 = (gooddisplay.left+good.width,gooddisplay.top+level_start_height+good.height)
                         cv2.rectangle(image,point1,point2,(0,0,255),2)
                         txt_point = (gooddisplay.left,gooddisplay.top+level_start_height-int(good.height/2))
-                        cv2.putText(image, '{}'.format(good.name),txt_point, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
+                        cv2.putText(image, '{}'.format(good.mch_good_code),txt_point, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
         cv2.imwrite(image_path,image)
 
 if __name__ == "__main__":
