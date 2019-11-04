@@ -28,6 +28,8 @@ def get_raw_shop_shelfs(uc_shopid, tz_id = None):
     (shopid, mch_id) = cursor.fetchone()
 
     # 获取台账
+    print(uc_shopid)
+    print(tz_id)
     if tz_id is None:
         cursor.execute("select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(uc_shopid))
     else:
