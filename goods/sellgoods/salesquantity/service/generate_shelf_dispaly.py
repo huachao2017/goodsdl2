@@ -21,7 +21,8 @@ def generate_displays(uc_shopid, tz_id):
     taizhang = Taizhang()
     # 生成taizhang对象，初始化所有数据相关的字段
     raw_shelfs = get_raw_shop_shelfs(uc_shopid,tz_id)
-    print(raw_shelfs)
+    if raw_shelfs is None or len(raw_shelfs):
+        raise ValueError('not found shelf!')
     taizhang.tz_id = tz_id
     for raw_shelf in raw_shelfs:
         shelf = Shelf(

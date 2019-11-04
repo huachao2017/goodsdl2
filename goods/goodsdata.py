@@ -28,8 +28,6 @@ def get_raw_shop_shelfs(uc_shopid, tz_id = None):
     (shopid, mch_id) = cursor.fetchone()
 
     # 获取台账
-    print(uc_shopid)
-    print(tz_id)
     if tz_id is None:
         cursor.execute("select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(uc_shopid))
     else:
@@ -37,7 +35,6 @@ def get_raw_shop_shelfs(uc_shopid, tz_id = None):
             "select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
                 uc_shopid, tz_id))
     taizhangs = cursor.fetchall()
-    print(taizhangs)
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
         shelf_id = taizhang[1]
@@ -49,10 +46,8 @@ def get_raw_shop_shelfs(uc_shopid, tz_id = None):
         except:
             print('获取台账陈列失败：{}！'.format(taizhang_id))
             associated_catids = None
-        print(associated_catids)
         if associated_catids is None or associated_catids == '':
             associated_catids = '0501,0502,0503,0504,0505,0506'  # FIXME only for test
-        print(associated_catids)
 
         cursor.execute("select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(shelf_id))
         (shelf_no, length, height, depth) = cursor.fetchone()
