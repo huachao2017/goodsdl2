@@ -3,7 +3,7 @@ from goods.sellgoods.salesquantity.proxy import display_rule
 from goods.sellgoods.commonbean.good import GoodDisplay
 import math
 import copy
-from goods.sellgoods.auto_display import service_for_display
+from goods.sellgoods.auto_choose_goods import out_service_api
 from set_config import config
 tz_display_maxitems = config.shellgoods_params['shelf_display_maxitems']
 shelf_levels_max = config.shellgoods_params['shelf_levels_max']
@@ -26,11 +26,22 @@ def generate(tz_ins):
         for level_ins in shelf_ins.levels:
             print ("shelf_id,level_id , sum, level_height,level_start_height "+str((shelf_ins.shelf_id,level_ins.level_id,len(level_ins.goods),level_ins.level_height,level_ins.level_start_height)))
     put_none_level_good_to_shelf(tz_ins)
+    put_level_good_none(tz_ins)
+
+def put_level_good_none(tz_ins):
+    # 返回 [shelf_id,level_id,[good_ins]]
+    # TODO 调用api  填充品后还有 空余  使用该api
+    shelf_goods_list = out_service_api.shelf_gap_expand_gooods(tz_ins)
+    for shelf_ins in tz_ins.shelfs:
+        for level_ins in shelf_ins.levels:
+            for (shelf_id, level_id, good_inss) in shelf_goods_list:
+                if shelf_ins.shelf_id == shelf_id and level_ins.level_id == level_id:
+                    put_good(level_ins, good_inss)
 
 def put_none_level_good_to_shelf(tz_ins):
     # 返回 [shelf_id,level_id,[good_ins]]
     # TODO 调用api  填充商品
-    shelf_goods_list = service_for_display.shelf_gap_choose_goods(tz_ins)
+    shelf_goods_list = out_service_api.shelf_gap_choose_goods(tz_ins)
     for shelf_ins in tz_ins.shelfs:
         for level_ins in shelf_ins.levels:
             for (shelf_id,level_id,good_inss) in shelf_goods_list:
@@ -76,7 +87,7 @@ def put_good_to_tz(tz_ins):
         if try_flag: # 层多于 货架物理层数
             # TODO 调用api 重新获取商品信息 需要传入变化的刻度
             print ("max true level do..............")
-            is_update_flag = service_for_display.update_mark_goods_array(tz_ins, 0-width_kedu_sum)
+            is_update_flag = out_service_api.update_mark_goods_array(tz_ins, 0-width_kedu_sum)
             # is_update_flag = api_get_shelf_goods(tz_ins,(0-width_kedu_sum))
             if is_update_flag == False:
                 break
@@ -91,7 +102,7 @@ def put_good_to_tz(tz_ins):
             level_end_width_kedu_sum = get_level_kedu(end_shelf_levels[-1])
             # TODO 调用api 重新获取商品信息 需要传入变化的刻度
             print("min true level do..............")
-            is_update_flag = service_for_display.update_mark_goods_array(tz_ins, 0 + level_end_width_kedu_sum)
+            is_update_flag = out_service_api.update_mark_goods_array(tz_ins, 0 + level_end_width_kedu_sum)
             # is_update_flag = api_get_shelf_goods(tz_ins, 0 + level_end_width_kedu_sum)
             if is_update_flag == False:
                 break
