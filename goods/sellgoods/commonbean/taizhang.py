@@ -43,18 +43,19 @@ class Taizhang:
             ret += str(shelf.shelf_id)
             ret += '\n[\n'
             for level in shelf.levels:
-                ret += '\tlevel_id:{}\n'.format(level.level_id)
-                ret += '\theight:{}\n'.format(level.level_height)
-                ret += '\tgoods:[\n'
-                for good in level.goods:
-                    for gooddisplay in good.gooddisplay_inss:
-                        ret += '\tmch_goods_code:{}\n'.format(good.mch_good_code)
-                        ret += '\ttop:{}\n'.format(gooddisplay.top)
-                        ret += '\tleft:{}\n'.format(gooddisplay.left)
-                        ret += '\trow:{}\n'.format(gooddisplay.row)
-                        ret += '\tcol:{}\n'.format(gooddisplay.col)
-                        ret += '\tdep:{}\n'.format(gooddisplay.dep)
-
+                if level.isTrue:
+                    ret += '\tlevel_id:{}\n'.format(level.level_id)
+                    ret += '\theight:{}\n'.format(level.level_height)
+                    ret += '\tgoods:[\n'
+                    for good in level.goods:
+                        ret += '\t\t{}-{},{},{}:[\n'.format(good.mch_good_code,good.width,good.height,good.depth)
+                        for gooddisplay in good.gooddisplay_inss:
+                            ret += '\t\ttop:{}\n'.format(gooddisplay.top)
+                            ret += '\t\tleft:{}\n'.format(gooddisplay.left)
+                            ret += '\t\trow:{}\n'.format(gooddisplay.row)
+                            ret += '\t\tcol:{}\n'.format(gooddisplay.col)
+                            ret += '\t\tdep:{}\n'.format(gooddisplay.dep)
+                        ret += '\t\t]\n'
                 ret += '\t]\n'
             ret += '\n]'
 

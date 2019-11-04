@@ -98,22 +98,25 @@ def print_taizhang(taizhang,image_dir):
         image = np.ones((shelf.width,shelf.height,3),dtype=np.int8)
         image = image*255
         for level in shelf.levels:
-            level_start_height = level.level_start_height
-            for good in level.goods:
-                for gooddisplay in good.gooddisplay_inss:
-                    point1 = (gooddisplay.left,gooddisplay.top+level_start_height)
-                    point2 = (gooddisplay.left+good.width,gooddisplay.top+level_start_height-good.height)
-                    cv2.rectangle(image,point1,point2,(0,0,255),2)
-                    txt_point = (gooddisplay.left,gooddisplay.top+level_start_height-int(good.height/2))
-                    cv2.putText(image, '{}'.format(good.name),txt_point, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
+            if level.isTrue:
+                level_start_height = level.level_start_height
+                for good in level.goods:
+                    for gooddisplay in good.gooddisplay_inss:
+                        point1 = (gooddisplay.left,gooddisplay.top+level_start_height)
+                        point2 = (gooddisplay.left+good.width,gooddisplay.top+level_start_height-good.height)
+                        cv2.rectangle(image,point1,point2,(0,0,255),2)
+                        txt_point = (gooddisplay.left,gooddisplay.top+level_start_height-int(good.height/2))
+                        cv2.putText(image, '{}'.format(good.name),txt_point, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
         cv2.imwrite(image_path,image)
 
 if __name__ == "__main__":
     taizhang = generate_displays(806,1142)
     # print(taizhang)
+    import os
+    with open("1.txt","w") as f:
+        f.write(str(taizhang.__str__()))
     image_dir = '/home/src/goodsdl2/media/images/taizhang/{}'.format(taizhang.tz_id)
     from pathlib import Path
-    if Path(image_dir).exists():
-        os.removedirs(image_dir)
-    os.makedirs(image_dir)
+    if not Path(image_dir).exists():
+        os.makedirs(image_dir)
     print_taizhang(taizhang, image_dir)
