@@ -52,7 +52,7 @@ def shelf_gap_expand_gooods(taizhang):
     :param taizhang:
     :return:
     """
-    shelf_gap_expand_gooods_origin(taizhang)
+    return shelf_gap_expand_gooods_origin(taizhang)
 
 if __name__ == '__main__':
     shelf_gap_expand_gooods('1')
