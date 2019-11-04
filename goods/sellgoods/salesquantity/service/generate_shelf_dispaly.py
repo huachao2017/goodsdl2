@@ -120,6 +120,7 @@ def print_taizhang(taizhang,image_dir):
                             goods_image_path = os.path.join(image_dir, goods_image_name)
                             urllib.request.urlretrieve(picurl, goods_image_path)
                             goods_image = cv2.imread(goods_image_path)
+                            goods_image = cv2.resize(goods_image,(good.width,good.height))
                         except Exception as e:
                             print('get goods pic error:{}'.format(e))
                             goods_image = None
