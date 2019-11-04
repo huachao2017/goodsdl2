@@ -162,8 +162,8 @@ def put_good_to_level(level_ins,shelf_goods,shelf_levels):
             need_good_weight = shelf_good.faces_num * shelf_good.width
         # 优先放置前面没有放满的上两层
         if flag:
-            print("level_id , level_none_good_width,need_good_weight =  %s,%s,%s" % (
-                str(level_ins.level_id), str(level_ins.level_none_good_width), str(need_good_weight)))
+            # print("level_id , level_none_good_width,need_good_weight =  %s,%s,%s" % (
+            #     str(level_ins.level_id), str(level_ins.level_none_good_width), str(need_good_weight)))
             fl1 = put_good_to_last_second(shelf_good, shelf_levels, need_good_weight)
             if fl1:
                 continue
@@ -330,8 +330,8 @@ def get_level_height(level_ins):
     for level_good in level_ins.goods:
         for gooddisplay_ins in level_good.gooddisplay_inss:
             if gooddisplay_ins.dep == 0 :
-                print(
-                    "gooddisplay_ins.dep = " + str(gooddisplay_ins.dep) + ",level_good.height" + str(level_good.height))
+                # print(
+                #     "gooddisplay_ins.dep = " + str(gooddisplay_ins.dep) + ",level_good.height" + str(level_good.height))
                 level_height = 0
                 if level_good.is_superimpose :
                     level_height = level_good.superimpose_rows * level_good.height
@@ -347,7 +347,7 @@ def get_level_goods_col_sum(level_ins):
         good_width = 0
         for gooddisplay_ins in level_good.gooddisplay_inss:
             if gooddisplay_ins.row == 0 and gooddisplay_ins.dep == 0 :
-                print("gooddisplay_ins.dep = " + str(gooddisplay_ins.dep) + ",level_good.width" + str(level_good.width))
+                # print("gooddisplay_ins.dep = " + str(gooddisplay_ins.dep) + ",level_good.width" + str(level_good.width))
                 good_width+=level_good.width
         goods_width += good_width
     return goods_width
