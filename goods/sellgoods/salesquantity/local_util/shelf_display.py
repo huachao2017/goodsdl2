@@ -46,11 +46,10 @@ def put_good_to_tz(tz_ins):
         print("try display nums = "+str(i))
         shelfs = tz_ins.shelfs
         tz_goods = tz_ins.calculate_goods_array
-        # shelf_goods = display_rule.sort_display_code(tz_goods)  # 陈列分类  TODO 需要等加入陈列分类后测试 加入
+        shelf_goods = display_rule.sort_code_and_height(tz_goods)  # 陈列分类  TODO 需要等加入陈列分类后测试 加入
         # shelf_goods = display_rule.sort_good_height(shelf_goods)  # 商品高度
         # shelf_goods = display_rule.sort_good_volume(shelf_goods)  # 商品体积
-        # put_shelf_goods = shelf_goods.copy()
-        put_shelf_goods = tz_goods
+        put_shelf_goods = shelf_goods.copy()
         end_shelf_levels = None
         end_shelf_height = None
         width_kedu_sum = 0
