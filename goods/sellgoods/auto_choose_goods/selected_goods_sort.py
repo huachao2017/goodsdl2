@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import os,django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings_public")
 django.setup()
 
 from django.db import connections
