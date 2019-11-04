@@ -21,6 +21,7 @@ def generate_displays(uc_shopid, tz_id):
     taizhang = Taizhang()
     # 生成taizhang对象，初始化所有数据相关的字段
     raw_shelfs = get_raw_shop_shelfs(uc_shopid,tz_id)
+    print(raw_shelfs)
     taizhang.tz_id = tz_id
     for raw_shelf in raw_shelfs:
         shelf = Shelf(
@@ -98,18 +99,22 @@ def print_taizhang(taizhang,image_dir):
     for shelf in taizhang.shelfs:
         index += 1
         image_path = os.path.join(image_dir,'{}.jpg'.format(index))
-        image = np.ones((shelf.height,shelf.width,3),dtype=np.int8)
+        image = np.ones((shelf.height,shelf.width,3),dtype=np.int16)
         image = image*255
 
         for level in shelf.levels:
             if level.isTrue:
                 level_start_height = level.level_start_height
                 for good in level.goods:
+                    goods_image_name = '{}.jpg'.format(shopid, shelfid, now.strftime('%M%S'))
+                    goods_image_path = os.path.join(image_dir, source_image_name)
+                    urllib.request.urlretrieve(picurl, source_image_path)
+
                     for gooddisplay in good.gooddisplay_inss:
                         if gooddisplay.dep == 0:
                             point1 = (gooddisplay.left,shelf.height-(gooddisplay.top+level_start_height+good.height))
                             point2 = (gooddisplay.left+good.width,shelf.height-(gooddisplay.top+level_start_height))
-                            cv2.rectangle(image,point1,point2,(0,0,255),2)
+                            # cv2.rectangle(image,point1,point2,(0,0,255),2)
                             txt_point = (gooddisplay.left,shelf.height-(gooddisplay.top+level_start_height+int(good.height/2)))
                             cv2.putText(image, '{}'.format(good.mch_good_code),txt_point, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
         cv2.imwrite(image_path,image)
