@@ -46,8 +46,10 @@ def get_raw_shop_shelfs(uc_shopid, tz_id = None):
         except:
             print('获取台账陈列失败：{}！'.format(taizhang_id))
             associated_catids = None
+        print(associated_catids)
         if associated_catids is None or associated_catids == '':
             associated_catids = '0501,0502,0503,0504,0505,0506'  # FIXME only for test
+        print(associated_catids)
 
         cursor.execute("select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(shelf_id))
         (shelf_no, length, height, depth) = cursor.fetchone()
