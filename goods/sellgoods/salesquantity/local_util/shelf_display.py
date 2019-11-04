@@ -36,7 +36,8 @@ def put_level_good_none(tz_ins):
         for level_ins in shelf_ins.levels:
             for (shelf_id, level_id, good_inss) in shelf_goods_list:
                 if shelf_ins.shelf_id == shelf_id and level_ins.level_id == level_id:
-                    put_good(level_ins, good_inss)
+                    for good_ins in good_inss:
+                        put_good(level_ins,good_ins)
 
 def put_none_level_good_to_shelf(tz_ins):
     # 返回 [shelf_id,level_id,[good_ins]]
@@ -46,7 +47,8 @@ def put_none_level_good_to_shelf(tz_ins):
         for level_ins in shelf_ins.levels:
             for (shelf_id,level_id,good_inss) in shelf_goods_list:
                 if shelf_ins.shelf_id == shelf_id and level_ins.level_id == level_id:
-                    put_good(level_ins,good_inss)
+                    for good_ins in good_inss:
+                        put_good(level_ins,good_ins)
 
 
 
