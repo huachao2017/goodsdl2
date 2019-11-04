@@ -196,7 +196,7 @@ class DataRawShelf():
         self.height = height
         self.depth = depth
         if associated_catids is None or associated_catids == '':
-            self.associated_catids = []
+            self.associated_catids = None
         else:
             self.associated_catids = associated_catids.split(',')
 
