@@ -319,9 +319,9 @@ def get_col_row_dep(shelf_good,level_ins,flag):
         row_nums = 1
         dep_nums = int(math.floor(float(level_ins.level_depth) / shelf_good.depth))
     col_row_deps = []
-    for dep in range(dep_nums):
+    for col in range(col_nums):
         for row in range(row_nums):
-            for col in range(col_nums):
+            for dep in range(dep_nums):
                 col_row_deps.append((col,row,dep))
     return col_row_deps
 
