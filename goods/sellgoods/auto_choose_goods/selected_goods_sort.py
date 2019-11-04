@@ -268,7 +268,7 @@ class ShelfGoodsSort():
         # all_data = get_data(1284,'3598')
         return all_data
 
-    def run(self, r=0.5, m=2, ave_ratio=1.5):
+    def run(self):
         """
 
         :param data:
@@ -301,7 +301,7 @@ class ShelfGoodsSort():
 
             for third_code,amount in third_class_dict.items():
                 times = float(amount)/min      # 是商品数最少的类的数量的几倍
-                shrink_times = times ** r      # 放缩后的倍数
+                shrink_times = times ** self.r      # 放缩后的倍数
                 shrink_times_int = int(shrink_times)
                 sales_sorted_goods = self.get_class_sales_sort(third_code)
                 # print('sales_sorted_goods:',sales_sorted_goods)
@@ -316,12 +316,12 @@ class ShelfGoodsSort():
                 if shrink_times > shrink_times_int:
                     if len(sales_sorted_goods) > shrink_times_int+1:
                         # print(len(sales_sorted_goods),shrink_times_int)
-                        if sales_sorted_goods[shrink_times_int+1][4] > ave_ratio*average_sales:
+                        if sales_sorted_goods[shrink_times_int+1][4] > self.ave_ratio*average_sales:
                             every_epoch_goods_list.append(sales_sorted_goods[shrink_times_int+1])
                             shrink_times_int += 1
 
-                if m > 0:     # 和平均销售额比，增加或减少m个
-                    for e in range(1,m+1):
+                if self.m > 0:     # 和平均销售额比，增加或减少m个
+                    for e in range(1,self.m+1):
                         every_epoch_goods_list, state = self.add_or_reduce_goods(every_epoch_goods_list, average_sales,sales_sorted_goods, shrink_times_int)
                         if state == "add":
                             shrink_times_int += 1
