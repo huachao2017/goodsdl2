@@ -32,6 +32,7 @@ def put_level_good_none(tz_ins):
     # 返回 [shelf_id,level_id,[good_ins]]
     # TODO 调用api  填充品后还有 空余  使用该api
     shelf_goods_list = out_service_api.shelf_gap_expand_gooods(tz_ins)
+    print ("add level 2 : "+str(len(shelf_goods_list)))
     for shelf_ins in tz_ins.shelfs:
         for level_ins in shelf_ins.levels:
             for (shelf_id, level_id, good_inss) in shelf_goods_list:
@@ -43,6 +44,7 @@ def put_none_level_good_to_shelf(tz_ins):
     # 返回 [shelf_id,level_id,[good_ins]]
     # TODO 调用api  填充商品
     shelf_goods_list = out_service_api.shelf_gap_choose_goods(tz_ins)
+    print("add level 1 : " + str(len(shelf_goods_list)))
     for shelf_ins in tz_ins.shelfs:
         for level_ins in shelf_ins.levels:
             for (shelf_id,level_id,good_inss) in shelf_goods_list:
