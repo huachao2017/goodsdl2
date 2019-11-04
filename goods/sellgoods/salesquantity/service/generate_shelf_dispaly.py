@@ -106,9 +106,9 @@ def print_taizhang(taizhang,image_dir):
             if level.isTrue:
                 level_start_height = level.level_start_height
                 for good in level.goods:
-                    goods_image_name = '{}.jpg'.format(shopid, shelfid, now.strftime('%M%S'))
-                    goods_image_path = os.path.join(image_dir, source_image_name)
-                    urllib.request.urlretrieve(picurl, source_image_path)
+                    # goods_image_name = '{}.jpg'.format(shopid, shelfid, now.strftime('%M%S'))
+                    # goods_image_path = os.path.join(image_dir, source_image_name)
+                    # urllib.request.urlretrieve(picurl, source_image_path)
 
                     for gooddisplay in good.gooddisplay_inss:
                         if gooddisplay.dep == 0:
