@@ -19,14 +19,6 @@ def generate(tz_ins):
     # 上架商品到tz
 
     print ("tz.kedu1 "+str(tz_ins.last_twidth))
-    for good_ins in tz_ins.calculate_goods_array:
-        if good_ins.width == 0 or good_ins.width==None:
-            good_ins.width = 20
-        if good_ins.height == 0 or good_ins.height==None:
-            good_ins.height = 20
-        if good_ins.depth == 0 or good_ins.depth==None:
-            good_ins.depth = 20
-
     put_good_to_tz(tz_ins)
     print("tz.kedu2 " + str(tz_ins.last_twidth))
     for shelf_ins in tz_ins.shelfs:
@@ -51,19 +43,12 @@ def put_none_level_good_to_shelf(tz_ins):
 def put_good_to_tz(tz_ins):
     try_flag = False
     for i in range(tz_display_maxitems):
-        for good_ins in tz_ins.calculate_goods_array:
-            if good_ins.width == 0 or good_ins.width == None:
-                good_ins.width = 20
-            if good_ins.height == 0 or good_ins.height == None:
-                good_ins.height = 20
-            if good_ins.depth == 0 or good_ins.depth == None:
-                good_ins.depth = 20
         print("try display nums = "+str(i))
         shelfs = tz_ins.shelfs
         tz_goods = tz_ins.calculate_goods_array
-        shelf_goods = display_rule.sort_display_code(tz_goods)  # 陈列分类  TODO 需要等加入陈列分类后测试 加入
-        shelf_goods = display_rule.sort_good_height(shelf_goods)  # 商品高度
-        shelf_goods = display_rule.sort_good_volume(shelf_goods)  # 商品体积
+        shelf_goods = display_rule.sort_code_and_height(tz_goods)  # 陈列分类  TODO 需要等加入陈列分类后测试 加入
+        # shelf_goods = display_rule.sort_good_height(shelf_goods)  # 商品高度
+        # shelf_goods = display_rule.sort_good_volume(shelf_goods)  # 商品体积
         put_shelf_goods = shelf_goods.copy()
         end_shelf_levels = None
         end_shelf_height = None
@@ -216,7 +201,7 @@ def put_good_many_level(level_ins,shelf_good):
             width = level_good.width
             for good_display_ins in level_good.gooddisplay_inss:
                 if good_display_ins.dep == 0 and good_display_ins.row == 0 :
-                    left += (good_display_ins.left +width)
+                    left += width
                     col = good_display_ins.col + 1
     if shelf_good.gooddisplay_inss == None or len(shelf_good.gooddisplay_inss) <1:
         shelf_good.gooddisplay_inss = []
@@ -268,7 +253,7 @@ def put_good(level_ins,shelf_good):
             width = level_good.width
             for good_display_ins in level_good.gooddisplay_inss:
                 if good_display_ins.dep == 0 and good_display_ins.row == 0 :
-                    left += (good_display_ins.left +width)
+                    left += width
                     col = good_display_ins.col + 1
     if shelf_good.gooddisplay_inss == None or len(shelf_good.gooddisplay_inss) <1:
         shelf_good.gooddisplay_inss = []
