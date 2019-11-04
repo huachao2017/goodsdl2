@@ -20,10 +20,14 @@ def sort_display_code(shelf_goods):
 def sort_good_height(shelf_goods):
     good_heights = []
     for good_ins in shelf_goods:
-        good_heights.append(int(good_ins.height))
+        if good_ins.is_superimpose == True:
+            good_heights.append(int(good_ins.height)*good_ins.superimpose_rows)
+        else:
+            good_heights.append(int(good_ins.height))
+
     good_heights = list(set(good_heights))
-    # 陈列分类升序排列
-    good_heights.sort()
+    # 陈列分类降序排列
+    good_heights.sort(reverse=True)
     new_shelf_goods = []
     for good_height in good_heights:
         for good_ins in shelf_goods:
@@ -35,10 +39,13 @@ def sort_good_height(shelf_goods):
 def sort_good_volume(shelf_goods):
     good_volumes = []
     for good_ins in shelf_goods:
-        good_volumes.append(int(good_ins.height*good_ins.width*good_ins.depth))
+        if good_ins.is_superimpose == True:
+            good_volumes.append(int(good_ins.height*good_ins.superimpose_rows*good_ins.width*good_ins.depth))
+        else:
+            good_volumes.append(int(good_ins.height * good_ins.width * good_ins.depth))
     good_volumes = list(set(good_volumes))
     # 陈列分类升序排列
-    good_volumes.sort()
+    good_volumes.sort(reverse=True)
     new_shelf_goods = []
     for good_volume in good_volumes:
         for good_ins in shelf_goods:
