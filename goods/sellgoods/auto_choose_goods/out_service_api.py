@@ -2,7 +2,7 @@
 
 import math
 # from goods.goodsdata import *
-from goods.sellgoods.auto_choose_goods.selected_goods_sort import *
+# from goods.sellgoods.auto_choose_goods.selected_goods_sort import *
 from goods.sellgoods.auto_display.service_for_display import *
 # from goods.sellgoods.commonbean.taizhang import *
 
@@ -36,7 +36,7 @@ def update_mark_goods_array(taizhang,shelf_diff_width):
     :param shelf_diff_width 宽度超出或缺少的，超出为负，缺少为正
     :return:
     """
-    update_mark_goods_array(taizhang,shelf_diff_width)
+    update_mark_goods_array_origin(taizhang,shelf_diff_width)
 
 def shelf_gap_choose_goods(taizhang):
     """
@@ -44,10 +44,17 @@ def shelf_gap_choose_goods(taizhang):
 
     :return:(shelf_id,level_id,good对象)的列表
     """
-    result_list = shelf_gap_choose_goods(taizhang)
+    result_list = shelf_gap_choose_goods_origin(taizhang)
     return result_list
-
+def shelf_gap_expand_gooods(taizhang):
+    """
+        对于每层的空隙，进行周边商品增加face来填充
+    :param taizhang:
+    :return:
+    """
+    shelf_gap_expand_gooods_origin(taizhang)
 
 if __name__ == '__main__':
-    a = goods_sort('0502')
-    print(a)
+    shelf_gap_expand_gooods('1')
+    # a = goods_sort('0502')
+    # print(a)
