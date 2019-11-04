@@ -1,5 +1,5 @@
 # 陈列设计规则
-
+import functools
 # 先按code  在按 高度
 def many_sort(good_a, good_b):
     if int(good_a.display_code) > int(good_b.display_code):
@@ -24,7 +24,7 @@ def many_sort(good_a, good_b):
             return -1
 
 def sort_code_and_height(shelf_goods):
-    return shelf_goods.sort(cmp=many_sort)
+    return sorted(shelf_goods, key=functools.cmp_to_key(mycmp=many_sort))
 
 # 商品陈列排序规则2   按优先体积 排序
 def sort_good_volume(shelf_goods):
