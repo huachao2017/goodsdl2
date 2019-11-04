@@ -2,7 +2,7 @@
 
 import math
 # from goods.goodsdata import *
-# from goods.sellgoods.auto_choose_goods.selected_goods_sort import *
+from goods.sellgoods.auto_choose_goods.selected_goods_sort import *
 from goods.sellgoods.auto_display.service_for_display import *
 # from goods.sellgoods.commonbean.taizhang import *
 
