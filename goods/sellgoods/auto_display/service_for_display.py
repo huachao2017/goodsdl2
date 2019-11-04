@@ -75,7 +75,7 @@ def shelf_gap_expand_gooods_origin(taizhang):
     :param taizhang:
     :return:
     """
-
+    result_list = []
     for shelf in taizhang.shelfs:
         for level in shelf.levels:
             if level.level_none_good_width > level.goods[-1].width:
@@ -83,11 +83,12 @@ def shelf_gap_expand_gooods_origin(taizhang):
                 while level.level_none_good_width > add_face_num * level.goods[-1].width:
                     add_face_num += 1
                 add_face_num -= 1
-                level.goods[-1].faces_num += add_face_num
-                level.goods[-1].display_num = level.goods[-1].faces_num * level.goods[-1].one_face_most_goods_num
-                level.goods[-1].good_scale = level.goods[-1].faces_num * level.goods[-1].width
-
-
+                gap_good = copy.deepcopy(level.goods[-1])
+                gap_good.faces_num = add_face_num
+                gap_good.display_num = gap_good.faces_num * gap_good.one_face_most_goods_num
+                gap_good.good_scale = gap_good.faces_num * gap_good.width
+                result_list.append((shelf.shelf_id, level.level_id, gap_good))
+    return result_list
 
 
 def shelf_gap_choose_goods_origin(taizhang):
