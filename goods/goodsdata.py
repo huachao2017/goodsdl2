@@ -35,6 +35,7 @@ def get_raw_shop_shelfs(uc_shopid, tz_id = None):
             "select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
                 uc_shopid, tz_id))
     taizhangs = cursor.fetchall()
+    print(taizhangs)
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
         shelf_id = taizhang[1]
