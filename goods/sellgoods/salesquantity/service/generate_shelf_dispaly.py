@@ -21,7 +21,7 @@ def generate_displays(uc_shopid, tz_id):
     taizhang = Taizhang()
     # 生成taizhang对象，初始化所有数据相关的字段
     raw_shelfs = get_raw_shop_shelfs(uc_shopid,tz_id)
-    if raw_shelfs is None or len(raw_shelfs):
+    if raw_shelfs is None or len(raw_shelfs)==0:
         raise ValueError('not found shelf!')
     taizhang.tz_id = tz_id
     for raw_shelf in raw_shelfs:
@@ -93,6 +93,8 @@ def generate_displays(uc_shopid, tz_id):
     return taizhang
 
 def print_taizhang(taizhang,image_dir):
+    import urllib.request
+    from django.conf import settings
     index = 0
 
     # import PIL.ImageFont as ImageFont
@@ -107,6 +109,7 @@ def print_taizhang(taizhang,image_dir):
             if level.isTrue:
                 level_start_height = level.level_start_height
                 for good in level.goods:
+                    picurl = '{}{}'.format(settings.UC_PIC_HOST,good.icon)
                     # goods_image_name = '{}.jpg'.format(shopid, shelfid, now.strftime('%M%S'))
                     # goods_image_path = os.path.join(image_dir, source_image_name)
                     # urllib.request.urlretrieve(picurl, source_image_path)
