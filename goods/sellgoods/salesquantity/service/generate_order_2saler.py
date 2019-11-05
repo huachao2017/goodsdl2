@@ -31,9 +31,9 @@ def generate():
             max_stock, min_stock = calu_stock.get_stock(upc_depth,shelf_depth,faces)
             if stock is None or stock < 0:
                 stock = 0
-            if multiple is None and multiple == 0:
+            if multiple is None or multiple == 0:
                 multiple = 1
-            if start_sum is None and start_sum == 0:
+            if start_sum is None or start_sum == 0:
                 start_sum = 1
             upc_ordersales = order_rule.rule_isAndNotFir(max_stock, min_stock, stock, upc_ordersales, upc, sale,
                                                              multiple, start_sum, isfir=isfirst)
