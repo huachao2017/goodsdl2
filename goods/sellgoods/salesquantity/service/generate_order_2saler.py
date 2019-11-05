@@ -9,7 +9,7 @@ from goods.sellgoods.commonbean.goods_ai_sales_order import SalesOrder
 from goods.goodsdata import get_shop_order_goods
 from goods.goodsdata import DataRawGoods
 order_shop_idsfirst = config.shellgoods_params['order_shop_idsfirst']
-shop_type = config.shellgoods_params['shop_types'][1]  # 门店
+shop_type = config.shellgoods_params['shop_types'][1]  # 二批
 def generate():
     shop_upc_ordersales = []
     for (shop_id,isfirst) in order_shop_idsfirst:

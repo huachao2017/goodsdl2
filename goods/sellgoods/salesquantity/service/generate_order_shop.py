@@ -15,9 +15,9 @@ def generate():
     # create_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     shop_upc_ordersales = []
     for shop_id in order_shop_ids:
-        result = get_shop_order_goods(shop_id)
+        result = get_shop_order_goods(shop_id,shop_type)
         if result == None or len(result.keys()) < 1:
-            print ("shop_id  hour generate order failed ,get_data error   "+str(shop_id))
+            print ("shop_id  hour generate order failed ,get_data error   "+str(shop_id)+",shop_type:"+str(shop_type))
             return
         for mch_code  in result:
             drg_ins = result[mch_code]
