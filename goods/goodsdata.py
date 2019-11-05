@@ -451,3 +451,6 @@ if __name__ == "__main__":
 
     ret_goods = get_shop_order_goods(1284,0)
     print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
+
+    ret_goods = get_shop_order_goods(1284,1)
+    print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
