@@ -9,14 +9,14 @@ from goods.sellgoods.commonbean.goods_ai_sales_order import SalesOrder
 from goods.goodsdata import get_shop_order_goods
 from goods.goodsdata import DataRawGoods
 order_shop_idsfirst = config.shellgoods_params['order_shop_idsfirst']
-shop_type = config.shellgoods_params['shop_types'][1]  # 门店
+shop_type = config.shellgoods_params['shop_types'][1]  # 二批
 def generate():
     shop_upc_ordersales = []
     for (shop_id,isfirst) in order_shop_idsfirst:
         result = get_shop_order_goods(shop_id,shop_type)
         upc_ordersales = {}
-        if result == None or len(result) < 1:
-            print("shop_id  hour generate order failed ,get_data error   " + str(shop_id))
+        if result == None or len(result.keys()) < 1:
+            print("shop_id day generate order failed ,get_data error   " + str(shop_id))
             return
         for mch_code  in result:
             drg_ins = result[mch_code]
