@@ -3,13 +3,13 @@ import urllib.request
 import json
 import django
 import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings_public")
 django.setup()
 from django.db import connections
 
 from goods.models import ai_sales_order
 
-def order_commit():
+def order_commit(shop_upc_ordersales):
     cursor = connections['dmstore'].cursor()
     cursor.execute('select shop_id, erp_shop_id from erp_shop_related where erp_shop_type = 0')
     relate_list = cursor.fetchall()
@@ -44,4 +44,4 @@ def order_commit():
         print(response.read().decode())
 
 if __name__ == "__main__":
-    order_commit()
+    order_commit([])
