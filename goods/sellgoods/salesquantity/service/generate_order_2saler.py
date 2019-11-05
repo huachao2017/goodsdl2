@@ -23,7 +23,7 @@ def generate():
             upc = drg_ins.upc
             upc_depth = drg_ins.depth
             shelf_depth = drg_ins.shelf_depth
-            faces = drg_ins.faces
+            faces = drg_ins.face_num
             stock = drg_ins.stock
             multiple = drg_ins.multiple
             start_sum = drg_ins.start_sum
