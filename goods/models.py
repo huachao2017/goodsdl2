@@ -102,6 +102,8 @@ class ai_sales_goods(models.Model):
 
 class ai_sales_order(models.Model):
     shopid = models.IntegerField()
+    erp_shop_type = models.IntegerField()
+    status = models.IntegerField(default=1) #0为待订货，1为已订货
     upc = models.CharField(max_length=20)
     order_sale = models.IntegerField() #订货量
     predict_sale = models.IntegerField() #预测销量
