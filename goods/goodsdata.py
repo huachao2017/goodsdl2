@@ -250,10 +250,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         # 获取预测销量
                         # TODO
 
-                        cursor.execute(
-                            "select id, upc, spec, volume, width,height,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
-                                mch_id, goods['mch_goods_code']))
-                        (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
                         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
                                                      is_superimpose,is_suspension, start_sum,multiple,
                                                      stock = stock,
