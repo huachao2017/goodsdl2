@@ -13,12 +13,12 @@ shop_type = config.shellgoods_params['shop_types'][0]  # 门店
 def generate():
     # create_date = str(time.strftime('%Y-%m-%d', time.localtime()))
     # create_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
-    shop_upc_ordersales = []
     for shop_id in order_shop_ids:
         result = get_shop_order_goods(shop_id,shop_type)
         if result == None or len(result.keys()) < 1:
             print ("shop_id  hour generate order failed ,get_data error   "+str(shop_id)+",shop_type:"+str(shop_type))
             return
+        shop_upc_ordersales = []
         for mch_code  in result:
             drg_ins = result[mch_code]
             upc = drg_ins.upc
@@ -38,10 +38,9 @@ def generate():
                 salesorder_ins.min_stock = min_stock
                 salesorder_ins.stock = stock
                 shop_upc_ordersales.append(salesorder_ins)
-    if len(shop_upc_ordersales) > 0 :
-        erp_interface.order_commit(shop_upc_ordersales)
-        print("erp_interface.order_commit success!")
-
+        if len(shop_upc_ordersales) > 0:
+            erp_interface.order_commit(shop_id, shop_type, shop_upc_ordersales)
+            print("erp_interface.order_commit success!")
 
 
 
