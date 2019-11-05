@@ -8,6 +8,7 @@
 import json
 import django
 import os
+import time
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
 from django.db import connections
@@ -137,6 +138,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
     """
 
     ret = {}
+    next_day = str(time.strftime('%Y-%m-%d', time.localtime()))
     cursor = connections['ucenter'].cursor()
     cursor_dmstore = connections['dmstore'].cursor()
     cursor_erp = connections['erp'].cursor()
@@ -247,13 +249,21 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                             # 二批订货需要综合两边库存
                             stock = stock + supply_stock
 
-                        # 获取预测销量
-                        # TODO
+                            # 获取预测销量
+                            try:
+                                cursor_ai.execute(
+                                    "select nextday_predict_sales from goods_ai_sales_goods where shop_id={} and upc='{}' and next_day='{}'".format(shopid, upc, next_day))
+                                (sales,) = cursor_ai.fetchone()
+                            except:
+                                print('ai找不到销量预测:{}-{}！'.format(upc, mch_code))
+                                sales = 0
+                        else:
+                            sales = 0
 
                         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
                                                      is_superimpose,is_suspension, start_sum,multiple,
                                                      stock = stock,
-                                                     sales = 0,
+                                                     sales = sales,
                                                      shelf_depth=level_depth,
                                                      face_num = 1)
 
