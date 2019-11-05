@@ -24,7 +24,7 @@ def generate():
             upc = drg_ins.upc
             upc_depth = drg_ins.depth
             shelf_depth = drg_ins.shelf_depth
-            faces = drg_ins.faces
+            faces = drg_ins.face_num
             stock = drg_ins.stock
             min_stock,max_stock = calu_stock.get_stock(upc_depth,shelf_depth,faces)
             ordersales = max_stock - stock
