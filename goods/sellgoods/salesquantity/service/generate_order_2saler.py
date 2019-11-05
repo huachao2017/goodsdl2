@@ -11,10 +11,10 @@ from goods.goodsdata import DataRawGoods
 order_shop_idsfirst = config.shellgoods_params['order_shop_idsfirst']
 shop_type = config.shellgoods_params['shop_types'][1]  # 二批
 def generate():
-    shop_upc_ordersales = []
     for (shop_id,isfirst) in order_shop_idsfirst:
         result = get_shop_order_goods(shop_id,shop_type)
         upc_ordersales = {}
+        shop_upc_ordersales = []
         if result == None or len(result.keys()) < 1:
             print("shop_id day generate order failed ,get_data error   " + str(shop_id))
             return
@@ -55,10 +55,9 @@ def generate():
             salesorder_ins.multiple = multiple
             salesorder_ins.predict_sale = predict_sale
             shop_upc_ordersales.append(salesorder_ins)
-
-    if len(shop_upc_ordersales) > 0:
-        erp_interface.order_commit(shop_upc_ordersales)
-        print("erp_interface.order_commit success!")
+        if len(shop_upc_ordersales) > 0:
+            erp_interface.order_commit(shop_id,shop_type,shop_upc_ordersales)
+            print("erp_interface.order_commit success!")
 
 
 if __name__=='__main__':
