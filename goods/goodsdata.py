@@ -202,7 +202,9 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                 level_depth = round(float(level['depth']))
                 for goods in goods_level_array:
                     mch_code = goods['mch_goods_code']
-                    if mch_code not in goods:
+                    if mch_code in ret:
+                        ret[mch_code].face_num += 1
+                    else:
                         # 获取商品属性
                         try:
                             cursor.execute(
@@ -271,7 +273,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                                      is_superimpose,is_suspension, start_sum,multiple,
                                                      stock = stock,
                                                      sales = 0,
-                                                     shelf_depth=level_depth)
+                                                     shelf_depth=level_depth,
+                                                     face_num = 1)
 
     cursor.close()
     cursor_dmstore.close()
@@ -412,7 +415,7 @@ class DataGoods():
         return '\t\t{},{},{},{},{}'.format(self.mch_code,self.upc,self.width,self.height,self.depth)
 
 class DataRawGoods():
-    def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth, is_superimpose, is_suspension, start_sum, multiple, stock=0, sales=0, shelf_depth=0):
+    def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth, is_superimpose, is_suspension, start_sum, multiple, stock=0, sales=0, shelf_depth=0, face_num=1):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -437,12 +440,13 @@ class DataRawGoods():
         self.stock = stock
         self.sales = sales
         self.shelf_depth = shelf_depth
+        self.face_num = face_num
 
     def __str__(self):
         return '{},{},{},{},{},{},{},{},' \
                '{},{},{},{},{},{},{},{},{},{}'.format(
             self.mch_code,self.goods_name,self.upc,self.tz_display_img,self.corp_classify_code,self.display_code,self.spec,self.volume,
-            self.width,self.height,self.depth,self.is_superimpose,self.is_suspension,self.start_sum,self.multiple,self.stock,self.sales,self.shelf_depth)
+            self.width,self.height,self.depth,self.is_superimpose,self.is_suspension,self.start_sum,self.multiple,self.stock,self.sales,self.shelf_depth,self.face_num)
 
 if __name__ == "__main__":
     ret = get_raw_shop_shelfs(806)
