@@ -8,6 +8,7 @@
 import json
 import django
 import os
+import time
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
 from django.db import connections
@@ -137,6 +138,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
     """
 
     ret = {}
+    next_day = str(time.strftime('%Y-%m-%d', time.localtime()))
     cursor = connections['ucenter'].cursor()
     cursor_dmstore = connections['dmstore'].cursor()
     cursor_erp = connections['erp'].cursor()
@@ -155,20 +157,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
         cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_shop_id))
         (authorized_shop_id,) = cursor_erp.fetchone()
 
-        if erp_shop_type == 1:
-            try:
-                cursor_dmstore.execute(
-                    "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 1".format(shopid))
-                (erp_supply_shop_id,) = cursor_dmstore.fetchone()
-                if erp_supply_shop_id == authorized_shop_id:
-                    cursor_erp.execute(
-                        "select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(
-                            erp_supply_shop_id))
-                    (authorized_shop_id,) = cursor_erp.fetchone()
-
-            except:
-                pass
-
     except:
         print('找不到供应商:{}！'.format(shopid))
         authorized_shop_id = None
@@ -181,8 +169,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
         shelf_id = taizhang[1]
         display_shelf_info = taizhang[2]
         display_goods_info = taizhang[3]
-        cursor.execute("select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(shelf_id))
-        (shelf_no, shelf_length, shelf_height, shelf_depth) = cursor.fetchone()
         display_shelf_info = json.loads(display_shelf_info)
         display_goods_info = json.loads(display_goods_info)
         shelfs = display_shelf_info['shelf']
@@ -221,26 +207,21 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         # 获取分类码
                         try:
                             cursor_dmstore.execute(
-                                "select id,corp_classify_code from goods where upc = '{}' and corp_goods_id={}".format(upc,
+                                "select corp_classify_code from goods where upc = '{}' and corp_goods_id={}".format(upc,
                                                                                                                     mch_code))
-                            (goods_id, corp_classify_code) = cursor_dmstore.fetchone()
+                            (corp_classify_code, ) = cursor_dmstore.fetchone()
                         except:
                             print('dmstore找不到商品:{}-{}！'.format(upc, mch_code))
                             corp_classify_code = None
-                            goods_id = 0
 
                         # 获取库存
                         try:
                             cursor_dmstore.execute(
-                                "select stock from shop_goods where goods_id = {} and shop_id={}".format(goods_id,
-                                                                                                         shopid))
+                                "select stock from shop_goods where shop_id={} and upc='{}' order by modify_time desc".format(shopid, upc))
                             (stock,) = cursor_dmstore.fetchone()
                         except:
-                            print('dmstore找不到商店商品:{}-{}！'.format(upc, goods_id))
+                            print('dmstore找不到商店商品:{}-{}！'.format(shopid, upc))
                             stock = 0
-                        if erp_shop_type == 1:
-                            # TODO 获取erp 二批的库存
-                            pass
 
                         if authorized_shop_id is not None:
                             try:
@@ -251,28 +232,38 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                         authorized_shop_id, upc))
                                 (sku_id,) = cursor_erp.fetchone()
                                 cursor_erp.execute(
-                                    "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                                    "select start_sum,multiple,stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
                                         sku_id))
-                                (start_sum, multiple) = cursor_erp.fetchone()
+                                (start_sum, multiple, supply_stock) = cursor_erp.fetchone()
                             except:
                                 print('Erp找不到商品:{}-{}！'.format(upc, mch_code))
                                 start_sum = 0
                                 multiple = 0
+                                supply_stock = 0
                         else:
                             start_sum = 0
                             multiple = 0
+                            supply_stock = 0
 
-                        # 获取预测销量
-                        # TODO
+                        if erp_shop_type == 1:
+                            # 二批订货需要综合两边库存
+                            stock = stock + supply_stock
 
-                        cursor.execute(
-                            "select id, upc, spec, volume, width,height,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
-                                mch_id, goods['mch_goods_code']))
-                        (goods_id, upc, spec, volume, width, height, depth) = cursor.fetchone()
+                            # 获取预测销量
+                            try:
+                                cursor_ai.execute(
+                                    "select nextday_predict_sales from goods_ai_sales_goods where shop_id={} and upc='{}' and next_day='{}'".format(shopid, upc, next_day))
+                                (sales,) = cursor_ai.fetchone()
+                            except:
+                                print('ai找不到销量预测:{}-{}！'.format(upc, mch_code))
+                                sales = 0
+                        else:
+                            sales = 0
+
                         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
                                                      is_superimpose,is_suspension, start_sum,multiple,
                                                      stock = stock,
-                                                     sales = 0,
+                                                     sales = sales,
                                                      shelf_depth=level_depth,
                                                      face_num = 1)
 
@@ -459,4 +450,7 @@ if __name__ == "__main__":
     print("\n".join('{}:{}'.format(str(i),str(ret[i])) for i in ret.keys()))
 
     ret_goods = get_shop_order_goods(1284,0)
+    print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
+
+    ret_goods = get_shop_order_goods(1284,1)
     print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
