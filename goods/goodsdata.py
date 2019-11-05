@@ -232,8 +232,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         # 获取库存
                         try:
                             cursor_dmstore.execute(
-                                "select stock from shop_goods where goods_id = {} and shop_id={}".format(goods_id,
-                                                                                                         shopid))
+                                "select stock from shop_goods where shop_id={} and upc='{}' order by modify_time desc".format(shopid, goods['goods_upc']))
                             (stock,) = cursor_dmstore.fetchone()
                         except:
                             print('dmstore找不到商店商品:{}-{}！'.format(upc, goods_id))
