@@ -8,7 +8,7 @@
 import json
 import django
 import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings_public")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
 from django.db import connections
 
