@@ -15,7 +15,7 @@ def generate():
     for (shop_id,isfirst) in order_shop_idsfirst:
         result = get_shop_order_goods(shop_id,shop_type)
         upc_ordersales = {}
-        if result == None or len(result) < 1:
+        if result == None or len(result.keys()) < 1:
             print("shop_id  hour generate order failed ,get_data error   " + str(shop_id))
             return
         for mch_code  in result:
