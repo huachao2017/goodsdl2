@@ -415,7 +415,8 @@ class DataGoods():
         return '\t\t{},{},{},{},{}'.format(self.mch_code,self.upc,self.width,self.height,self.depth)
 
 class DataRawGoods():
-    def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth, is_superimpose, is_suspension, start_sum, multiple, stock=0, sales=0, shelf_depth=0, face_num=1):
+    def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth, is_superimpose, is_suspension, start_sum, multiple,
+                 stock=0, sales=0, shelf_depth=0, face_num=1):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -444,7 +445,7 @@ class DataRawGoods():
 
     def __str__(self):
         return '{},{},{},{},{},{},{},{},' \
-               '{},{},{},{},{},{},{},{},{},{}'.format(
+               '{},{},{},{},{},{},{},{},{},{},{}'.format(
             self.mch_code,self.goods_name,self.upc,self.tz_display_img,self.corp_classify_code,self.display_code,self.spec,self.volume,
             self.width,self.height,self.depth,self.is_superimpose,self.is_suspension,self.start_sum,self.multiple,self.stock,self.sales,self.shelf_depth,self.face_num)
 
