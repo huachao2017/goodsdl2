@@ -37,6 +37,7 @@ def rule_start_sum(upc_ordersales):
 
 
 
+
 #  是否首次下单规则
 def rule_isAndNotFir(max_stock,min_stock,stock,upc_ordersales,upc,sale,multiple,start_sum,isfir=False):
     start_min = max(int(max_stock/2),min_stock)
@@ -56,3 +57,10 @@ def rule_isAndNotFir(max_stock,min_stock,stock,upc_ordersales,upc,sale,multiple,
                 if max_stock - stock > 0: # 剩余空间小于销量 订剩余空间
                     upc_ordersales[upc] = (max_stock - stock, sale, min_stock, max_stock, stock,multiple,start_sum,start_min,start_max)
     return upc_ordersales
+
+
+#  订货价规则
+def  rule_price(upc_ordersales):
+    for upc in upc_ordersales:
+        (order_sale, sale, min_stock, max_stock, stock, multiple, start_sum, start_min, start_max,yesday_sale,single_price) = upc_ordersales[upc]
+
