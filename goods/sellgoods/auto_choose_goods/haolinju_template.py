@@ -53,7 +53,7 @@ def get_data(target,template_shop_id,days=27):
     upcs = [str(i[1]) for i in results]
     sql_02 = 'select upc from ucenter.uc_merchant_goods where upc in {} and storage_day>12'
     cursor_02 = connections['ucenter'].cursor()
-    print(tuple(upcs))
+    # print(tuple(upcs))
     cursor_02.execute(sql_02.format(tuple(upcs)))
     upcs = cursor_02.fetchall()
     upcs = [i[0] for i in upcs]
