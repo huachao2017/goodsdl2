@@ -63,6 +63,7 @@ shellgoods_params={
     # 销量预测
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,
+    'order_shop_ids': [1284],
     # 订单生成
     'order_shop_idsfirst':[(1284,False)], #二批向订货商订货
     'order_shop_hour_ids':[1284], # 门店向二批订货
