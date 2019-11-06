@@ -264,7 +264,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                 (sales,) = cursor_ai.fetchone()
                                 print('ai找到销量预测:{}-{}！'.format(upc, sales))
                             except:
-                                print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
+                                #print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
                                 sales = 0
                         else:
                             sales = 0
