@@ -444,10 +444,12 @@ class DataRawGoods():
         self.face_num = face_num
 
     def __str__(self):
-        return '{},{},{},{},{},{},{},{},' \
-               '{},{},{},{},{},{},{},{},{},{},{}'.format(
-            self.mch_code,self.goods_name,self.upc,self.tz_display_img,self.corp_classify_code,self.display_code,self.spec,self.volume,
-            self.width,self.height,self.depth,self.is_superimpose,self.is_suspension,self.start_sum,self.multiple,self.stock,self.sales,self.shelf_depth,self.face_num)
+        # return '{},{},{},{},{},{},{},{},' \
+        #        '{},{},{},{},{},{},{},{},{},{},{}'.format(
+        #     self.mch_code,self.goods_name,self.upc,self.tz_display_img,self.corp_classify_code,self.display_code,self.spec,self.volume,
+        #     self.width,self.height,self.depth,self.is_superimpose,self.is_suspension,self.start_sum,self.multiple,self.stock,self.sales,self.shelf_depth,self.face_num)
+        return '{},{},{},depth:{},start_sum:{},stock:{},sales:{},shelf_depth:{},face_num:{}'.format(
+            self.mch_code,self.goods_name,self.upc,self.depth,self.start_sum,self.stock,self.sales,self.shelf_depth,self.face_num)
 
 if __name__ == "__main__":
     ret = get_raw_shop_shelfs(806)
@@ -466,4 +468,4 @@ if __name__ == "__main__":
     for i in ret_goods.keys():
         if ret_goods[i].sales>0:
             index += 1
-            print('{}:{}:{}'.format(index,str(i),str(ret_goods[i])))
+            print('{}:{}'.format(index,str(ret_goods[i])))
