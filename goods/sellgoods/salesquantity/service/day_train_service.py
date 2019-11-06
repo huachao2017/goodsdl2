@@ -4,7 +4,7 @@ import os
 import shutil
 from set_config import config
 import time
-from goods.sellgoods.salesquantity.service import generate_order
+from goods.sellgoods.salesquantity.service import generate_order_2saler
 from goods.sellgoods.salesquantity.local_util import file_util
 from goods.sellgoods.salesquantity.local_util import save_mysql_sales
 regressor_model_path = config.shellgoods_params['regressor_model_path']
@@ -38,8 +38,7 @@ def train_regressor(model_time):
     test_d = test_d.select("shop_id","upc","ai_weekday","ai_day","ai_next_day","ai_day_nums")
     save_mysql_sales.save_df(test_d,result,dt_model,MeanEncoder,sqlsc)
     # file_util.save_test_dataRdd(test_d, result, test_path)
-    print ("generate  order")
-    generate_order.generate(salves_ins=salves_ins,MeanEncoder=MeanEncoder)
+    generate_order_2saler.generate()
     print("###########################################################")
 
 
