@@ -51,8 +51,10 @@ def generate(salves_ins=None,MeanEncoder=None):
                     if shop_id3 == shop_id1:
                         # 首次订单规则
                         upc_ordersales = order_rule.rule_isAndNotFir(max_stock,min_stock,stock,upc_ordersales,upc,sale,multiple,start_sum,isfir=isfir)
+        print ("规则一：商品数："+str(len(upc_ordersales.keys())))
         # 最小起订量规则 和 上限  下限规则
         upc_ordersales = order_rule.rule_start_sum(upc_ordersales)
+        print("规则二：商品数：" + str(len(upc_ordersales.keys())))
         shop_upc_ordersales[int(shop_id1)] = upc_ordersales
     print ("shop_upc_ordersales:")
     print (shop_upc_ordersales)
