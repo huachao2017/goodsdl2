@@ -107,7 +107,7 @@ def  save_oreder(shop_upc_ordersales):
     mysql_ins = mysql_util.MysqlUtil(ai)
     del_sql = "delete from goods_ai_sales_order where create_date = {0} and erp_shop_type = {1}"
     del_sql = del_sql.format("'"+exe_time+"'",shop_type)
-    sql = "insert into goods_ai_sales_order (shopid,upc,order_sale, predict_sale, min_stock, max_stock, stock,create_date,create_time,multiple, start_sum, start_min, start_max,status,erp_shop_type) value(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    sql = "insert into goods_ai_sales_order (shopid,upc,order_sale, predict_sale, min_stock, max_stock, stock,create_date,create_time,multiple, start_sum, start_min, start_max) value(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     print(sql)
     print(data[0])
     mysql_ins.delete_sql(del_sql)
