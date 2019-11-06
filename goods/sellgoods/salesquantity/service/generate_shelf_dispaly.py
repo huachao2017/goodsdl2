@@ -1,6 +1,7 @@
 import os
 import cv2
 import numpy as np
+import json
 from set_config import config
 from goods.sellgoods.salesquantity.local_util import shelf_display
 from goods.sellgoods.commonbean.taizhang import Taizhang
@@ -142,7 +143,7 @@ def print_taizhang(taizhang,image_dir):
 
 if __name__ == "__main__":
     taizhang = generate_displays(806,1142)
-    print(taizhang.to_json())
+    print(json.dumps(taizhang.to_json()))
     import os
     with open("1.txt","w") as f:
         f.write(str(taizhang.__str__()))
