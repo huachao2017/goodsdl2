@@ -15,6 +15,7 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales):
         cursor_dmstore = connections['dmstore'].cursor()
         cursor_dmstore.execute('select erp_shop_id from erp_shop_related where shop_id={} and erp_shop_type = {}'.format(shopid,erp_shop_type))
         (erp_shopid,) = cursor_dmstore.fetchone()
+        print('店号{}类型{}开始订货'.format(erp_shopid,erp_shop_type))
         cursor_dmstore.close()
 
         create_date = str(time.strftime('%Y-%m-%d', time.localtime()))

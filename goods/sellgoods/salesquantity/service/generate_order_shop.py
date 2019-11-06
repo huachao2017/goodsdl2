@@ -6,13 +6,9 @@ from goods.sellgoods.salesquantity.local_util import calu_stock
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from goods.sellgoods.commonbean.goods_ai_sales_order import SalesOrder
 from goods.goodsdata import get_shop_order_goods
-import time
-
 order_shop_ids = config.shellgoods_params['order_shop_hour_ids']
 shop_type = config.shellgoods_params['shop_types'][0]  # 门店
 def generate():
-    # create_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-    # create_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     for shop_id in order_shop_ids:
         result = get_shop_order_goods(shop_id,shop_type)
         if result == None or len(result.keys()) < 1:

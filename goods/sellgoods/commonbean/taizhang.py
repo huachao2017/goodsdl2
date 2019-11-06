@@ -101,41 +101,41 @@ class Taizhang:
         }
         """
         json_ret = {
-            'taizhang_id':self.tz_id,
-            'shelfs':[]
+            "taizhang_id":self.tz_id,
+            "shelfs":[]
         }
         for shelf in self.shelfs:
             json_shelf={
-                'shelf':shelf.shelf_id,
-                'levels':[]
+                "shelf":shelf.shelf_id,
+                "levels":[]
             }
-            json_ret['shelfs'].append(json_shelf)
+            json_ret["shelfs"].append(json_shelf)
             for level in shelf.levels:
                 if level.isTrue:
                     json_level = {
-                        'level_id':level.level_id,
-                        'height':level.level_height,
-                        'goods':[]
+                        "level_id":level.level_id,
+                        "height":level.level_height,
+                        "goods":[]
                     }
-                    json_shelf['levels'].append(json_level)
+                    json_shelf["levels"].append(json_level)
                     for good in level.goods:
                         json_goods = {
-                            'mch_good_code': good.mch_good_code,
-                            'upc': good.upc,
-                            'width':good.width,
-                            'height':good.height,
-                            'depth':good.depth,
-                            'displays': []
+                            "mch_good_code": good.mch_good_code,
+                            "upc": good.upc,
+                            "width":good.width,
+                            "height":good.height,
+                            "depth":good.depth,
+                            "displays": []
                         }
-                        json_level['goods'].append(json_goods)
+                        json_level["goods"].append(json_goods)
                         for gooddisplay in good.gooddisplay_inss:
                             if gooddisplay.dep == 0:
                                 json_display = {
-                                    'top': gooddisplay.top,
-                                    'left': gooddisplay.left,
-                                    'row': gooddisplay.row,
-                                    'col': gooddisplay.col,
+                                    "top": gooddisplay.top,
+                                    "left": gooddisplay.left,
+                                    "row": gooddisplay.row,
+                                    "col": gooddisplay.col,
                                 }
-                                json_goods['displays'].append(json_display)
+                                json_goods["displays"].append(json_display)
 
         return json_ret
