@@ -225,6 +225,9 @@ data={'05': {'0502': {'050203': 3, '050204': 7, '050205': 3, '050202': 6, '05020
 
 
 class ShelfGoodsSort():
+    """
+    货架指定多个中类的列表，然后根据类别整体性和销售额进行排序，作为后续陈列的取舍依据
+    """
     sorted_goods_list = []
     def __init__(self,middle_list, r=0.5, m=10, ave_ratio=2):
         self.r = r
@@ -337,7 +340,6 @@ class ShelfGoodsSort():
         every_epoch_goods_list.sort(key=lambda x: x[4], reverse=True)
         self.sorted_goods_list.extend(every_epoch_goods_list)
         return
-
 
     def upc_statistics(self,upcs_data, class_data=None):
         """
@@ -466,6 +468,8 @@ class ShelfGoodsSort():
             print('rest:',len(self.data))
             self.run()
         return self.sorted_goods_list
+
+
 
 
 
