@@ -64,6 +64,7 @@ shellgoods_params={
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,
     # 订单生成
+    'order_shop_ids': [1284],
     'order_shop_idsfirst':[(1284,False)], #二批向订货商订货
     'order_shop_hour_ids':[1284], # 门店向二批订货
     'shop_types':[0,1], #门店类型 0：门店 1：批发商
