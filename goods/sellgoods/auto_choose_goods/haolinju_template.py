@@ -59,7 +59,7 @@ def get_data(target,template_shop_id,days=27):
     upcs = [i[0] for i in upcs]
     cursor_02.close()
 
-    print("results:",results)
+    print("upcs:",upcs)
     data = []
     for result in results:
 
