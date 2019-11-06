@@ -49,10 +49,10 @@ def rule_isAndNotFir(max_stock,min_stock,stock,upc_ordersales,upc,sale,multiple,
                 upc_ordersales[upc] = (max_stock - stock, 0, min_stock, max_stock, stock,multiple,start_sum,start_min,start_max)
 
     else:
-        if sale != 0 and sale != None :
-            if max_stock - stock > sale:
+        if sale != 0 and sale != None :  # 优先保证订货空间能容纳订货量
+            if max_stock - stock > sale:  # 剩余空间大于销量 订销量
                 upc_ordersales[upc] = (sale, sale, min_stock, max_stock, stock,multiple,start_sum,start_min,start_max)
             else:
-                if max_stock - stock > 0:
+                if max_stock - stock > 0: # 剩余空间小于销量 订剩余空间
                     upc_ordersales[upc] = (max_stock - stock, sale, min_stock, max_stock, stock,multiple,start_sum,start_min,start_max)
     return upc_ordersales
