@@ -237,7 +237,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                         sku_id))
                                 (start_sum, multiple, supply_stock) = cursor_erp.fetchone()
                             except:
-                                #print('Erp找不到商品:{}-{}！'.format(upc, mch_code))
+                                print('Erp找不到商品:{}-{}！'.format(upc, authorized_shop_id))
                                 start_sum = 0
                                 multiple = 0
                                 supply_stock = 0
