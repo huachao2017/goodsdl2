@@ -6,10 +6,7 @@ def rule_start_sum(upc_ordersales):
         (order_sale, sale, min_stock, max_stock, stock, multiple, start_sum, start_min, start_max) = upc_ordersales[upc]
         # 订货第一目标为达到上限
         if stock - sale <= start_max:  #  28
-            if stock - sale < 0:
-                order_sale = start_max
-            else:
-                order_sale = start_max - (stock - sale)
+            order_sale = start_max - (stock - sale)
         # 订货数必须满足起订量的要求
         if order_sale != start_sum:
             if order_sale > start_sum:  # 28 > 24   #
