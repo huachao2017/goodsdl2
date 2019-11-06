@@ -462,7 +462,8 @@ if __name__ == "__main__":
     # print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
 
     ret_goods = get_shop_order_goods(1284,1)
+    index = 0
     for i in ret_goods.keys():
         if ret_goods[i].sales>0:
-            print('{}:{}'.format(str(i),str(ret_goods[i])))
-            print("\n")
+            index += 1
+            print('{}:{}:{}'.format(index,str(i),str(ret_goods[i])))
