@@ -260,11 +260,11 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                             # 获取昨日销量
                             try:
                                 cursor_ai.execute(
-                                    "select nextday_predict_sales from goods_ai_sales_goods where shop_id={} and upc='{}' and next_day='{}'".format(shopid, upc, next_day))
+                                    "select nextday_predict_sales from goods_ai_sales_goods where shopid={} and upc='{}' and next_day='{}'".format(shopid, upc, next_day))
                                 (sales,) = cursor_ai.fetchone()
                                 print('ai找到销量预测:{}-{}！'.format(upc, sales))
                             except:
-                                #print('ai找不到销量预测:{}！'.format(upc))
+                                #print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
                                 sales = 0
                         else:
                             sales = 0
@@ -458,8 +458,11 @@ if __name__ == "__main__":
     ret = get_raw_goods_info(806,[2036329,2036330])
     print("\n".join('{}:{}'.format(str(i),str(ret[i])) for i in ret.keys()))
 
-    ret_goods = get_shop_order_goods(1284,0)
-    print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
+    # ret_goods = get_shop_order_goods(1284,0)
+    # print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
 
     ret_goods = get_shop_order_goods(1284,1)
-    print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
+    for i in ret_goods.keys():
+        if ret_goods[i].sales>0:
+            print('{}:{}'.format(str(i),str(ret_goods[i])))
+            print("\n")
