@@ -58,7 +58,7 @@ def get_data(target,template_shop_id,days=27):
     results = cursor_02.fetchall()
     cursor_02.close()
 
-
+    print("results:",results)
     data = []
     for result in results:
         list = [target,template_shop_id]
