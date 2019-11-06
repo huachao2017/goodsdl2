@@ -12,7 +12,7 @@ from goods.sellgoods.salesquantity.proxy import order_rule
 import time
 import datetime
 order_shop_ids = config.shellgoods_params['order_shop_ids']
-order_shop_isfirst = config.shellgoods_params['order_shop_isfirst']
+order_shop_isfirst = config.shellgoods_params['order_shop_idsfirst']
 def generate(salves_ins=None,MeanEncoder=None):
     shop_upc_stock = stock_util1.get_stock(order_shop_ids)
     print ("shop_upc_stock")
