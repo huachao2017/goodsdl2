@@ -51,16 +51,18 @@ def generate(salves_ins=None,MeanEncoder=None):
                     if shop_id3 == shop_id1:
                         # 首次订单规则
                         upc_ordersales = order_rule.rule_isAndNotFir(max_stock,min_stock,stock,upc_ordersales,upc,sale,multiple,start_sum,isfir=isfir)
+        print ("规则一：商品数："+str(len(upc_ordersales.keys())))
         # 最小起订量规则 和 上限  下限规则
         upc_ordersales = order_rule.rule_start_sum(upc_ordersales)
+        print("规则二：商品数：" + str(len(upc_ordersales.keys())))
         shop_upc_ordersales[int(shop_id1)] = upc_ordersales
     print ("shop_upc_ordersales:")
     print (shop_upc_ordersales)
     if len(list(shop_upc_ordersales.keys())) > 0:
         # 保存mysql 订单表
         save_mysql_sales.save_oreder(shop_upc_ordersales)
-        # 通知魔兽订单
-        erp_interface.order_commit()
+        # # 通知魔兽订单
+        # erp_interface.order_commit()
         print ("erp_interface.order_commit success!")
 
 def get_none_sales_features(shop_upc_stock,shop_upc_sales):
