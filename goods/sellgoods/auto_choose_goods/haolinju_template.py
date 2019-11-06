@@ -47,6 +47,18 @@ def get_data(target,template_shop_id,days=27):
     results = cursor.fetchall()
     cursor.close()
     # print(results)
+
+
+    # 以下查询保质期的长短
+    upcs = [str(i[1]) for i in results]
+    sql_02 = 'select * from ucenter.uc_merchant_goods where upc in {} and storage_day>12'
+    cursor_02 = connections['ucenter'].cursor()
+    print(tuple(upcs))
+    cursor_02.execute(sql_02.format(tuple(upcs)))
+    results = cursor_02.fetchall()
+    cursor_02.close()
+
+
     data = []
     for result in results:
         list = [target,template_shop_id]
@@ -54,8 +66,13 @@ def get_data(target,template_shop_id,days=27):
         list.append(result[2])
         list.append(int(result[0]))
         list.append(result[3])
-        if not result[1].startswith('6901028'):       # 以此为开头的是香烟
+        # if not result[1].startswith('6901028'):       # 以此为开头的是香烟
+        #     data.append(list)
+
+        if result[2][:2] in ['01','16','17']:       # 日配的商品
+            # if result[4]
             data.append(list)
+
 
     print('first:',len(data))
 
