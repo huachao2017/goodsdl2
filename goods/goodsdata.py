@@ -463,6 +463,6 @@ if __name__ == "__main__":
 
     ret_goods = get_shop_order_goods(1284,1)
     for i in ret_goods.keys():
-        if i.sales>0:
+        if ret_goods[i].sales>0:
             print('{}:{}'.format(str(i),str(ret_goods[i])))
             print("\n")
