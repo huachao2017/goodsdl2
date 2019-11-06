@@ -260,7 +260,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                             # 获取昨日销量
                             try:
                                 cursor_ai.execute(
-                                    "select nextday_predict_sales from goods_ai_sales_goods where shop_id={} and upc='{}' and next_day='{}'".format(shopid, upc, next_day))
+                                    "select nextday_predict_sales from goods_ai_sales_goods where shopid={} and upc='{}' and next_day='{}'".format(shopid, upc, next_day))
                                 (sales,) = cursor_ai.fetchone()
                                 print('ai找到销量预测:{}-{}！'.format(upc, sales))
                             except:
