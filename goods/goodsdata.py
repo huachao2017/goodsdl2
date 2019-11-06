@@ -134,6 +134,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
     """
     获取商店的所有货架及货架上的商品信息，该方法在订货时用
     :param shopid: fx系统的商店id
+    :param erp_shop_type: erp系统里面的类型
     :return:返回一个DataRawGoods对象的map,key为mch_code
     """
 
@@ -249,13 +250,14 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                             # 二批订货需要综合两边库存
                             stock = stock + supply_stock
 
-                            # 获取预测销量
+                            # 获取昨日销量
                             try:
                                 cursor_ai.execute(
                                     "select nextday_predict_sales from goods_ai_sales_goods where shop_id={} and upc='{}' and next_day='{}'".format(shopid, upc, next_day))
                                 (sales,) = cursor_ai.fetchone()
+                                print('ai找到销量预测:{}-{}！'.format(upc, sales))
                             except:
-                                print('ai找不到销量预测:{}-{}！'.format(upc, mch_code))
+                                print('ai找不到销量预测:{}！'.format(upc))
                                 sales = 0
                         else:
                             sales = 0
