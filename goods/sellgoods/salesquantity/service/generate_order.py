@@ -1,3 +1,6 @@
+"""
+二批向供货商订货  （1284 --> 好邻居）
+"""
 from set_config import config
 from goods.sellgoods.salesquantity.local_util import stock_util1
 from goods.sellgoods.salesquantity.local_util import sales_util
@@ -17,9 +20,6 @@ def generate(salves_ins=None,MeanEncoder=None):
     shop_upc_sales = sales_util.get_predict_sales(order_shop_ids)
     print ("shop_upc_sales")
     print (shop_upc_sales)
-    # shop_ids, upcs, yes_time, day_sales = get_none_sales_features(shop_upc_stock,shop_upc_sales)
-    # if len(upcs)>0:
-    #     shop_upc_sales = get_predict_sales(shop_ids, upcs, yes_time, day_sales,shop_upc_sales,salves_ins,MeanEncoder)
     shop_upc_ordersales = {}
     for shop_id1 in shop_upc_stock:
         upc_stock = shop_upc_stock[shop_id1]
@@ -62,7 +62,6 @@ def generate(salves_ins=None,MeanEncoder=None):
         # 通知魔兽订单
         erp_interface.order_commit()
         print ("erp_interface.order_commit success!")
-
 
 def get_none_sales_features(shop_upc_stock,shop_upc_sales):
     # 没有销量的特征信息

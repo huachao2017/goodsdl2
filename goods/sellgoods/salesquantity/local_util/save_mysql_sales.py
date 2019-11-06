@@ -6,6 +6,7 @@ from goods.sellgoods.salesquantity.utils import mysql_util
 import time
 ai = config.ai
 predict_ext_days = config.shellgoods_params['predict_ext_days']
+
 def save_df(data_frame,label,model,mean_encode_ins,sqlsc):
     data = []
     shop_ids = []
@@ -93,6 +94,8 @@ def get_ext_predict_day(shop_ids,upcs,ai_nextday,model,mean_encode_ins,predicts,
 
 
 def  save_oreder(shop_upc_ordersales):
+    shop_type = config.shellgoods_params['shop_types'][1]  # 门店
+    order_status = config.shellgoods_params['order_status']
     exe_time = str(time.strftime('%Y-%m-%d', time.localtime()))
     exe_time1 = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     data = []
@@ -100,16 +103,27 @@ def  save_oreder(shop_upc_ordersales):
         upc_ordersales = shop_upc_ordersales[shop_id]
         for upc in upc_ordersales:
             (order_sale, predict_sale, min_stock, max_stock, stock,multiple, start_sum, start_min, start_max) = upc_ordersales[upc]
-            data.append((shop_id,upc,order_sale, predict_sale, min_stock, max_stock, stock,exe_time,exe_time1,multiple, start_sum, start_min, start_max))
+            data.append((shop_id,upc,order_sale, predict_sale, min_stock, max_stock, stock,exe_time,exe_time1,multiple, start_sum, start_min, start_max,order_status,shop_type))
     mysql_ins = mysql_util.MysqlUtil(ai)
-    del_sql = "delete from goods_ai_sales_order where create_date = {0}"
-    del_sql = del_sql.format("'"+exe_time+"'")
-    sql = "insert into goods_ai_sales_order (shopid,upc,order_sale, predict_sale, min_stock, max_stock, stock,create_date,create_time,multiple, start_sum, start_min, start_max) value(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    del_sql = "delete from goods_ai_sales_order where create_date = {0} and erp_shop_type = {1}"
+    del_sql = del_sql.format("'"+exe_time+"'",shop_type)
+    sql = "insert into goods_ai_sales_order (shopid,upc,order_sale, predict_sale, min_stock, max_stock, stock,create_date,create_time,multiple, start_sum, start_min, start_max,status,erp_shop_type) value(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     print(sql)
     print(data[0])
     mysql_ins.delete_sql(del_sql)
     print ("delete goods_ai_sales_order sucess")
     print (del_sql)
+    mysql_ins.insert_many_sql(data, sql)
+    print ("insert into goods_ai_sales_order sucess")
+    mysql_ins.cursor.close()
+    mysql_ins.conn.close()
+
+
+def save_oreder_hour(data):
+    sql = "insert into goods_ai_sales_order (shopid,erp_shop_type,upc,order_sale,status,max_stock,min_stock,stock,create_date,create_time) value(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    print (sql)
+    print (data[0])
+    mysql_ins = mysql_util.MysqlUtil(ai)
     mysql_ins.insert_many_sql(data, sql)
     print ("insert into goods_ai_sales_order sucess")
     mysql_ins.cursor.close()

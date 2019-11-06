@@ -60,10 +60,14 @@ shellgoods_params={
         "gb_tree": "/home/ai/model/regressor/GBTRegressionModel",
         "random_forest": "/home/ai/model/regressor/RandomForestRegressionModel"
     },
+    # 销量预测
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,
-    'order_shop_ids': [1284],
-    'order_shop_isfirst':[(1284,False)],
+    # 订单生成
+    'order_shop_idsfirst':[(1284,False)], #二批向订货商订货
+    'order_shop_hour_ids':[1284], # 门店向二批订货
+    'shop_types':[0,1], #门店类型 0：门店 1：批发商
+    # 自动陈列
     'shelf_display':[(1284,True)],
     "shelf_display_maxitems":20, # 排列单个货架最大循环次数
     "shelf_levels_max":20000,# 货架的最高层数

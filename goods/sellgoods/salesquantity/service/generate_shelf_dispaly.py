@@ -99,6 +99,8 @@ def print_taizhang(taizhang,image_dir):
 
     # import PIL.ImageFont as ImageFont
     #     fontText = ImageFont.truetype("font/simsun.ttc", 12, encoding="utf-8")
+
+    picurl_to_goods_image = {}
     for shelf in taizhang.shelfs:
         index += 1
         image_path = os.path.join(image_dir,'{}.jpg'.format(index))
@@ -109,23 +111,38 @@ def print_taizhang(taizhang,image_dir):
             if level.isTrue:
                 level_start_height = level.level_start_height
                 for good in level.goods:
-                    picurl = '{}{}'.format(settings.UC_PIC_HOST,good.icon)
-                    # goods_image_name = '{}.jpg'.format(shopid, shelfid, now.strftime('%M%S'))
-                    # goods_image_path = os.path.join(image_dir, source_image_name)
-                    # urllib.request.urlretrieve(picurl, source_image_path)
+                    picurl = '{}{}'.format(settings.UC_PIC_HOST, good.icon)
+                    if picurl in picurl_to_goods_image:
+                        goods_image = picurl_to_goods_image[picurl]
+                    else:
+                        try:
+                            goods_image_name = '{}.jpg'.format(good.mch_good_code)
+                            goods_image_path = os.path.join(image_dir, goods_image_name)
+                            urllib.request.urlretrieve(picurl, goods_image_path)
+                            goods_image = cv2.imread(goods_image_path)
+                            goods_image = cv2.resize(goods_image,(good.width,good.height))
+                        except Exception as e:
+                            print('get goods pic error:{}'.format(e))
+                            goods_image = None
+                        picurl_to_goods_image[picurl] = goods_image
 
                     for gooddisplay in good.gooddisplay_inss:
                         if gooddisplay.dep == 0:
                             point1 = (gooddisplay.left,shelf.height-(gooddisplay.top+level_start_height+good.height))
                             point2 = (gooddisplay.left+good.width,shelf.height-(gooddisplay.top+level_start_height))
-                            # cv2.rectangle(image,point1,point2,(0,0,255),2)
+                            if goods_image is None:
+                                cv2.rectangle(image,point1,point2,(0,0,255),2)
+                            else:
+                                h = goods_image.shape[0]
+                                w = goods_image.shape[1]
+                                image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image
                             txt_point = (gooddisplay.left,shelf.height-(gooddisplay.top+level_start_height+int(good.height/2)))
                             cv2.putText(image, '{}'.format(good.mch_good_code),txt_point, cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
         cv2.imwrite(image_path,image)
 
 if __name__ == "__main__":
     taizhang = generate_displays(806,1142)
-    # print(taizhang)
+    print(taizhang.to_json())
     import os
     with open("1.txt","w") as f:
         f.write(str(taizhang.__str__()))
