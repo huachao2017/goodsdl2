@@ -154,9 +154,16 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
         cursor_dmstore.execute("select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
         (erp_shop_id,) = cursor_dmstore.fetchone()
 
+        if erp_shop_type == 0:
+            cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_shop_id))
+            (authorized_shop_id,) = cursor_erp.fetchone()
+        else:
+            cursor_dmstore.execute(
+                "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 1".format(shopid))
+            (erp_supply_id,) = cursor_dmstore.fetchone()
+            cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_supply_id))
+            (authorized_shop_id,) = cursor_erp.fetchone()
 
-        cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_shop_id))
-        (authorized_shop_id,) = cursor_erp.fetchone()
 
     except:
         print('找不到供应商:{}！'.format(shopid))
