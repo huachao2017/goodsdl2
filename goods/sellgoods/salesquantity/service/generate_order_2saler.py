@@ -18,6 +18,7 @@ def generate():
         if result == None or len(result.keys()) < 1:
             print("shop_id day generate order failed ,get_data error   " + str(shop_id))
             return
+        print ("规则0 商品数："+str(len(result.keys())))
         for mch_code  in result:
             drg_ins = result[mch_code]
             upc = drg_ins.upc
