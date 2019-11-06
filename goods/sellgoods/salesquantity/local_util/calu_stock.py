@@ -8,4 +8,4 @@ def get_stock(upc_depth,shelf_depth,faces):
         faces = 1
     min_stock = faces
     max_stock = faces * math.floor(float(shelf_depth)/upc_depth)
-    return min_stock,max_stock
+    return max_stock,min_stock
