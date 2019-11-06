@@ -92,9 +92,9 @@ def get_raw_goods_info(uc_shopid, mch_codes):
         # 获取商品属性
         try:
             cursor.execute("select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_code))
+            (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
             # FIXME width,height暂时翻转
-            # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
-            (goods_id, goods_name, upc, tz_display_img, spec, volume, height, width, depth, is_superimpose, is_suspension) = cursor.fetchone()
+            # (goods_id, goods_name, upc, tz_display_img, spec, volume, height, width, depth, is_superimpose, is_suspension) = cursor.fetchone()
         except:
             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
             continue
