@@ -52,7 +52,7 @@ def rule_isAndNotFir(max_stock,min_stock,stock,upc_ordersales,upc,sale,multiple,
                 upc_ordersales[upc] = (max_stock - stock, 0, min_stock, max_stock, stock,multiple,start_sum,start_min,start_max)
 
     else:
-        if sale is not None:
+        if sale is not None or sale == 0 :
             if max_stock - stock > sale:
                 upc_ordersales[upc] = (sale, sale, min_stock, max_stock, stock,multiple,start_sum,start_min,start_max)
             else:
