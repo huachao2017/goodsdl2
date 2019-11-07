@@ -71,6 +71,7 @@ class Taizhang:
             levels:[{
                 level_id:xx   #0是底层,1,2,3,4...
                 height:xx
+                hole_num:xx
                 goods:[{
                     mch_goods_code:
                     upc:
@@ -115,6 +116,7 @@ class Taizhang:
                     json_level = {
                         "level_id":level.level_id,
                         "height":level.level_height,
+                        "hole_num": level.level_hole_num,
                         "goods":[]
                     }
                     json_shelf["levels"].append(json_level)

@@ -31,7 +31,9 @@ def generate_displays(uc_shopid, tz_id):
             raw_shelf.shelf_id,
             raw_shelf.length,
             raw_shelf.height,
-            raw_shelf.depth
+            raw_shelf.depth,
+            raw_shelf.hole_height,
+            raw_shelf.hole_dis
         )
         taizhang.associated_catids = raw_shelf.associated_catids
         taizhang.shelfs.append(shelf)
