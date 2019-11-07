@@ -18,6 +18,7 @@ def generate():
         if result == None or len(result.keys()) < 1:
             print("shop_id day generate order failed ,get_data error   " + str(shop_id))
             return
+        print ("规则0 商品数："+str(len(result.keys())))
         for mch_code  in result:
             drg_ins = result[mch_code]
             upc = drg_ins.upc
@@ -37,8 +38,9 @@ def generate():
                 start_sum = 1
             upc_ordersales = order_rule.rule_isAndNotFir(max_stock, min_stock, stock, upc_ordersales, upc, sale,
                                                              multiple, start_sum, isfir=isfirst)
+        print("规则一：商品数：" + str(len(upc_ordersales.keys())))
         upc_ordersales = order_rule.rule_start_sum(upc_ordersales)
-
+        print("规则二：商品数：" + str(len(upc_ordersales.keys())))
         for upc in upc_ordersales :
             (order_sale, predict_sale, min_stock, max_stock, stock, multiple, start_sum, start_min, start_max) = upc_ordersales[upc]
             salesorder_ins = SalesOrder()

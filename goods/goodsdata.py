@@ -134,6 +134,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
     """
     获取商店的所有货架及货架上的商品信息，该方法在订货时用
     :param shopid: fx系统的商店id
+    :param erp_shop_type: erp系统里面的类型
     :return:返回一个DataRawGoods对象的map,key为mch_code
     """
 
@@ -153,9 +154,16 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
         cursor_dmstore.execute("select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
         (erp_shop_id,) = cursor_dmstore.fetchone()
 
+        if erp_shop_type == 0:
+            cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_shop_id))
+            (authorized_shop_id,) = cursor_erp.fetchone()
+        else:
+            cursor_dmstore.execute(
+                "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 1".format(shopid))
+            (erp_supply_id,) = cursor_dmstore.fetchone()
+            cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_supply_id))
+            (authorized_shop_id,) = cursor_erp.fetchone()
 
-        cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_shop_id))
-        (authorized_shop_id,) = cursor_erp.fetchone()
 
     except:
         print('找不到供应商:{}！'.format(shopid))
@@ -232,30 +240,44 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                         authorized_shop_id, upc))
                                 (sku_id,) = cursor_erp.fetchone()
                                 cursor_erp.execute(
-                                    "select start_sum,multiple,stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                                    "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
                                         sku_id))
-                                (start_sum, multiple, supply_stock) = cursor_erp.fetchone()
+                                (start_sum, multiple) = cursor_erp.fetchone()
                             except:
-                                print('Erp找不到商品:{}-{}！'.format(upc, mch_code))
+                                print('Erp找不到商品:{}-{}！'.format(upc, authorized_shop_id))
                                 start_sum = 0
                                 multiple = 0
-                                supply_stock = 0
                         else:
                             start_sum = 0
                             multiple = 0
-                            supply_stock = 0
 
                         if erp_shop_type == 1:
                             # 二批订货需要综合两边库存
+                            try:
+                                # 获取起订量
+                                # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
+                                cursor_erp.execute(
+                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
+                                        erp_supply_id, upc))
+                                (sku_id,) = cursor_erp.fetchone()
+                                cursor_erp.execute(
+                                    "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                                        sku_id))
+                                (supply_stock, ) = cursor_erp.fetchone()
+                            except:
+                                print('ErpSupply找不到商品:{}-{}！'.format(upc, erp_supply_id))
+                                supply_stock = 0
+
                             stock = stock + supply_stock
 
-                            # 获取预测销量
+                            # 获取昨日销量
                             try:
                                 cursor_ai.execute(
-                                    "select nextday_predict_sales from goods_ai_sales_goods where shop_id={} and upc='{}' and next_day='{}'".format(shopid, upc, next_day))
+                                    "select nextday_predict_sales from goods_ai_sales_goods where shopid={} and upc='{}' and next_day='{}'".format(shopid, upc, next_day))
                                 (sales,) = cursor_ai.fetchone()
+                                print('ai找到销量预测:{}-{}！'.format(upc, sales))
                             except:
-                                print('ai找不到销量预测:{}-{}！'.format(upc, mch_code))
+                                #print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
                                 sales = 0
                         else:
                             sales = 0
@@ -435,10 +457,12 @@ class DataRawGoods():
         self.face_num = face_num
 
     def __str__(self):
-        return '{},{},{},{},{},{},{},{},' \
-               '{},{},{},{},{},{},{},{},{},{},{}'.format(
-            self.mch_code,self.goods_name,self.upc,self.tz_display_img,self.corp_classify_code,self.display_code,self.spec,self.volume,
-            self.width,self.height,self.depth,self.is_superimpose,self.is_suspension,self.start_sum,self.multiple,self.stock,self.sales,self.shelf_depth,self.face_num)
+        # return '{},{},{},{},{},{},{},{},' \
+        #        '{},{},{},{},{},{},{},{},{},{},{}'.format(
+        #     self.mch_code,self.goods_name,self.upc,self.tz_display_img,self.corp_classify_code,self.display_code,self.spec,self.volume,
+        #     self.width,self.height,self.depth,self.is_superimpose,self.is_suspension,self.start_sum,self.multiple,self.stock,self.sales,self.shelf_depth,self.face_num)
+        return '{},{},{},depth:{},start_sum:{},stock:{},sales:{},shelf_depth:{},face_num:{}'.format(
+            self.mch_code,self.goods_name,self.upc,self.depth,self.start_sum,self.stock,self.sales,self.shelf_depth,self.face_num)
 
 if __name__ == "__main__":
     ret = get_raw_shop_shelfs(806)
@@ -449,8 +473,12 @@ if __name__ == "__main__":
     ret = get_raw_goods_info(806,[2036329,2036330])
     print("\n".join('{}:{}'.format(str(i),str(ret[i])) for i in ret.keys()))
 
-    ret_goods = get_shop_order_goods(1284,0)
-    print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
+    # ret_goods = get_shop_order_goods(1284,0)
+    # print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
 
     ret_goods = get_shop_order_goods(1284,1)
-    print("\n".join('{}:{}'.format(str(i),str(ret_goods[i])) for i in ret_goods.keys()))
+    index = 0
+    for i in ret_goods.keys():
+        if ret_goods[i].sales>0:
+            index += 1
+            print('{}:{}'.format(index,str(ret_goods[i])))
