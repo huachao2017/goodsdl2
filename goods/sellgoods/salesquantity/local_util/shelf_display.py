@@ -459,6 +459,6 @@ def get_level(shelf_ins,isAlter=False):
             level_ins.hole_dis_num = bs
             if isAlter : # 是最后一个货架  添置逻辑层
                 level_ins.isTrue = False
-            return level_ins
+                return level_ins
         else: #如果不是最后一个货架 ， 不产生新层
             return None
