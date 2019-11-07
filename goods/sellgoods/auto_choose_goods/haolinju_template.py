@@ -74,7 +74,7 @@ def get_data(target,template_shop_id,days=100):
 def storage_day_choose(data):
     # 以下查询保质期的长短
     upcs = [str(i[2]) for i in data]
-    sql_02 = 'select upc from ucenter.uc_merchant_goods where upc in {} and storage_day>12'
+    sql_02 = 'select upc from ucenter.uc_merchant_goods where upc in {} and storage_day>0'
     cursor_02 = connections['ucenter'].cursor()
     # print(tuple(upcs))
     cursor_02.execute(sql_02.format(tuple(upcs)))
@@ -252,13 +252,13 @@ if __name__ == '__main__':
 
     a = get_data(1284,'3598')
     # print(a)
-    # a = storage_day_choose(a)
+    a = storage_day_choose(a)
     b = choose_goods(a)
     # print(b)
     # print(len(a))
     # print(len(b))
     c = check_order(b)
-    save_data(c)
+    # save_data(c)
 
 
 
