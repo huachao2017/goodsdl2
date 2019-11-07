@@ -45,7 +45,7 @@ def rule_start_sum(sales_order_inss):
     return 订单对象
 """
 def rule_isAndNotFir(sales_order_ins):
-    if sales_order_ins.predict_sale != None and sales_order_ins.predict_sale :  # 优先保证订货空间能容纳订货量
+    if sales_order_ins.predict_sale != None and sales_order_ins.predict_sale > 0  :  # 优先保证订货空间能容纳订货量
         if sales_order_ins.max_stock - sales_order_ins.stock > sales_order_ins.predict_sale:  # 剩余空间大于销量 订销量
             sales_order_ins.order_sale = sales_order_ins.predict_sale
         else:
