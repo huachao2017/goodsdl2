@@ -158,8 +158,6 @@ def put_last_shelf(shelf_ins,put_shelf_goods,try_flag):
             level_ins = get_level(shelf_ins,isAlter=True)
             if level_ins != None:
                 put_shelf_goods = put_good_to_level(level_ins, put_shelf_goods, shelf_ins.levels)
-                if shelf_ins.levels == None :
-                    shelf_ins.levels = []
                 shelf_ins.levels.append(level_ins)
         else:  # 没有摆放商品时 ，摆放结束
             break
@@ -461,6 +459,6 @@ def get_level(shelf_ins,isAlter=False):
             level_ins.hole_dis_num = bs
             if isAlter : # 是最后一个货架  添置逻辑层
                 level_ins.isTrue = False
-            return level_ins
+                return level_ins
         else: #如果不是最后一个货架 ， 不产生新层
             return None
