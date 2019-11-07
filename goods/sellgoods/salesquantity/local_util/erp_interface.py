@@ -67,6 +67,7 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales):
                 start_min = one_order.start_min,
                 start_sum = one_order.start_sum,
                 erp_shop_type = one_order.erp_shop_type,
+                goods_name = one_order.goods_name
             )
     except Exception as e:
         print('order_commit error:{}'.format(e))

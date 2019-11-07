@@ -29,4 +29,5 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.stock = stock
     sales_order_ins.start_sum = start_sum
     sales_order_ins.multiple = multiple
+    sales_order_ins.goods_name = drg_ins.goods_name
     return sales_order_ins
