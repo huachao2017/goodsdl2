@@ -24,7 +24,7 @@ origin_choose = ((1284, '3598', '6921168558049', '050203', 9900, 2026210), (1284
 # +                   "where T3.upc != '' and  T3.upc != '0' "
 # +                   "group by T2.t1_create_date,T2.t1_shop_id,T3.upc "
 # upc_data_sql.format()
-def get_data(target,template_shop_id,days=27):
+def get_data(target,template_shop_id,days=100):
     """
     :param target: 选品店的id
     :param template_shop_id: 模板店的id
