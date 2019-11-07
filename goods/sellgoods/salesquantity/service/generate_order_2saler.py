@@ -6,10 +6,10 @@ from goods.sellgoods.salesquantity.local_util import erp_interface
 from goods.sellgoods.salesquantity.proxy import order_rule
 from goods.sellgoods.salesquantity.local_util import combean_to_mybean
 from goods.goodsdata import get_shop_order_goods
-order_shop_idsfirst = config.shellgoods_params['order_shop_idsfirst']
+order_shop_ids = config.shellgoods_params['order_shop_ids']
 shop_type = config.shellgoods_params['shop_types'][1]  # 二批
 def generate():
-    for (shop_id,isfirst) in order_shop_idsfirst:
+    for shop_id in order_shop_ids:
         result = get_shop_order_goods(shop_id,shop_type)
         sales_order_inss = []
         if result == None or len(result.keys()) < 1:
@@ -19,7 +19,7 @@ def generate():
         for mch_code  in result:
             drg_ins = result[mch_code]
             sales_order_ins = combean_to_mybean.get_saleorder_ins(drg_ins,shop_id,shop_type)
-            sales_order_ins = order_rule.rule_isAndNotFir(sales_order_ins ,isfir=isfirst)
+            sales_order_ins = order_rule.rule_isAndNotFir(sales_order_ins)
             if sales_order_ins != None:
                 sales_order_inss.append(sales_order_ins)
         print("规则一：商品数：" + str(len(sales_order_inss)))

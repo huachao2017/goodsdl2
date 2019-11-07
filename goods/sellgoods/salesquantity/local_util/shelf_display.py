@@ -410,8 +410,8 @@ def get_level_kedu(level_ins):
     :param isAlter 是否是最后一个货架
     :return: 层对象
 """
-def get_level(shelf_levels,shelf_ins,isAlter=False):
-    if shelf_levels == None or len(shelf_levels) == 0 :
+def get_level(shelf_ins,isAlter=False):
+    if shelf_ins.levels == None or len(shelf_ins.levels) == 0 :
         level_ins =Level()
         level_ins.level_id = 0
         level_ins.isTrue = True
@@ -419,17 +419,19 @@ def get_level(shelf_levels,shelf_ins,isAlter=False):
         level_ins.level_depth = shelf_ins.depth
         level_ins.level_start_height = shelf_level_start_height
         level_ins.level_none_good_width = shelf_ins.width
+        level_ins.hole_num = 0
+        level_ins.hole_dis_num = 0
         return level_ins
     else:
         level_ids = []
-        for level_ins in shelf_levels:
+        for level_ins in shelf_ins.levels:
             level_ids.append(level_ins.level_id)
         level_ids = list(set(level_ids))
         level_ids.sort()
         level_start_height = 0
         level_holes_height = 0
         level_holes_dis = 0
-        for level_ins in shelf_levels:
+        for level_ins in shelf_ins.levels:
             if level_ins.level_id == level_ids[-1]:
                 level_start_height = level_ins.level_height + level_ins.level_start_height + shelf_level_redundancy_height
                 bs = math.ceil(
@@ -446,12 +448,17 @@ def get_level(shelf_levels,shelf_ins,isAlter=False):
         level_ins.level_none_good_width = shelf_ins.width
         level_ins.level_start_height = level_start_height
         level_ins.level_none_good_width = shelf_ins.width
-        level_ins.hole_num = level_holes_height
-        level_ins.hole_dis_num = level_holes_dis
+        shelf_ins.levels[-1].hole_num = level_holes_height - 1
+        shelf_ins.levels[-1].hole_dis_num = level_holes_dis
         if shelf_ins.height - level_start_height > shelf_top_level_height:  # 小于距离限制，产生新层
             level_ins.isTrue = True
             return level_ins
-        elif isAlter and  shelf_ins.height - level_start_height <= shelf_top_level_height : # 不产生新层 改为也产生新层 只是新层打上标记 不可用  只有最后一个货架有逻辑层
-            level_ins.isTrue = False
+        elif shelf_ins.height - level_start_height <= shelf_top_level_height: #最后一层 更新空数
+            bs = math.floor(float(shelf_ins.height - level_ins.level_start_height) / (shelf_ins.hole_height + shelf_ins.hole_dis))
+            level_ins.hole_num = bs
+            level_ins.hole_dis_num = bs
+            if isAlter : # 是最后一个货架  添置逻辑层
+                level_ins.isTrue = False
+            return level_ins
         else: #如果不是最后一个货架 ， 不产生新层
             return None
