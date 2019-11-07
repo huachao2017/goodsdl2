@@ -181,10 +181,6 @@ def check_order(data):
     print('third_order_checked:',len(result))
     return result
 
-
-
-
-
 def save_data(data):
     upc_list = []
     for i in data:
@@ -262,7 +258,7 @@ if __name__ == '__main__':
     # print(len(a))
     # print(len(b))
     c = check_order(b)
-    # save_data(c)
+    save_data(c)
 
 
 
