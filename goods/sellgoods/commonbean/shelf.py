@@ -4,7 +4,7 @@ class Shelf:
     width = None
     height = None
     depth = None
-    levels = None
+    levels = []
     hole_height = 10 # 孔高
     hole_dis = 5 # 孔距
 

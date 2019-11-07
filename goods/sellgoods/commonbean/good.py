@@ -1,6 +1,6 @@
 class Good:
     #陈列信息
-    gooddisplay_inss = None # 商品陈列对象 列表
+    gooddisplay_inss = [] # 商品陈列对象 列表
 
     #初始化数据
     mch_good_code = None

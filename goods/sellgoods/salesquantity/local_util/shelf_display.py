@@ -158,6 +158,8 @@ def put_last_shelf(shelf_ins,put_shelf_goods,try_flag):
             level_ins = get_level(shelf_ins,isAlter=True)
             if level_ins != None:
                 put_shelf_goods = put_good_to_level(level_ins, put_shelf_goods, shelf_ins.levels)
+                if shelf_ins.levels == None :
+                    shelf_ins.levels = []
                 shelf_ins.levels.append(level_ins)
         else:  # 没有摆放商品时 ，摆放结束
             break
