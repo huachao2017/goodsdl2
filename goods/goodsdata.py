@@ -240,21 +240,34 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                         authorized_shop_id, upc))
                                 (sku_id,) = cursor_erp.fetchone()
                                 cursor_erp.execute(
-                                    "select start_sum,multiple,stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                                    "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
                                         sku_id))
-                                (start_sum, multiple, supply_stock) = cursor_erp.fetchone()
+                                (start_sum, multiple) = cursor_erp.fetchone()
                             except:
                                 print('Erp找不到商品:{}-{}！'.format(upc, authorized_shop_id))
                                 start_sum = 0
                                 multiple = 0
-                                supply_stock = 0
                         else:
                             start_sum = 0
                             multiple = 0
-                            supply_stock = 0
 
                         if erp_shop_type == 1:
                             # 二批订货需要综合两边库存
+                            try:
+                                # 获取起订量
+                                # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
+                                cursor_erp.execute(
+                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
+                                        erp_supply_id, upc))
+                                (sku_id,) = cursor_erp.fetchone()
+                                cursor_erp.execute(
+                                    "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                                        sku_id))
+                                (supply_stock, ) = cursor_erp.fetchone()
+                            except:
+                                print('ErpSupply找不到商品:{}-{}！'.format(upc, erp_supply_id))
+                                supply_stock = 0
+
                             stock = stock + supply_stock
 
                             # 获取昨日销量
