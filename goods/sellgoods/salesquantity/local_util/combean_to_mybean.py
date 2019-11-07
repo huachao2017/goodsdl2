@@ -27,4 +27,5 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.max_stock = max_stock
     sales_order_ins.min_stock = min_stock
     sales_order_ins.stock = stock
+    sales_order_ins.start_sum = start_sum
     return sales_order_ins
