@@ -19,7 +19,7 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins = SalesOrder()
     sales_order_ins.shopid = shop_id
     sales_order_ins.start_max = max_stock  # 上限
-    sales_order_ins.start_min = max(int(max_stock / 2), min_stock)  # 下限
+    sales_order_ins.start_min = max(int(max_stock / 3), min_stock)  # 下限 FIXME
     sales_order_ins.upc = upc
     sales_order_ins.predict_sale = sale
     sales_order_ins.erp_shop_type = shop_type
