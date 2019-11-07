@@ -446,8 +446,8 @@ def get_level(shelf_levels,shelf_ins,isAlter=False):
         level_ins.level_none_good_width = shelf_ins.width
         level_ins.level_start_height = level_start_height
         level_ins.level_none_good_width = shelf_ins.width
-        level_ins.level_holes_height = level_holes_height
-        level_ins.level_holes_dis = level_holes_dis
+        level_ins.hole_num = level_holes_height
+        level_ins.hole_dis_num = level_holes_dis
         if shelf_ins.height - level_start_height > shelf_top_level_height:  # 小于距离限制，产生新层
             level_ins.isTrue = True
             return level_ins

@@ -8,5 +8,5 @@ class Level :
     level_width = None  #层宽度
     level_height = None  # 层高度
     level_depth = None  # 层深度
-    level_holes_height = None # 多少个孔高度
-    level_holes_dis = None # 多少个孔距
+    hole_num = None # 多少个孔
+    hole_dis_num = None # 多少个孔距
