@@ -60,7 +60,7 @@ def get_data(target,template_shop_id,days=100):
         # if not result[1].startswith('6901028'):       # 以此为开头的是香烟
         #     data.append(list)
 
-        if result[2][:2] in ['01','16','17']:       # 日配的商品
+        if result[2][:2] in ['02','16','17']:       # 日配的商品
             # if result[4]
             data.append(list)
 
@@ -258,7 +258,7 @@ if __name__ == '__main__':
     # print(len(a))
     # print(len(b))
     c = check_order(b)
-    # save_data(c)
+    save_data(c)
 
 
 
