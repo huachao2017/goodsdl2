@@ -24,7 +24,7 @@ origin_choose = ((1284, '3598', '6921168558049', '050203', 9900, 2026210), (1284
 # +                   "where T3.upc != '' and  T3.upc != '0' "
 # +                   "group by T2.t1_create_date,T2.t1_shop_id,T3.upc "
 # upc_data_sql.format()
-def get_data(target,template_shop_id,days=100):
+def get_data(target,template_shop_id,days=28):
     """
     :param target: 选品店的id
     :param template_shop_id: 模板店的id
@@ -34,7 +34,6 @@ def get_data(target,template_shop_id,days=100):
     now = datetime.datetime.now()
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
     week_ago = (now - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
-    # print(now_date,week_ago)
     # sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '2019-10-14 00:00:00' and p.create_time < '2019-10-17 00:00:00' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
     sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
     # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
@@ -42,7 +41,6 @@ def get_data(target,template_shop_id,days=100):
 
     cursor = connections['dmstore'].cursor()
 
-    # cursor.execute(sql.format(template_shop_id))
     cursor.execute(sql.format(week_ago,now_date,template_shop_id))
     results = cursor.fetchall()
     cursor.close()
@@ -60,21 +58,22 @@ def get_data(target,template_shop_id,days=100):
         # if not result[1].startswith('6901028'):       # 以此为开头的是香烟
         #     data.append(list)
 
-        if result[2][:2] in ['01','16','17']:       # 日配的商品
-            # if result[4]
+        # if result[2][:2] in ['02','16','17']:       # 日配的商品
+        #     data.append(list)
+        if result[2][:2] in ['01']:       # 冷冻的商品
             data.append(list)
 
     print('first:', len(data))
 
     for i in data:
         i[4] = round(i[4] / days)
-    # print(data)
+    print(data)
     return data
 
 def storage_day_choose(data):
     # 以下查询保质期的长短
     upcs = [str(i[2]) for i in data]
-    sql_02 = 'select upc from ucenter.uc_merchant_goods where upc in {} and storage_day>0'
+    sql_02 = 'select upc from ucenter.uc_merchant_goods where upc in {} and storage_day is null'
     cursor_02 = connections['ucenter'].cursor()
     # print(tuple(upcs))
     cursor_02.execute(sql_02.format(tuple(upcs)))
@@ -252,12 +251,13 @@ if __name__ == '__main__':
 
     a = get_data(1284,'3598')
     # print(a)
-    a = storage_day_choose(a)
+    # a = storage_day_choose(a)
     b = choose_goods(a)
     # print(b)
     # print(len(a))
     # print(len(b))
     c = check_order(b)
+    print(c)
     # save_data(c)
 
 
