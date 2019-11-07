@@ -155,6 +155,7 @@ def put_last_shelf(shelf_ins,put_shelf_goods,try_flag):
     width_kedu_sum = 0
     for j in range(shelf_levels_max):
         if put_shelf_goods != None and len(put_shelf_goods) > 0:
+            print("222")
             level_ins = get_level(shelf_ins,isAlter=True)
             if level_ins != None:
                 print ("111")
