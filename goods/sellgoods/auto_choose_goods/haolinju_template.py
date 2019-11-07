@@ -256,7 +256,7 @@ if __name__ == '__main__':
 
     a = get_data(1284,'3598')
     # print(a)
-    a = storage_day_choose(a)
+    # a = storage_day_choose(a)
     b = choose_goods(a)
     # print(b)
     # print(len(a))
