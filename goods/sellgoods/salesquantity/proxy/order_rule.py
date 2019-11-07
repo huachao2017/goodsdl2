@@ -40,17 +40,23 @@ def rule_start_sum(sales_order_inss):
 
 
 """
-    是否首次下单规则
+    首次下单规则
     param:sales_order_ins 订货对象
     return 订单对象
 """
 def rule_isAndNotFir(sales_order_ins):
-    if sales_order_ins.predict_sale != None and sales_order_ins.predict_sale > 0  :  # 优先保证订货空间能容纳订货量
+    if sales_order_ins.predict_sale != None and sales_order_ins.predict_sale > 0 :  # 优先保证订货空间能容纳订货量
         if sales_order_ins.max_stock - sales_order_ins.stock > sales_order_ins.predict_sale:  # 剩余空间大于销量 订销量
             sales_order_ins.order_sale = sales_order_ins.predict_sale
         else:
             if sales_order_ins.max_stock - sales_order_ins.stock  > 0: # 剩余空间小于销量 订剩余空间
                 sales_order_ins.order_sale = sales_order_ins.max_stock - sales_order_ins.stock
+    else:
+        if sales_order_ins.max_stock - sales_order_ins.stock > 0:
+            sales_order_ins.predict_sale = 0
+            sales_order_ins.order_sale = sales_order_ins.max_stock - sales_order_ins.stock
+    if sales_order_ins.order_sale <= 0 :
+        return None
     return sales_order_ins
 
 
