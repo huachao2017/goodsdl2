@@ -29,9 +29,9 @@ def rule_start_sum(sales_order_inss):
                     min_order_sale = 0
                     max_order_sale = sales_order_ins.start_sum
 
-                if max_order_sale > sales_order_ins.start_max:
+                if max_order_sale+sales_order_ins.stock > sales_order_ins.start_max:
                     # 如果上面的选择大于上限，则需二次判断
-                    if min_order_sale < sales_order_ins.start_min:
+                    if min_order_sale+sales_order_ins.stock < sales_order_ins.start_min:
                         # 如果下面的选择小于下限，曾优先用超出的上限
                         sales_order_ins.order_sale = max_order_sale
                     else:
