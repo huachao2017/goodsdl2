@@ -65,4 +65,10 @@ def rule_isAndNotFir(sales_order_ins):
     return sales_order_ins
 
 
+def rule_filter_order_sale(sales_order_inss):
+    sales_order_inss_new = []
+    for sales_order_ins in sales_order_inss:
+        if sales_order_ins.order_sale > 0 :
+            sales_order_inss_new.append(sales_order_ins)
+    return sales_order_inss_new
 

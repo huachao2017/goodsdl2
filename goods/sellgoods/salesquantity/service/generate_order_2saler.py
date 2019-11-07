@@ -25,6 +25,8 @@ def generate():
         print("规则一：商品数：" + str(len(sales_order_inss)))
         sales_order_inss = order_rule.rule_start_sum(sales_order_inss)
         print("规则二：商品数：" + str(len(sales_order_inss)))
+        sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
+        print("规则三：商品数：" + str(len(sales_order_inss)))
         if len(sales_order_inss) > 0:
             erp_interface.order_commit(shop_id,shop_type,sales_order_inss)
             print("erp_interface.order_commit success!")
