@@ -24,7 +24,7 @@ origin_choose = ((1284, '3598', '6921168558049', '050203', 9900, 2026210), (1284
 # +                   "where T3.upc != '' and  T3.upc != '0' "
 # +                   "group by T2.t1_create_date,T2.t1_shop_id,T3.upc "
 # upc_data_sql.format()
-def get_data(target,template_shop_id,days=100):
+def get_data(target,template_shop_id,days=28):
     """
     :param target: 选品店的id
     :param template_shop_id: 模板店的id
@@ -74,7 +74,7 @@ def get_data(target,template_shop_id,days=100):
 def storage_day_choose(data):
     # 以下查询保质期的长短
     upcs = [str(i[2]) for i in data]
-    sql_02 = 'select upc from ucenter.uc_merchant_goods where upc in {} and storage_day>0'
+    sql_02 = 'select upc from ucenter.uc_merchant_goods where upc in {} and storage_day>11'
     cursor_02 = connections['ucenter'].cursor()
     # print(tuple(upcs))
     cursor_02.execute(sql_02.format(tuple(upcs)))
@@ -252,7 +252,7 @@ if __name__ == '__main__':
 
     a = get_data(1284,'3598')
     # print(a)
-    a = storage_day_choose(a)
+    # a = storage_day_choose(a)
     b = choose_goods(a)
     # print(b)
     # print(len(a))
