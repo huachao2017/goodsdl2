@@ -55,19 +55,19 @@ def get_data(target,template_shop_id,days=28):
         list.append(result[2])
         list.append(int(result[0]))
         list.append(result[3])
-        # if not result[1].startswith('6901028'):       # 以此为开头的是香烟
-        #     data.append(list)
+        if not result[1].startswith('6901028'):       # 以此为开头的是香烟
+            data.append(list)
 
         # if result[2][:2] in ['02','16','17']:       # 日配的商品
         #     data.append(list)
-        if result[2][:2] in ['01']:       # 冷冻的商品
-            data.append(list)
+        # if result[2][:2] in ['01']:       # 冷冻的商品
+        #     data.append(list)
 
     print('first:', len(data))
 
     for i in data:
         i[4] = round(i[4] / days)
-    print(data)
+    # print(data)
     return data
 
 def storage_day_choose(data):
@@ -257,8 +257,8 @@ if __name__ == '__main__':
     # print(len(a))
     # print(len(b))
     c = check_order(b)
-    print(c)
-    # save_data(c)
+    # print(c)
+    save_data(c)
 
 
 
