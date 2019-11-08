@@ -66,6 +66,7 @@ shellgoods_params={
     # 订单生成
     'order_shop_ids': [1284],
     'order_shop_hour_ids':[1284], # 门店向二批订货
+    'order_shop_hours':[0,7,14,19],# 补货时间
     'shop_types':[0,1], #门店类型 0：门店 1：批发商
     # 自动陈列
     'shelf_display':[(1284,True)],
