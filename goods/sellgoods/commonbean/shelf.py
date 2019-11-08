@@ -4,11 +4,15 @@ class Shelf:
     width = None
     height = None
     depth = None
-    levels = None
+    levels = []
+    hole_height = 10 # 孔高
+    hole_dis = 5 # 孔距
 
-    def __init__(self,taizhang_id,shelf_id, width,height,depth):
+    def __init__(self,taizhang_id,shelf_id, width,height,depth,hole_height,hole_dis):
         self.taizhang_id = taizhang_id
         self.shelf_id = shelf_id
         self.width = width
         self.height = height
         self.depth = depth
+        self.hole_height = hole_height
+        self.hole_dis = hole_dis

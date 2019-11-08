@@ -50,9 +50,9 @@ def get_raw_shop_shelfs(uc_shopid, tz_id = None):
         if associated_catids is None or associated_catids == '':
             associated_catids = '0501,0502,0503,0504,0505,0506'  # FIXME only for test
 
-        cursor.execute("select t.shelf_no,s.length,s.height,s.depth from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(shelf_id))
-        (shelf_no, length, height, depth) = cursor.fetchone()
-        data_raw_shelf = DataRawShelf(taizhang_id, shelf_id, shelf_no,count, length,height,depth,associated_catids)
+        cursor.execute("select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(shelf_id))
+        (shelf_no, length, height, depth, hole_height, hole_distance) = cursor.fetchone()
+        data_raw_shelf = DataRawShelf(taizhang_id, shelf_id, shelf_no,count, length,height,depth,associated_catids,hole_height, hole_distance)
         ret.append(data_raw_shelf)
 
     cursor.close()
@@ -356,7 +356,7 @@ def get_shop_shelf_goods(shopid):
 
 
 class DataRawShelf():
-    def __init__(self, taizhang_id, shelf_id, type, count, length, height, depth, associated_catids):
+    def __init__(self, taizhang_id, shelf_id, type, count, length, height, depth, associated_catids, hole_height, hole_dis):
         self.taizhang_id = taizhang_id
         self.shelf_id = shelf_id
         self.type = type
@@ -369,8 +369,11 @@ class DataRawShelf():
         else:
             self.associated_catids = associated_catids.split(',')
 
+        self.hole_height = hole_height
+        self.hole_dis = hole_dis
+
     def __str__(self):
-        ret = '{},{},{},{},{},{},{},{}'.format(self.taizhang_id, self.shelf_id, self.type, self.count, self.length, self.height, self.depth, self.associated_catids)
+        ret = '{},{},{},{},{},{},{},{},{},{}'.format(self.taizhang_id, self.shelf_id, self.type, self.count, self.length, self.height, self.depth, self.associated_catids, self.hole_height, self.hole_dis)
         return ret
 
 class DataShelf():

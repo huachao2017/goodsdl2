@@ -115,6 +115,7 @@ class ai_sales_order(models.Model):
     start_max = models.IntegerField(default=0) #上限
     create_date = models.CharField(max_length=20)
     create_time = models.DateTimeField('date created', auto_now_add=True, db_index=True)
+    goods_name = models.CharField(max_length=100, default='')
 
 def goods_image_upload_source(instance, filename):
     now = datetime.datetime.now()

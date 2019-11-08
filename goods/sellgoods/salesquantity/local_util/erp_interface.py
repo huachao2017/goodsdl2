@@ -32,11 +32,11 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales):
                 "upc":one_order.upc,
                 "number":one_order.order_sale
             })
+        print(order_data)
         index = 0
         while True:
             try:
                 json_info = json.dumps(order_data)
-                print(json_info)
                 data = bytes(json_info, 'utf8')
                 request = urllib.request.Request(url=url.format(erp_shopid), data=data, headers=headers)
 
@@ -46,7 +46,8 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales):
             except Exception as e:
                 index += 1
                 if index > 5:
-                    raise e
+                    # raise e
+                    break
                 print('order_commit error:{}'.format(e))
                 time.sleep(1)
                 continue
@@ -66,6 +67,7 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales):
                 start_min = one_order.start_min,
                 start_sum = one_order.start_sum,
                 erp_shop_type = one_order.erp_shop_type,
+                goods_name = one_order.goods_name
             )
     except Exception as e:
         print('order_commit error:{}'.format(e))

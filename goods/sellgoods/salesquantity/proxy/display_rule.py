@@ -1,5 +1,8 @@
 # 陈列设计规则
+from set_config import config
 import functools
+import math
+shelf_level_start_height = config.shellgoods_params['shelf_level_start_height']
 # 先按code  在按 高度
 def many_sort(good_a, good_b):
     if int(good_a.display_code) > int(good_b.display_code):
@@ -43,3 +46,7 @@ def sort_good_volume(shelf_goods):
             if int(good_ins.height*good_ins.width*good_ins.depth) == int(good_volume):
                 new_shelf_goods.append(good_ins)
     return new_shelf_goods
+
+
+
+
