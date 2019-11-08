@@ -90,7 +90,6 @@ def shelf_gap_expand_gooods_origin(taizhang):
                 result_list.append((shelf.shelf_id, level.level_id, [gap_good]))
     return result_list
 
-
 def shelf_gap_choose_goods_origin(taizhang):
     """
     空隙补品
@@ -217,37 +216,3 @@ def shelf_gap_choose_goods_origin(taizhang):
     return result_list
 
 
-
-
-
-
-
-
-
-
-
-
-
-# class DisplayData():
-#
-#     def __init__(self):
-#         pass
-#     def get_shop_shelfs_upcs(self,shop_id):
-#         # 获取某店的所有货架对应的陈列的类别
-#         shelfs = get_shop_shelfs(shop_id)
-#         # 获取该店选品列表
-#         upcs = get_shop_selected_goods()
-#         # 获取upc的统计信息
-#         upc_statistics_dict = upc_statistics(upcs)
-#         # 遍历每个货架，获取该货架下的类别的所有upc
-#         for shelf in shelfs:
-#             codes_str = shelf[0]
-#             codes_list = codes_str.split(".")
-#             for code in codes_list:
-#                 if len(code) == 2:
-#                     upc_statistics_dict[code]
-#
-#         # 获取upc对应的信息
-#         # 根据类别和预计销售额进行排序
-#         # 计算每个upc的宽度
-#         # 依次给每个upc加上刻度
