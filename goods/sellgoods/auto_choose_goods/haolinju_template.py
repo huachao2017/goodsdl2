@@ -67,7 +67,7 @@ def get_data(target,template_shop_id,days=28):
 
     for i in data:
         i[4] = round(i[4] / days)
-    print(data)
+    # print(data)
     return data
 
 def storage_day_choose(data):
@@ -258,7 +258,7 @@ if __name__ == '__main__':
     # print(len(b))
     c = check_order(b)
     # print(c)
-    # save_data(c)
+    save_data(c)
 
 
 
