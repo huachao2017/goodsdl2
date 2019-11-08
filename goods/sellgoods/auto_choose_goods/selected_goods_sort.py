@@ -230,9 +230,17 @@ class ShelfGoodsSort():
     """
     sorted_goods_list = []
     def __init__(self,middle_list, r=0.5, m=10, ave_ratio=2):
+        """
+
+        :param middle_list: 中类的列表
+        :param r: 类别间的比例缩放因子
+        :param m: 和平均值比较的时候，某类可以加减多少个品
+        :param ave_ratio: 跟平均值的多少倍进行比较
+        """
         self.r = r
         self.m = m
         self.ave_ratio = ave_ratio
+        self.middle_list = middle_list
 
         all_data = self.get_all_data()
         all_data_dict, _, _ = self.upc_statistics(all_data)
@@ -259,6 +267,18 @@ class ShelfGoodsSort():
         #         tem.append(d)
         # self.data = tem
         # print('0001',len(self.data))
+
+    def taizhangcode_to_aicode(self,all_data):
+        cursor = connections['ucenter'].cursor()
+        sql = "select category2_id from uc_merchant_goods where mch_id={} and mch_goods_code={}"
+        results = []
+        for data in all_data:
+            cursor.execute(sql.format(data[6],data[7]))
+            code = cursor.fetchone()
+            if code[0] in self.middle_list:
+                results.append(data)
+        cursor.close()
+        return results
 
 
     def get_all_data(self):
