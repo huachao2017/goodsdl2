@@ -5,23 +5,10 @@ from set_config import config
 from goods.sellgoods.salesquantity.local_util import combean_to_mybean
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from goods.goodsdata import get_shop_order_goods
-import datetime
-import time
 order_shop_ids = config.shellgoods_params['order_shop_hour_ids']
 shop_type = config.shellgoods_params['shop_types'][0]  # 门店
 order_shop_hours = config.shellgoods_params['order_shop_hours']
 def generate():
-    now_hour = datetime.datetime.now().hour
-    now_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-    time1 = now_date
-    time2 = now_date
-    if now_hour in order_shop_hours:
-        index_now_hour = order_shop_hours.index(now_hour)
-        time1_hour = now_hour
-        time2_hour = order_shop_hours[index_now_hour-1]
-        time1 = str(time1) + " " + time1 +":00:00"
-        time2 = str(time2) + " " + time2 +":00:00"
-
     # TODO 订货量 由库存计算改为用实际销售量计算
     for shop_id in order_shop_ids:
         result = get_shop_order_goods(shop_id,shop_type)
@@ -32,7 +19,10 @@ def generate():
         for mch_code  in result:
             drg_ins = result[mch_code]
             sales_order_ins = combean_to_mybean.get_saleorder_ins(drg_ins,shop_id,shop_type)
-            sales_order_ins.order_sale = sales_order_ins.max_stock - sales_order_ins.stock
+            if  sales_order_ins.max_stock < 0 or sales_order_ins.stock < 0 :
+                sales_order_ins.order_sale = 200000
+            elif float(sales_order_ins.stock) <= float(2/3*sales_order_ins.max_stock):
+                sales_order_ins.order_sale = sales_order_ins.max_stock - sales_order_ins.stock
             if sales_order_ins.order_sale  > 0 :
                 sales_order_inss.append(sales_order_ins)
         if len(sales_order_inss) > 0:
