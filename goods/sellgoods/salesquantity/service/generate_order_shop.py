@@ -23,7 +23,7 @@ def generate():
                 sales_order_ins.order_sale = 200000
             elif float(sales_order_ins.stock) < float(sales_order_ins.start_min):
                 sales_order_ins.order_sale = sales_order_ins.max_stock - sales_order_ins.stock
-                print ("补货单..... upc=%s,order_sale=%s,supply_stock=%s" % (str(sales_order_ins.upc),str(sales_order_ins.order_sale),str(sales_order_ins.supply_stock)))
+                print ("补货单..... upc=%s,name=%s,order_sale=%s,supply_stock=%s" % (str(sales_order_ins.upc),str(sales_order_ins.goods_name),str(sales_order_ins.order_sale),str(sales_order_ins.supply_stock)))
                 if sales_order_ins.order_sale > sales_order_ins.supply_stock:
                     sales_order_ins.order_sale = sales_order_ins.supply_stock
             if sales_order_ins.order_sale > 0:
