@@ -14,3 +14,4 @@ class SalesOrder:
     start_sum = None
     erp_shop_type = None
     goods_name = None
+    supply_stock = None
