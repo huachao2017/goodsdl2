@@ -276,7 +276,7 @@ class ShelfGoodsSort():
             time.sleep(0.01)
             cursor.execute(sql.format(self.shop_id,str(data[5])))
             code = cursor.fetchone()
-            print(sql.format(self.shop_id,str(data[5])))
+            # print(sql.format(self.shop_id,str(data[5])))
             if code:
                 if code[0] in self.middle_list_tz:
                     results.append(data[3][:4])
@@ -315,7 +315,7 @@ class ShelfGoodsSort():
         self.data_dict = {}
         for k,v in data_dict.items():
             for kk,vv in v.items():
-                if len(kk) == 4:
+                if kk[:4] in self.middle_list:
                     self.data_dict[k] = v
 
 
