@@ -506,5 +506,5 @@ if __name__ == '__main__':
 
     # middle_list = ['0502','0503']
     middle_list = ['169','173','185']
-    # a = goods_sort(middle_list)
-    # print(a)
+    a = ShelfGoodsSort(middle_list)
+    print(a)
