@@ -331,6 +331,8 @@ class ShelfGoodsSort():
             # print(middle_class)
             print(third_class_dict)
             average_sales = self.get_class_average_sales(middle_class)
+            if average_sales is None:     # 这类已经加完了，不剩了
+                continue
 
             min = float("inf")       # 正无穷大
             for third_code, amount in third_class_dict.items():   # 找到该中类下，数量最小的小类对应的数量
@@ -485,7 +487,10 @@ class ShelfGoodsSort():
             if d[3][:len(code)] == code:
                 sum += d[4]
                 n += 1
-        average_sales = float(sum)/n
+        try:
+            average_sales = float(sum)/n
+        except ZeroDivisionError:
+            average_sales = None
         return average_sales
 
     def get_class_sales_sort(self,code):
