@@ -327,7 +327,7 @@ class ShelfGoodsSort():
             third_class_dict = self.data_dict[middle_class]
             # print(self.data_dict)
             # print(middle_class)
-            # print(third_class_dict)
+            print(third_class_dict)
             average_sales = self.get_class_average_sales(middle_class)
 
             min = float("inf")       # 正无穷大
@@ -477,7 +477,7 @@ class ShelfGoodsSort():
         """
         sum = 0
         n = 0
-        print(self.data)
+        # print(self.data)
         for d in self.data:
             if d[3][:len(code)] == code:
                 sum += d[4]
