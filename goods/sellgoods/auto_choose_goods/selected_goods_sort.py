@@ -240,30 +240,30 @@ class ShelfGoodsSort():
         self.r = r
         self.m = m
         self.ave_ratio = ave_ratio
-        self.middle_list = middle_list
+        self.middle_list_tz = middle_list
         self.shop_id = shop_id
 
         all_data = self.get_all_data()
-        self.data = self.taizhangcode_to_select(all_data)
-        self.data_dict = {}
+        self.middle_list = self.taizhangcode_to_aicode(all_data)
+        # self.data_dict = {}
 
-        # # 以下的代码，输入的middle_list需要是ai库的code，即050505类型的
-        # all_data_dict, _, _ = self.upc_statistics(all_data)
-        # data_dict = {}
-        # for big_class,big_dict in all_data_dict.items():
-        #     for middle_class,middle_dict in big_dict.items():
-        #         if middle_class in middle_list:
-        #             data_dict[middle_class] = middle_dict
-        # self.data_dict = data_dict
-        # tem = []
-        # for d in all_data:
-        #     # print(d)
-        #     if d[3][:4] in middle_list:
-        #         tem.append(d)
-        # self.data = tem
+        # 以下的代码，输入的middle_list需要是ai库的code，即050505类型的
+        all_data_dict, _, _ = self.upc_statistics(all_data)
+        data_dict = {}
+        for big_class,big_dict in all_data_dict.items():
+            for middle_class,middle_dict in big_dict.items():
+                if middle_class in self.middle_list:
+                    data_dict[middle_class] = middle_dict
+        self.data_dict = data_dict
+        tem = []
+        for d in all_data:
+            # print(d)
+            if d[3][:4] in self.middle_list:
+                tem.append(d)
+        self.data = tem
 
 
-    def taizhangcode_to_select(self,all_data):
+    def taizhangcode_to_aicode(self,all_data):
         """
         输入的中类code为台账系统的code，要进行转化
         :param all_data:
@@ -277,10 +277,12 @@ class ShelfGoodsSort():
             cursor.execute(sql.format(self.shop_id,str(data[5])))
             code = cursor.fetchone()
             print(sql.format(self.shop_id,str(data[5])))
-            if code[0] in self.middle_list:
-                results.append(data)
+            if code:
+                if code[0] in self.middle_list_tz:
+                    results.append(data[3][:4])
+
         cursor.close()
-        return results
+        return list(set(results))
 
 
     def get_all_data(self):
@@ -311,8 +313,9 @@ class ShelfGoodsSort():
         data_dict, _, _ = self.upc_statistics(self.data)
         # self.data_dict = data_dict['05']
         for k,v in data_dict.items():
-            if len(k) == 4:
-                self.data_dict[k] = v
+            for kk,vv in v.items():
+                if len(kk) == 4:
+                    self.data_dict[k] = v
 
 
         every_epoch_goods_list = []  # 每轮选出来的商品列表
@@ -508,5 +511,6 @@ if __name__ == '__main__':
 
     # middle_list = ['0502','0503']
     middle_list = ['169','173','185']
-    a = ShelfGoodsSort(middle_list)
+    a = ShelfGoodsSort(middle_list).main()
+
     print(a)
