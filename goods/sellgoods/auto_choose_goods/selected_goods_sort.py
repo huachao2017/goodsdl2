@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-import os,django
+import os,django,time
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
 
@@ -273,8 +273,10 @@ class ShelfGoodsSort():
         sql = "select category2_id from uc_merchant_goods where mch_id={} and mch_goods_code={}"
         results = []
         for data in all_data:
-            cursor.execute(sql.format(self.shop_id,data[5]))
+            time.sleep(0.01)
+            cursor.execute(sql.format(self.shop_id,str(data[5])))
             code = cursor.fetchone()
+            print(sql.format(self.shop_id,str(data[5])))
             if code[0] in self.middle_list:
                 results.append(data)
         cursor.close()
