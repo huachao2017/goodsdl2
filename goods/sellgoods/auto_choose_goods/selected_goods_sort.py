@@ -477,7 +477,8 @@ class ShelfGoodsSort():
         """
         sum = 0
         n = 0
-        # print(self.data)
+        print(self.data)
+        print(code)
         for d in self.data:
             if d[3][:len(code)] == code:
                 sum += d[4]
