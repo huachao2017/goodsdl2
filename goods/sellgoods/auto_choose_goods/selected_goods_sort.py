@@ -256,6 +256,7 @@ class ShelfGoodsSort():
                 if middle_class in self.middle_list:
                     data_dict[middle_class] = middle_dict
         self.data_dict = data_dict
+        print('data_dict',self.data_dict)
         tem = []
         for d in all_data:
             # print(d)
