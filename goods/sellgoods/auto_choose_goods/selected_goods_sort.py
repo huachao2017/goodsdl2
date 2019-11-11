@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-import os,django
+import os,django,time
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
 
@@ -229,7 +229,7 @@ class ShelfGoodsSort():
     货架指定多个中类的列表，然后根据类别整体性和销售额进行排序，作为后续陈列的取舍依据
     """
     sorted_goods_list = []
-    def __init__(self,middle_list, r=0.5, m=10, ave_ratio=2):
+    def __init__(self,middle_list,shop_id=2, r=0.5, m=10, ave_ratio=2):
         """
 
         :param middle_list: 中类的列表
@@ -240,52 +240,60 @@ class ShelfGoodsSort():
         self.r = r
         self.m = m
         self.ave_ratio = ave_ratio
-        self.middle_list = middle_list
+        self.middle_list_tz = middle_list
+        self.shop_id = shop_id
 
         all_data = self.get_all_data()
+        self.middle_list = self.taizhangcode_to_aicode(all_data)
+        # self.data_dict = {}
+
+        # 以下的代码，输入的middle_list需要是ai库的code，即050505类型的
         all_data_dict, _, _ = self.upc_statistics(all_data)
         data_dict = {}
         for big_class,big_dict in all_data_dict.items():
             for middle_class,middle_dict in big_dict.items():
-                if middle_class in middle_list:
+                if middle_class in self.middle_list:
                     data_dict[middle_class] = middle_dict
         self.data_dict = data_dict
         tem = []
         for d in all_data:
             # print(d)
-            if d[3][:4] in middle_list:
+            if d[3][:4] in self.middle_list:
                 tem.append(d)
         self.data = tem
 
-        # data_dict, _, _ = self.upc_statistics(data)
-
-        # self.data_dict = data_dict['05']
-        # print(self.data_dict)
-        # tem = []
-        # for d in data:
-        #     if d[3][:len('05')] == '05':
-        #         tem.append(d)
-        # self.data = tem
-        # print('0001',len(self.data))
 
     def taizhangcode_to_aicode(self,all_data):
+        """
+        输入的中类code为台账系统的code，要进行转化
+        :param all_data:
+        :return:
+        """
         cursor = connections['ucenter'].cursor()
         sql = "select category2_id from uc_merchant_goods where mch_id={} and mch_goods_code={}"
         results = []
         for data in all_data:
-            cursor.execute(sql.format(data[6],data[7]))
+            time.sleep(0.01)
+            cursor.execute(sql.format(self.shop_id,str(data[5])))
             code = cursor.fetchone()
-            if code[0] in self.middle_list:
-                results.append(data)
+            # print(sql.format(self.shop_id,str(data[5])))
+            if code:
+                if code[0] in self.middle_list_tz:
+                    results.append(data[3][:4])
+
         cursor.close()
-        return results
+        return list(set(results))
 
 
     def get_all_data(self):
+        """
+        获取到选品表里的所有数据
+        :return:
+        """
 
-        sql = "select shopid,template_shop_ids,upc,code,predict_sales_amount,mch_goods_code from goods_firstgoodsselection"
+        sql = "select shopid,template_shop_ids,upc,code,predict_sales_amount,mch_goods_code from goods_firstgoodsselection where mch_code={}"
         cursor = connections['default'].cursor()
-        cursor.execute(sql)
+        cursor.execute(sql.format(self.shop_id))
         all_data = cursor.fetchall()
         print('goods_len',len(all_data))
         # all_data = get_data(1284,'3598')
@@ -303,7 +311,13 @@ class ShelfGoodsSort():
             return self.sorted_goods_list
 
         data_dict, _, _ = self.upc_statistics(self.data)
-        self.data_dict = data_dict['05']
+        # self.data_dict = data_dict['05']
+        self.data_dict = {}
+        for k,v in data_dict.items():
+            for kk,vv in v.items():
+                if kk[:4] in self.middle_list:
+                    self.data_dict[k] = v
+
 
         every_epoch_goods_list = []  # 每轮选出来的商品列表
 
@@ -495,7 +509,9 @@ class ShelfGoodsSort():
 
 
 if __name__ == '__main__':
-    pass
+
     # middle_list = ['0502','0503']
-    # a = goods_sort(middle_list)
-    # print(a)
+    middle_list = ['169','173','185']
+    a = ShelfGoodsSort(middle_list).main()
+
+    print(a)
