@@ -310,13 +310,13 @@ class ShelfGoodsSort():
         if len(self.data)==0:
             return self.sorted_goods_list
 
-        data_dict, _, _ = self.upc_statistics(self.data)
+        # data_dict, _, _ = self.upc_statistics(self.data)
         # self.data_dict = data_dict['05']
-        self.data_dict = {}
-        for k,v in data_dict.items():
-            for kk,vv in v.items():
-                if kk[:4] in self.middle_list:
-                    self.data_dict[k] = v
+        # self.data_dict = {}
+        # for k,v in data_dict.items():
+        #     for kk,vv in v.items():
+        #         if kk[:4] in self.middle_list:
+        #             self.data_dict[k] = v
 
 
         every_epoch_goods_list = []  # 每轮选出来的商品列表
@@ -477,6 +477,7 @@ class ShelfGoodsSort():
         """
         sum = 0
         n = 0
+        print(self.data)
         for d in self.data:
             if d[3][:len(code)] == code:
                 sum += d[4]
