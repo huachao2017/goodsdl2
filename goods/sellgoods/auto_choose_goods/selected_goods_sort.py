@@ -312,6 +312,7 @@ class ShelfGoodsSort():
 
         data_dict, _, _ = self.upc_statistics(self.data)
         # self.data_dict = data_dict['05']
+        self.data_dict = {}
         for k,v in data_dict.items():
             for kk,vv in v.items():
                 if len(kk) == 4:
