@@ -21,9 +21,12 @@ def generate():
             sales_order_ins = combean_to_mybean.get_saleorder_ins(drg_ins,shop_id,shop_type)
             if  sales_order_ins.max_stock < 0 or sales_order_ins.stock < 0 :
                 sales_order_ins.order_sale = 200000
-            elif float(sales_order_ins.stock) <= float(2/3*sales_order_ins.max_stock):
+            elif float(sales_order_ins.stock) < float(sales_order_ins.start_min):
                 sales_order_ins.order_sale = sales_order_ins.max_stock - sales_order_ins.stock
-            if sales_order_ins.order_sale  > 0 :
+                print ("补货单..... upc=%s,name=%s,order_sale=%s,supply_stock=%s" % (str(sales_order_ins.upc),str(sales_order_ins.goods_name),str(sales_order_ins.order_sale),str(sales_order_ins.supply_stock)))
+                if sales_order_ins.order_sale > sales_order_ins.supply_stock:
+                    sales_order_ins.order_sale = sales_order_ins.supply_stock
+            if sales_order_ins.order_sale > 0:
                 sales_order_inss.append(sales_order_ins)
         if len(sales_order_inss) > 0:
             erp_interface.order_commit(shop_id, shop_type, sales_order_inss)

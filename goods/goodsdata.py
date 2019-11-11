@@ -153,14 +153,13 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
     try:
         cursor_dmstore.execute("select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
         (erp_shop_id,) = cursor_dmstore.fetchone()
-
+        cursor_dmstore.execute(
+            "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 1".format(shopid))
+        (erp_supply_id,) = cursor_dmstore.fetchone()
         if erp_shop_type == 0:
             cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_shop_id))
             (authorized_shop_id,) = cursor_erp.fetchone()
         else:
-            cursor_dmstore.execute(
-                "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 1".format(shopid))
-            (erp_supply_id,) = cursor_dmstore.fetchone()
             cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_supply_id))
             (authorized_shop_id,) = cursor_erp.fetchone()
 
@@ -250,24 +249,23 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         else:
                             start_sum = 0
                             multiple = 0
+                        try:
+                            # 获取起订量
+                            # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
+                            cursor_erp.execute(
+                                "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
+                                    erp_supply_id, upc))
+                            (sku_id,) = cursor_erp.fetchone()
+                            cursor_erp.execute(
+                                "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                                    sku_id))
+                            (supply_stock, ) = cursor_erp.fetchone()
+                        except:
+                            print('ErpSupply找不到商品:{}-{}！'.format(upc, erp_supply_id))
+                            supply_stock = 0
 
                         if erp_shop_type == 1:
                             # 二批订货需要综合两边库存
-                            try:
-                                # 获取起订量
-                                # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
-                                cursor_erp.execute(
-                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
-                                        erp_supply_id, upc))
-                                (sku_id,) = cursor_erp.fetchone()
-                                cursor_erp.execute(
-                                    "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
-                                        sku_id))
-                                (supply_stock, ) = cursor_erp.fetchone()
-                            except:
-                                print('ErpSupply找不到商品:{}-{}！'.format(upc, erp_supply_id))
-                                supply_stock = 0
-
                             stock = stock + supply_stock
 
                             # 获取昨日销量
@@ -287,7 +285,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                                      stock = stock,
                                                      sales = sales,
                                                      shelf_depth=level_depth,
-                                                     face_num = 1)
+                                                     face_num = 1,supply_stock=supply_stock)
 
     cursor.close()
     cursor_dmstore.close()
@@ -432,7 +430,7 @@ class DataGoods():
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth, is_superimpose, is_suspension, start_sum, multiple,
-                 stock=0, sales=0, shelf_depth=0, face_num=1):
+                 stock=0, sales=0, shelf_depth=0, face_num=1,supply_stock=0):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -458,6 +456,7 @@ class DataRawGoods():
         self.sales = sales
         self.shelf_depth = shelf_depth
         self.face_num = face_num
+        self.supply_stock = supply_stock
 
     def __str__(self):
         # return '{},{},{},{},{},{},{},{},' \
