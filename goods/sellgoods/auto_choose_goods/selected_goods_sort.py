@@ -245,6 +245,7 @@ class ShelfGoodsSort():
 
         all_data = self.get_all_data()
         self.middle_list = self.taizhangcode_to_aicode(all_data)
+        print(self.middle_list)
         # self.data_dict = {}
 
         # 以下的代码，输入的middle_list需要是ai库的code，即050505类型的
