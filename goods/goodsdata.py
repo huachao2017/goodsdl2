@@ -233,8 +233,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
 
                         #  获取最近一周的平均销量
                         try:
-                            (shop_goods_id, modify_time) = cursor_dmstore.execute(
-                                "select id,modify_time FROM shop_goods where upc = '{}' and shop_id = {}".format(
+                            (id,) = cursor_dmstore.execute(
+                                "select id FROM shop_goods where upc = '{}' and shop_id = {}".format(
                                     upc, shopid))
                             # 销量
                             sales_sql = "SELECT sum(number) as nums FROM payment_detail " \
@@ -244,10 +244,11 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                             end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
                             start_date = str((datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                                 days=-14)).strftime("%Y-%m-%d"))
-                            cursor_dmstore.execute(sales_sql.format(shopid, shop_goods_id, start_date, end_date, start_date, end_date))
+                            cursor_dmstore.execute(sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
+                            print ([str(shopid), str(id), str(start_date), str(end_date), str(start_date), str(end_date)])
                             (sales_nums,) = cursor_dmstore.fetchone()
                         except:
-                            print('dmstore找不到商店商品:{}-{}！'.format(shopid, upc))
+                            print('dmstore找不到计算销量商店商品:{}-{}！'.format(shopid, upc,goods_name))
                             sales_nums = 0
 
                         if authorized_shop_id is not None:
