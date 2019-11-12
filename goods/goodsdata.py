@@ -9,6 +9,7 @@ import json
 import django
 import os
 import time
+import datetime
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
 from django.db import connections
@@ -230,6 +231,25 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                             print('dmstore找不到商店商品:{}-{}！'.format(shopid, upc))
                             stock = 0
 
+                        #  获取最近一周的平均销量
+                        try:
+                            (shop_goods_id, modify_time) = cursor_dmstore.execute(
+                                "select id,modify_time FROM shop_goods where upc = '{}' and shop_id = {}".format(
+                                    upc, shopid))
+                            # 销量
+                            sales_sql = "SELECT sum(number) as nums FROM payment_detail " \
+                                        "WHERE shop_id = {} and shop_goods_id = {} and number > 0 and create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
+                                        "SELECT DISTINCT(payment.id) FROM payment WHERE payment.type != 50 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' )"
+
+                            end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                            start_date = str((datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
+                                days=-14)).strftime("%Y-%m-%d"))
+                            cursor_dmstore.execute(sales_sql.format(shopid, shop_goods_id, start_date, end_date, start_date, end_date))
+                            (sales_nums,) = cursor_dmstore.fetchone()
+                        except:
+                            print('dmstore找不到商店商品:{}-{}！'.format(shopid, upc))
+                            sales_nums = 0
+
                         if authorized_shop_id is not None:
                             try:
                                 # 获取起订量
@@ -285,7 +305,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                                      stock = stock,
                                                      sales = sales,
                                                      shelf_depth=level_depth,
-                                                     face_num = 1,supply_stock=supply_stock)
+                                                     face_num = 1,supply_stock=supply_stock,sales_nums = sales_nums)
 
     cursor.close()
     cursor_dmstore.close()
@@ -430,7 +450,7 @@ class DataGoods():
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth, is_superimpose, is_suspension, start_sum, multiple,
-                 stock=0, sales=0, shelf_depth=0, face_num=1,supply_stock=0):
+                 stock=0, sales=0, shelf_depth=0, face_num=1,supply_stock=0,sales_nums=0):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -457,6 +477,7 @@ class DataRawGoods():
         self.shelf_depth = shelf_depth
         self.face_num = face_num
         self.supply_stock = supply_stock
+        self.sales_nums = sales_nums
 
     def __str__(self):
         # return '{},{},{},{},{},{},{},{},' \

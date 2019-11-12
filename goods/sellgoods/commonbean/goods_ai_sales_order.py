@@ -15,3 +15,4 @@ class SalesOrder:
     erp_shop_type = None
     goods_name = None
     supply_stock = None
+    sales_nums = None
