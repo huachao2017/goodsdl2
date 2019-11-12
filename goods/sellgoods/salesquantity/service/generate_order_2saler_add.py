@@ -34,8 +34,9 @@ def generate():
         print("规则2：商品数：" + str(len(sales_order_inss)))
 
         print ("订货-补货，最终下单")
+        print ("商品名称，订单数量，库存，销量，起订量")
         for sales_order_ins  in sales_order_inss:
-            print ("goods_name=%s,order_sale=%s,stock=%s,predict_sale=%s,start_sum=%s"
+            print ("%s,%s,%s,%s,%s"
                    % (str(sales_order_ins.goods_name),str(sales_order_ins.order_sale),str(sales_order_ins.stock),str(sales_order_ins.sales_nums),str(sales_order_ins.start_sum)))
 
         if len(sales_order_inss) > 0:
