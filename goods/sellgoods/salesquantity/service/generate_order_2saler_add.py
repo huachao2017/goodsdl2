@@ -36,7 +36,7 @@ def generate():
         print ("订货-补货，最终下单")
         for sales_order_ins  in sales_order_inss:
             print ("goods_name=%s,order_sale=%s,stock=%s,predict_sale=%s,start_sum=%s"
-                   % (str(sales_order_ins.goods_name),str(sales_order_ins.order_sale),str(sales_order_ins.stock),str(sales_order_ins.sales_nums,sales_order_ins.start_sum)))
+                   % (str(sales_order_ins.goods_name),str(sales_order_ins.order_sale),str(sales_order_ins.stock),str(sales_order_ins.sales_nums),str(sales_order_ins.start_sum)))
 
         if len(sales_order_inss) > 0:
             erp_interface.order_commit(shop_id,shop_type,sales_order_inss)
