@@ -20,7 +20,7 @@ def generate():
         for mch_code  in result:
             drg_ins = result[mch_code]
             sales_order_ins = combean_to_mybean.get_saleorder_ins(drg_ins,shop_id,shop_type)
-            if sales_order_ins.sales_nums > 0:
+            if sales_order_ins.sales_nums != None and sales_order_ins.sales_nums > 0:
                 # 进入起订量规则
                 if sales_order_ins.sales_nums <= sales_order_ins.start_sum:
                     sales_order_ins.order_sale = sales_order_ins.start_sum
