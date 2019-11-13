@@ -16,7 +16,7 @@ def generate_displays(uc_shopid, tz_id):
     """
     :param uc_shopid:
     :param tz_id:
-    :return:
+    :return: taizhang对象
     """
 
     # 初始化基础数据

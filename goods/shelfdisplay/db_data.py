@@ -45,5 +45,6 @@ class GoodsData:
     is_superimpose = None # 1可叠放，2不可叠放
     is_suspension = None # 1可挂放，2不可挂放
     psd = None # 预测销量
+    face_num = None #在某个货架时填入 # FIXME 临时方案
 
 

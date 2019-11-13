@@ -100,6 +100,15 @@ class Shelf:
     height = None
     depth = None
     levels = []
+    badcase_value = 0
+
+    def copy(self):
+        shelf = Shelf()
+        shelf.shelf_id = self.shelf_id
+        shelf.width = self.width
+        shelf.height = self.height
+        shelf.depth = self.depth
+        return shelf
 
 class Level:
     level_id = None # 层id
@@ -115,5 +124,5 @@ class Goods:
     goods_data = None
 
     #计算信息
-    faces_num = 1 # faces 数
+    face_num = 1 # faces 数
     superimpose_rows = 1 # 叠放几行
