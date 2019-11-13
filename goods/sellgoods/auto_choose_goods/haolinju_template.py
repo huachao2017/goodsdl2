@@ -189,6 +189,7 @@ def save_data(data):
         i = tuple(i)
         upc_list.append(i)
     upc_tuple = tuple(upc_list)
+    print(upc_tuple)
 
     # conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
     # cursor = conn.cursor()
