@@ -84,6 +84,7 @@ class FirstGoodsSelection(models.Model):
     upc = models.CharField(max_length=20)
     code = models.CharField(max_length=20)
     predict_sales_amount = models.IntegerField()
+    predict_sales_num = models.IntegerField(default=0)
     template_shop_ids = models.CharField(max_length=100)
     mch_goods_code = models.CharField(max_length=100,default='')
     mch_code = models.IntegerField(default=2)
