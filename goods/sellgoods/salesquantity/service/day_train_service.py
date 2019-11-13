@@ -40,7 +40,9 @@ def train_regressor(model_time):
     test_d = test_d.select("shop_id","upc","ai_weekday","ai_day","ai_next_day","ai_day_nums")
     save_mysql_sales.save_df(test_d,result,dt_model,MeanEncoder,sqlsc)
     # file_util.save_test_dataRdd(test_d, result, test_path)
-    generate_order_2saler_add.generate()
+    # 目前非日配的品 没有给订货周期， 给出了在加入定时任务
+    #  generate_order_2saler_add.generate()
+    # 日配品订单生成
     if datetime.datetime.now().weekday()+1 in day_order_time_weekday:
         generate_order_2saler_add_day.generate()
     print("###########################################################")
