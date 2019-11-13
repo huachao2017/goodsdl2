@@ -20,12 +20,10 @@ def generate():
         for mch_code  in result:
             drg_ins = result[mch_code]
             sales_order_ins = combean_to_mybean.get_saleorder_ins(drg_ins,shop_id,shop_type)
+            if sales_order_ins.delivery_type is None or sales_order_ins.delivery_type != 1 or sales_order_ins.delivery_type != 2 :
+                print ("%s delivery_type is error , goods_name=%s,upc=%s"%(str(sales_order_ins.delivery_type),str(sales_order_ins.goods_name),str(sales_order_ins.upc)))
 
-            if sales_order_ins.delivery_type is None or sales_order_ins.delivery_type != 1 or sales_order_ins.delivery_type != 2:
-                print("%s delivery_type is error , goods_name=%s,upc=%s" % (
-                str(sales_order_ins.delivery_type), str(sales_order_ins.goods_name), str(sales_order_ins.upc)))
-
-            if sales_order_ins.sales_nums != None and sales_order_ins.sales_nums > 0 and sales_order_ins.sales_nums - sales_order_ins.stock > 0 and sales_order_ins.delivery_type == 2 :
+            if sales_order_ins.sales_nums != None and sales_order_ins.sales_nums*3 > 0 and sales_order_ins.sales_nums*3 - sales_order_ins.stock > 0 :
                 # 进入起订量规则
                 if sales_order_ins.sales_nums <= sales_order_ins.start_sum:
                     sales_order_ins.order_sale = sales_order_ins.start_sum
@@ -37,7 +35,6 @@ def generate():
         print("规则1：商品数：" + str(len(sales_order_inss)))
         sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
         print("规则2：商品数：" + str(len(sales_order_inss)))
-
         print ("订货-补货，最终下单")
         print ("商品名称,订单数量,库存,近两周销量,起订量")
         for sales_order_ins  in sales_order_inss:

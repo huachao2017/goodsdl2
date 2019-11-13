@@ -202,12 +202,12 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         # 获取商品属性
                         try:
                             cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                "select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension,delivery_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                                     mch_id, mch_code))
                             # FIXME width,height暂时翻转
                             # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
                             (goods_id, goods_name, upc, tz_display_img, spec, volume, height, width, depth, is_superimpose,
-                             is_suspension) = cursor.fetchone()
+                             is_suspension,delivery_type) = cursor.fetchone()
                         except:
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue
@@ -233,21 +233,35 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
 
                         #  获取最近一周的平均销量
                         try:
-                            cursor_dmstore.execute(
-                                "select id FROM shop_goods where upc = '{}' and shop_id = {}".format(
-                                    upc, shopid))
-                            (id,) = cursor_dmstore.fetchone()
-                            # 销量
-                            sales_sql = "SELECT sum(number) as nums FROM payment_detail " \
-                                        "WHERE shop_id = {} and shop_goods_id = {} and number > 0 and create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
-                                        "SELECT DISTINCT(payment.id) FROM payment WHERE payment.type != 50 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' )"
-
-                            end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-                            start_date = str((datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
-                                days=-14)).strftime("%Y-%m-%d"))
-                            cursor_dmstore.execute(sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
-                            # print ([str(shopid), str(id), str(start_date), str(end_date), str(start_date), str(end_date)])
-                            (sales_nums,) = cursor_dmstore.fetchone()
+                                cursor_dmstore.execute(
+                                    "select id FROM shop_goods where upc = '{}' and shop_id = {}".format(
+                                        upc, shopid))
+                                (id,) = cursor_dmstore.fetchone()
+                                # 销量
+                                sales_sql = "SELECT sum(number) as nums FROM payment_detail " \
+                                            "WHERE shop_id = {} and shop_goods_id = {} and number > 0 and create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
+                                            "SELECT DISTINCT(payment.id) FROM payment WHERE payment.type != 50 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' )"
+                                if delivery_type == 2:  # 非日配
+                                    end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                                    start_date = str(
+                                        (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
+                                            days=-14)).strftime("%Y-%m-%d"))
+                                elif  delivery_type == 1: # 日配
+                                    end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                                    start_date = str(
+                                        (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
+                                            days=-1)).strftime("%Y-%m-%d"))
+                                else:
+                                    print("%s delivery_type is error , goods_name=%s,upc=%s" % (
+                                    str(delivery_type), str(goods_name),
+                                    str(upc)))
+                                    end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                                    start_date = str(
+                                        (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
+                                            days=-1)).strftime("%Y-%m-%d"))
+                                cursor_dmstore.execute(sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
+                                # print ([str(shopid), str(id), str(start_date), str(end_date), str(start_date), str(end_date)])
+                                (sales_nums,) = cursor_dmstore.fetchone()
                         except:
                             print('dmstore找不到计算销量商店商品:{}-{}-{}！'.format(shopid, upc,goods_name))
                             sales_nums = 0
@@ -307,7 +321,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                                      stock = stock,
                                                      sales = sales,
                                                      shelf_depth=level_depth,
-                                                     face_num = 1,supply_stock=supply_stock,sales_nums = sales_nums)
+                                                     face_num = 1,supply_stock=supply_stock,sales_nums = sales_nums,delivery_type=delivery_type)
 
     cursor.close()
     cursor_dmstore.close()
@@ -452,7 +466,7 @@ class DataGoods():
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth, is_superimpose, is_suspension, start_sum, multiple,
-                 stock=0, sales=0, shelf_depth=0, face_num=1,supply_stock=0,sales_nums=0):
+                 stock=0, sales=0, shelf_depth=0, face_num=1,supply_stock=0,sales_nums=0,delivery_type=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -480,6 +494,7 @@ class DataRawGoods():
         self.face_num = face_num
         self.supply_stock = supply_stock
         self.sales_nums = sales_nums
+        self.delivery_type = delivery_type
 
     def __str__(self):
         # return '{},{},{},{},{},{},{},{},' \

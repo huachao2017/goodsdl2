@@ -14,7 +14,6 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     print("goods_base_info....  upc=%s,name=%s,faces=%s,upc_depth=%s,shelf_depth=%s,max_stock=%s" % (
     str(upc), str(goods_name),str(faces),str(upc_depth),
     str(shelf_depth),str(max_stock)))
-
     if stock is None or stock < 0:
         stock = 0
     if multiple is None or multiple == 0:
@@ -37,4 +36,5 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.goods_name = drg_ins.goods_name
     sales_order_ins.supply_stock = drg_ins.supply_stock
     sales_order_ins.sales_nums = drg_ins.sales_nums
+    sales_order_ins.delivery_type = drg_ins.delivery_type
     return sales_order_ins
