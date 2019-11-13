@@ -11,6 +11,9 @@ spu：四级分类、品牌、规格（包装）、尺寸（只选宽和高）�
 根据算法4.3打分规则在给每个解打分后，获得最优解。
 """
 
+from goods.shelfdisplay import single_algorithm
+from goods.shelfdisplay import display_data
+
 def goods_arrange(shelf, candidate_category_list, goods_data_list, category_area_ratio, goods_arrange_weight):
     """
 
@@ -22,5 +25,32 @@ def goods_arrange(shelf, candidate_category_list, goods_data_list, category_area
     :return:
     """
 
-    # TODO
+    # 一、准备工作
+    # 1、计算扩面
+    _solve_goods_face(shelf.depth, goods_data_list)
+    # 2、计算spu
+    # 3、每一个三级分类获得排序商品
+    categoryid_to_sorted_goods_list = {}
+    for categoryid in candidate_category_list[0]:
+        sorted_goods_list = single_algorithm.choose_goods_for_3category(categoryid, category_area_ratio, goods_data_list, shelf, extra_add=2)
+        categoryid_to_sorted_goods_list[categoryid] = sorted_goods_list
+
+    # 生成所有的候选解
+    candidate_result_shelf_list = []
+    for category_list in candidate_category_list:
+        candidate_result_shelf_list.extend(
+            _display_shelf(category_list,categoryid_to_sorted_goods_list,shelf)
+        )
+
+    #
+
     return True
+
+def _display_shelf(category_list, categoryid_to_sorted_goods_list, shelf):
+    candidate_result_shelf_list = []
+    return candidate_result_shelf_list
+
+def _solve_goods_face(shelf_depth, goods_data_list):
+    # TODO
+    # TODO 层板深度问题处理怎么解决？
+    pass
