@@ -35,7 +35,7 @@ def get_data(target,template_shop_id,days=28):
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
     week_ago = (now - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
     # sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '2019-10-14 00:00:00' and p.create_time < '2019-10-17 00:00:00' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
-    sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
+    sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
     # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
     # cursor = conn.cursor()
 
@@ -55,6 +55,8 @@ def get_data(target,template_shop_id,days=28):
         list.append(result[2])
         list.append(int(result[0]))
         list.append(result[3])
+        list.append(result[4])
+        list.append(result[5])
         if not result[1].startswith('6901028'):       # 以此为开头的是香烟
             data.append(list)
 
@@ -183,16 +185,18 @@ def check_order(data):
 def save_data(data):
     upc_list = []
     for i in data:
+        i[6] = i[4]/i[6]    # 计算psd
         i = tuple(i)
         upc_list.append(i)
     upc_tuple = tuple(upc_list)
+    print(upc_tuple)
 
     # conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
     # cursor = conn.cursor()
     cursor = connections['default'].cursor()
 
 
-    insert_sql = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code) values (%s,%s,%s,%s,%s,2,%s)"
+    insert_sql = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name) values (%s,%s,%s,%s,%s,2,%s,%s,%s)"
     # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
 
     # for i in data:
