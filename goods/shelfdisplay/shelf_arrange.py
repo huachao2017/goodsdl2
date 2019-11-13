@@ -16,5 +16,5 @@ def shelf_arrange(shelf, category3_intimate_weight, category3_level_value):
     :return: 候选分类列表，例如[[a,b,c,d],[d,c,b,a]]
     """
     candidate_category_list = []
-    # TODO
+    # TODO 顺序是从下往上
     return candidate_category_list

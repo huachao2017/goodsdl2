@@ -49,6 +49,6 @@ def goods_badcase_score(shelf_list):
     空缺层板宽度	0.02*∑
     各层板的高度差	0.02*∑
     :param shelf_list:
-    :return: True or False
+    :return: 分数最低的shelf
     """
     pass
