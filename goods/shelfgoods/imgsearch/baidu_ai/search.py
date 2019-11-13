@@ -123,7 +123,7 @@ class ImgSearch_02:
                     # print(score)
                     if score > self.min_score:
                         try:
-                            # upcs.append(str(eval(result["brief"])["upc"]))
+                            # upcs.append(str(data_eval(result["brief"])["upc"]))
                             upcs.append(str(result["brief"]))
                         except:
                             continue
@@ -160,7 +160,7 @@ class ImgSearch_02:
                     score = result["score"]
                     if score > self.min_score:
                         try:
-                            # upcs.append(str(eval(result["brief"])["upc"]))
+                            # upcs.append(str(data_eval(result["brief"])["upc"]))
                             upcs.append(str(result["brief"]))
                         except:
                             continue
@@ -196,7 +196,7 @@ class ImgSearch_02:
                     print(score)
                     if score > self.min_score_top1:
                         try:
-                            # upc=str(eval(result["brief"])["upc"])
+                            # upc=str(data_eval(result["brief"])["upc"])
                             upc=str(result["brief"])
                             break
                         except:
