@@ -25,7 +25,7 @@ def generate():
                 print("%s delivery_type is error , goods_name=%s,upc=%s" % (
                 str(sales_order_ins.delivery_type), str(sales_order_ins.goods_name), str(sales_order_ins.upc)))
 
-            if sales_order_ins.sales_nums != None and sales_order_ins.sales_nums > 0 and sales_order_ins.sales_nums - sales_order_ins.stock > 0 and sales_order_ins.delivery_type == 2 :
+            if sales_order_ins.sales_nums != None and sales_order_ins.sales_nums > 0 and sales_order_ins.sales_nums - sales_order_ins.stock-sales_order_ins.supply_stock > 0 and sales_order_ins.delivery_type == 2 :
                 # 进入起订量规则
                 if sales_order_ins.sales_nums <= sales_order_ins.start_sum:
                     sales_order_ins.order_sale = sales_order_ins.start_sum
@@ -42,7 +42,8 @@ def generate():
         print ("商品名称,订单数量,库存,近两周销量,起订量")
         for sales_order_ins  in sales_order_inss:
             print ("%s,%s,%s,%s,%s"
-                   % (str(sales_order_ins.goods_name),str(sales_order_ins.order_sale),str(sales_order_ins.stock),str(sales_order_ins.sales_nums),str(sales_order_ins.start_sum)))
+                   % (str(sales_order_ins.goods_name),
+                      str(sales_order_ins.order_sale),str(sales_order_ins.stock),str(sales_order_ins.sales_nums),str(sales_order_ins.start_sum)))
 
         if len(sales_order_inss) > 0:
             erp_interface.order_commit(shop_id,shop_type,sales_order_inss)

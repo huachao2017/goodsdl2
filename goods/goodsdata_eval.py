@@ -118,11 +118,11 @@ def get_raw_goods_info(uc_shopid, mch_codes):
                 (start_sum,multiple) = cursor_erp.fetchone()
             except:
                 print('Erp找不到商品:{}-{}！'.format(upc, mch_code))
-                start_sum = 0
-                multiple = 0
+                start_sum = -100
+                multiple = -100
         else:
-            start_sum = 0
-            multiple = 0
+            start_sum = -100
+            multiple = -100
 
         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,is_superimpose,is_suspension, start_sum,multiple)
 
@@ -220,7 +220,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                             (corp_classify_code, ) = cursor_dmstore.fetchone()
                         except:
                             print('dmstore找不到商品:{}-{}！'.format(upc, mch_code))
-                            corp_classify_code = None
+                            corp_classify_code = -100
 
                         # 获取库存
                         try:
@@ -229,7 +229,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                             (stock,) = cursor_dmstore.fetchone()
                         except:
                             print('dmstore找不到商店商品:{}-{}！'.format(shopid, upc))
-                            stock = 0
+                            stock = -100
 
                         #  获取最近一周的平均销量
                         try:
@@ -263,11 +263,11 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                     print("%s delivery_type is error , goods_name=%s,upc=%s" % (
                                     str(delivery_type), str(goods_name),
                                     str(upc)))
-                                    sales_nums = 0
+                                    sales_nums = -100
 
                         except:
                             print('dmstore找不到计算销量商店商品:{}-{}-{}！'.format(shopid, upc,goods_name))
-                            sales_nums = 0
+                            sales_nums = -100
 
                         if authorized_shop_id is not None:
                             try:
@@ -283,11 +283,11 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                 (start_sum, multiple) = cursor_erp.fetchone()
                             except:
                                 print('Erp找不到商品:{}-{}！'.format(upc, authorized_shop_id))
-                                start_sum = 0
-                                multiple = 0
+                                start_sum = -100
+                                multiple = -100
                         else:
-                            start_sum = 0
-                            multiple = 0
+                            start_sum = -100
+                            multiple = -100
                         try:
                             # 获取起订量
                             # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
@@ -301,8 +301,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                             (supply_stock, ) = cursor_erp.fetchone()
                         except:
                             print('ErpSupply找不到商品:{}-{}！'.format(upc, erp_supply_id))
-                            supply_stock = 0
-
+                            supply_stock = -100
                         # 获取昨日销量
                         try:
                             cursor_ai.execute(
@@ -311,7 +310,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                             print('ai找到销量预测:{}-{}！'.format(upc, sales))
                         except:
                             #print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
-                            sales = 0
+                                sales = -100
 
 
                         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
@@ -486,11 +485,11 @@ class DataRawGoods():
             self.is_suspension = False
         self.start_sum = start_sum
         self.multiple = multiple
-        self.stock = stock   # 门店库存
+        self.stock = stock
         self.sales = sales
         self.shelf_depth = shelf_depth
         self.face_num = face_num
-        self.supply_stock = supply_stock  #小仓库库存
+        self.supply_stock = supply_stock
         self.sales_nums = sales_nums
         self.delivery_type = delivery_type
 
