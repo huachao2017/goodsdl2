@@ -4,12 +4,14 @@ import os
 import shutil
 from set_config import config
 import time
-from goods.sellgoods.salesquantity.service import generate_order_2saler
+import datetime
+from goods.sellgoods.salesquantity.service import generate_order_2saler_add,generate_order_2saler_add_day
 from goods.sellgoods.salesquantity.local_util import file_util
 from goods.sellgoods.salesquantity.local_util import save_mysql_sales
 regressor_model_path = config.shellgoods_params['regressor_model_path']
 test_data_save_path = config.shellgoods_params['test_data_save_path']
 predict_shop_ids = config.shellgoods_params['predict_shop_ids']
+day_order_time_weekday = config.shellgoods_params['day_order_time_weekday']
 salves_ins = salves_volume.Salves()
 regressor_ins = regressor.Regressor()
 from set_config import config
@@ -38,7 +40,9 @@ def train_regressor(model_time):
     test_d = test_d.select("shop_id","upc","ai_weekday","ai_day","ai_next_day","ai_day_nums")
     save_mysql_sales.save_df(test_d,result,dt_model,MeanEncoder,sqlsc)
     # file_util.save_test_dataRdd(test_d, result, test_path)
-    generate_order_2saler.generate()
+    generate_order_2saler_add.generate()
+    if datetime.datetime.now().weekday()+1 in day_order_time_weekday:
+        generate_order_2saler_add_day.generate()
     print("###########################################################")
 
 

@@ -68,7 +68,7 @@ shellgoods_params={
     'order_shop_hour_ids':[1284], # 门店向二批订货
     'order_shop_hours':[0,7,14,19],# 补货时间
     'shop_types':[0,1], #门店类型 0：门店 1：批发商
-    'day_order_first_classes':[''],
+    'day_order_time_weekday':[1,2,3,6,7],
     # 自动陈列
     'shelf_display':[(1284,True)],
     "shelf_display_maxitems":20, # 排列单个货架最大循环次数
