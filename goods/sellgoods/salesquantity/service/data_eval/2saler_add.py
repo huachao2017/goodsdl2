@@ -17,7 +17,7 @@ def generate():
             print("shop_id day generate order failed ,get_data error   " + str(shop_id))
             return
         print ("获取 商品数："+str(len(result.keys())))
-        print ("商品名称,条形码,配送类型,face数,商品深度,货架深度,陈列店内码,小仓库库存,起订量,步长,库存,历史销量,预测销量")
+        print ("商品名称,条形码,配送类型,face数,商品深度,货架深度,陈列店内码,小仓库库存,起订量,步长,门店库存,历史销量,预测销量")
         for mch_code  in result:
             drg_ins = result[mch_code]
             print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s"
