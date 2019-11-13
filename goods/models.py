@@ -82,6 +82,7 @@ class FreezerImage(models.Model):
 class FirstGoodsSelection(models.Model):
     shopid = models.IntegerField(db_index=True)
     upc = models.CharField(max_length=20)
+    name = models.CharField(max_length=50, default='')
     code = models.CharField(max_length=20)
     predict_sales_amount = models.IntegerField()
     predict_sales_num = models.IntegerField(default=0)
