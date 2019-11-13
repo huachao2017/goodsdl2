@@ -25,7 +25,7 @@ class GoodsData:
     category2 = None
     category3 = None
     category4 = None
-    spec = None # 规格
+    package_type = None # 包装方式
     brand = None # 品牌
     width = None
     height = None
@@ -33,3 +33,9 @@ class GoodsData:
     is_superimpose = None # 1可叠放，2不可叠放
     is_suspension = None # 1可挂放，2不可挂放
     psd = None # 预测销量
+
+class ShelfData:
+    width = None
+    height = None
+    depth = None
+

@@ -4,11 +4,13 @@
 子算法4.3 打分规则
 """
 
-def choose_goods_for_3category(categoryid, category_area_ratio, extra_add=0):
+def choose_goods_for_3category(categoryid, category_area_ratio, goods_data_list, shelf_data, extra_add=0):
     """
     根据面积比例选该分类下预测销量最大的品
     :param categoryid:
     :param category_area_ratio:
+    :param goods_data_list: 商品列表
+    :param shelf_data: 货架信息
     :param extra_add: 返回商品数=最佳比例+extra_add，
     :return:商品列表GoodsData
     """
