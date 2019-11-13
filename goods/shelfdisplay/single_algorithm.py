@@ -23,10 +23,18 @@ def choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list,
             category3_list.append(i)
     category3_list.sort(key=lambda x: x.spd, reverse=True)
     mark = 0
+    goods_results = []
     for goods in category3_list:
-        area = goods.width * goods.height
+        area = goods.width * goods.height * goods.faces_num
         mark += area
-        
+        if mark > category3_area:
+            if extra_add == 0:
+                break
+            else:
+                extra_add -= 1
+        goods_results.append(goods)
+    return goods_results
+
 
 
 def goods_arrange(goods_list, goods_arrange_weight):
@@ -38,7 +46,17 @@ def goods_arrange(goods_list, goods_arrange_weight):
     :param goods_arrange_weight:排序权值
     :return: goods_list:
     """
-    pass
+    max_weight = 0
+    max_weight_attribute = None
+    for k,weight in goods_arrange_weight.items():
+        if weight > max_weight:
+            max_weight = weight
+            max_weight_attribute = k
+    goods_list.sort(key=lambda x: x.spd, reverse=True)
+
+
+
+
 
 def goods_badcase_score(shelf_list):
     """
