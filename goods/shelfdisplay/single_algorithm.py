@@ -4,7 +4,7 @@
 子算法4.3 打分规则
 """
 
-def choose_goods_for_3category(categoryid, category_area_ratio, goods_data_list, shelf_data, extra_add=0):
+def choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list, shelf_data, extra_add=0):
     """
     根据面积比例选该分类下预测销量最大的品
     :param categoryid:
@@ -14,7 +14,20 @@ def choose_goods_for_3category(categoryid, category_area_ratio, goods_data_list,
     :param extra_add: 返回商品数=最佳比例+extra_add，
     :return:商品列表GoodsData
     """
-    pass
+    shelf_area = shelf_data.width * shelf_data.heigth
+    ratio = category_area_ratio[categoryid]
+    category3_area = shelf_area * ratio
+    category3_list = []
+    for i in goods_data_list:
+        if i.category3 == categoryid:
+            category3_list.append(i)
+    category3_list.sort(key=lambda x: x.spd, reverse=True)
+    mark = 0
+    for goods in category3_list:
+        area = goods.width * goods.height
+        mark += area
+        
+
 
 def goods_arrange(goods_list, goods_arrange_weight):
     """
