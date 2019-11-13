@@ -245,7 +245,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                     end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
                                     start_date = str(
                                         (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
-                                            days=-14)).strftime("%Y-%m-%d"))
+                                            days=-7)).strftime("%Y-%m-%d"))
                                 elif  delivery_type == 1: # 日配
                                     end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
                                     start_date = str(
