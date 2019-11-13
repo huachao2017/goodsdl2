@@ -196,7 +196,7 @@ def save_data(data):
     cursor = connections['default'].cursor()
 
 
-    insert_sql = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name) values (%s,%s,%s,%s,%s,2,%s)"
+    insert_sql = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name) values (%s,%s,%s,%s,%s,2,%s,%s,%s)"
     # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
 
     # for i in data:
