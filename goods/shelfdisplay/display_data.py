@@ -1,6 +1,101 @@
+from django.db import connections
+
+def init_data(tz_id, goods_data_list):
+    taizhang = Taizhang()
+    # TODO 获取数据
+    return taizhang
+
+
+class Taizhang:
+    tz_id=None
+    shelfs = []
+    associated_catids = None
+
+    candidate_goods_data_list = []
+
+    def to_json(self):
+        """
+        :return:
+        {
+        taizhang_id:xx
+        shelfs:[{
+            shelf_id:xx
+            levels:[{
+                level_id:xx   #0是底层,1,2,3,4...
+                height:xx
+                hole_num:xx
+                goods:[{
+                    mch_goods_code:
+                    upc:
+                    width:
+                    height:
+                    depth:
+                    displays:[{
+                        top:
+                        left:
+                        row:
+                        col:
+                        },
+                        {
+                        ...
+                        }]
+                    },
+                    {
+                    ...
+                    }]
+                },
+                {
+                ...
+                }]
+            },
+            {
+            ...
+            }]
+        }
+        """
+        json_ret = {
+            "taizhang_id":self.tz_id,
+            "shelfs":[]
+        }
+        for shelf in self.shelfs:
+            json_shelf={
+                "shelf":shelf.shelf_id,
+                "levels":[]
+            }
+            json_ret["shelfs"].append(json_shelf)
+            for level in shelf.levels:
+                if level.isTrue:
+                    json_level = {
+                        "level_id":level.level_id,
+                        "height":level.level_height,
+                        "goods":[]
+                    }
+                    json_shelf["levels"].append(json_level)
+                    for good in level.goods:
+                        json_goods = {
+                            "mch_good_code": good.goods_data.mch_code,
+                            "upc": good.goods_data.upc,
+                            "width":good.goods_data.width,
+                            "height":good.goods_data.height,
+                            "depth":good.goods_data.depth,
+                            "displays": []
+                        }
+                        json_level["goods"].append(json_goods)
+                        # TODO
+                        # for gooddisplay in good.gooddisplay_inss:
+                        #     if gooddisplay.dep == 0:
+                        #         json_display = {
+                        #             "top": gooddisplay.top,
+                        #             "left": gooddisplay.left,
+                        #             "row": gooddisplay.row,
+                        #             "col": gooddisplay.col,
+                        #         }
+                        #         json_goods["displays"].append(json_display)
+
+        return json_ret
+
 class Shelf:
-    taizhang_id = None
-    shelf_id =  None
+    shelf_id = None
     width = None
     height = None
     depth = None
@@ -8,8 +103,7 @@ class Shelf:
 
 class Level:
     level_id = None # 层id
-    goods_list = None  # 商品集合
-    isTrue = None  # 是否货架上的真实层
+    goods_list = []  # 商品集合
     level_none_good_width = None  # 层空余的宽度
     level_start_height = None  # 层相对货架的起始高度
     level_width = None  #层宽度
@@ -17,31 +111,9 @@ class Level:
     level_depth = None  # 层深度
 
 class Goods:
-    #陈列信息
-    gooddisplay_inss = [] # 商品陈列对象 列表
-
     #初始化数据
-    mch_good_code = None
-    sale_num = None  # TODO 预测销量
-    sale_account = None # 预测销售额
-
-    #数据信息
-    upc = None
-    name = None
-    icon = None
-    first_cls_code = None
-    second_cls_code = None
-    third_cls_code = None
-    width = None
-    height = None
-    depth = None
-    isfitting = None # 是否需要挂放
-    fitting_rows = 1 # 需要挂放几行
-    is_superimpose = None # 是否需要叠放  True  or False
-    superimpose_rows = 2 # 叠放几行
+    goods_data = None
 
     #计算信息
-    display_num = None # 最终陈列量
-    good_scale = None # 单品刻度宽度
-    faces_num = None # faces 数
-    one_face_most_goods_num = None # 单face最多的商品数
+    faces_num = 1 # faces 数
+    superimpose_rows = 1 # 叠放几行
