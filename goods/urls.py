@@ -26,7 +26,6 @@ router.register(r'shelfimage2', views_shelf2.ShelfImageViewSet)
 router.register(r'shelfgoods2', views_shelf2.ShelfGoodsViewSet)
 router.register(r'freezerimage', views.FreezerImageViewSet)
 router.register(r'goodswh', views.GoodsImageViewSet)
-router.register(r'sellgoods', views_sellgoods.SellGoodsViewSet)
 urlpatterns = [
     url(r'^test', views.Test.as_view()),
     url(r'^api/shelf_score', views_shelf.ShelfScore.as_view()),
