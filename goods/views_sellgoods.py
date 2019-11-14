@@ -15,13 +15,14 @@ class Test(APIView):
 class SellGoodsViewSet(APIView):
     def get(self,request):
         shop_id = request.query_params['shop_id']
-        with ThreadPoolExecutor(max_workers=5) as t:  # 创建一个最大容纳数量为5的线程池
-            try:
-                task1 = t.submit(generate_order_shop.generate, shopid=shop_id)
-                print("shop_id=%s, notify_shop_order_generate success..." % str(shop_id))
-                wait(task1, timeout=2)
-            except:
-                return Response(status=status.HTTP_200_OK)
+        generate_order_shop.generate(shopid = shop_id)
+        # with ThreadPoolExecutor(max_workers=5) as t:  # 创建一个最大容纳数量为5的线程池
+        #     try:
+        #         task1 = t.submit(generate_order_shop.generate, shopid=shop_id)
+        #         print("shop_id=%s, notify_shop_order_generate success..." % str(shop_id))
+        #         wait(task1, timeout=2)
+        #     except:
+        #         return Response(status=status.HTTP_200_OK)
         print ("shop_id=%s, notify_shop_order_generate success..."% str(shop_id))
         return Response(status=status.HTTP_200_OK)
 
