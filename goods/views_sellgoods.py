@@ -13,9 +13,9 @@ class Test(APIView):
         return Response({'Test': path})
 
 class SellGoodsViewSet(APIView):
-    def notify(self,request):
+    def get(self,request):
         shop_id = request.query_params['shop_id']
         generate_order_shop.generate(shopid = shop_id)
-        print ("shop_id=%s, notify_shop_order_generate success..."+str(shop_id))
-        return Response(status=status.HTTP_201_CREATED)
+        print ("shop_id=%s, notify_shop_order_generate success..."% str(shop_id))
+        return Response(status=status.HTTP_200_OK)
 
