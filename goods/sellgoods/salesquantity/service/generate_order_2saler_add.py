@@ -9,6 +9,7 @@ from goods.goodsdata import get_shop_order_goods
 import math
 order_shop_ids = config.shellgoods_params['order_shop_ids']
 shop_type = config.shellgoods_params['shop_types'][1]  # 二批
+
 def generate():
     for shop_id in order_shop_ids:
         result = get_shop_order_goods(shop_id,shop_type)

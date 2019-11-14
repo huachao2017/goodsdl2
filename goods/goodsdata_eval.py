@@ -202,12 +202,12 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         # 获取商品属性
                         try:
                             cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension,delivery_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                "select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                                     mch_id, mch_code))
                             # FIXME width,height暂时翻转
                             # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
                             (goods_id, goods_name, upc, tz_display_img, spec, volume, height, width, depth, is_superimpose,
-                             is_suspension,delivery_type) = cursor.fetchone()
+                             is_suspension,delivery_type,category1_id,category2_id,category_id) = cursor.fetchone()
                         except:
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue
@@ -318,7 +318,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                                      stock = stock,
                                                      sales = sales,
                                                      shelf_depth=level_depth,
-                                                     face_num = 1,supply_stock=supply_stock,sales_nums = sales_nums,delivery_type=delivery_type)
+                                                     face_num = 1,supply_stock=supply_stock,sales_nums = sales_nums,delivery_type=delivery_type,category1_id=category1_id,category2_id=category2_id,category_id=category_id)
 
     cursor.close()
     cursor_dmstore.close()
@@ -463,7 +463,7 @@ class DataGoods():
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth, is_superimpose, is_suspension, start_sum, multiple,
-                 stock=0, sales=0, shelf_depth=0, face_num=1,supply_stock=0,sales_nums=0,delivery_type=None):
+                 stock=0, sales=0, shelf_depth=0, face_num=1,supply_stock=0,sales_nums=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -492,7 +492,9 @@ class DataRawGoods():
         self.supply_stock = supply_stock
         self.sales_nums = sales_nums
         self.delivery_type = delivery_type
-
+        self.category1_id = category1_id  # 台账分类
+        self.category2_id = category2_id
+        self.category_id = category_id
     def __str__(self):
         # return '{},{},{},{},{},{},{},{},' \
         #        '{},{},{},{},{},{},{},{},{},{},{}'.format(
