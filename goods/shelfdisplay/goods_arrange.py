@@ -16,7 +16,7 @@ from goods.shelfdisplay import display_data
 
 def goods_arrange(shelf, candidate_categoryid_list, goods_data_list, category_area_ratio, goods_arrange_weight):
     """
-
+    第四步，商品布局主体函数
     :param shelf:货架
     :param candidate_categoryid_list: 货架三级分类排列候选
     :param goods_data_list: 候选商品
@@ -31,7 +31,7 @@ def goods_arrange(shelf, candidate_categoryid_list, goods_data_list, category_ar
     # 2、计算spu
     # 3、每一个三级分类获得排序商品
     categoryid_to_sorted_goods_list = {}
-    _caculate_shelf_category_area_ratio(shelf, candidate_categoryid_list[0], category_area_ratio)
+    _calcuate_shelf_category_area_ratio(shelf, candidate_categoryid_list[0], category_area_ratio)
     for categoryid in candidate_categoryid_list[0]:
         sorted_goods_list = single_algorithm.choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list, shelf, extra_add=1)
         categoryid_to_sorted_goods_list[categoryid] = sorted_goods_list
@@ -52,12 +52,12 @@ def goods_arrange(shelf, candidate_categoryid_list, goods_data_list, category_ar
 
 def _display_shelf(categoryid_list, categoryid_to_sorted_goods_list, template_shelf, goods_arrange_weight):
     """
-    主体陈列算法
-    :param categoryid_list:
-    :param categoryid_to_sorted_goods_list:
-    :param template_shelf:
-    :param goods_arrange_weight:
-    :return:
+    陈列主算法
+    :param categoryid_list: 三级分类排序
+    :param categoryid_to_sorted_goods_list: 每个分类按销量的排序
+    :param template_shelf: 模板货架
+    :param goods_arrange_weight: 商品排序权重
+    :return: 候选货架解列表
     """
     candidate_result_shelf_list = []
 
@@ -71,6 +71,9 @@ def _display_shelf(categoryid_list, categoryid_to_sorted_goods_list, template_sh
             level = _level_add_goods(shelf, level, goods)
             # TODO 什么情况以及如何才能再创建一个副本货架陈列
 
+    # 计算货架多余或缺失宽度
+    addition_width = shelf.calculate_addition_width()
+    # TODO 候选商品调整
     return candidate_result_shelf_list
 
 def _level_add_goods(shelf,cur_level,goods):
@@ -82,12 +85,24 @@ def _level_add_goods(shelf,cur_level,goods):
     :return: 商品添加的层
     """
 
-    ret_level = cur_level
+    display_goods = display_data.DisplayGoods(goods)
     if cur_level == None:
-        ret_level = display_data.Level()
-        display_goods = display_data.DisplayGoods()
-        ret_level.goods_list.append(display_goods)
-        # TODO
+        # 初始陈列
+        cur_level = display_data.Level(shelf, 0, shelf.bottom_height,True)
+    ret_level = cur_level
+
+    # 陈列商品 TODO 需要处理陈列商品跨层拆分
+    success = ret_level.display_goods(display_goods)
+    if not success:
+        # 无法陈列商品
+        ret_level = display_data.Level(
+            shelf,
+            cur_level.level_id+1,
+            cur_level.start_height+cur_level.goods_height+shelf.level_buff_height+shelf.level_board_height,
+            bool(1-cur_level.is_left_right_direction)
+        )
+        # TODO 需要考虑整层无法摆下的拆分
+        ret_level.display_goods(display_goods)
 
     return ret_level
 
@@ -102,7 +117,7 @@ def _solve_goods_face(shelf_depth, goods_data_list):
     # TODO 层板深度问题处理怎么解决？
     pass
 
-def _caculate_shelf_category_area_ratio(shelf, categoryid_list, category_area_ratio):
+def _calcuate_shelf_category_area_ratio(shelf, categoryid_list, category_area_ratio):
     """
     计算出本货架的比例
     :param shelf:
