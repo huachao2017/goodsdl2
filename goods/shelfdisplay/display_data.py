@@ -96,35 +96,52 @@ class Taizhang:
 
 class Shelf:
     shelf_id = None
+
+    # 空间参数
     width = None
     height = None
     depth = None
-    bottom_height = 50 # 底层到地面的高度 # TODO
-    level_board_height = 20 # 层板高度 # TODO
-    level_buff_height = 30 # 层冗余高度 # TODO
+    bottom_height = 50 # 底层到地面的高度 # TODO 需考虑初始化
+    level_board_height = 20 # 层板高度 # TODO 需考虑初始化
+    level_buff_height = 30 # 层冗余高度 # TODO 需考虑初始化
+    last_level_min_remain_height = 150 # 最后一层最小剩余高度
+
+    # 计算用到的参数
+    categoryid_to_sorted_goods_list = None # 候选商品列表
+    extra_add_num = 2 # 每类冗余数量
+    goods_arrange_weight = None
+
+    best_candidate_shelf = None
+
+
+class CandidateShelf:
+    shelf = None
+    categoryid_list = None
+    categoryid_to_used_sorted_goods_list = {}
+    categoryid_to_candidate_sorted_goods_list = {}
     levels = []
     badcase_value = 0
+    goods_mean_width = 0
 
-    def copy(self):
-        """
-        拷贝一个货架的参数
-        :return:
-        """
-        shelf = Shelf()
-        shelf.shelf_id = self.shelf_id
-        shelf.width = self.width
-        shelf.height = self.height
-        shelf.depth = self.depth
-        return shelf
+    def __init__(self, shelf, categoryid_list):
+        self.shelf = shelf
+        self.categoryid_list = categoryid_list
 
-    def assign(self, shelf):
-        """
-        用一个候选货架给另一个货架赋值
-        :param shelf:
-        :return:
-        """
-        self.levels = shelf.levels
-        self.badcase_value = shelf.badcase_value
+        goods_total_width = 0
+        goods_num = 0
+        for categoryid in shelf.categoryid_to_sorted_goods_list.keys():
+            self.categoryid_to_used_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid][:-shelf.extra_add_num]
+            self.categoryid_to_candidate_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid][-shelf.extra_add_num:]
+
+            for goods in self.categoryid_to_used_sorted_goods_list[categoryid]:
+                goods_num += 1
+                goods_total_width += goods.width * goods.face_num
+
+        self.goods_mean_width = goods_total_width/goods_num
+
+    def recalculate(self):
+        self.leves = []
+        self.badcase_value = 0
 
     def calculate_addition_width(self):
         """
@@ -132,12 +149,21 @@ class Shelf:
         :return: 超出或不足的width
         """
 
-        # TODO
+        last_level = self.levels[-1]
 
-        return 0
+        ret = 0
+        if self.shelf.height - last_level.start_height < self.shelf.last_level_min_remain_height:
+            # 超出层
+            ret += last_level.goods_width
+        else:
+            # 空缺宽度
+            ret -= self.shelf.width - last_level.goods_width
+
+        return ret
+
 
 class Level:
-    parent_shelf = None # 上层货架
+    candidate_shelf = None # 候选货架
     level_id = None # 层id
     is_left_right_direction = True # True从左向右，False从右向左
     goods_width = None  # 层宽度
@@ -147,14 +173,14 @@ class Level:
 
     display_goods_list = []  # 陈列商品集合
 
-    def __init__(self, parent_shelf, level_id, start_height, is_left_right_direction):
-        self.parent_shelf = parent_shelf
+    def __init__(self, candidate_shelf, level_id, start_height, is_left_right_direction):
+        self.candidate_shelf = candidate_shelf
         self.level_id = level_id
         self.is_left_right_direction = is_left_right_direction
         self.start_height = start_height
 
     def display_goods(self, display_goods):
-        if display_goods.get_width() + self.goods_width > self.parent_shelf.width:
+        if display_goods.get_width() + self.goods_width > self.candidate_shelf.shelf.width:
             # TODO 需要考虑拆分
             return False
         self.display_goods_list.append(display_goods)
