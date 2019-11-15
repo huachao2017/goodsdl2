@@ -160,13 +160,15 @@ def _level_add_goods(candidate_shelf,cur_level,goods):
 
 def _solve_goods_face(shelf_depth, goods_data_list):
     """
-    扩面处理
+    扩面处理 n*psd/最大成列量（初始n默认为3）
     :param shelf_depth:
     :param goods_data_list:
     :return:
     """
-    # TODO
-    # TODO 层板深度问题处理怎么解决？
+    # FIXME 层板深度问题处理怎么解决？
+    for goods in goods_data_list:
+        max_one_face = int(shelf_depth/goods.depth)
+        goods.face_num = int(3 * goods.psd/max_one_face)
     pass
 
 def _calcuate_shelf_category_area_ratio(shelf, categoryid_list, category_area_ratio):
@@ -179,5 +181,10 @@ def _calcuate_shelf_category_area_ratio(shelf, categoryid_list, category_area_ra
     """
 
     shelf_category_area_ratio = {}
-    # TODO
+    total_ratio = 0.0
+    for categoryid in categoryid_list:
+        total_ratio += category_area_ratio[categoryid]
+    for categoryid in categoryid_list:
+        shelf_category_area_ratio[categoryid] = category_area_ratio[categoryid]/total_ratio
+
     return shelf_category_area_ratio
