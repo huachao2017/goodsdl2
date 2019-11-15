@@ -3,6 +3,7 @@
 子算法4.2 商品排列
 子算法4.3 打分规则
 """
+from goods.shelfdisplay.db_data import *
 
 def choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list, shelf_data, extra_add=0):
     """
@@ -25,7 +26,7 @@ def choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list,
     mark = 0
     goods_results = []
     for goods in category3_list:
-        area = goods.width * goods.height * goods.faces_num
+        area = goods.width * goods.height * goods.face_num
         mark += area
         if mark > category3_area:
             if extra_add == 0:
@@ -52,7 +53,22 @@ def goods_arrange(goods_list, goods_arrange_weight):
         if weight > max_weight:
             max_weight = weight
             max_weight_attribute = k
-    goods_list.sort(key=lambda x: x.spd, reverse=True)
+
+    print(max_weight_attribute)
+
+    goods_list.sort(key=lambda x:x.__dict__[max_weight_attribute], reverse=True)
+
+
+    print(goods_list)
+    temp_list = [goods_list[0]]
+    goods_list_two = []
+    for i in range(0,len(goods_list)-1):
+        if goods_list[i].__dict__[max_weight_attribute] == goods_list[i+1].__dict__[max_weight_attribute]:
+            temp_list.append(goods_list[i+1])
+        else:
+            goods_list_two.append(temp_list)
+            temp_list = [goods_list[i+1]]
+    return 
 
 
 
@@ -70,3 +86,13 @@ def goods_badcase_score(shelf_list):
     :return: True or False
     """
     pass
+
+
+if __name__ == '__main__':
+    a = GoodsData()
+    a.category4 = 1
+    c = GoodsData()
+    c.category4 = 3
+    b = GoodsData()
+    b.category4 = 2
+    goods_arrange([a, c, b], BaseData.goods_arrange_weight)
