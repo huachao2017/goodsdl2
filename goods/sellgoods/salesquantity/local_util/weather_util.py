@@ -109,7 +109,7 @@ def get_old_weather_http(city,date):
             }
 
             param = old_weather_url + "?appkey=e22d1fbac88700a0&city=" + city + '&date=' + date
-            reponse = requests.get(param,headers=headers)
+            reponse = requests.get(param,headers=headers).text
             print (param)
             print (reponse)
             reponse = demjson.decode(reponse)
