@@ -118,11 +118,11 @@ def get_old_weather_http(city,date):
                 weather_ins = Weather()
                 weather_ins.create_date = reponse['result']['date']
                 weather_ins.weather_type = reponse['result']['weather']
-                weather_ins.temphigh = reponse['result']['weather']
-                weather_ins.templow = reponse['result']['weather']
-                weather_ins.windspeed = reponse['result']['weather']
-                weather_ins.winddirect = reponse['result']['weather']
-                weather_ins.windpower = reponse['result']['weather']
+                weather_ins.temphigh = reponse['result']['temphigh']
+                weather_ins.templow = reponse['result']['templow']
+                weather_ins.windspeed = reponse['result']['windspeed']
+                weather_ins.winddirect = reponse['result']['winddirect']
+                weather_ins.windpower = reponse['result']['windpower']
                 weather_ins.city = city
                 weather_ins.city_id = reponse['result']['cityid']
                 return weather_ins
