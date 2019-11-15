@@ -33,7 +33,7 @@ def goods_arrange(shelf, candidate_categoryid_list, goods_data_list, category_ar
     # 3、每一个三级分类获得排序商品
     extra_add_num = 2  # FIXME 冗余数量怎么定，如果没有了呢？
     categoryid_to_sorted_goods_list = {}
-    _calcuate_shelf_category_area_ratio(shelf, candidate_categoryid_list[0], category_area_ratio)
+    _calculate_shelf_category_area_ratio(shelf, candidate_categoryid_list[0], category_area_ratio)
     for categoryid in candidate_categoryid_list[0]:
         sorted_goods_list = single_algorithm.choose_goods_for_category3(categoryid, category_area_ratio,
                                                                         goods_data_list, shelf, extra_add=extra_add_num)
@@ -189,14 +189,14 @@ def _level_add_goods(candidate_shelf, cur_level, goods, last_goods):
     """
     处理层添加和层的width和height变化
     :param candidate_shelf:
-    :param levelid:
+    :param cur_level:
     :param goods:
     :param last_goods: 上一个goods
     :return: 商品添加的层
     """
 
     display_goods = display_data.DisplayGoods(goods)
-    if cur_level == None:
+    if cur_level is None:
         # 初始陈列
         cur_level = display_data.Level(candidate_shelf, 0, candidate_shelf.shelf.bottom_height, True)
     ret_level = cur_level
@@ -240,7 +240,7 @@ def _solve_goods_face(shelf_depth, goods_data_list):
     pass
 
 
-def _calcuate_shelf_category_area_ratio(shelf, categoryid_list, category_area_ratio):
+def _calculate_shelf_category_area_ratio(shelf, categoryid_list, category_area_ratio):
     """
     计算出本货架的比例
     :param shelf:
