@@ -1,5 +1,6 @@
 from django.db import connections
 
+
 def init_data(tz_id, goods_data_list):
     taizhang = Taizhang()
     # TODO 获取数据
@@ -7,7 +8,7 @@ def init_data(tz_id, goods_data_list):
 
 
 class Taizhang:
-    tz_id=None
+    tz_id = None
     shelfs = []
     associated_catids = None
 
@@ -54,45 +55,44 @@ class Taizhang:
         }
         """
         json_ret = {
-            "taizhang_id":self.tz_id,
-            "shelfs":[]
+            "taizhang_id": self.tz_id,
+            "shelfs": []
         }
         for shelf in self.shelfs:
-            json_shelf={
-                "shelf":shelf.shelf_id,
-                "levels":[]
+            json_shelf = {
+                "shelf": shelf.shelf_id,
+                "levels": []
             }
             json_ret["shelfs"].append(json_shelf)
-            for level in shelf.levels:
+            for level in shelf.best_candidate_shelf.levels:
                 if level.isTrue:
                     json_level = {
-                        "level_id":level.level_id,
-                        "height":level.level_height,
-                        "goods":[]
+                        "level_id": level.level_id,
+                        "height": level.level_height,
+                        "goods": []
                     }
                     json_shelf["levels"].append(json_level)
-                    for good in level.goods:
+                    for display_goods in level.get_left_right_display_goods_list():
                         json_goods = {
-                            "mch_good_code": good.goods_data.mch_code,
-                            "upc": good.goods_data.upc,
-                            "width":good.goods_data.width,
-                            "height":good.goods_data.height,
-                            "depth":good.goods_data.depth,
+                            "mch_good_code": display_goods.goods_data.mch_code,
+                            "upc": display_goods.goods_data.upc,
+                            "width": display_goods.goods_data.width,
+                            "height": display_goods.goods_data.height,
+                            "depth": display_goods.goods_data.depth,
                             "displays": []
                         }
                         json_level["goods"].append(json_goods)
-                        # TODO
-                        # for gooddisplay in good.gooddisplay_inss:
-                        #     if gooddisplay.dep == 0:
-                        #         json_display = {
-                        #             "top": gooddisplay.top,
-                        #             "left": gooddisplay.left,
-                        #             "row": gooddisplay.row,
-                        #             "col": gooddisplay.col,
-                        #         }
-                        #         json_goods["displays"].append(json_display)
+                        for goods_display_info in display_goods.get_display_info(level):
+                            json_display = {
+                                "top": goods_display_info.top,
+                                "left": goods_display_info.left,
+                                "row": goods_display_info.row,
+                                "col": goods_display_info.col,
+                            }
+                            json_goods["displays"].append(json_display)
 
         return json_ret
+
 
 class Shelf:
     shelf_id = None
@@ -101,14 +101,14 @@ class Shelf:
     width = None
     height = None
     depth = None
-    bottom_height = 50 # 底层到地面的高度 # TODO 需考虑初始化
-    level_board_height = 20 # 层板高度 # TODO 需考虑初始化
-    level_buff_height = 30 # 层冗余高度 # TODO 需考虑初始化
-    last_level_min_remain_height = 150 # 最后一层最小剩余高度
+    bottom_height = 50  # 底层到地面的高度 # TODO 需考虑初始化
+    level_board_height = 20  # 层板高度 # TODO 需考虑初始化
+    level_buff_height = 30  # 层冗余高度 # TODO 需考虑初始化
+    last_level_min_remain_height = 150  # 最后一层最小剩余高度
 
     # 计算用到的参数
-    categoryid_to_sorted_goods_list = None # 候选商品列表
-    extra_add_num = 2 # 每类冗余数量
+    categoryid_to_sorted_goods_list = None  # 候选商品列表
+    extra_add_num = 2  # 每类冗余数量
     goods_arrange_weight = None
 
     best_candidate_shelf = None
@@ -133,14 +133,16 @@ class CandidateShelf:
         goods_total_width = 0
         goods_num = 0
         for categoryid in shelf.categoryid_to_sorted_goods_list.keys():
-            self.categoryid_to_used_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid][:-shelf.extra_add_num]
-            self.categoryid_to_candidate_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid][-shelf.extra_add_num:]
+            self.categoryid_to_used_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid][
+                                                                    :-shelf.extra_add_num]
+            self.categoryid_to_candidate_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[
+                                                                             categoryid][-shelf.extra_add_num:]
 
             for goods in self.categoryid_to_used_sorted_goods_list[categoryid]:
                 goods_num += 1
                 goods_total_width += goods.width * goods.face_num
 
-        self.goods_mean_width = goods_total_width/goods_num
+        self.goods_mean_width = goods_total_width / goods_num
 
     def get_real_arrange_goods_list(self, categoryid):
         """
@@ -160,7 +162,6 @@ class CandidateShelf:
                     break
 
         return real_arrange_goods_list
-
 
     def recalculate(self):
         self.leves = []
@@ -186,12 +187,12 @@ class CandidateShelf:
 
 
 class Level:
-    candidate_shelf = None # 候选货架
-    level_id = None # 层id
-    is_left_right_direction = True # True从左向右，False从右向左
+    candidate_shelf = None  # 候选货架
+    level_id = None  # 层id
+    is_left_right_direction = True  # True从左向右，False从右向左
     goods_width = None  # 层宽度
     start_height = None  # 层板相对货架的起始高度
-    goods_height = 0     # 商品最高高度
+    goods_height = 0  # 商品最高高度
     # level_depth = None  # 层深度
 
     display_goods_list = []  # 陈列商品集合
@@ -220,12 +221,18 @@ class Level:
     def get_nono_goods_width(self):
         return self.candidate_shelf.shelf.width - self.goods_width
 
+    def get_left_right_display_goods_list(self):
+        if self.is_left_right_direction:
+            return self.display_goods_list
+        else:
+            return self.display_goods_list[::-1]
+
 
 class DisplayGoods:
-    #初始化数据
+    # 初始化数据
     goods_data = None
 
-    #计算信息
+    # 计算信息
     # face_num = 1 # 陈列几个face
     # superimpose_rows = 1 # 叠放几行
 
@@ -237,3 +244,38 @@ class DisplayGoods:
 
     def get_height(self):
         return self.goods_data.height * self.goods_data.superimpose_num
+
+    def get_display_info(self, level):
+        """
+        :return:GoodsDisplayInfo列表
+        """
+        display_goods_info = []
+        display_goods_list = level.get_left_right_display_goods_list()
+        init_top = self.goods_data.height
+        init_left = 0
+        for display_goods in display_goods_list:
+            if self.goods_data.equal(display_goods.goods_data):
+                break
+            init_left += display_goods.get_width()
+        for i in range(self.goods_data.face_num):
+            for j in range(self.goods_data.superimpose_num):
+                col = i
+                row = j
+                top = init_top + j * self.goods_data.height
+                left = init_left + i * self.goods_data.width
+                display_goods_info.append(DisplayOneGoodsInfo(col, row, top, left))
+
+        return []
+
+
+class DisplayOneGoodsInfo:
+    col = None  # 在level上的列
+    row = None  # 行
+    top = None
+    left = None
+
+    def __init__(self, col, row, top, left):
+        self.col = col
+        self.row = row
+        self.top = top
+        self.left = left

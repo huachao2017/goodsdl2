@@ -5,6 +5,7 @@
 """
 from goods.shelfdisplay.db_data import *
 
+
 def choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list, shelf_data, extra_add=0):
     """
     根据面积比例选该分类下预测销量最大的品
@@ -37,7 +38,6 @@ def choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list,
     return goods_results
 
 
-
 def goods_arrange(goods_list, goods_arrange_weight):
     """
     按四级分类、品牌、规格（包装）顺序分组，
@@ -51,27 +51,25 @@ def goods_arrange(goods_list, goods_arrange_weight):
     """
     max_weight = 0
     max_weight_attribute = None
-    for k,weight in goods_arrange_weight.items():
+    for k, weight in goods_arrange_weight.items():
         if weight > max_weight:
             max_weight = weight
             max_weight_attribute = k
 
     print(max_weight_attribute)
 
-    goods_list.sort(key=lambda x:x.__dict__[max_weight_attribute], reverse=True)
-
+    goods_list.sort(key=lambda x: x.__dict__[max_weight_attribute], reverse=True)
 
     print(goods_list)
     temp_list = [goods_list[0]]
     goods_list_two = []
-    for i in range(0,len(goods_list)-1):
-        if goods_list[i].__dict__[max_weight_attribute] == goods_list[i+1].__dict__[max_weight_attribute]:
-            temp_list.append(goods_list[i+1])
+    for i in range(0, len(goods_list) - 1):
+        if goods_list[i].__dict__[max_weight_attribute] == goods_list[i + 1].__dict__[max_weight_attribute]:
+            temp_list.append(goods_list[i + 1])
         else:
             goods_list_two.append(temp_list)
-            temp_list = [goods_list[i+1]]
-    return 
-
+            temp_list = [goods_list[i + 1]]
+    return
 
 
 def goods_badcase_score(candidate_shelf_list):
@@ -93,15 +91,16 @@ def goods_badcase_score(candidate_shelf_list):
         # 各层板的高度差
         last_level = None
         for level in candidate_shelf.levels:
-            candidate_shelf.badcase_value += level.get_nono_goods_width()*0.02
+            candidate_shelf.badcase_value += level.get_nono_goods_width() * 0.02
             if last_level is not None:
-                candidate_shelf.badcase_value += abs(level.height - last_level.height)*0.02
+                candidate_shelf.badcase_value += abs(level.height - last_level.height) * 0.02
             last_level = level
         if min_badcase_value > candidate_shelf.badcase_value:
             min_badcase_value = candidate_shelf.badcase_value
             best_candidate_shelf = candidate_shelf
 
     return best_candidate_shelf
+
 
 if __name__ == '__main__':
     a = GoodsData()
