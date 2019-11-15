@@ -100,11 +100,13 @@ def get_old_weather(start_date=None):
 
 def get_old_weather_http(city,date):
     print ("%s , %s" % (city,date))
+    city=str(city).strip("市")
     for i in range(1,10):
         try:
             param = old_weather_url + "?appkey=e22d1fbac88700a0&city=" + city + '&date=' + date
             reponse = requests.get(param)
             print (param)
+            print (reponse)
             reponse = demjson.decode(reponse)
             print (reponse)
             if reponse['status'] == 0 :
