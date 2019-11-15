@@ -17,7 +17,7 @@ from goods.models import ai_weather
 
 old_weather_url = 'https://api.jisuapi.com/weather/query?appkey=e22d1fbac88700a0'
 now_weather_url = 'https://api.jisuapi.com/weather2/query?appkey=e22d1fbac88700a0'
-def get_old_weather(start_date):
+def get_old_weather(start_date=None):
     """
 
     :param start_date:起始时间  该时间必须小于等于当前日期
