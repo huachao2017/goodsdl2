@@ -99,10 +99,12 @@ def get_old_weather(start_date=None):
 
 
 def get_old_weather_http(city,date):
+    print ("%s , %s" % (city,date))
     for i in range(1,10):
         try:
             reponse = requests.get(old_weather_url, params={'appkey': 'e22d1fbac88700a0', 'city': city, 'date': date})
             reponse = demjson.decode(reponse)
+            print (reponse)
             if reponse['status'] == 0 :
                 weather_ins = Weather()
                 weather_ins.create_date = reponse['result']['date']
