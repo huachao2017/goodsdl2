@@ -39,6 +39,8 @@ def get_old_weather(start_date=None,cron=False):
     print (results[0])
 
     default_min_date = '2019-11-15'
+    print (min_create_date)
+    print (max_create_date)
     if min_create_date is None and max_create_date is None:
         i=0
         while True:
@@ -53,10 +55,7 @@ def get_old_weather(start_date=None,cron=False):
                 return
             for_citys_get_weather(results,start_date1)
 
-    elif default_min_date is not None and start_date is not None:
-        date1 = datetime.datetime.strptime(min_create_date, "%Y-%m-%d").time()
-        date2 = datetime.datetime.strptime(start_date, "%Y-%m-%d").time()
-        if date2 < date1:
+    elif default_min_date != None and start_date != None:
             i=0
             while True:
                 start_date1 = str(
