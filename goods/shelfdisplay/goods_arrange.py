@@ -30,56 +30,108 @@ def goods_arrange(shelf, candidate_categoryid_list, goods_data_list, category_ar
     _solve_goods_face(shelf.depth, goods_data_list)
     # 2、计算spu
     # 3、每一个三级分类获得排序商品
+    extra_add_num = 2 # TODO 冗余数量怎么定，如果没有了呢？
     categoryid_to_sorted_goods_list = {}
     _calcuate_shelf_category_area_ratio(shelf, candidate_categoryid_list[0], category_area_ratio)
     for categoryid in candidate_categoryid_list[0]:
-        sorted_goods_list = single_algorithm.choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list, shelf, extra_add=1)
+        sorted_goods_list = single_algorithm.choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list, shelf, extra_add=extra_add_num)
         categoryid_to_sorted_goods_list[categoryid] = sorted_goods_list
 
+    # 设定shelf的全局计算参数
+    shelf.categoryid_to_sorted_goods_list = categoryid_to_sorted_goods_list
+    shelf.extra_add_num = extra_add_num
+    shelf.goods_arrange_weight = goods_arrange_weight
     # 生成所有的候选解
     candidate_result_shelf_list = []
     for categoryid_list in candidate_categoryid_list:
         candidate_result_shelf_list.extend(
-            _display_shelf(categoryid_list,categoryid_to_sorted_goods_list, shelf, goods_arrange_weight)
+            _display_shelf(shelf, categoryid_list)
         )
 
     # 计算候选解的badcase得分
-    best_shelf = single_algorithm.goods_badcase_score(candidate_result_shelf_list)
+    best_candidate_shelf = single_algorithm.goods_badcase_score(candidate_result_shelf_list)
 
-    shelf.assign(best_shelf)
+    shelf.best_candidate_shelf = best_candidate_shelf
 
     return True
 
-def _display_shelf(categoryid_list, categoryid_to_sorted_goods_list, template_shelf, goods_arrange_weight):
+def _display_shelf(shelf, categoryid_list):
     """
     陈列主算法
+    :param shelf: 实际货架
     :param categoryid_list: 三级分类排序
-    :param categoryid_to_sorted_goods_list: 每个分类按销量的排序
-    :param template_shelf: 模板货架
-    :param goods_arrange_weight: 商品排序权重
     :return: 候选货架解列表
     """
     candidate_result_shelf_list = []
 
-    shelf = template_shelf.copy()
-    for categoryid in categoryid_list:
-        arrange_goods_list = single_algorithm.goods_arrange(categoryid_to_sorted_goods_list[categoryid][:-1], goods_arrange_weight)
+    candidate_shelf = display_data.CandidateShelf(shelf, categoryid_list)
+
+    for i in range(5): # 试错5次
+        candidate_shelf.recalculate()
+        _try_display_shelf(candidate_shelf)
+        # 计算货架多余或缺失宽度
+        addition_width = shelf.calculate_addition_width()
+
+        if addition_width > 0:
+            # 陈列越界
+            if addition_width < candidate_shelf.goods_mean_width*2: # TODO 阈值多少合适？
+                # 舍弃最后一层，并退出试错
+                candidate_shelf.levels = candidate_shelf.levels[:-1]
+                break
+
+            # 减少候选品
+            reduce_width = 0
+            for j in range(3): # 每个品最多减三轮
+                for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
+                    goods = candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid][-1]
+                    reduce_width += goods.width*goods.face_num
+                    candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid] = candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid][:-1]
+                    candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid].insert(0,goods)
+                    if reduce_width > addition_width:
+                        break
+                if reduce_width > addition_width:
+                    break
+        else:
+            # 成列不足
+            positive_addition_width = -addition_width
+            if positive_addition_width < candidate_shelf.goods_mean_width*2: # TODO 阈值多少合适？
+                # 退出试错
+                break
+
+            # 增加候选品
+            add_width = 0
+            for j in range(2): # 每个品最多减两轮
+                for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
+                    if len(candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid])>0: # 防止没有候选商品
+                        goods = candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid][0]
+                        add_width += goods.width*goods.face_num
+                        candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid].append(goods)
+                        candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid] = candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid][1:]
+                        if add_width > positive_addition_width:
+                            break
+                if add_width > positive_addition_width:
+                    break
+
+    return candidate_result_shelf_list
+
+
+def _try_display_shelf(candidate_shelf):
+    for categoryid in candidate_shelf.categoryid_list:
+        arrange_goods_list = single_algorithm.goods_arrange(
+            candidate_shelf.shelf.categoryid_to_sorted_goods_list[categoryid],
+            candidate_shelf.shelf.goods_arrange_weight)
 
         level = None
         for goods in arrange_goods_list:
             # 创建层
-            level = _level_add_goods(shelf, level, goods)
+            level = _level_add_goods(candidate_shelf, level, goods)
             # TODO 什么情况以及如何才能再创建一个副本货架陈列
 
-    # 计算货架多余或缺失宽度
-    addition_width = shelf.calculate_addition_width()
-    # TODO 候选商品调整
-    return candidate_result_shelf_list
 
-def _level_add_goods(shelf,cur_level,goods):
+def _level_add_goods(candidate_shelf,cur_level,goods):
     """
     处理层添加和层的width和height变化
-    :param shelf:
+    :param candidate_shelf:
     :param levelid:
     :param goods:
     :return: 商品添加的层
@@ -88,7 +140,7 @@ def _level_add_goods(shelf,cur_level,goods):
     display_goods = display_data.DisplayGoods(goods)
     if cur_level == None:
         # 初始陈列
-        cur_level = display_data.Level(shelf, 0, shelf.bottom_height,True)
+        cur_level = display_data.Level(candidate_shelf, 0, candidate_shelf.shelf.bottom_height,True)
     ret_level = cur_level
 
     # 陈列商品 TODO 需要处理陈列商品跨层拆分
@@ -96,9 +148,9 @@ def _level_add_goods(shelf,cur_level,goods):
     if not success:
         # 无法陈列商品
         ret_level = display_data.Level(
-            shelf,
+            candidate_shelf,
             cur_level.level_id+1,
-            cur_level.start_height+cur_level.goods_height+shelf.level_buff_height+shelf.level_board_height,
+            cur_level.start_height+cur_level.goods_height+candidate_shelf.shelf.level_buff_height+candidate_shelf.shelf.level_board_height,
             bool(1-cur_level.is_left_right_direction)
         )
         # TODO 需要考虑整层无法摆下的拆分
