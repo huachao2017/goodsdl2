@@ -103,8 +103,13 @@ def get_old_weather_http(city,date):
     city=str(city).strip("市")
     for i in range(1,10):
         try:
+            headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+
             param = old_weather_url + "?appkey=e22d1fbac88700a0&city=" + city + '&date=' + date
-            reponse = requests.get(param)
+            reponse = requests.get(param,headers=headers)
             print (param)
             print (reponse)
             reponse = demjson.decode(reponse)
