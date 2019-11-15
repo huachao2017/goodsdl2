@@ -173,17 +173,20 @@ def _try_display_shelf(candidate_shelf):
 
         arrange_goods_list = candidate_shelf.get_real_arrange_goods_list(categoryid)
         level = None
+        last_goods = None
         for goods in arrange_goods_list:
             # 创建层
-            level = _level_add_goods(candidate_shelf, level, goods)
+            level = _level_add_goods(candidate_shelf, level, goods, last_goods)
+            last_goods = goods
 
 
-def _level_add_goods(candidate_shelf,cur_level,goods):
+def _level_add_goods(candidate_shelf,cur_level,goods, last_goods):
     """
     处理层添加和层的width和height变化
     :param candidate_shelf:
     :param levelid:
     :param goods:
+    :param last_goods: 上一个goods
     :return: 商品添加的层
     """
 
@@ -193,8 +196,9 @@ def _level_add_goods(candidate_shelf,cur_level,goods):
         cur_level = display_data.Level(candidate_shelf, 0, candidate_shelf.shelf.bottom_height,True)
     ret_level = cur_level
 
-    # 陈列商品 TODO 需要处理陈列商品跨层拆分
+    # 陈列商品 TODO 需要处理陈列同商品跨层拆分
     success = ret_level.display_goods(display_goods)
+
     if not success:
         # 无法陈列商品
         ret_level = display_data.Level(
@@ -205,6 +209,12 @@ def _level_add_goods(candidate_shelf,cur_level,goods):
         )
         # TODO 需要考虑整层无法摆下的拆分
         ret_level.display_goods(display_goods)
+        if goods.is_spu(last_goods):
+            candidate_shelf.badcase_value += 0.3 # 计算spu badcase
+    else:
+        candidate_shelf.badcase_value += goods.height_diff(last_goods) * 0.02  # 计算同层板相邻品高度差 badcase
+        if last_goods is not None and goods.category3 == last_goods.category3:
+            candidate_shelf.badcase_value += goods.height_diff(last_goods) * 0.2  # 计算同三级分类相邻品高度差 badcase
 
     return ret_level
 
@@ -216,6 +226,8 @@ def _solve_goods_face(shelf_depth, goods_data_list):
     :return:
     """
     # FIXME 层板深度问题处理怎么解决？
+    # TODO 需要考虑叠放
+    # TODO 这个计算需要放到摆放时现算
     for goods in goods_data_list:
         max_one_face = int(shelf_depth/goods.depth)
         goods.face_num = int(3 * goods.psd/max_one_face)

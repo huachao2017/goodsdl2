@@ -49,4 +49,22 @@ class GoodsData:
     face_num = 1 #在某个货架时填入 # FIXME 临时方案
     superimpose_num = 1 #在商品初始化时填入
 
+    def equal(self, another_goods):
+        if another_goods is not None:
+            return self.mch_code == another_goods.mch_code
+        return False
+
+    def is_spu(self, another_goods):
+        if another_goods is not None:
+            return self.category4 == another_goods.category4 and self.package_type == another_goods.package_type and self.brand == another_goods.brand \
+                   and abs(self.height - another_goods.height) < 5 and abs(self.width - another_goods.width) < 5
+        return False
+
+    def height_diff(self,another_goods):
+        if another_goods is not None:
+            # FIXME 需考虑叠放
+            return self.height - another_goods.height
+        return 0
+
+
 

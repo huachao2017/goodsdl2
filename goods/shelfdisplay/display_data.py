@@ -122,7 +122,7 @@ class CandidateShelf:
 
     categoryid_to_arrange_goods_list = None
     levels = []
-    badcase_value = 0
+    badcase_value = 0.0
     goods_mean_width = 0
 
     def __init__(self, shelf, categoryid_list, categoryid_to_arrange_goods_list):
@@ -164,7 +164,7 @@ class CandidateShelf:
 
     def recalculate(self):
         self.leves = []
-        self.badcase_value = 0
+        self.badcase_value = 0.0
 
     def calculate_addition_width(self):
         """
@@ -216,6 +216,9 @@ class Level:
             self.goods_height = display_goods.get_height()
 
         return True
+
+    def get_nono_goods_width(self):
+        return self.candidate_shelf.shelf.width - self.goods_width
 
 
 class DisplayGoods:
