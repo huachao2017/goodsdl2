@@ -38,7 +38,7 @@ def get_old_weather(start_date=None,cron=False):
     results = cursor_dmstore.fetchall()
     print (results[0])
 
-    default_min_date = '2019-11-14'
+    default_min_date = '2019-11-15'
     if min_create_date is None and max_create_date is None:
         i=0
         while True:
@@ -53,7 +53,7 @@ def get_old_weather(start_date=None,cron=False):
                 return
             for_citys_get_weather(results,start_date1)
 
-    elif min_create_date is not None and start_date is not None:
+    elif default_min_date is not None and start_date is not None:
         date1 = datetime.datetime.strptime(min_create_date, "%Y-%m-%d").time()
         date2 = datetime.datetime.strptime(start_date, "%Y-%m-%d").time()
         if date2 < date1:
@@ -63,7 +63,7 @@ def get_old_weather(start_date=None,cron=False):
                     (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
                         days=i)).strftime("%Y-%m-%d"))
                 i+=1
-                if min_create_date == start_date1:
+                if default_min_date == start_date1:
                     return
                 for_citys_get_weather(results,start_date1)
     elif cron:
