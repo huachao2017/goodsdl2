@@ -23,7 +23,7 @@ def generate():
             if sales_order_ins.delivery_type is None or sales_order_ins.delivery_type != 1 or sales_order_ins.delivery_type != 2 :
                 print ("%s delivery_type is error , goods_name=%s,upc=%s"%(str(sales_order_ins.delivery_type),str(sales_order_ins.goods_name),str(sales_order_ins.upc)))
 
-            if sales_order_ins.sales_nums != None and sales_order_ins.sales_nums*3 > 0 and sales_order_ins.sales_nums*3 - sales_order_ins.stock > 0 :
+            if sales_order_ins.sales_nums != None and sales_order_ins.sales_nums*1.5 > 0 and sales_order_ins.sales_nums*1.5 - sales_order_ins.stock > 0 :
                 # 进入起订量规则
                 if sales_order_ins.sales_nums <= sales_order_ins.start_sum:
                     sales_order_ins.order_sale = sales_order_ins.start_sum

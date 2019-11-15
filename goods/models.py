@@ -119,6 +119,19 @@ class ai_sales_order(models.Model):
     create_time = models.DateTimeField('date created', auto_now_add=True, db_index=True)
     goods_name = models.CharField(max_length=100, default='')
 
+
+
+class ai_weather(models.Model):
+    city = models.CharField(max_length=2000)# 城市名
+    create_date = models.CharField(default=200) #日期
+    weather_type = models.CharField(max_length=2000)# 天气类型
+    temphigh = models.IntegerField() #最高温度
+    templow = models.IntegerField() #最低温度
+    windspeed = models.IntegerField() #风速
+    winddirect = models.CharField(max_length=255) #风向
+    windpower = models.FloatField() #风力
+    city_id = models.IntegerField(default=0) #城市id
+
 def goods_image_upload_source(instance, filename):
     now = datetime.datetime.now()
     return '{}/{}/{}/{}/{}_{}_{}'.format(settings.DETECT_DIR_NAME, 'goodsWH', now.strftime('%Y%m'),
