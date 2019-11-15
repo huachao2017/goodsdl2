@@ -54,7 +54,7 @@ def get_old_weather(start_date=None):
             for city in results:
                 if city[0] == '':
                     continue
-                weather_ins = get_old_weather_http(city[0],start_date)
+                weather_ins = get_old_weather_http(city[0],start_date1)
                 if weather_ins is not None:
                     ai_weather.objects.create(
                         city=weather_ins.city,
@@ -83,7 +83,7 @@ def get_old_weather(start_date=None):
                 for city in results:
                     if city[0] == '':
                         continue
-                    weather_ins = get_old_weather_http(city[0], start_date)
+                    weather_ins = get_old_weather_http(city[0], start_date1)
                     if weather_ins is not None:
                         ai_weather.objects.create(
                             city=weather_ins.city,
