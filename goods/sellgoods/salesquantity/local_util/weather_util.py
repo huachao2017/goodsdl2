@@ -51,22 +51,7 @@ def get_old_weather(start_date=None,cron=False):
                 return
             if start_date is not None and start_date1 == start_date:
                 return
-            for city in results:
-                if city[0] == '':
-                    continue
-                weather_ins = get_old_weather_http(city[0],start_date1)
-                if weather_ins is not None:
-                    ai_weather.objects.create(
-                        city=weather_ins.city,
-                        create_date=weather_ins.create_date,
-                        weather_type =weather_ins.weather_type,
-                        temphigh = int(weather_ins.temphigh),
-                        templow = int(weather_ins.templow),
-                        windspeed = float(weather_ins.windspeed),
-                        winddirect = weather_ins.winddirect,
-                        windpower = float(str(weather_ins.windpower).strip("级")),
-                        city_id = int(weather_ins.city_id)
-                    )
+            for_citys_get_weather(results,start_date1)
 
     elif min_create_date is not None and start_date is not None:
         date1 = datetime.datetime.strptime(min_create_date, "%Y-%m-%d").time()
@@ -80,44 +65,33 @@ def get_old_weather(start_date=None,cron=False):
                 i+=1
                 if min_create_date == start_date1:
                     return
-                for city in results:
-                    if city[0] == '':
-                        continue
-                    weather_ins = get_old_weather_http(city[0], start_date1)
-                    if weather_ins is not None:
-                        ai_weather.objects.create(
-                            city=weather_ins.city,
-                            create_date=weather_ins.create_date,
-                            weather_type=weather_ins.weather_type,
-                            temphigh=int(weather_ins.temphigh),
-                            templow=int(weather_ins.templow),
-                            windspeed=float(weather_ins.windspeed),
-                            winddirect=weather_ins.winddirect,
-                            windpower=float(str(weather_ins.windpower).strip("级")),
-                            city_id=int(weather_ins.city_id)
-                        )
+                for_citys_get_weather(results,start_date1)
     elif cron:
         end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
         start_date1 = str(
             (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                 days=-1)).strftime("%Y-%m-%d"))
-        for city in results:
-            if city[0] == '':
-                continue
-            weather_ins = get_old_weather_http(city[0], start_date1)
-            if weather_ins is not None:
-                ai_weather.objects.create(
-                    city=weather_ins.city,
-                    create_date=weather_ins.create_date,
-                    weather_type=weather_ins.weather_type,
-                    temphigh=int(weather_ins.temphigh),
-                    templow=int(weather_ins.templow),
-                    windspeed=float(weather_ins.windspeed),
-                    winddirect=weather_ins.winddirect,
-                    windpower=float(str(weather_ins.windpower).strip("级")),
-                    city_id=int(weather_ins.city_id)
-                )
+        for_citys_get_weather(results,start_date1)
 
+
+
+def for_citys_get_weather(results,start_date1):
+    for city in results:
+        if city[0] == '':
+            continue
+        weather_ins = get_old_weather_http(city[0], start_date1)
+        if weather_ins is not None:
+            ai_weather.objects.create(
+                city=weather_ins.city,
+                create_date=weather_ins.create_date,
+                weather_type=weather_ins.weather_type,
+                temphigh=int(weather_ins.temphigh),
+                templow=int(weather_ins.templow),
+                windspeed=float(weather_ins.windspeed),
+                winddirect=weather_ins.winddirect,
+                windpower=float(str(weather_ins.windpower).strip("级")),
+                city_id=int(weather_ins.city_id)
+            )
 
 
 def get_old_weather_http(city,date):
