@@ -20,7 +20,7 @@ def generate():
         print ("商品名称,条形码,配送类型,face数,商品深度,货架深度,陈列店内码,小仓库库存,起订量,步长,门店库存,历史销量,预测销量")
         for mch_code  in result:
             drg_ins = result[mch_code]
-            print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s"
+            print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s"
                   % (str(drg_ins.goods_name),
                      str(drg_ins.upc),
                      str(drg_ins.delivery_type),
@@ -28,6 +28,7 @@ def generate():
                      str(drg_ins.depth),
                      str(drg_ins.shelf_depth),
                      str(drg_ins.mch_code),
+                     str(drg_ins.category_id),
                      str(drg_ins.supply_stock),
                      str(drg_ins.start_sum),
                      str(drg_ins.multiple),

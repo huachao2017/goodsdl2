@@ -8,6 +8,7 @@ from goods.goodsdata import get_shop_order_goods
 order_shop_ids = config.shellgoods_params['order_shop_hour_ids']
 shop_type = config.shellgoods_params['shop_types'][0]  # 门店
 order_shop_hours = config.shellgoods_params['order_shop_hours']
+yinliao_cat_ids = config.shellgoods_params['yinliao_cat_ids'] # 饮料台账分类
 def generate(shopid = None):
     if shopid != None:
         order_shop_ids = [shopid]
@@ -23,7 +24,7 @@ def generate(shopid = None):
             sales_order_ins = combean_to_mybean.get_saleorder_ins(drg_ins,shop_id,shop_type)
             if  sales_order_ins.max_stock < 0 or sales_order_ins.stock < 0 :
                 sales_order_ins.order_sale = 200000
-            elif float(sales_order_ins.stock) <= float(2):
+            elif (float(sales_order_ins.stock) <= float(2) and drg_ins.category_id not in yinliao_cat_ids) or (float(sales_order_ins.stock) <= float(4) and drg_ins.category_id  in yinliao_cat_ids):
                 sales_order_ins.order_sale = sales_order_ins.max_stock - sales_order_ins.stock
                 print ("补货单..... upc=%s,name=%s,order_sale=%s,supply_stock=%s" % (str(sales_order_ins.upc),str(sales_order_ins.goods_name),str(sales_order_ins.order_sale),str(sales_order_ins.supply_stock)))
                 if sales_order_ins.order_sale > sales_order_ins.supply_stock:
