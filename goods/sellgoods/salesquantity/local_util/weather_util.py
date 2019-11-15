@@ -84,12 +84,12 @@ def for_citys_get_weather(results,start_date1):
                 city=weather_ins.city,
                 create_date=weather_ins.create_date,
                 weather_type=weather_ins.weather_type,
-                temphigh=int(weather_ins.temphigh),
-                templow=int(weather_ins.templow),
-                windspeed=float(weather_ins.windspeed),
+                temphigh=weather_ins.temphigh,
+                templow=weather_ins.templow,
+                windspeed=weather_ins.windspeed,
                 winddirect=weather_ins.winddirect,
-                windpower=float(str(weather_ins.windpower).strip("级")),
-                city_id=int(weather_ins.city_id)
+                windpower=weather_ins.windpower,
+                city_id=weather_ins.city_id
             )
 
 
