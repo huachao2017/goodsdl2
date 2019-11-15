@@ -34,7 +34,7 @@ def get_old_weather(start_date=None,cron=False):
     cursor_ai.execute('select MIN(create_date),MAX(create_date) from goods_ai_weather')
     (min_create_date,max_create_date) = cursor_ai.fetchone()
 
-    cursor_dmstore.execute("select DISTINCT(owned_city) from shop where owned_city != '天津新区' ")
+    cursor_dmstore.execute("select DISTINCT(owned_city) from shop where owned_city != '天津新区' and owned_city != '' ")
     results = cursor_dmstore.fetchall()
     print (results[0])
 
