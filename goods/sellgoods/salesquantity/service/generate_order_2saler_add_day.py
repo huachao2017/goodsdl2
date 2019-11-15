@@ -32,6 +32,12 @@ def generate():
                         float((sales_order_ins.sales_nums / sales_order_ins.start_sum))) * sales_order_ins.start_sum
                     sales_order_ins.order_sale = max_order_sale
                 sales_order_inss.append(sales_order_ins)
+            elif sales_order_ins.stock == 0 : #库存等于0 且 销量较低 可能被废弃了  订最小起订量
+                sales_order_ins.order_sale = sales_order_ins.start_sum
+            elif drg_ins.storage_day is not None and drg_ins.storage_day < 3: #商品的保质期 小于配送的周期  有可能在到货前， 会被废弃或者被卖空
+                sales_order_ins.order_sale = sales_order_ins.start_sum
+
+
         print("规则1：商品数：" + str(len(sales_order_inss)))
         sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
         print("规则2：商品数：" + str(len(sales_order_inss)))
