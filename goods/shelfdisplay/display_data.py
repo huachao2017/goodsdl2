@@ -119,13 +119,16 @@ class CandidateShelf:
     categoryid_list = None
     categoryid_to_used_sorted_goods_list = {}
     categoryid_to_candidate_sorted_goods_list = {}
+
+    categoryid_to_arrange_goods_list = None
     levels = []
     badcase_value = 0
     goods_mean_width = 0
 
-    def __init__(self, shelf, categoryid_list):
+    def __init__(self, shelf, categoryid_list, categoryid_to_arrange_goods_list):
         self.shelf = shelf
         self.categoryid_list = categoryid_list
+        self.categoryid_to_arrange_goods_list = categoryid_to_arrange_goods_list
 
         goods_total_width = 0
         goods_num = 0
@@ -138,6 +141,26 @@ class CandidateShelf:
                 goods_total_width += goods.width * goods.face_num
 
         self.goods_mean_width = goods_total_width/goods_num
+
+    def get_real_arrange_goods_list(self, categoryid):
+        """
+        根据用到商品筛选商品排序表
+        :param categoryid:
+        :return:
+        """
+        arrange_goods_list = self.categoryid_to_arrange_goods_list[categoryid]
+
+        used_goods_list = self.categoryid_to_used_sorted_goods_list[categoryid]
+
+        real_arrange_goods_list = []
+        for arrange_goods in arrange_goods_list:
+            for used_goods in used_goods_list:
+                if arrange_goods.mch_code == used_goods.mch_code:
+                    real_arrange_goods_list.append(arrange_goods)
+                    break
+
+        return real_arrange_goods_list
+
 
     def recalculate(self):
         self.leves = []

@@ -40,12 +40,14 @@ def choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list,
 
 def goods_arrange(goods_list, goods_arrange_weight):
     """
-    按四级分类、品牌、规格（包装）、尺寸（只选宽和高）排序
-    特征权重
-    按特征权重高低排列
+    按四级分类、品牌、规格（包装）顺序分组，
+    分组按平均高度排序，组内按先按商品高度排序，再按商品宽度
+    1、排序从高到低和从低到高都要输出解
+    2、高度差距小于5mm的分组可以交换位置输出解
+    3、商品在同一分组中且高度相差5mm且宽度相差5mm内不做交换解输出
     :param goods_list:
     :param goods_arrange_weight:排序权值
-    :return: goods_list:
+    :return: 排序的新的goods_list的列表集:
     """
     max_weight = 0
     max_weight_attribute = None
