@@ -99,10 +99,17 @@ class Shelf:
     width = None
     height = None
     depth = None
+    bottom_height = 50 # 底层到地面的高度 # TODO
+    level_board_height = 20 # 层板高度 # TODO
+    level_buff_height = 30 # 层冗余高度 # TODO
     levels = []
     badcase_value = 0
 
     def copy(self):
+        """
+        拷贝一个货架的参数
+        :return:
+        """
         shelf = Shelf()
         shelf.shelf_id = self.shelf_id
         shelf.width = self.width
@@ -110,19 +117,71 @@ class Shelf:
         shelf.depth = self.depth
         return shelf
 
-class Level:
-    level_id = None # 层id
-    goods_list = []  # 商品集合
-    level_none_good_width = None  # 层空余的宽度
-    level_start_height = None  # 层相对货架的起始高度
-    level_width = None  #层宽度
-    level_height = None  # 层高度
-    level_depth = None  # 层深度
+    def assign(self, shelf):
+        """
+        用一个候选货架给另一个货架赋值
+        :param shelf:
+        :return:
+        """
+        self.levels = shelf.levels
+        self.badcase_value = shelf.badcase_value
 
-class Goods:
+    def calculate_addition_width(self):
+        """
+        计算货架多余或缺失宽度
+        :return: 超出或不足的width
+        """
+
+        # TODO
+
+        return 0
+
+class Level:
+    parent_shelf = None # 上层货架
+    level_id = None # 层id
+    is_left_right_direction = True # True从左向右，False从右向左
+    goods_width = None  # 层宽度
+    start_height = None  # 层板相对货架的起始高度
+    goods_height = 0     # 商品最高高度
+    # level_depth = None  # 层深度
+
+    display_goods_list = []  # 陈列商品集合
+
+    def __init__(self, parent_shelf, level_id, start_height, is_left_right_direction):
+        self.parent_shelf = parent_shelf
+        self.level_id = level_id
+        self.is_left_right_direction = is_left_right_direction
+        self.start_height = start_height
+
+    def display_goods(self, display_goods):
+        if display_goods.get_width() + self.goods_width > self.parent_shelf.width:
+            # TODO 需要考虑拆分
+            return False
+        self.display_goods_list.append(display_goods)
+
+        # 更新宽度
+        self.goods_width += display_goods.get_width()
+
+        # 更新高度
+        if self.goods_height < display_goods.get_height():
+            self.goods_height = display_goods.get_height()
+
+        return True
+
+
+class DisplayGoods:
     #初始化数据
     goods_data = None
 
     #计算信息
-    face_num = 1 # faces 数
-    superimpose_rows = 1 # 叠放几行
+    # face_num = 1 # 陈列几个face
+    # superimpose_rows = 1 # 叠放几行
+
+    def __init__(self, goods_data):
+        self.goods_data = goods_data
+
+    def get_width(self):
+        return self.goods_data.width * self.goods_data.face_num
+
+    def get_height(self):
+        return self.goods_data.height * self.goods_data.superimpose_num
