@@ -74,21 +74,34 @@ def goods_arrange(goods_list, goods_arrange_weight):
 
 
 
-
-
-def goods_badcase_score(shelf_list):
+def goods_badcase_score(candidate_shelf_list):
     """
-    扩面跨层	1*∑
-    spu跨层	0.3*∑
-    同三级分类相邻品高度差	0.2*∑
-    同层板相邻品高度差	0.02*∑
+    扩面跨层	1*∑，在陈列摆放中直接计算
+    spu跨层	0.3*∑，在陈列摆放中直接计算
+    同三级分类相邻品高度差	0.2*∑ ，在陈列摆放中直接计算
+    同层板相邻品高度差	0.02*∑  ，在陈列摆放中直接计算
     空缺层板宽度	0.02*∑
     各层板的高度差	0.02*∑
-    :param shelf_list:
+    :param candidate_shelf_list:
     :return: 分数最低的shelf
     """
-    pass
 
+    min_badcase_value = 100000
+    best_candidate_shelf = None
+    for candidate_shelf in candidate_shelf_list:
+        # 空缺层板宽度
+        # 各层板的高度差
+        last_level = None
+        for level in candidate_shelf.levels:
+            candidate_shelf.badcase_value += level.get_nono_goods_width()*0.02
+            if last_level is not None:
+                candidate_shelf.badcase_value += abs(level.height - last_level.height)*0.02
+            last_level = level
+        if min_badcase_value > candidate_shelf.badcase_value:
+            min_badcase_value = candidate_shelf.badcase_value
+            best_candidate_shelf = candidate_shelf
+
+    return best_candidate_shelf
 
 if __name__ == '__main__':
     a = GoodsData()
