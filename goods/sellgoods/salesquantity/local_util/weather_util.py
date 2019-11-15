@@ -15,8 +15,8 @@ import requests
 import demjson
 from goods.models import ai_weather
 
-old_weather_url = 'https://api.jisuapi.com/weather/query?appkey=e22d1fbac88700a0'
-now_weather_url = 'https://api.jisuapi.com/weather2/query?appkey=e22d1fbac88700a0'
+old_weather_url = 'https://api.jisuapi.com/weather2/query'
+now_weather_url = 'https://api.jisuapi.com/weather/query'
 def get_old_weather(start_date=None):
     """
 
@@ -52,7 +52,9 @@ def get_old_weather(start_date=None):
             if start_date is not None and start_date1 == start_date:
                 return
             for city in results:
-                weather_ins = get_old_weather_http(city,start_date)
+                if city[0] == '':
+                    continue
+                weather_ins = get_old_weather_http(city[0],start_date1)
                 if weather_ins is not None:
                     ai_weather.objects.create(
                         city=weather_ins.city,
@@ -79,7 +81,9 @@ def get_old_weather(start_date=None):
                 if min_create_date == start_date1:
                     return
                 for city in results:
-                    weather_ins = get_old_weather_http(city, start_date)
+                    if city[0] == '':
+                        continue
+                    weather_ins = get_old_weather_http(city[0], start_date1)
                     if weather_ins is not None:
                         ai_weather.objects.create(
                             city=weather_ins.city,
@@ -95,19 +99,30 @@ def get_old_weather(start_date=None):
 
 
 def get_old_weather_http(city,date):
+    print ("%s , %s" % (city,date))
+    city=str(city).strip("市")
     for i in range(1,10):
         try:
-            reponse = requests.get(old_weather_url, params={'appkey': 'e22d1fbac88700a0', 'city': city, 'date': date})
+            headers = {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+
+            param = old_weather_url + "?appkey=e22d1fbac88700a0&city=" + city + '&date=' + date
+            reponse = requests.get(param,headers=headers).text
+            print (param)
+            print (reponse)
             reponse = demjson.decode(reponse)
+            print (reponse)
             if reponse['status'] == 0 :
                 weather_ins = Weather()
                 weather_ins.create_date = reponse['result']['date']
                 weather_ins.weather_type = reponse['result']['weather']
-                weather_ins.temphigh = reponse['result']['weather']
-                weather_ins.templow = reponse['result']['weather']
-                weather_ins.windspeed = reponse['result']['weather']
-                weather_ins.winddirect = reponse['result']['weather']
-                weather_ins.windpower = reponse['result']['weather']
+                weather_ins.temphigh = reponse['result']['temphigh']
+                weather_ins.templow = reponse['result']['templow']
+                weather_ins.windspeed = reponse['result']['windspeed']
+                weather_ins.winddirect = reponse['result']['winddirect']
+                weather_ins.windpower = reponse['result']['windpower']
                 weather_ins.city = city
                 weather_ins.city_id = reponse['result']['cityid']
                 return weather_ins
