@@ -15,14 +15,13 @@ from goods.shelfdisplay import single_algorithm
 from goods.shelfdisplay import display_data
 
 
-def goods_arrange(shelf, candidate_categoryid_list, goods_data_list, category_area_ratio, goods_arrange_weight):
+def goods_arrange(shelf, candidate_categoryid_list, goods_data_list, category_area_ratio):
     """
     第四步，商品布局主体函数
     :param shelf:货架
     :param candidate_categoryid_list: 货架三级分类排列候选
     :param goods_data_list: 候选商品
     :param category_area_ratio: 面积比例
-    :param goods_arrange_weight: 商品排列权重
     :return:
     """
 
@@ -42,14 +41,12 @@ def goods_arrange(shelf, candidate_categoryid_list, goods_data_list, category_ar
     # 设定shelf的全局计算参数
     shelf.categoryid_to_sorted_goods_list = categoryid_to_sorted_goods_list
     shelf.extra_add_num = extra_add_num
-    shelf.goods_arrange_weight = goods_arrange_weight
     # 生成所有的候选解
     candidate_result_shelf_list = []
     categoryid_to_arrange_goods_list_list = {}
     for categoryid in candidate_categoryid_list[0]:
         arrange_goods_list_list = single_algorithm.goods_arrange(
-            shelf.categoryid_to_sorted_goods_list[categoryid],
-            shelf.goods_arrange_weight)
+            shelf.categoryid_to_sorted_goods_list[categoryid])
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
     for categoryid_list in candidate_categoryid_list:
         candidate_shelf_list = create_candidate_shelf_list(

@@ -38,7 +38,7 @@ def choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list,
     return goods_results
 
 
-def goods_arrange(goods_list, goods_arrange_weight):
+def goods_arrange(goods_list):
     """
     按四级分类、品牌、规格（包装）顺序分组，
     分组按平均高度排序，组内按先按商品高度排序，再按商品宽度
@@ -46,7 +46,6 @@ def goods_arrange(goods_list, goods_arrange_weight):
     2、高度差距小于5mm的分组可以交换位置输出解
     3、商品在同一分组中且高度相差5mm且宽度相差5mm内不做交换解输出
     :param goods_list:
-    :param goods_arrange_weight:排序权值
     :return: 排序的新的goods_list的列表集:
     """
     max_weight = 0
@@ -109,4 +108,4 @@ if __name__ == '__main__':
     c.category4 = 3
     b = GoodsData()
     b.category4 = 2
-    goods_arrange([a, c, b], BaseData.goods_arrange_weight)
+    goods_arrange([a, c, b])

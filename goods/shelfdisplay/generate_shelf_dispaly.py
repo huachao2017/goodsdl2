@@ -36,8 +36,7 @@ def generate_displays(uc_shopid, tz_id):
     goods_arrange.goods_arrange(taizhang.shelfs[0],
                                 candidate_category_list,
                                 taizhang.candidate_goods_data_list,
-                                base_data.category_area_ratio,
-                                base_data.goods_arrange_weight)
+                                base_data.category_area_ratio)
 
     return taizhang
 

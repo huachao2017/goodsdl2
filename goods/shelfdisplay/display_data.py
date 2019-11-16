@@ -109,7 +109,6 @@ class Shelf:
     # 计算用到的参数
     categoryid_to_sorted_goods_list = None  # 候选商品列表
     extra_add_num = 2  # 每类冗余数量
-    goods_arrange_weight = None
 
     best_candidate_shelf = None
 
