@@ -15,7 +15,7 @@ class Test(APIView):
 class SellGoodsViewSet(APIView):
     def get(self,request):
         shop_id = request.query_params['shop_id']
-        generate_order_shop.generate(shopid = shop_id)
+        generate_order_shop.generate(shopid1 = shop_id)
         # with ThreadPoolExecutor(max_workers=5) as t:  # 创建一个最大容纳数量为5的线程池
         #     try:
         #         task1 = t.submit(generate_order_shop.generate, shopid=shop_id)
