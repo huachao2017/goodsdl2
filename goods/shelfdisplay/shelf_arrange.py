@@ -35,12 +35,12 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
 
     # 1，初始化数据
     root_category_tree_list = init_category_tree(category3_intimate_weight, category3_level_value, category3_list)
-    # for root_category_tree in root_category_tree_list:
-    #     print(root_category_tree)
 
     # 2，计算level_value
     for category_tree in root_category_tree_list:
         category_tree.calculate_level_value()
+    for root_category_tree in root_category_tree_list:
+        print(root_category_tree)
 
     # 3, 输出里层排序
     for category_tree in root_category_tree_list:
@@ -239,6 +239,10 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
         if parent_tree.parent == None:
             id_to_root_parent_tree[parent_tree.id] = parent_tree
 
+    for child_tree in all_category_tree_without_parent:
+        if child_tree.category in category3_level_value:
+            child_tree.level_value = category3_level_value[child_tree.category]
+
     return id_to_root_parent_tree.values()
 
 
@@ -294,7 +298,23 @@ class CategoryTree:
         return None
 
     def calculate_level_value(self):
-        pass
+        min_level_value = 10
+        max_level_value = 0
+        if self.children is not None:
+            for child in self.children:
+                if child.children is not None:
+                    child.calculate_level_value()
+                if child.level_value is not None:
+                    if child.level_value < min_level_value:
+                        min_level_value = child.level_value
+                    if child.level_value > max_level_value:
+                        max_level_value = child.level_value
+            if min_level_value <= max_level_value:
+                # 出现有效值
+                if min_level_value > 5:
+                    self.level_value = max_level_value
+                if max_level_value < 5:
+                    self.level_value = min_level_value
 
     def calculate_result(self):
         pass
@@ -302,9 +322,10 @@ class CategoryTree:
     def __str__(self):
         ret = ''
         if self.children is None:
-            return self.category + ','
+            return str(self.level_value) + ':' + self.category + ','
         else:
-            ret += '('
+            ret += str(self.level_value)
+            ret += ':('
             for child in self.children:
                 ret += str(child)
             ret += '),'
@@ -320,7 +341,8 @@ if __name__ == '__main__':
         'd,e,f': 6,
         'd,e,f,g': 5
     }
-    category3_level_value = {}
+    category3_level_value = {'b':8, 'c':10, 'e':0}
+    print(category3_level_value)
     category3_list = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
     a = main_calculate(category3_intimate_weight, category3_level_value, category3_list)
     print('--------------候选列表---------------')
