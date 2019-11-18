@@ -9,9 +9,9 @@ order_shop_ids = config.shellgoods_params['order_shop_hour_ids']
 shop_type = config.shellgoods_params['shop_types'][0]  # 门店
 order_shop_hours = config.shellgoods_params['order_shop_hours']
 yinliao_cat_ids = config.shellgoods_params['yinliao_cat_ids'] # 饮料台账分类
-def generate(shopid = None):
-    if shopid != None:
-        order_shop_ids = [shopid]
+def generate(shopid1 = None):
+    if shopid1 != None:
+        order_shop_ids = [shopid1]
     # TODO 订货量 由库存计算改为用实际销售量计算
     for shop_id in order_shop_ids:
         result = get_shop_order_goods(shop_id,shop_type)
