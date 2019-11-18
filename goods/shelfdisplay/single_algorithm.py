@@ -1,30 +1,24 @@
 """
 子算法4.1 选品
-子算法4.2 商品排列
 子算法4.3 打分规则
 """
-from goods.shelfdisplay.goods_arrange_category3 import goods_arrange
-from goods.shelfdisplay.db_data import *
 
-
-def choose_goods_for_category3(categoryid, shelf_category_area_ratio, goods_data_list, shelf_data, extra_add=0):
+def choose_goods_for_category3(categoryid, shelf, extra_add=0):
     """
     根据面积比例选该分类下预测销量最大的品
     :param categoryid:
-    :param shelf_category_area_ratio:
-    :param goods_data_list: 商品列表
-    :param shelf_data: 货架信息
+    :param shelf: 货架信息
     :param extra_add: 返回商品数=最佳比例+extra_add，
     :return:商品列表GoodsData
     """
-    shelf_area = shelf_data.width * shelf_data.heigth
-    ratio = shelf_category_area_ratio[categoryid]
+    shelf_area = shelf.width * shelf.heigth
+    ratio = shelf.shelf_category_area_ratio[categoryid]
     category3_area = shelf_area * ratio
     category3_list = []
-    for i in goods_data_list:
+    for i in shelf.shelf_goods_data_list:
         if i.category3 == categoryid:
             category3_list.append(i)
-    category3_list.sort(key=lambda x: x.spd, reverse=True)
+    category3_list.sort(key=lambda x: x.psd, reverse=True)
     mark = 0
     goods_results = []
     for goods in category3_list:
@@ -69,11 +63,23 @@ def goods_badcase_score(candidate_shelf_list):
     return best_candidate_shelf
 
 
-if __name__ == '__main__':
-    a = GoodsData()
-    a.category4 = 1
-    c = GoodsData()
-    c.category4 = 3
-    b = GoodsData()
-    b.category4 = 2
-    goods_arrange([a, c, b])
+def calculate_shelf_category_area_ratio(categoryid_list, category_area_ratio):
+    """
+    计算出本货架的比例
+    :param shelf:
+    :param categoryid_list:
+    :param category_area_ratio:
+    :return: 修正的category_area_ratio
+    """
+
+    shelf_category_area_ratio = {}
+    total_ratio = 0.0
+    for categoryid in categoryid_list:
+        total_ratio += category_area_ratio[categoryid]
+    for categoryid in categoryid_list:
+        shelf_category_area_ratio[categoryid] = category_area_ratio[categoryid] / total_ratio
+
+    return shelf_category_area_ratio
+
+
+

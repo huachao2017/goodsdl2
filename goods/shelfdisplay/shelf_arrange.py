@@ -8,21 +8,22 @@
 """
 
 import itertools,copy,collections
-category3_intimate_weight = {'a,b': 10,  'd,e': 10, 'd,e,f': 5, 'd,e,f,g': 3}
-category3_level_value = {'b': 0,'a': 0, 'd': 10, 'f': 10}
+# category3_intimate_weight = {'a,b': 10,  'd,e': 10, 'd,e,f': 5, 'd,e,f,g': 3}
+# category3_level_value = {'b': 0,'a': 0, 'd': 10, 'f': 10}
 
-def shelf_arrange(shelf, category3_intimate_weight, category3_level_value):
+def shelf_arrange(shelf):
     """
     流程：
         先全部无约束的排序
         然后根据亲密度条件筛选
         然后根据上下关系筛选
     :param shelf: display_data中的shelf对象
-    :param category3_intimate_weight: 亲密度数据
-    :param category3_level_value: 层数分值数据
     :return: 候选分类列表，例如[[a,b,c,d],[d,c,b,a]]
     """
-    original_category3_list = ['a','b','c','d','e','f','m']
+    category3_intimate_weight = shelf.category3_intimate_weight
+    category3_level_value = shelf.category3_level_value
+
+    original_category3_list = shelf.shelf_category_list
     category3_arrange_all_list = category3_arrange_all(original_category3_list)   #所有的排列情况
     candidate_category_list_temp = []     # 候选的临时列表
     candidate_category_list = []     # 返回的候选的列表
@@ -237,6 +238,6 @@ def category3_arrange_all(list1):
     return result
 
 if __name__ == '__main__':
-    a = shelf_arrange(1, category3_intimate_weight, category3_level_value)
+    a = shelf_arrange(None) # TODO
     print('--------------候选列表---------------')
     print(a)
