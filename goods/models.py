@@ -143,3 +143,16 @@ class GoodsImage(models.Model):
     table_z = models.IntegerField(default=0)
     result = models.TextField()
     create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
+
+
+class CategoryIntimacy(models.Model):
+    cat_ids = models.CharField(max_length=200,unique=True)
+    score = models.IntegerField(default=0)
+
+class CategoryLevelRelation(models.Model):
+    cat_id = models.IntegerField(unique=True)
+    score = models.IntegerField(default=0)
+
+class CategoryAreaRatio(models.Model):
+    cat_id = models.IntegerField(unique=True)
+    ratio = models.FloatField()
