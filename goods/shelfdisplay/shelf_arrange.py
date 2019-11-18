@@ -112,6 +112,17 @@ def is_equal(a,b):
             return False
     return True
 
+def category3_arrange_all(list1):
+    """
+    :return: 输出无约束情况下所有排列的可能
+    """
+    # list1 = [1, 2, 3, 4, 5]
+    iter = itertools.permutations(list1, len(list1))
+    result = list(iter)
+    print('所有排列数:',len(result))
+    # print(result)
+    return result
+
 def combine_all_result(candidate_category_tree_order):
     """
     遍历并组合所有内部解和外部解，并把对象转为category
