@@ -90,7 +90,7 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
     for arrange in all_arrange_2:
         tem_list = []
         for obj in arrange:
-            tem_list.append(obj.category3)
+            tem_list.append(obj.category)
         if is_equal(tem_list[:len(min_list)], min_list) and is_equal(tem_list[-len(max_list):], max_list):
             ret.append(arrange)
 
