@@ -33,7 +33,7 @@ def generate(shopid1 = None):
             if sales_order_ins.order_sale > 0:
                 sales_order_inss.append(sales_order_ins)
         if len(sales_order_inss) > 0:
-            # erp_interface.order_commit(shop_id, shop_type, sales_order_inss)
+            erp_interface.order_commit(shop_id, shop_type, sales_order_inss)
             print("erp_interface.order_commit success!")
 
 if __name__=='__main__':
