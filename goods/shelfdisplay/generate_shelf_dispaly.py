@@ -22,7 +22,7 @@ def generate_displays(uc_shopid, tz_id):
     """
 
     # 初始化基础数据
-    base_data = db_data.init_data()
+    base_data = db_data.init_data(uc_shopid)
 
     # 初始化台账数据
     taizhang = display_data.init_data(tz_id, base_data.goods_data_list)
