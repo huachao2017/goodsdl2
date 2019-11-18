@@ -38,7 +38,7 @@ def get_old_weather(start_date=None,cron=False):
     results = cursor_dmstore.fetchall()
     print (results[0])
 
-    default_min_date = '2018-10-19'
+    default_min_date = '2019-10-19'
     print (min_create_date)
     print (max_create_date)
     if min_create_date is None and max_create_date is None:
