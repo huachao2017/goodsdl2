@@ -7,18 +7,18 @@ from goods.shelfdisplay.goods_arrange_category3 import goods_arrange
 from goods.shelfdisplay.db_data import *
 
 
-def choose_goods_for_category3(categoryid, category_area_ratio, goods_data_list, shelf_data, extra_add=0):
+def choose_goods_for_category3(categoryid, shelf_category_area_ratio, goods_data_list, shelf_data, extra_add=0):
     """
     根据面积比例选该分类下预测销量最大的品
     :param categoryid:
-    :param category_area_ratio:
+    :param shelf_category_area_ratio:
     :param goods_data_list: 商品列表
     :param shelf_data: 货架信息
     :param extra_add: 返回商品数=最佳比例+extra_add，
     :return:商品列表GoodsData
     """
     shelf_area = shelf_data.width * shelf_data.heigth
-    ratio = category_area_ratio[categoryid]
+    ratio = shelf_category_area_ratio[categoryid]
     category3_area = shelf_area * ratio
     category3_list = []
     for i in goods_data_list:
