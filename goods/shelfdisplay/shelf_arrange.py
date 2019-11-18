@@ -273,7 +273,7 @@ class CategoryTree:
     intimate_value = None
     level_value = None
     category = None
-    result_list = None  # 这里面是对象解：[[Child1,Child2,Child3],[Child2,Child3,Child1]]
+    result_list = None  # 这里面是对象解：[(Child1,Child2,Child3),(Child2,Child3,Child1)]
 
     def __init__(self, id, intimate_value):
         self.id = id
@@ -333,8 +333,18 @@ class CategoryTree:
                 if child.children is not None:
                     child.calculate_result()
 
-
-
+            temp_result = arrange_all(self.children)
+            for one_result in temp_result:
+                last_category_tree = None
+                is_valid = True
+                for category_tree in one_result:
+                    if last_category_tree is not None:
+                        if last_category_tree.level_value is not None and category_tree.level_value is not None and last_category_tree.level_value > category_tree.level_value:
+                            is_valid = False
+                            break
+                    last_category_tree = category_tree
+                if is_valid:
+                    return
 
     def __str__(self):
         ret = ''
