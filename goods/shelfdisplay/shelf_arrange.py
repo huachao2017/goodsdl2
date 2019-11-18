@@ -39,12 +39,12 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
     # 2，计算level_value
     for category_tree in root_category_tree_list:
         category_tree.calculate_level_value()
-    for root_category_tree in root_category_tree_list:
-        print(root_category_tree)
 
     # 3, 输出里层排序
     for category_tree in root_category_tree_list:
         category_tree.calculate_result()
+    for root_category_tree in root_category_tree_list:
+        print(root_category_tree)
 
     # 4，外层排序解集
     candidate_category_tree_order = calculate_outer_result(root_category_tree_list,category3_level_value,category3_list)
@@ -316,7 +316,13 @@ class CategoryTree:
                     self.level_value = min_level_value
 
     def calculate_result(self):
-        pass
+        if self.children is not None:
+            for child in self.children:
+                if child.children is not None:
+                    child.calculate_result()
+
+
+
 
     def __str__(self):
         ret = ''
