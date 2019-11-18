@@ -6,7 +6,6 @@ import django
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
-from django.db import connections
 
 from goods.shelfdisplay import db_data
 from goods.shelfdisplay import display_data
@@ -33,8 +32,7 @@ def generate_displays(uc_shopid, tz_id):
     taizhang.shelfs[0].candidate_category_list = candidate_category_list
 
     # 第四步
-    goods_arrange.goods_arrange(taizhang.shelfs[0],
-                                base_data.category_area_ratio)
+    goods_arrange.goods_arrange(taizhang.shelfs[0])
 
     return taizhang
 

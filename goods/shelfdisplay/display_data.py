@@ -40,7 +40,8 @@ def init_data(uc_shopid, tz_id, base_data):
             # 做部分删减
             category3_list = category3_list_str.split(',')
             if shelf_category in category3_list:
-                shelf_category3_intimate_weight[category3_list_str] = base_data.category3_intimate_weight[category3_list_str]
+                shelf_category3_intimate_weight[category3_list_str] = base_data.category3_intimate_weight[
+                    category3_list_str]
         if shelf_category in base_data.category3_level_value:
             shelf_category3_intimate_weight[shelf_category] = base_data.shelf_category3_level_value[shelf_category]
 
@@ -161,11 +162,13 @@ class Shelf:
     level_buff_height = 30  # 层冗余高度 # TODO 需考虑初始化
     last_level_min_remain_height = 150  # 最后一层最小剩余高度
 
-    shelf_category_list = None # 货架指定分类列表
-    shelf_category3_intimate_weight = None # 货架分类涉及的亲密度分值
-    shelf_category3_level_value = None # 货架分类涉及的层数分值
-    shelf_category_area_ratio = None # 货架内分类面积比例
-    shelf_goods_data_list = [] # 货架候选商品列表
+    shelf_category_list = None  # 货架指定分类列表
+    shelf_category3_intimate_weight = None  # 货架分类涉及的亲密度分值
+    shelf_category3_level_value = None  # 货架分类涉及的层数分值
+    shelf_category_area_ratio = None  # 货架内分类面积比例
+    shelf_goods_data_list = []  # 货架候选商品列表
+
+    # 以上都是初始化后就会有的数据
 
     # 计算用到的参数
     candidate_category_list = None
