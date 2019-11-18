@@ -112,7 +112,7 @@ def is_equal(a,b):
             return False
     return True
 
-def category3_arrange_all(list1):
+def arrange_all(list1):
     """
     :return: 输出无约束情况下所有排列的可能
     """
