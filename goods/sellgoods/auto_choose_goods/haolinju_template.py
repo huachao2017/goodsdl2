@@ -258,6 +258,7 @@ if __name__ == '__main__':
     # a = storage_day_choose(a)
     b = choose_goods(a)
     # print(b)
+
     # print(len(a))
     # print(len(b))
     c = check_order(b)
