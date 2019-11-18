@@ -10,7 +10,7 @@ spu：四级分类、品牌、规格（包装）、尺寸（只选宽和高）�
 根据算法4.1选品和算法4.2商品排列计算所有候选解。
 根据算法4.3打分规则在给每个解打分后，获得最优解。
 """
-
+import goods.shelfdisplay.goods_arrange_category3
 from goods.shelfdisplay import single_algorithm
 from goods.shelfdisplay import display_data
 
@@ -45,7 +45,7 @@ def goods_arrange(shelf, candidate_categoryid_list, goods_data_list, category_ar
     candidate_result_shelf_list = []
     categoryid_to_arrange_goods_list_list = {}
     for categoryid in candidate_categoryid_list[0]:
-        arrange_goods_list_list = single_algorithm.goods_arrange(
+        arrange_goods_list_list = goods.shelfdisplay.goods_arrange_category3.goods_arrange(
             shelf.categoryid_to_sorted_goods_list[categoryid])
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
     for categoryid_list in candidate_categoryid_list:
