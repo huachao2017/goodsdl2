@@ -48,27 +48,28 @@ def goods_arrange(goods_list):
     :param goods_list:
     :return: 排序的新的goods_list的列表集:
     """
-    max_weight = 0
-    max_weight_attribute = None
-    for k, weight in goods_arrange_weight.items():
-        if weight > max_weight:
-            max_weight = weight
-            max_weight_attribute = k
-
-    print(max_weight_attribute)
-
-    goods_list.sort(key=lambda x: x.__dict__[max_weight_attribute], reverse=True)
-
-    print(goods_list)
-    temp_list = [goods_list[0]]
-    goods_list_two = []
-    for i in range(0, len(goods_list) - 1):
-        if goods_list[i].__dict__[max_weight_attribute] == goods_list[i + 1].__dict__[max_weight_attribute]:
-            temp_list.append(goods_list[i + 1])
-        else:
-            goods_list_two.append(temp_list)
-            temp_list = [goods_list[i + 1]]
-    return
+    # 深拷贝一个
+    # max_weight = 0
+    # max_weight_attribute = None
+    # for k, weight in goods_arrange_weight.items():
+    #     if weight > max_weight:
+    #         max_weight = weight
+    #         max_weight_attribute = k
+    #
+    # print(max_weight_attribute)
+    #
+    # goods_list.sort(key=lambda x: x.__dict__[max_weight_attribute], reverse=True)
+    #
+    # print(goods_list)
+    # temp_list = [goods_list[0]]
+    # goods_list_two = []
+    # for i in range(0, len(goods_list) - 1):
+    #     if goods_list[i].__dict__[max_weight_attribute] == goods_list[i + 1].__dict__[max_weight_attribute]:
+    #         temp_list.append(goods_list[i + 1])
+    #     else:
+    #         goods_list_two.append(temp_list)
+    #         temp_list = [goods_list[i + 1]]
+    # return
 
 
 def goods_badcase_score(candidate_shelf_list):
@@ -99,6 +100,9 @@ def goods_badcase_score(candidate_shelf_list):
             best_candidate_shelf = candidate_shelf
 
     return best_candidate_shelf
+
+
+
 
 
 if __name__ == '__main__':
