@@ -254,9 +254,12 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                     end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
                                     start_date = str(
                                         (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
-                                            days=-7)).strftime("%Y-%m-%d"))
+                                            days=-5)).strftime("%Y-%m-%d"))
+                                    start_date1 = str(
+                                        (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
+                                            days=-4)).strftime("%Y-%m-%d"))
                                     cursor_dmstore.execute(
-                                        sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
+                                        sales_sql.format(shopid, id, start_date, start_date1, start_date, start_date1))
                                     # print ([str(shopid), str(id), str(start_date), str(end_date), str(start_date), str(end_date)])
                                     (sales_nums,) = cursor_dmstore.fetchone()
                                 else:
