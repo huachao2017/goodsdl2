@@ -47,16 +47,13 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
         category_tree.calculate_result()
 
     # 4，外层排序解集
-    candidate_category_tree_order = calculate_outer_result(root_category_tree_list)
-    candidate_category_tree_order = calculate_outer_result(category_tree_list,category3_level_value)
+    candidate_category_tree_order = calculate_outer_result(root_category_tree_list,category3_level_value)
 
     # 5, 里外合并
     ret = combine_all_result(candidate_category_tree_order)
 
     return ret
 
-
-def calculate_outer_result(category_tree_list):
 def calculate_outer_result(category_tree_list,category3_level_value,category3_list):
     """
     计算外层解
