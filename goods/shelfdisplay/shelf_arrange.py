@@ -120,13 +120,14 @@ def combine_all_result(candidate_category_tree_order):
     """
     ret = []
     for obj_arrange in candidate_category_tree_order:
-        temp_list = []
         lengh = len(obj_arrange)
-        for obj in obj_arrange:
-            lengh = len(obj.result_list)
-            for result in obj.result_list:
-                temp_list.append(obj.result_list)
+        i = 0
+        loop_val = []
+        while i < lengh:
+            loop_val.append(obj_arrange[i].result_list)
 
+        for obj in obj_arrange:
+            list(itertools.product(*loop_val))
 
 
     # TODO @李树
