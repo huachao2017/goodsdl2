@@ -65,6 +65,7 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
     all_arrange = []
     iter = itertools.permutations(category_tree_list, len(category_tree_list))
     category_tree_list_len = len(category_tree_list)
+    print('category_tree_list_len:',category_tree_list_len)
     if category_tree_list_len > 7:     # 如果大于7，排列组合太多了就，取前n个
         for i in iter[:10000]:
             all_arrange.append(i)
@@ -105,12 +106,12 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
         tem_list = []
         for obj in arrange:
             tem_list.append(obj.level_value)
-            print(obj.level_value)
+            # print(obj.level_value)
         if is_equal(tem_list[:len(min_list)], min_list) and is_equal(tem_list[-len(max_list):], max_list):
             ret.append(arrange)
 
     # TODO @李树
-    print('所有排列数:', len(ret))
+    print('四、外层最终所有排列数:', len(ret))
 
     return ret
 
@@ -155,11 +156,18 @@ def combine_all_result(candidate_category_tree_order):
             loop_val.append(_get_root_result_list(obj_arrange[i]))
             i += 1
         for i in list(itertools.product(*loop_val)):
-            ret.append(i)
+            temp_candidate.append(i)
 
+    for arrange in temp_candidate:    # 变成一维平铺的
+        temp_list = []
+        for category_list in arrange:
+            for category in category_list:
+                temp_list.append(category)
+        ret.append(temp_list)
 
     # TODO @李树
 
+    # return temp_candidate
     return ret
 
 
@@ -431,16 +439,27 @@ class CategoryTree:
 
 if __name__ == '__main__':
     # TODO 李树
-    category3_intimate_weight = {
-        'a,b': 10,
-        'a,b,c': 5,
-        'd,e': 10,
-        'd,e,f': 6,
-        'd,e,f,g': 5
-    }
-    category3_level_value = {'b':8, 'c':10, 'e':0}
-    print(category3_level_value)
-    category3_list = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
-    a = main_calculate(category3_intimate_weight, category3_level_value, category3_list)
+    category3_intimate_weight = [
+                                {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f': 6,'d,e,f,g': 5},
+                                {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f,g,h,i,j,k,l,m': 5},
+                                {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f': 6,'d,e,f,g': 5},
+                                 {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
+                                 ]
+    category3_level_value = [
+                                {'b':8, 'c':10, 'e':0},
+                                {'b':8, 'c':10, 'e':0},
+                                {'b':8, 'c':10, 'e':0},
+                                {'b':8, 'c':10, 'e':0},
+                             ]
+    category3_list = [
+                    {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
+                    {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
+                    {'a', 'b', 'c', 'd', 'e', 'f'},
+                      {'a', 'b', 'c', 'd', 'e', 'f', 'g','h','i','j','k'},
+                      ]
+
+    n = 1
+    a = main_calculate(category3_intimate_weight[n], category3_level_value[n], category3_list[n])
     print('--------------候选列表---------------')
-    print(a)
+    print('候选列表总数：',len(a))
+    # print(a)
