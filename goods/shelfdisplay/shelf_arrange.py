@@ -372,8 +372,10 @@ class CategoryTree:
                         index += 1
                 list_index_to_simple_result = single_algorithm.dict_arrange(index_to_simple_result_list)
                 for index_to_simple_result in list_index_to_simple_result:
-                    for i in range(index+1):
-                        all_simple_result.append(index_to_simple_result[i])
+                    simple_result_list = []
+                    for i in range(index):
+                        simple_result_list.append(index_to_simple_result[i])
+                    all_simple_result.append(simple_result_list)
             return all_simple_result
 
 
@@ -397,6 +399,13 @@ class CategoryTree:
             for child in self.children:
                 ret += str(child)
             ret += '),'
+
+            if self.parent is None:
+                simple_results = self.get_all_simple_result()
+                ret += str(len(simple_results))
+                ret += '-'
+                ret += str(simple_results)
+
         return ret
 
 

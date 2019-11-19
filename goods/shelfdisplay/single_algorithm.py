@@ -83,6 +83,11 @@ def calculate_shelf_category_area_ratio(categoryid_list, category_area_ratio):
 
 
 def dict_arrange(key_to_candidate_list):
+    """
+
+    :param key_to_candidate_list:
+    :return: list_key_to_candidate
+    """
 
     ret = []
     data_len = []
@@ -114,3 +119,10 @@ def dict_arrange(key_to_candidate_list):
             break
 
     return ret
+
+if __name__ == "__main__":
+    a = {0: [1, 2, 3, 4], 1: [5, 6, 7, 8], 2: [9, 10, 11]}
+    list_key_to_candidate = dict_arrange(a)
+    print(len(list_key_to_candidate))
+    for key_to_candidate in list_key_to_candidate:
+        print(key_to_candidate)
