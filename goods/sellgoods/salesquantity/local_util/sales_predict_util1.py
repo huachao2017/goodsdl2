@@ -4,13 +4,28 @@ from goods.sellgoods.salesquantity.utils import mysql_util
 from set_config import config
 ai = config.ai
 erp = config.erp
-
+from goods.sellgoods.salesquantity.utils import sparkdb
+from pyspark.sql import SparkSession
+from set_config import config
+sdb = sparkdb.SparkDb()
 from goods.sellgoods.salesquantity.bean import goods_ai_weather,ai_sales_old,sales_old_tmp
 class SalesPredict:
+    sc = None
+    sqlsc = None
+    ss = None
+    def __init__(self):
+        self.sc = sdb.get_spark_context()
+        self.sqlsc = sdb.get_sparksql_context(self.sc)
+        self.ss = SparkSession(self.sqlsc)
+
+    def get_data_from_mysql(self, sql):
+        sql_dataf = sdb.get_data_frame(sql, self.sqlsc, config.erp)
+        return sql_dataf
+
     def generate_data(self,all_data=False):
         mysql_ins = mysql_util.MysqlUtil(erp)
 
-        sql1 = "select T3.shop_id,T3.goods_id,T3.num,shop.owned_city,T3.create_date,goods.upc,goods.`name`,goods.price,goods.first_cate_id,goods.second_cate_id,goods.third_cate_id from ( " \
+        sql1 = "(select T3.shop_id,T3.goods_id,T3.num,shop.owned_city,T3.create_date,goods.upc,goods.`name`,goods.price,goods.first_cate_id,goods.second_cate_id,goods.third_cate_id from ( " \
                "SELECT T2.shop_id,T2.goods_id,SUM(T2.number) as num,T2.create_date from " \
                "(select T1.shop_id,T1.goods_id,T1.number,DATE_FORMAT(T1.create_time,'%Y-%m-%d') as create_date from ( " \
                "select shop_id,goods_id,create_time,number,price from payment_detail where create_time >= '{0} 00:00:00' and create_time < '{1} 00:00:00' and payment_id in ( " \
@@ -18,7 +33,7 @@ class SalesPredict:
                ") " \
                ") T1 " \
                ") T2 GROUP BY T2.shop_id,T2.goods_id,T2.create_date " \
-               ") T3 LEFT JOIN shop on T3.shop_id = shop.id LEFT JOIN goods on goods.id = T3.goods_id"
+               ") T3 LEFT JOIN shop on T3.shop_id = shop.id LEFT JOIN goods on goods.id = T3.goods_id) tmp"
 
         salesold_inss = []
 
@@ -33,18 +48,25 @@ class SalesPredict:
                     start_time = week_days2[0]
                     end_time = week_days1[-1]
                     sql1 = sql1.format(start_time, end_time, start_time, end_time)
-                    results = mysql_ins.selectAll(sql1)
+                    datafame = self.get_data_from_mysql(sql1)
+                    results = self.for_dataframe(datafame)
+                    # results = mysql_ins.selectAll(sql1)
                     salesold_inss = self.get_data_week(results, week_days1, week_days2)
 
         else:
             week_days1 = self.get_date(1)
-            week_days2 = self.get_date(12)
+            week_days2 = self.get_date(4)
             start_time = week_days2[0]
             end_time = week_days1[-1]
             sql1 = sql1.format(start_time, end_time, start_time, end_time)
-            results = mysql_ins.selectAll(sql1)
+            datafame = self.get_data_from_mysql(sql1)
+            results = self.for_dataframe(datafame)
+            # results = mysql_ins.selectAll(sql1)
             salesold_inss = self.get_data_week(results,week_days1,week_days2)
         return salesold_inss
+
+    def for_dataframe(self,dataframe):
+        return dataframe.collect()
 
     def get_weather(self,week_days1,results1,results2):
         mysql_ins = mysql_util.MysqlUtil(ai)
