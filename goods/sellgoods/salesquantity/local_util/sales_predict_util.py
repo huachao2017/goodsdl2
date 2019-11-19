@@ -383,7 +383,15 @@ class SalesPredict:
                 if create_date in sales_old_tmp_dict[str(shop_id)+"_"+str(upc)].date_nums.keys():
                     sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date].num = sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date].num + num
                 else:
-                    sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date].num = num
+                    datenum_ins = sales_old_tmp.DateNum()
+                    datenum_ins.create_date = create_date
+                    datenum_ins.num = num
+                    datenum_ins.week_i = datetime.datetime.strptime(create_date, "%Y-%m-%d").weekday() + 1
+                    if datenum_ins.week_i <= 5:
+                        datenum_ins.week_type = 0
+                    else:
+                        datenum_ins.week_type = 1
+                    sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date] = datenum_ins
             else:
                 self.add_sales_old_tmp(row, sales_old_tmp_dict)
 
