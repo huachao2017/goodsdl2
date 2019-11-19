@@ -14,7 +14,6 @@ import goods.shelfdisplay.goods_arrange_category3
 from goods.shelfdisplay import display_data
 from goods.shelfdisplay import single_algorithm
 
-
 def goods_arrange(shelf):
     """
     第四步，商品布局主体函数
@@ -71,39 +70,10 @@ def create_candidate_shelf_list(shelf, categoryid_list, categoryid_to_arrange_go
     """
 
     candidate_shelf_list = []
-
-    data_len = []
-    index1 = []
-    index2 = {}
-    for i in categoryid_to_arrange_goods_list_list.keys():
-        data_len.append(len(categoryid_to_arrange_goods_list_list[i]))
-        index1.append(i)
-        index2[i] = 0
-
-    total = 0
-    while True:
-        categoryid_to_arrange_goods_list = {}
-        for i in range(len(index1)):
-            categoryid_to_arrange_goods_list[index1[i]] = categoryid_to_arrange_goods_list_list[index1[i]][
-                index2[index1[i]]]
-
+    list_categoryid_to_arrange_goods_list = single_algorithm.dict_arrange(categoryid_to_arrange_goods_list_list)
+    for categoryid_to_arrange_goods_list in list_categoryid_to_arrange_goods_list:
         candidate_shelf = display_data.CandidateShelf(shelf, categoryid_list, categoryid_to_arrange_goods_list)
         candidate_shelf_list.append(candidate_shelf)
-
-        total += 1
-
-        total0 = 0
-        for i in range(len(index1)):
-            cur = len(index1) - i - 1
-            if index2[index1[cur]] < data_len[cur] - 1:
-                index2[index1[cur]] += 1
-                break
-            else:
-                index2[index1[cur]] = 0
-                total0 += 1
-
-        if total0 == len(index1):
-            break
 
     return candidate_shelf_list
 
