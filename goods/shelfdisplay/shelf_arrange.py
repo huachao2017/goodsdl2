@@ -353,14 +353,17 @@ class CategoryTree:
             return str(self.level_value) + ':' + self.category + ','
         else:
             ret += str(self.level_value)
-            ret += '['
-            for one_result in self.result_list:
-                ret += '['
-                for one_tree in one_result:
-                    ret += str(one_tree.id)
-                    ret += ','
-                ret += '],'
-            ret += ']:('
+            ret += '-'
+            ret += str(len(self.result_list))
+            # ret += '['
+            # for one_result in self.result_list:
+            #     ret += '['
+            #     for one_tree in one_result:
+            #         ret += str(one_tree.id)
+            #         ret += ','
+            #     ret += '],'
+            # ret += ']:('
+            ret += ':('
             for child in self.children:
                 ret += str(child)
             ret += '),'
