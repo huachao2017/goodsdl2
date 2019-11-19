@@ -25,7 +25,7 @@ class SalesPredict:
     def generate_data(self,all_data=False):
         mysql_ins = mysql_util.MysqlUtil(erp)
 
-        sql1 = "( select T3.shop_id,T3.goods_id,T3.num,shop.owned_city,T3.create_date,goods.upc,goods.`name`,goods.price,goods.first_cate_id,goods.second_cate_id,goods.third_cate_id from ( " \
+        sql1 = "(select T3.shop_id,T3.goods_id,T3.num,shop.owned_city,T3.create_date,goods.upc,goods.`name`,goods.price,goods.first_cate_id,goods.second_cate_id,goods.third_cate_id from ( " \
                "SELECT T2.shop_id,T2.goods_id,SUM(T2.number) as num,T2.create_date from " \
                "(select T1.shop_id,T1.goods_id,T1.number,DATE_FORMAT(T1.create_time,'%Y-%m-%d') as create_date from ( " \
                "select shop_id,goods_id,create_time,number,price from payment_detail where create_time >= '{0} 00:00:00' and create_time < '{1} 00:00:00' and payment_id in ( " \
@@ -33,7 +33,7 @@ class SalesPredict:
                ") " \
                ") T1 " \
                ") T2 GROUP BY T2.shop_id,T2.goods_id,T2.create_date " \
-               ") T3 LEFT JOIN shop on T3.shop_id = shop.id LEFT JOIN goods on goods.id = T3.goods_id ） tmp"
+               ") T3 LEFT JOIN shop on T3.shop_id = shop.id LEFT JOIN goods on goods.id = T3.goods_id) tmp"
 
         salesold_inss = []
 
