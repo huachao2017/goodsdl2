@@ -119,7 +119,7 @@ def arrange_all(list1):
     # list1 = [1, 2, 3, 4, 5]
     iter = itertools.permutations(list1, len(list1))
     result = list(iter)
-    print('所有排列数:',len(result))
+    # print('所有排列数:',len(result))
     # print(result)
     return result
 
@@ -333,6 +333,7 @@ class CategoryTree:
                 if child.children is not None:
                     child.calculate_result()
 
+            self.result_list = []
             temp_result = arrange_all(self.children)
             for one_result in temp_result:
                 last_category_tree = None
@@ -344,7 +345,7 @@ class CategoryTree:
                             break
                     last_category_tree = category_tree
                 if is_valid:
-                    return
+                    self.result_list.append(one_result)
 
     def __str__(self):
         ret = ''
@@ -352,7 +353,14 @@ class CategoryTree:
             return str(self.level_value) + ':' + self.category + ','
         else:
             ret += str(self.level_value)
-            ret += ':('
+            ret += '['
+            for one_result in self.result_list:
+                ret += '['
+                for one_tree in one_result:
+                    ret += str(one_tree.id)
+                    ret += ','
+                ret += '],'
+            ret += ']:('
             for child in self.children:
                 ret += str(child)
             ret += '),'
