@@ -461,11 +461,11 @@ class SalesPredict:
             crt = datetime.datetime.strptime(day, "%Y-%m-%d")
             sales_old_ins.week_i.append(crt.weekday()+1)
             sales_old_ins.month.append(crt.month)
-            if sales_old_ins.month >= 1 and sales_old_ins.month <= 3:
+            if crt.month >= 1 and crt.month <= 3:
                 sales_old_ins.season.append(1)
-            elif sales_old_ins.month >=4 and sales_old_ins.month <= 6:
+            elif crt.month >=4 and crt.month <= 6:
                 sales_old_ins.season.append(2)
-            elif sales_old_ins.month >=7 and sales_old_ins.month <= 9:
+            elif crt.month >=7 and crt.month <= 9:
                 sales_old_ins.season.append(3)
             else:
                 sales_old_ins.season.append(4)
