@@ -126,7 +126,7 @@ class SalesPredict:
         sql4 = "select distinct(winddirect) from goods_ai_weather"
         results2 = mysql_ins.selectAll(sql4)
 
-        sql5 = "select day,type from holiday"
+        sql5 = "select day,type from goods_ai_holiday"
         results3 = mysql_ins.selectAll(sql5)
 
 
