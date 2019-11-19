@@ -61,10 +61,18 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
     :return: candidate_category_tree_order
     """
     ret = []  # 最终返回
+    all_arrange = []
     iter = itertools.permutations(category_tree_list, len(category_tree_list))
-    all_arrange = list(iter)
+    category_tree_list_len = len(category_tree_list)
+    if category_tree_list_len > 7:     # 如果大于7，排列组合太多了就，取前n个
+        for i in iter[:10000]:
+            all_arrange.append(i)
+    else:
+        all_arrange = list(iter)
+
+
     print('所有排列数:', len(all_arrange))
-    # print(result)
+    # print('所有排列:', all_arrange)
     all_arrange_2 = copy.deepcopy(all_arrange)
     for arrange in all_arrange:
         for obj in arrange:
@@ -78,23 +86,30 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
                     if tem_list[i] > tem_list[i + 1]:
                         all_arrange_2.remove(arrange)
 
+    print('所有排列数2:', len(all_arrange_2))
     #查看未定义的是否在0分和10分之间,即可以转化为0和10是否都在两头
+    tree_leval_value_list = []
+    for i in all_arrange_2[0]:
+        tree_leval_value_list.append(i.level_value)
     min_list = []
     max_list = []
-    for k, v in category3_level_value.items():
-        if v == 0 and k in category3_list:
-            min_list.append(k)
-        if v == 10 and k in category3_list:
-            max_list.append(k)
+    for v in tree_leval_value_list:
+        if v == 0:
+            min_list.append(v)
+        if v == 10:
+            max_list.append(v)
     print('min_list', min_list)
+    print('max_list', max_list)
     for arrange in all_arrange_2:
         tem_list = []
         for obj in arrange:
-            tem_list.append(obj.category)
+            tem_list.append(obj.level_value)
+            print(obj.level_value)
         if is_equal(tem_list[:len(min_list)], min_list) and is_equal(tem_list[-len(max_list):], max_list):
             ret.append(arrange)
 
     # TODO @李树
+    print('所有排列数:', len(ret))
 
     return ret
 
@@ -136,10 +151,10 @@ def combine_all_result(candidate_category_tree_order):
         i = 0
         loop_val = []
         while i < lengh:
-            loop_val.append(obj_arrange[i].result_list)
-
+            loop_val.append(_get_root_result_list(obj_arrange[i]))
+            i += 1
         for i in list(itertools.product(*loop_val)):
-            temp_candidate.append(i)
+            ret.append(i)
 
 
     # TODO @李树
