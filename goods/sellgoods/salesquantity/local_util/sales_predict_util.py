@@ -381,9 +381,9 @@ class SalesPredict:
         else:
             if str(shop_id)+"_"+str(upc) in sales_old_tmp_dict.keys():
                 if create_date in sales_old_tmp_dict[str(shop_id)+"_"+str(upc)].date_nums.keys():
-                    sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date] = sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date] + num
+                    sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date].num = sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date].num + num
                 else:
-                    sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date] = num
+                    sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date].num = num
             else:
                 self.add_sales_old_tmp(row, sales_old_tmp_dict)
 
