@@ -52,7 +52,15 @@ class SalesPredict:
         return resultss
 
 
-    def get_weather(self,week_days1,results1,results2,results):
+    def get_weather(self,results1,results2,results):
+        weather_types = []
+        for row in results1:
+            weather_types.append(row[0])
+
+        winddirects = []
+        for row in results2:
+            winddirects.append(row[0])
+
         # mysql_ins = mysql_util.MysqlUtil(ai)
         weather_week = {}
         for row in list(results):
@@ -69,7 +77,7 @@ class SalesPredict:
             if weather_ins.weather_type is None or  weather_ins.weather_type == '' or weather_ins.weather_type == 'NULL':
                 weather_ins.weather_type = 0
             else:
-                weather_ins.weather_type = list(results1).index(weather_ins.weather_type)
+                weather_ins.weather_type = list(weather_types).index(weather_ins.weather_type)
 
             if weather_ins.temphigh is None or weather_ins.temphigh == '' or weather_ins.temphigh == 'NULL':
                 weather_ins.temphigh = 0
@@ -89,7 +97,7 @@ class SalesPredict:
             if weather_ins.winddirect is None or weather_ins.winddirect == '' or weather_ins.winddirect == 'NULL':
                 weather_ins.winddirect = 0
             else:
-                weather_ins.winddirect =list(results2).index(weather_ins.winddirect)
+                weather_ins.winddirect =list(winddirects).index(weather_ins.winddirect)
 
             if weather_ins.windpower is None or weather_ins.windpower == '' or weather_ins.windpower=='NULL':
                 weather_ins.windpower = 0
@@ -122,7 +130,7 @@ class SalesPredict:
 
         sql2 = "select * from goods_ai_weather where create_date >= '{0}' and create_date <= '{1}' order by create_date asc "
         sql2 = sql2.format(week_days1[0], week_days1[-1])
-        results = mysql_ins.selectAll(sql2)
+        results4 = mysql_ins.selectAll(sql2)
 
 
         for key in sales_old_tmp_dict:
@@ -130,7 +138,7 @@ class SalesPredict:
             # 添加基础维度 和 地域维度
             self.add_baseinfo(sales_old_ins,sales_old_tmp_dict[key])
             # 添加天气维度
-            self.add_weather(sales_old_ins,week_days1,results1,results2,results)
+            self.add_weather(sales_old_ins,week_days1,results1,results2,results4)
             # 添加时间维度
             self.add_time(sales_old_ins, week_days1,results3)
             # 添加销量统计维度
@@ -519,7 +527,7 @@ class SalesPredict:
             if sales_old_ins.city == '天津新区':
                 sales_old_ins.city = '天津'
             sales_old_ins.city = str(sales_old_ins.city).strip("市")
-            week_weather = self.get_weather(week_days1,results1,results2,results)
+            week_weather = self.get_weather(results1,results2,results)
 
             for day,i in zip(week_days1,range(len(week_days1))):
                 key_weather = sales_old_ins.city + "_" + day
