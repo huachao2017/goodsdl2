@@ -12,7 +12,8 @@ class MysqlUtil:
             db=dbcontext['database'],
             charset='utf8',
             connect_timeout = 3000,
-            read_timeout=3000
+            read_timeout=3000,
+            max_allowed_packet = 1677721600000000,
         )
         self.conn = conn
         self.cursor = conn.cursor()
