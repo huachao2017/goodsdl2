@@ -52,18 +52,8 @@ class SalesPredict:
         return resultss
 
 
-    def get_weather(self,week_days1,results1,results2):
-        mysql_ins = mysql_util.MysqlUtil(ai)
-
-        # if city is None or city == '':
-        #     return None
-        #
-        # if city == '天津新区':
-        #     city = '天津'
-        # city = str(city).strip("市")
-        sql2 = "select * from goods_ai_weather where create_date >= '{0}' and create_date <= '{1}' order by create_date asc "
-        sql2 = sql2.format(week_days1[0],week_days1[-1])
-        results = mysql_ins.selectAll(sql2)
+    def get_weather(self,week_days1,results1,results2,results):
+        # mysql_ins = mysql_util.MysqlUtil(ai)
         weather_week = {}
         for row in list(results):
             weather_ins = goods_ai_weather.GoodsAiWeather()
@@ -129,13 +119,17 @@ class SalesPredict:
         sql5 = "select day,type from goods_ai_holiday"
         results3 = mysql_ins.selectAll(sql5)
 
+        sql2 = "select * from goods_ai_weather where create_date >= '{0}' and create_date <= '{1}' order by create_date asc "
+        sql2 = sql2.format(week_days1[0], week_days1[-1])
+        results = mysql_ins.selectAll(sql2)
+
 
         for key in sales_old_tmp_dict:
             sales_old_ins = ai_sales_old.SalesOld()
             # 添加基础维度 和 地域维度
             self.add_baseinfo(sales_old_ins,sales_old_tmp_dict[key])
             # 添加天气维度
-            self.add_weather(sales_old_ins,week_days1,results1,results2)
+            self.add_weather(sales_old_ins,week_days1,results1,results2,results)
             # 添加时间维度
             self.add_time(sales_old_ins, week_days1,results3)
             # 添加销量统计维度
@@ -518,13 +512,13 @@ class SalesPredict:
 
 
 
-    def add_weather(self,sales_old_ins,week_days1,results1,results2):
+    def add_weather(self,sales_old_ins,week_days1,results1,results2,results):
 
-        if sales_old_ins.city is not None and sales_old_ins.city == '':
+        if sales_old_ins.city is not None and sales_old_ins.city != '':
             if sales_old_ins.city == '天津新区':
                 sales_old_ins.city = '天津'
             sales_old_ins.city = str(sales_old_ins.city).strip("市")
-            week_weather = self.get_weather(week_days1,results1,results2)
+            week_weather = self.get_weather(week_days1,results1,results2,results)
 
             for day,i in zip(week_days1,range(len(week_days1))):
                 key_weather = sales_old_ins.city + "_" + day
