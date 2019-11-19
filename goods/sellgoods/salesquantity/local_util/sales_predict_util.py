@@ -52,55 +52,54 @@ class SalesPredict:
         return resultss
 
 
-    def get_weather(self,week_days1,results1,results2):
-        mysql_ins = mysql_util.MysqlUtil(ai)
+    def get_weather(self,results1,results2,results):
+        weather_types = []
+        for row in results1:
+            weather_types.append(row[0])
 
-        # if city is None or city == '':
-        #     return None
-        #
-        # if city == '天津新区':
-        #     city = '天津'
-        # city = str(city).strip("市")
-        sql2 = "select * from goods_ai_weather where create_date >= '{0}' and create_date <= '{1}' order by create_date asc "
-        sql2 = sql2.format(week_days1[0],week_days1[-1])
-        results = mysql_ins.selectAll(sql2)
+        winddirects = []
+        for row in results2:
+            winddirects.append(row[0])
+
+        # mysql_ins = mysql_util.MysqlUtil(ai)
         weather_week = {}
         for row in list(results):
             weather_ins = goods_ai_weather.GoodsAiWeather()
             weather_ins.city = row[1]
-            weather_ins.weather_type = row[2]
-            weather_ins.temphigh = row[3]
-            weather_ins.templow = row[4]
-            weather_ins.windspeed = row[5]
-            weather_ins.winddirect = row[6]
-            weather_ins.windpower = row[7]
-            weather_ins.city_id = row[8]
-            if weather_ins.weather_type is None or  weather_ins.weather_type == '':
+            weather_ins.create_date = row[2]
+            weather_ins.weather_type = row[3]
+            weather_ins.temphigh = row[4]
+            weather_ins.templow = row[5]
+            weather_ins.windspeed = row[6]
+            weather_ins.winddirect = row[7]
+            weather_ins.windpower = row[8]
+            weather_ins.city_id = row[9]
+            if weather_ins.weather_type is None or  weather_ins.weather_type == '' or weather_ins.weather_type == 'NULL':
                 weather_ins.weather_type = 0
             else:
-                weather_ins.weather_type = list(results1).index( weather_ins.weather_type)
+                weather_ins.weather_type = list(weather_types).index(weather_ins.weather_type)
 
-            if weather_ins.temphigh is None or weather_ins.temphigh == '':
+            if weather_ins.temphigh is None or weather_ins.temphigh == '' or weather_ins.temphigh == 'NULL':
                 weather_ins.temphigh = 0
             else:
                 weather_ins.temphigh = str(weather_ins.temphigh).strip("℃")
 
-            if weather_ins.templow is None or weather_ins.templow == '':
+            if weather_ins.templow is None or weather_ins.templow == '' or weather_ins.templow == 'NULL' :
                 weather_ins.templow = 0
             else:
                 weather_ins.templow = str(weather_ins.templow).strip("℃")
 
-            if weather_ins.windspeed is None or weather_ins.windspeed == '':
+            if weather_ins.windspeed is None or weather_ins.windspeed == '' or weather_ins.windspeed == 'NULL':
                 weather_ins.windspeed = 0
             else:
                 weather_ins.windspeed = float(weather_ins.windspeed)
 
-            if weather_ins.winddirect is None or weather_ins.winddirect == '':
+            if weather_ins.winddirect is None or weather_ins.winddirect == '' or weather_ins.winddirect == 'NULL':
                 weather_ins.winddirect = 0
             else:
-                weather_ins.winddirect =list(results2).index(weather_ins.winddirect)
+                weather_ins.winddirect =list(winddirects).index(weather_ins.winddirect)
 
-            if weather_ins.windpower is None or weather_ins.windpower == '':
+            if weather_ins.windpower is None or weather_ins.windpower == '' or weather_ins.windpower=='NULL':
                 weather_ins.windpower = 0
             else:
                 weather_ins.windpower = str(weather_ins.windpower).strip("级")
@@ -129,13 +128,17 @@ class SalesPredict:
         sql5 = "select day,type from goods_ai_holiday"
         results3 = mysql_ins.selectAll(sql5)
 
+        sql2 = "select * from goods_ai_weather where create_date >= '{0}' and create_date <= '{1}' order by create_date asc "
+        sql2 = sql2.format(week_days1[0], week_days1[-1])
+        results4 = mysql_ins.selectAll(sql2)
+
 
         for key in sales_old_tmp_dict:
             sales_old_ins = ai_sales_old.SalesOld()
             # 添加基础维度 和 地域维度
             self.add_baseinfo(sales_old_ins,sales_old_tmp_dict[key])
             # 添加天气维度
-            self.add_weather(sales_old_ins,week_days1,results1,results2)
+            self.add_weather(sales_old_ins,week_days1,results1,results2,results4)
             # 添加时间维度
             self.add_time(sales_old_ins, week_days1,results3)
             # 添加销量统计维度
@@ -143,56 +146,55 @@ class SalesPredict:
             salesold_inss.append(sales_old_ins)
         return salesold_inss
     def add_sales_count(self,sales_old_ins,sales_old_tmp_ins,week_days1):
-        self.add_week_i_sales(sales_old_ins,sales_old_tmp_ins)
-        self.add_week_i_avg(sales_old_ins,sales_old_tmp_ins)
+        self.add_week_i_sales(sales_old_ins,sales_old_tmp_ins,week_days1)
+        self.add_week_i_avg(sales_old_ins,sales_old_tmp_ins,week_days1)
         self.add_week_avg_in_out(sales_old_ins, sales_old_tmp_ins)
 
 
     def add_week_avg_in_out(self,sales_old_ins,sales_old_tmp_ins):
         week_dates = []
-        for i in range(1,13):
+        for i in range(1, 13):
             wd = self.get_date(i)
-            week_dates.append(wd)
-        week_1 = [].extend(week_dates[0])
-        week_2 = [].extend(week_dates[0:2])
-        week_4 = [].extend(week_dates[0:5])
-        week_8 = [].extend(week_dates[0:9])
-        week_12 = [].extend(week_dates)
-        key = str(sales_old_ins.shop_id) + "_" + str(sales_old_ins.upc)
-        for day in sales_old_tmp_ins[key].date_nums.keys():
+            week_dates.extend(wd)
+        week_1 = week_dates[0:1 * 7]
+        week_2 = week_dates[0:2 * 7]
+        week_4 = week_dates[0:4 * 7]
+        week_8 = week_dates[0:8 * 7]
+        week_12 = week_dates[0:12 * 7]
+        for day in sales_old_tmp_ins.date_nums.keys():
             if day in week_1 :
-                if sales_old_tmp_ins[key].date_nums[day].week_type == 0:
-                    sales_old_ins.sale_1week_avg_in = sales_old_ins.sale_1week_avg_in + sales_old_tmp_ins[key].date_nums[day].num
+                if sales_old_tmp_ins.date_nums[day].week_type == 0:
+                    sales_old_ins.sale_1week_avg_in = sales_old_ins.sale_1week_avg_in + sales_old_tmp_ins.date_nums[day].num
                 else:
                     sales_old_ins.sale_1week_avg_out = sales_old_ins.sale_1week_avg_out + \
-                                                      sales_old_tmp_ins[key].date_nums[day].num
+                                                      sales_old_tmp_ins.date_nums[day].num
             if day in week_2 :
-                if sales_old_tmp_ins[key].date_nums[day].week_type == 0:
-                    sales_old_ins.sale_2week_avg_in = sales_old_ins.sale_2week_avg_in + sales_old_tmp_ins[key].date_nums[day].num
+                if sales_old_tmp_ins.date_nums[day].week_type == 0:
+                    sales_old_ins.sale_2week_avg_in = sales_old_ins.sale_2week_avg_in + sales_old_tmp_ins.date_nums[day].num
                 else:
                     sales_old_ins.sale_2week_avg_out = sales_old_ins.sale_2week_avg_out + \
-                                                      sales_old_tmp_ins[key].date_nums[day].num
+                                                      sales_old_tmp_ins.date_nums[day].num
 
             if day in week_4 :
-                if sales_old_tmp_ins[key].date_nums[day].week_type == 0:
-                    sales_old_ins.sale_4week_avg_in = sales_old_ins.sale_4week_avg_in + sales_old_tmp_ins[key].date_nums[day].num
+                if sales_old_tmp_ins.date_nums[day].week_type == 0:
+                    sales_old_ins.sale_4week_avg_in = sales_old_ins.sale_4week_avg_in + sales_old_tmp_ins.date_nums[day].num
                 else:
                     sales_old_ins.sale_4week_avg_out = sales_old_ins.sale_4week_avg_out + \
-                                                      sales_old_tmp_ins[key].date_nums[day].num
+                                                      sales_old_tmp_ins.date_nums[day].num
 
             if day in week_8 :
-                if sales_old_tmp_ins[key].date_nums[day].week_type == 0:
-                    sales_old_ins.sale_8week_avg_in = sales_old_ins.sale_8week_avg_in + sales_old_tmp_ins[key].date_nums[day].num
+                if sales_old_tmp_ins.date_nums[day].week_type == 0:
+                    sales_old_ins.sale_8week_avg_in = sales_old_ins.sale_8week_avg_in + sales_old_tmp_ins.date_nums[day].num
                 else:
                     sales_old_ins.sale_8week_avg_out = sales_old_ins.sale_8week_avg_out + \
-                                                      sales_old_tmp_ins[key].date_nums[day].num
+                                                      sales_old_tmp_ins.date_nums[day].num
 
             if day in week_12 :
-                if sales_old_tmp_ins[key].date_nums[day].week_type == 0:
-                    sales_old_ins.sale_12week_avg_in = sales_old_ins.sale_12week_avg_in + sales_old_tmp_ins[key].date_nums[day].num
+                if sales_old_tmp_ins.date_nums[day].week_type == 0:
+                    sales_old_ins.sale_12week_avg_in = sales_old_ins.sale_12week_avg_in + sales_old_tmp_ins.date_nums[day].num
                 else:
                     sales_old_ins.sale_12week_avg_out = sales_old_ins.sale_12week_avg_out + \
-                                                      sales_old_tmp_ins[key].date_nums[day].num
+                                                      sales_old_tmp_ins.date_nums[day].num
 
         sales_old_ins.sale_1week_avg_in = float(sales_old_ins.sale_1week_avg_in / 5.0)
         sales_old_ins.sale_1week_avg_out =  float(sales_old_ins.sale_1week_avg_out / 2.0)
@@ -208,8 +210,7 @@ class SalesPredict:
 
     def add_week_i_sales(self,sales_old_ins,sales_old_tmp_ins,week_days1):
         for day,i in zip(week_days1,range(len(week_days1))):
-            key = str(sales_old_ins.shop_id)+"_"+str(sales_old_ins.upc)
-            if day in sales_old_tmp_ins[key].date_nums.keys():
+            if day in sales_old_tmp_ins.date_nums.keys():
                 if i == 0:
                     sales_old_ins.sale_1 = sales_old_tmp_ins.date_nums[day].num
                 if i == 1:
@@ -230,16 +231,15 @@ class SalesPredict:
         week_dates = []
         for i in range(1, 13):
             wd = self.get_date(i)
-            week_dates.append(wd)
-        week_1 = [].extend(week_dates[0])
-        week_2 = [].extend(week_dates[0:2])
-        week_4 = [].extend(week_dates[0:5])
-        week_8 = [].extend(week_dates[0:9])
-        week_12 = [].extend(week_dates)
-        key = str(sales_old_ins.shop_id) + "_" + str(sales_old_ins.upc)
+            week_dates.extend(wd)
+        week_1 = week_dates[0:1*7]
+        week_2 = week_dates[0:2*7]
+        week_4 = week_dates[0:4*7]
+        week_8 = week_dates[0:8*7]
+        week_12 = week_dates[0:12*7]
         for day, i in zip(week_days1, range(len(week_days1))):
-            if day in sales_old_tmp_ins[key].date_nums.keys():
-                for create_date  in sales_old_tmp_ins[key].date_nums.keys:
+            if day in sales_old_tmp_ins.date_nums.keys():
+                for create_date in sales_old_tmp_ins.date_nums.keys():
                     j = datetime.datetime.strptime(create_date, "%Y-%m-%d").weekday()+1
                     if i == 0 and j-1 == i:
                         if create_date in week_2:
@@ -456,34 +456,78 @@ class SalesPredict:
         day_types= {}
         for row in results3:
             day_types[row[0]] = row[1]
-        crt = datetime.datetime.strptime(sales_old_ins.create_date, "%Y-%m-%d")
-        sales_old_ins.week_i = crt.weekday()+1
-        sales_old_ins.month = crt.month
-        if sales_old_ins.month >= 1 and sales_old_ins.month <= 3:
-            sales_old_ins.season = 1
-        elif sales_old_ins.month >=4 and sales_old_ins.month <= 6:
-            sales_old_ins.season = 2
-        elif sales_old_ins.month >=7 and sales_old_ins.month <= 9:
-            sales_old_ins.season = 3
-        else:
-            sales_old_ins.season = 4
-        ind = week_days1.index(sales_old_ins.create_date)
-        if ind <=4:
-            sales_old_ins.week_type = 0
-        else:
-            sales_old_ins.week_type = 1
-        if sales_old_ins.create_date in day_types.keys():
-            sales_old_ins.holiday_type = day_types[sales_old_ins.create_date]
+
+        for day in week_days1:
+            crt = datetime.datetime.strptime(day, "%Y-%m-%d")
+            sales_old_ins.week_i.append(crt.weekday()+1)
+            sales_old_ins.month.append(crt.month)
+            if crt.month >= 1 and crt.month <= 3:
+                sales_old_ins.season.append(1)
+            elif crt.month >=4 and crt.month <= 6:
+                sales_old_ins.season.append(2)
+            elif crt.month >=7 and crt.month <= 9:
+                sales_old_ins.season.append(3)
+            else:
+                sales_old_ins.season.append(4)
+            ind = week_days1.index(day)
+            if ind <=4:
+                sales_old_ins.week_type.append(0)
+            else:
+                sales_old_ins.week_type.append(1)
+            if day in day_types.keys():
+                sales_old_ins.holiday_type.append(day_types[day])
+
+        sales_old_ins.week_i_1 = sales_old_ins.week_i[0]
+        sales_old_ins.season_1 = sales_old_ins.season[0]
+        sales_old_ins.week_type_1 = sales_old_ins.week_type[0]
+        sales_old_ins.month_1 = sales_old_ins.month[0]
+        sales_old_ins.holiday_type_1 = sales_old_ins.holiday_type[0]
+
+        sales_old_ins.week_i_2 = sales_old_ins.week_i[1]
+        sales_old_ins.season_2 = sales_old_ins.season[1]
+        sales_old_ins.week_type_2 = sales_old_ins.week_type[1]
+        sales_old_ins.month_2 = sales_old_ins.month[1]
+        sales_old_ins.holiday_type_2 = sales_old_ins.holiday_type[1]
+
+        sales_old_ins.week_i_3 = sales_old_ins.week_i[2]
+        sales_old_ins.season_3 = sales_old_ins.season[2]
+        sales_old_ins.week_type_3 = sales_old_ins.week_type[2]
+        sales_old_ins.month_3 = sales_old_ins.month[2]
+        sales_old_ins.holiday_type_3 = sales_old_ins.holiday_type[2]
+
+        sales_old_ins.week_i_4 = sales_old_ins.week_i[3]
+        sales_old_ins.season_4 = sales_old_ins.season[3]
+        sales_old_ins.week_type_4 = sales_old_ins.week_type[3]
+        sales_old_ins.month_4 = sales_old_ins.month[3]
+        sales_old_ins.holiday_type_4 = sales_old_ins.holiday_type[3]
+
+        sales_old_ins.week_i_5 = sales_old_ins.week_i[4]
+        sales_old_ins.season_5 = sales_old_ins.season[4]
+        sales_old_ins.week_type_5 = sales_old_ins.week_type[4]
+        sales_old_ins.month_5 = sales_old_ins.month[4]
+        sales_old_ins.holiday_type_5 = sales_old_ins.holiday_type[4]
+
+        sales_old_ins.week_i_6 = sales_old_ins.week_i[5]
+        sales_old_ins.season_6 = sales_old_ins.season[5]
+        sales_old_ins.week_type_6 = sales_old_ins.week_type[5]
+        sales_old_ins.month_6 = sales_old_ins.month[5]
+        sales_old_ins.holiday_type_6 = sales_old_ins.holiday_type[5]
+
+        sales_old_ins.week_i_7 = sales_old_ins.week_i[6]
+        sales_old_ins.season_7 = sales_old_ins.season[6]
+        sales_old_ins.week_type_7 = sales_old_ins.week_type[6]
+        sales_old_ins.month_7 = sales_old_ins.month[6]
+        sales_old_ins.holiday_type_7 = sales_old_ins.holiday_type[6]
 
 
 
-    def add_weather(self,sales_old_ins,week_days1,results1,results2):
+    def add_weather(self,sales_old_ins,week_days1,results1,results2,results):
 
-        if sales_old_ins.city is not None and sales_old_ins.city == '':
+        if sales_old_ins.city is not None and sales_old_ins.city != '':
             if sales_old_ins.city == '天津新区':
                 sales_old_ins.city = '天津'
             sales_old_ins.city = str(sales_old_ins.city).strip("市")
-            week_weather = self.get_weather(week_days1,results1,results2)
+            week_weather = self.get_weather(results1,results2,results)
 
             for day,i in zip(week_days1,range(len(week_days1))):
                 key_weather = sales_old_ins.city + "_" + day
@@ -543,9 +587,7 @@ class SalesPredict:
     def add_baseinfo(self,sales_old_ins,sales_old_tmp_ins):
         sales_old_ins.shop_id = int(sales_old_tmp_ins.shop_id)
         sales_old_ins.goods_id = int(sales_old_tmp_ins.goods_id)
-        sales_old_ins.num = int(sales_old_tmp_ins.num)
         sales_old_ins.city = sales_old_tmp_ins.city
-        sales_old_ins.create_date = sales_old_tmp_ins.create_date
         sales_old_ins.upc = sales_old_tmp_ins.upc
         sales_old_ins.goods_name = sales_old_tmp_ins.goods_name
         sales_old_ins.price = float(sales_old_tmp_ins.price)
@@ -575,16 +617,18 @@ class SalesPredict:
         for i in range(7):
             start_date_i = str(
                 (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
-                    days=-n * 7 + i)).strftime("%Y-%m-%d"))
+                    days = i)).strftime("%Y-%m-%d"))
             week_days.append(start_date_i)
         return week_days
 
 if __name__=='__main__':
     sp_ins = SalesPredict()
+    # dates = sp_ins.get_date(1)
+    # print (dates)
     salesold_inss = sp_ins.generate_data(all_data=False)
     for salesold_ins in salesold_inss:
         # 103
-        pristr = "%s,%s,%s,%s,%s," \
+        pristr = ("%s,%s,%s,%s,%s," \
               "%s,%s,%s,%s,%s," \
               "%s,%s,%s,%s,%s," \
               "%s,%s,%s,%s,%s," \
@@ -604,7 +648,13 @@ if __name__=='__main__':
               "%s,%s,%s,%s,%s," \
               "%s,%s,%s,%s,%s," \
               "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s" .format(
+              "%s,%s,%s,%s,%s," \
+              "%s,%s,%s,%s,%s," \
+                 "%s,%s,%s,%s,%s," \
+                 "%s,%s,%s,%s,%s," \
+                 "%s,%s,%s,%s,%s," \
+                 "%s,%s,%s,%s,%s," \
+                 "%s,%s,%s,%s" ) % (
         str(salesold_ins.shop_id),
         str(salesold_ins.upc),
         str(salesold_ins.goods_id),
@@ -721,11 +771,47 @@ if __name__=='__main__':
         str(salesold_ins.windspeed_7 ),
 
     # 时间维度
-        str(salesold_ins.week_i ),
-        str( salesold_ins.season ),
-        str(salesold_ins.week_type ),
-        str(salesold_ins.month),
-        str(salesold_ins.holiday_type),
+        str(salesold_ins.week_i_1 ),
+        str( salesold_ins.season_1 ),
+        str(salesold_ins.week_type_1 ),
+        str(salesold_ins.month_1),
+        str(salesold_ins.holiday_type_1),
+
+            str(salesold_ins.week_i_2),
+            str(salesold_ins.season_2),
+            str(salesold_ins.week_type_2),
+            str(salesold_ins.month_2),
+            str(salesold_ins.holiday_type_2),
+
+            str(salesold_ins.week_i_3),
+            str(salesold_ins.season_3),
+            str(salesold_ins.week_type_3),
+            str(salesold_ins.month_3),
+            str(salesold_ins.holiday_type_3),
+
+            str(salesold_ins.week_i_4),
+            str(salesold_ins.season_4),
+            str(salesold_ins.week_type_4),
+            str(salesold_ins.month_4),
+            str(salesold_ins.holiday_type_4),
+
+            str(salesold_ins.week_i_5),
+            str(salesold_ins.season_5),
+            str(salesold_ins.week_type_5),
+            str(salesold_ins.month_5),
+            str(salesold_ins.holiday_type_5),
+
+            str(salesold_ins.week_i_6),
+            str(salesold_ins.season_6),
+            str(salesold_ins.week_type_6),
+            str(salesold_ins.month_6),
+            str(salesold_ins.holiday_type_6),
+
+            str(salesold_ins.week_i_7),
+            str(salesold_ins.season_7),
+            str(salesold_ins.week_type_7),
+            str(salesold_ins.month_7),
+            str(salesold_ins.holiday_type_7),
     # 地域维度
         str(salesold_ins.city_id),
         )

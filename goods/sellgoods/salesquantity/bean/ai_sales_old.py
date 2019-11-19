@@ -11,7 +11,7 @@ class SalesOld:
     city = ''
     # 冗余维度字段
     create_date = ''
-    num = ''
+    num = 0
 
     # 销量数据维度
     sale_1 = 0 # 周一
@@ -117,10 +117,52 @@ class SalesOld:
     windspeed_7 = 0
 
     # 时间维度
-    week_i = 0
-    season = 0
-    week_type = 0
-    month = 0
-    holiday_type = 0
+    week_i = []
+    season = []
+    week_type = []
+    month = []
+    holiday_type = []
+
+    week_i_1 = 0
+    season_1 = 0
+    week_type_1 = 0
+    month_1 = 0
+    holiday_type_1 = 0
+
+    week_i_2 = 0
+    season_2 = 0
+    week_type_2 = 0
+    month_2 = 0
+    holiday_type_2 = 0
+
+    week_i_3 = 0
+    season_3 = 0
+    week_type_3 = 0
+    month_3 = 0
+    holiday_type_3 = 0
+
+    week_i_4 = 0
+    season_4 = 0
+    week_type_4 = 0
+    month_4 = 0
+    holiday_type_4 = 0
+
+    week_i_5 = 0
+    season_5 = 0
+    week_type_5 = 0
+    month_5 = 0
+    holiday_type_5 = 0
+
+    week_i_6 = 0
+    season_6 = 0
+    week_type_6 = 0
+    month_6 = 0
+    holiday_type_6 = 0
+
+    week_i_7 = 0
+    season_7 = 0
+    week_type_7 = 0
+    month_7 = 0
+    holiday_type_7 = 0
     # 地域维度
     city_id = 0
