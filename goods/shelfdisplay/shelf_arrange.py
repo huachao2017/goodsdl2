@@ -39,12 +39,12 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
     # 2，计算level_value
     for category_tree in root_category_tree_list:
         category_tree.calculate_level_value()
-    for root_category_tree in root_category_tree_list:
-        print(root_category_tree)
 
     # 3, 输出里层排序
     for category_tree in root_category_tree_list:
         category_tree.calculate_result()
+    for root_category_tree in root_category_tree_list:
+        print(root_category_tree)
 
     # 4，外层排序解集
     candidate_category_tree_order = calculate_outer_result(root_category_tree_list,category3_level_value,category3_list)
@@ -119,7 +119,7 @@ def arrange_all(list1):
     # list1 = [1, 2, 3, 4, 5]
     iter = itertools.permutations(list1, len(list1))
     result = list(iter)
-    print('所有排列数:',len(result))
+    # print('所有排列数:',len(result))
     # print(result)
     return result
 
@@ -266,6 +266,14 @@ def _find_category(category, category_tree_list):
 
     return None
 
+def _get_root_result_list(root_category_tree):
+    """
+    获取根数的所有展开解
+    :param root_category_tree:
+    :return:category_list的list
+    """
+    ret = []
+    return ret
 
 class CategoryTree:
     id = None
@@ -274,7 +282,7 @@ class CategoryTree:
     intimate_value = None
     level_value = None
     category = None
-    result_list = None  # 这里面是对象解：[[Child1,Child2,Child3],[Child2,Child3,Child1]]
+    result_list = None  # 这里面是对象解：[(Child1,Child2,Child3),(Child2,Child3,Child1)]
 
     def __init__(self, id, intimate_value):
         self.id = id
@@ -329,7 +337,24 @@ class CategoryTree:
                     self.level_value = min_level_value
 
     def calculate_result(self):
-        pass
+        if self.children is not None:
+            for child in self.children:
+                if child.children is not None:
+                    child.calculate_result()
+
+            self.result_list = []
+            temp_result = arrange_all(self.children)
+            for one_result in temp_result:
+                last_category_tree = None
+                is_valid = True
+                for category_tree in one_result:
+                    if last_category_tree is not None:
+                        if last_category_tree.level_value is not None and category_tree.level_value is not None and last_category_tree.level_value > category_tree.level_value:
+                            is_valid = False
+                            break
+                    last_category_tree = category_tree
+                if is_valid:
+                    self.result_list.append(one_result)
 
     def __str__(self):
         ret = ''
@@ -337,6 +362,16 @@ class CategoryTree:
             return str(self.level_value) + ':' + self.category + ','
         else:
             ret += str(self.level_value)
+            ret += '-'
+            ret += str(len(self.result_list))
+            # ret += '['
+            # for one_result in self.result_list:
+            #     ret += '['
+            #     for one_tree in one_result:
+            #         ret += str(one_tree.id)
+            #         ret += ','
+            #     ret += '],'
+            # ret += ']:('
             ret += ':('
             for child in self.children:
                 ret += str(child)
