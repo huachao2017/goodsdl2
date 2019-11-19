@@ -11,7 +11,8 @@ class MysqlUtil:
             passwd=dbcontext['password'],
             db=dbcontext['database'],
             charset='utf8',
-            connect_timeout = 3000
+            connect_timeout = 3000,
+            read_timeout=3000
         )
         self.conn = conn
         self.cursor = conn.cursor()
