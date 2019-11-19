@@ -58,10 +58,10 @@ def get_old_weather(start_date=None,cron=False):
     elif default_min_date != None and start_date != None:
             i=0
             while True:
+                i += 1
                 start_date1 = str(
                     (datetime.datetime.strptime(default_min_date, "%Y-%m-%d") + datetime.timedelta(
-                        days=-i)).strftime("%Y-%m-%d"))
-                i+=1
+                        days=i)).strftime("%Y-%m-%d"))
                 if start_date == start_date1:
                     return
                 for_citys_get_weather(results,start_date1)
