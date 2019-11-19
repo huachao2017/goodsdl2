@@ -415,10 +415,10 @@ class SalesPredict:
         sales_tmp_ins.goodid = goods_id
         sales_tmp_ins.first_cate_id = first_cate_id
         sales_tmp_ins.second_cate_id = second_cate_id
-        second_cate_id.third_cate_id = third_cate_id
-        third_cate_id.goods_name = goods_name
-        third_cate_id.price = price
-        third_cate_id.city = city
+        sales_tmp_ins.third_cate_id = third_cate_id
+        sales_tmp_ins.goods_name = goods_name
+        sales_tmp_ins.price = price
+        sales_tmp_ins.city = city
         date_nums = {}
         datenum_ins = sales_old_tmp.DateNum()
         datenum_ins.create_date = create_date
