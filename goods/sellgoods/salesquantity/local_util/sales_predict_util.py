@@ -426,7 +426,7 @@ class SalesPredict:
         sales_tmp_ins = sales_old_tmp.SalesOldTmp()
         sales_tmp_ins.shop_id = shop_id
         sales_tmp_ins.upc = upc
-        sales_tmp_ins.goodid = goods_id
+        sales_tmp_ins.goods_id = goods_id
         sales_tmp_ins.first_cate_id = first_cate_id
         sales_tmp_ins.second_cate_id = second_cate_id
         sales_tmp_ins.third_cate_id = third_cate_id
@@ -607,7 +607,7 @@ if __name__=='__main__':
               "%s,%s,%s,%s" .format(
         str(salesold_ins.shop_id),
         str(salesold_ins.upc),
-        str(salesold_ins.goodid),
+        str(salesold_ins.goods_id),
         str(salesold_ins.first_cate_id),
         str(salesold_ins.second_cate_id),
         str(salesold_ins.third_cate_id),
