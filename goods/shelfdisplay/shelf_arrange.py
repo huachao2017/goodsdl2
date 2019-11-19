@@ -249,6 +249,7 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
             category_tree_parent.init_parent(category_tree_leaf_list)
             all_category_tree_only_parent.append(category_tree_parent)
 
+
     # 创建不在亲密度里面的三级分类
     for category in category3_list:
         found_category = _find_category(category, all_category_tree_without_parent)
@@ -437,8 +438,11 @@ if __name__ == '__main__':
         'a,b,c': 5,
         'd,e': 10,
         'd,e,f': 6,
-        'd,e,f,g': 5
+        'd,e,f,g': 5,
+        'd,e,f,g,i': 4
     }
+    category3_list = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
+    print(category3_list)
     category3_level_value = {'b':8, 'c':10, 'e':0}
     print(category3_level_value)
     category3_list = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
