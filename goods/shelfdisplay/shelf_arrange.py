@@ -8,6 +8,7 @@ a，b，c如分值都小于5，则以最小的计算
 a，b，c如分值既有大于5又有小于5，则为N（未定义）
 """
 import itertools,copy
+from goods.shelfdisplay import single_algorithm
 def shelf_arrange(shelf):
     """
     流程：
@@ -271,8 +272,8 @@ def _get_root_result_list(root_category_tree):
     :param root_category_tree:
     :return:category_list的list
     """
-    ret = []
-    return ret
+
+    return root_category_tree.get_all_simple_result()
 
 class CategoryTree:
     id = None
@@ -354,6 +355,27 @@ class CategoryTree:
                     last_category_tree = category_tree
                 if is_valid:
                     self.result_list.append(one_result)
+
+    def get_all_simple_result(self):
+        if self.children is not None:
+            all_simple_result = []
+            for result in self.result_list:
+                index = 0
+                index_to_simple_result_list = {}
+                for one_tree in result:
+                    if one_tree.children is not None:
+                        child_all_simple_result = one_tree.get_all_simple_result()
+                        index_to_simple_result_list[index] = child_all_simple_result
+                        index += 1
+                    else:
+                        index_to_simple_result_list[index] = [one_tree.category]
+                        index += 1
+                list_index_to_simple_result = single_algorithm.dict_arrange(index_to_simple_result_list)
+                for index_to_simple_result in list_index_to_simple_result:
+                    for i in range(index+1):
+                        all_simple_result.append(index_to_simple_result[i])
+            return all_simple_result
+
 
     def __str__(self):
         ret = ''
