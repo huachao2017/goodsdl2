@@ -58,17 +58,17 @@ class SalesPredict:
         for row in list(results):
             weather_ins = goods_ai_weather.GoodsAiWeather()
             weather_ins.city = row[1]
-            weather_ins.weather_type = row[2]
-            weather_ins.temphigh = row[3]
-            weather_ins.templow = row[4]
-            weather_ins.windspeed = row[5]
-            weather_ins.winddirect = row[6]
-            weather_ins.windpower = row[7]
-            weather_ins.city_id = row[8]
+            weather_ins.create_date = row[2]
+            weather_ins.weather_type = row[3]
+            weather_ins.temphigh = row[4]
+            weather_ins.templow = row[5]
+            weather_ins.windspeed = row[6]
+            weather_ins.winddirect = row[7]
+            weather_ins.windpower = row[8]
+            weather_ins.city_id = row[9]
             if weather_ins.weather_type is None or  weather_ins.weather_type == '' or weather_ins.weather_type == 'NULL':
                 weather_ins.weather_type = 0
             else:
-                print (weather_ins.weather_type)
                 weather_ins.weather_type = list(results1).index(weather_ins.weather_type)
 
             if weather_ins.temphigh is None or weather_ins.temphigh == '' or weather_ins.temphigh == 'NULL':
