@@ -11,14 +11,12 @@ class SalesPredict:
         sql1 = "select T3.shop_id,T3.goods_id,T3.num,shop.owned_city,T3.create_date,goods.upc,goods.`name`,goods.price,goods.first_cate_id,goods.second_cate_id,goods.third_cate_id from ( " \
                "SELECT T2.shop_id,T2.goods_id,SUM(T2.number) as num,T2.create_date from " \
                "(select T1.shop_id,T1.goods_id,T1.number,DATE_FORMAT(T1.create_time,'%Y-%m-%d') as create_date from ( " \
-               "select shop_id,goods_id,create_time,number,price from payment_detail where shop_id = 1284 and create_time >= '{0} 00:00:00' and create_time <= '{1} 23:59:59' and payment_id in ( " \
-               "select distinct(payment.id) from payment where shop_id = 1284 and payment.type != 50  and create_time >= '{2} 00:00:00' and create_time <= '{3} 23:59:59' " \
+               "select shop_id,goods_id,create_time,number,price from payment_detail where create_time >= '{0} 00:00:00' and create_time <= '{1} 23:59:59' and payment_id in ( " \
+               "select distinct(payment.id) from payment where payment.type != 50  and create_time >= '{2} 00:00:00' and create_time <= '{3} 23:59:59' " \
                ") " \
                ") T1 " \
                ") T2 GROUP BY T2.shop_id,T2.goods_id,T2.create_date " \
                ") T3 LEFT JOIN shop on T3.shop_id = shop.id LEFT JOIN goods on goods.id = T3.goods_id where T3.shop_id is not NUlL and goods.upc is not NULL "
-
-        salesold_inss = []
 
         if all_data:
             end_time2 = '2019-03-04'
@@ -30,14 +28,208 @@ class SalesPredict:
                 else:
                     results = self.get_weeks_results(sql1)
                     salesold_inss = self.get_data_week(results, week_days1, week_days2)
+                    self.write_file(salesold_inss)
 
         else:
             week_days1 = self.get_date(1)
             week_days2 = self.get_date(4)
             results = self.get_weeks_results(sql1)
             salesold_inss = self.get_data_week(results,week_days1,week_days2)
-        return salesold_inss
+            self.write_file(salesold_inss)
 
+    def write_file(self,salesold_inss):
+        for salesold_ins in salesold_inss:
+            # 103
+            pristr = ("%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s,%s," \
+                      "%s,%s,%s,%s") % (
+                str(salesold_ins.shop_id),
+                str(salesold_ins.upc),
+                str(salesold_ins.goods_id),
+                str(salesold_ins.first_cate_id),
+                str(salesold_ins.second_cate_id),
+                str(salesold_ins.third_cate_id),
+                str(salesold_ins.goods_name),
+                str(salesold_ins.price),
+                str(salesold_ins.city),
+                # 冗余维度字段
+                str(salesold_ins.create_date),
+                str(salesold_ins.num),
+
+                # 销量数据维度
+                str(salesold_ins.sale_1),  # 周一
+                str(salesold_ins.sale_2),  # 周二
+                str(salesold_ins.sale_3),
+                str(salesold_ins.sale_4),
+                str(salesold_ins.sale_5),
+                str(salesold_ins.sale_6),
+                str(salesold_ins.sale_7),
+
+                str(salesold_ins.sale_1_2_avg),  # 两个周1 平均销量
+                str(salesold_ins.sale_2_2_avg),  #
+                str(salesold_ins.sale_3_2_avg),  #
+                str(salesold_ins.sale_4_2_avg),  #
+                str(salesold_ins.sale_5_2_avg),  #
+                str(salesold_ins.sale_6_2_avg),  #
+                str(salesold_ins.sale_7_2_avg),  #
+
+                str(salesold_ins.sale_1_4_avg),  # 4个周1 平均销量
+                str(salesold_ins.sale_2_4_avg),  #
+                str(salesold_ins.sale_3_4_avg),  #
+                str(salesold_ins.sale_4_4_avg),  #
+                str(salesold_ins.sale_5_4_avg),  #
+                str(salesold_ins.sale_6_4_avg),  #
+                str(salesold_ins.sale_7_4_avg),  #
+
+                str(salesold_ins.sale_1_8_avg),  # 8个周1 平均销量
+                str(salesold_ins.sale_2_8_avg),  #
+                str(salesold_ins.sale_3_8_avg),  #
+                str(salesold_ins.sale_4_8_avg),  #
+                str(salesold_ins.sale_5_8_avg),  #
+                str(salesold_ins.sale_6_8_avg),  #
+                str(salesold_ins.sale_7_8_avg),  #
+
+                str(salesold_ins.sale_1_12_avg),  # 12个周1 平均销量
+                str(salesold_ins.sale_2_12_avg),  #
+                str(salesold_ins.sale_3_12_avg),  #
+                str(salesold_ins.sale_4_12_avg),  #
+                str(salesold_ins.sale_5_12_avg),  #
+                str(salesold_ins.sale_6_12_avg),  #
+                str(salesold_ins.sale_7_12_avg),  #
+
+                str(salesold_ins.sale_1week_avg_in),  # 1周 周中平均销量
+                str(salesold_ins.sale_1week_avg_out),  # 1周 周末平均销量
+                str(salesold_ins.sale_2week_avg_in),  # 2周 周中平均销量
+                str(salesold_ins.sale_2week_avg_out),  # 2周 周末平均销量
+                str(salesold_ins.sale_4week_avg_in),  # 4周 周中平均销量
+                str(salesold_ins.sale_4week_avg_out),  # 4周 周末平均销量
+                str(salesold_ins.sale_8week_avg_in),  # 8周 周中平均销量
+                str(salesold_ins.sale_8week_avg_out),  # 8周 周末平均销量
+                str(salesold_ins.sale_12week_avg_in),  # 12周 周中平均销量
+                str(salesold_ins.sale_12week_avg_out),  # 12周 周末平均销量
+
+                # 天气维度
+                str(salesold_ins.templow_1),
+                str(salesold_ins.temphigh_1),
+                str(salesold_ins.weather_type_1),
+                str(salesold_ins.windpower_1),
+                str(salesold_ins.winddirect_1),
+                str(salesold_ins.windspeed_1),
+
+                str(salesold_ins.templow_2),
+                str(salesold_ins.temphigh_2),
+                str(salesold_ins.weather_type_2),
+                str(salesold_ins.windpower_2),
+                str(salesold_ins.winddirect_2),
+                str(salesold_ins.windspeed_2),
+
+                str(salesold_ins.templow_3),
+                str(salesold_ins.temphigh_3),
+                str(salesold_ins.weather_type_3),
+                str(salesold_ins.windpower_3),
+                str(salesold_ins.winddirect_3),
+                str(salesold_ins.windspeed_3),
+
+                str(salesold_ins.templow_4),
+                str(salesold_ins.temphigh_4),
+                str(salesold_ins.weather_type_4),
+                str(salesold_ins.windpower_4),
+                str(salesold_ins.winddirect_4),
+                str(salesold_ins.windspeed_4),
+
+                str(salesold_ins.templow_5),
+                str(salesold_ins.temphigh_5),
+                str(salesold_ins.weather_type_5),
+                str(salesold_ins.windpower_5),
+                str(salesold_ins.winddirect_5),
+                str(salesold_ins.windspeed_5),
+
+                str(salesold_ins.templow_6),
+                str(salesold_ins.temphigh_6),
+                str(salesold_ins.weather_type_6),
+                str(salesold_ins.windpower_6),
+                str(salesold_ins.winddirect_6),
+                str(salesold_ins.windspeed_6),
+
+                str(salesold_ins.templow_7),
+                str(salesold_ins.temphigh_7),
+                str(salesold_ins.weather_type_7),
+                str(salesold_ins.windpower_7),
+                str(salesold_ins.winddirect_7),
+                str(salesold_ins.windspeed_7),
+
+                # 时间维度
+                str(salesold_ins.week_i_1),
+                str(salesold_ins.season_1),
+                str(salesold_ins.week_type_1),
+                str(salesold_ins.month_1),
+                str(salesold_ins.holiday_type_1),
+
+                str(salesold_ins.week_i_2),
+                str(salesold_ins.season_2),
+                str(salesold_ins.week_type_2),
+                str(salesold_ins.month_2),
+                str(salesold_ins.holiday_type_2),
+
+                str(salesold_ins.week_i_3),
+                str(salesold_ins.season_3),
+                str(salesold_ins.week_type_3),
+                str(salesold_ins.month_3),
+                str(salesold_ins.holiday_type_3),
+
+                str(salesold_ins.week_i_4),
+                str(salesold_ins.season_4),
+                str(salesold_ins.week_type_4),
+                str(salesold_ins.month_4),
+                str(salesold_ins.holiday_type_4),
+
+                str(salesold_ins.week_i_5),
+                str(salesold_ins.season_5),
+                str(salesold_ins.week_type_5),
+                str(salesold_ins.month_5),
+                str(salesold_ins.holiday_type_5),
+
+                str(salesold_ins.week_i_6),
+                str(salesold_ins.season_6),
+                str(salesold_ins.week_type_6),
+                str(salesold_ins.month_6),
+                str(salesold_ins.holiday_type_6),
+
+                str(salesold_ins.week_i_7),
+                str(salesold_ins.season_7),
+                str(salesold_ins.week_type_7),
+                str(salesold_ins.month_7),
+                str(salesold_ins.holiday_type_7),
+                # 地域维度
+                str(salesold_ins.city_id),
+                     )
+
+            with open("tmp_sales_week.txt", 'a') as f:
+                f.write(pristr + "\n")
 
     def get_weeks_results(self,sql1):
         mysql_ins = mysql_util.MysqlUtil(erp)
@@ -625,196 +817,5 @@ if __name__=='__main__':
     sp_ins = SalesPredict()
     # dates = sp_ins.get_date(1)
     # print (dates)
-    salesold_inss = sp_ins.generate_data(all_data=False)
-    for salesold_ins in salesold_inss:
-        # 103
-        pristr = ("%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s,%s," \
-                 "%s,%s,%s,%s,%s," \
-                 "%s,%s,%s,%s,%s," \
-                 "%s,%s,%s,%s,%s," \
-                 "%s,%s,%s,%s,%s," \
-                 "%s,%s,%s,%s" ) % (
-        str(salesold_ins.shop_id),
-        str(salesold_ins.upc),
-        str(salesold_ins.goods_id),
-        str(salesold_ins.first_cate_id),
-        str(salesold_ins.second_cate_id),
-        str(salesold_ins.third_cate_id),
-        str(salesold_ins.goods_name),
-        str(salesold_ins.price),
-        str(salesold_ins.city),
-        # 冗余维度字段
-        str(salesold_ins.create_date),
-        str(salesold_ins.num),
+    sp_ins.generate_data(all_data=True)
 
-        # 销量数据维度
-        str( salesold_ins.sale_1), # 周一
-        str(salesold_ins.sale_2), # 周二
-        str(salesold_ins.sale_3),
-        str(salesold_ins.sale_4),
-        str(salesold_ins.sale_5),
-        str(salesold_ins.sale_6),
-        str(salesold_ins.sale_7),
-
-        str(salesold_ins.sale_1_2_avg), # 两个周1 平均销量
-        str(salesold_ins.sale_2_2_avg ),  #
-        str(salesold_ins.sale_3_2_avg ),  #
-        str(salesold_ins.sale_4_2_avg ),  #
-        str( salesold_ins.sale_5_2_avg),  #
-        str(salesold_ins.sale_6_2_avg),  #
-        str(salesold_ins.sale_7_2_avg ),  #
-
-        str(salesold_ins.sale_1_4_avg), # 4个周1 平均销量
-        str( salesold_ins.sale_2_4_avg),  #
-        str(salesold_ins.sale_3_4_avg),  #
-        str(salesold_ins.sale_4_4_avg),  #
-        str( salesold_ins.sale_5_4_avg),  #
-        str( salesold_ins.sale_6_4_avg),  #
-        str(salesold_ins.sale_7_4_avg),  #
-
-        str(salesold_ins.sale_1_8_avg), # 8个周1 平均销量
-        str(salesold_ins.sale_2_8_avg),  #
-        str( salesold_ins.sale_3_8_avg),  #
-        str( salesold_ins.sale_4_8_avg ),  #
-        str( salesold_ins.sale_5_8_avg),  #
-        str(salesold_ins.sale_6_8_avg),  #
-        str(salesold_ins.sale_7_8_avg), #
-
-        str( salesold_ins.sale_1_12_avg), # 12个周1 平均销量
-        str( salesold_ins.sale_2_12_avg),  #
-        str(salesold_ins.sale_3_12_avg),  #
-        str( salesold_ins.sale_4_12_avg),  #
-        str( salesold_ins.sale_5_12_avg),  #
-        str(salesold_ins.sale_6_12_avg),  #
-        str(salesold_ins.sale_7_12_avg),  #
-
-        str(salesold_ins.sale_1week_avg_in), # 1周 周中平均销量
-        str( salesold_ins.sale_1week_avg_out),  #1周 周末平均销量
-        str(salesold_ins.sale_2week_avg_in),  # 2周 周中平均销量
-        str(salesold_ins.sale_2week_avg_out), # 2周 周末平均销量
-        str( salesold_ins.sale_4week_avg_in),  # 4周 周中平均销量
-        str( salesold_ins.sale_4week_avg_out),  # 4周 周末平均销量
-        str( salesold_ins.sale_8week_avg_in),  # 8周 周中平均销量
-        str(salesold_ins.sale_8week_avg_out),  # 8周 周末平均销量
-        str(salesold_ins.sale_12week_avg_in),  # 12周 周中平均销量
-        str(salesold_ins.sale_12week_avg_out),  # 12周 周末平均销量
-
-        # 天气维度
-        str(salesold_ins.templow_1),
-        str( salesold_ins.temphigh_1),
-        str( salesold_ins.weather_type_1),
-        str( salesold_ins.windpower_1),
-        str( salesold_ins.winddirect_1),
-        str( salesold_ins.windspeed_1),
-
-        str(salesold_ins.templow_2),
-        str(salesold_ins.temphigh_2),
-        str( salesold_ins.weather_type_2),
-        str( salesold_ins.windpower_2),
-        str(salesold_ins.winddirect_2),
-        str(salesold_ins.windspeed_2),
-
-        str( salesold_ins.templow_3),
-        str( salesold_ins.temphigh_3),
-        str( salesold_ins.weather_type_3),
-        str(salesold_ins.windpower_3 ),
-        str( salesold_ins.winddirect_3),
-        str(salesold_ins.windspeed_3),
-
-        str( salesold_ins.templow_4),
-        str(salesold_ins.temphigh_4),
-        str( salesold_ins.weather_type_4),
-        str( salesold_ins.windpower_4),
-        str( salesold_ins.winddirect_4),
-        str(salesold_ins.windspeed_4),
-
-        str(salesold_ins.templow_5),
-        str( salesold_ins.temphigh_5),
-        str( salesold_ins.weather_type_5),
-        str( salesold_ins.windpower_5),
-        str( salesold_ins.winddirect_5),
-        str(salesold_ins.windspeed_5),
-
-        str( salesold_ins.templow_6 ),
-        str( salesold_ins.temphigh_6 ),
-        str( salesold_ins.weather_type_6 ),
-        str( salesold_ins.windpower_6 ),
-        str( salesold_ins.winddirect_6 ),
-        str(salesold_ins.windspeed_6 ),
-
-        str( salesold_ins.templow_7 ),
-        str( salesold_ins.temphigh_7 ),
-        str( salesold_ins.weather_type_7 ),
-        str(salesold_ins.windpower_7 ),
-        str( salesold_ins.winddirect_7 ),
-        str(salesold_ins.windspeed_7 ),
-
-    # 时间维度
-        str(salesold_ins.week_i_1 ),
-        str( salesold_ins.season_1 ),
-        str(salesold_ins.week_type_1 ),
-        str(salesold_ins.month_1),
-        str(salesold_ins.holiday_type_1),
-
-            str(salesold_ins.week_i_2),
-            str(salesold_ins.season_2),
-            str(salesold_ins.week_type_2),
-            str(salesold_ins.month_2),
-            str(salesold_ins.holiday_type_2),
-
-            str(salesold_ins.week_i_3),
-            str(salesold_ins.season_3),
-            str(salesold_ins.week_type_3),
-            str(salesold_ins.month_3),
-            str(salesold_ins.holiday_type_3),
-
-            str(salesold_ins.week_i_4),
-            str(salesold_ins.season_4),
-            str(salesold_ins.week_type_4),
-            str(salesold_ins.month_4),
-            str(salesold_ins.holiday_type_4),
-
-            str(salesold_ins.week_i_5),
-            str(salesold_ins.season_5),
-            str(salesold_ins.week_type_5),
-            str(salesold_ins.month_5),
-            str(salesold_ins.holiday_type_5),
-
-            str(salesold_ins.week_i_6),
-            str(salesold_ins.season_6),
-            str(salesold_ins.week_type_6),
-            str(salesold_ins.month_6),
-            str(salesold_ins.holiday_type_6),
-
-            str(salesold_ins.week_i_7),
-            str(salesold_ins.season_7),
-            str(salesold_ins.week_type_7),
-            str(salesold_ins.month_7),
-            str(salesold_ins.holiday_type_7),
-    # 地域维度
-        str(salesold_ins.city_id),
-        )
-
-        with open ("tmp_sales_week.txt",'a') as f:
-            f.write(pristr+"\n")
