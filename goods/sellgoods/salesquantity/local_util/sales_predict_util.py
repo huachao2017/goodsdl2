@@ -150,14 +150,14 @@ class SalesPredict:
 
     def add_week_avg_in_out(self,sales_old_ins,sales_old_tmp_ins):
         week_dates = []
-        for i in range(1,13):
+        for i in range(1, 13):
             wd = self.get_date(i)
-            week_dates.append(wd)
-        week_1 = [].extend(week_dates[0])
-        week_2 = [].extend(week_dates[0:2])
-        week_4 = [].extend(week_dates[0:5])
-        week_8 = [].extend(week_dates[0:9])
-        week_12 = [].extend(week_dates)
+            week_dates.extend(wd)
+        week_1 = week_dates[0:1 * 7]
+        week_2 = week_dates[0:2 * 7]
+        week_4 = week_dates[0:4 * 7]
+        week_8 = week_dates[0:8 * 7]
+        week_12 = week_dates[0:12 * 7]
         for day in sales_old_tmp_ins.date_nums.keys():
             if day in week_1 :
                 if sales_old_tmp_ins.date_nums[day].week_type == 0:
@@ -233,7 +233,7 @@ class SalesPredict:
         week_2 = week_dates[0:2*7]
         week_4 = week_dates[0:4*7]
         week_8 = week_dates[0:8*7]
-        week_12 =week_dates[0:12*7]
+        week_12 = week_dates[0:12*7]
         for day, i in zip(week_days1, range(len(week_days1))):
             if day in sales_old_tmp_ins.date_nums.keys():
                 for create_date in sales_old_tmp_ins.date_nums.keys():
