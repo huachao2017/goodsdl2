@@ -18,7 +18,7 @@ class SalesPredict:
                ") " \
                ") T1 " \
                ") T2 GROUP BY T2.shop_id,T2.goods_id,T2.create_date " \
-               ") T3 LEFT JOIN shop on T3.shop_id = shop.id LEFT JOIN goods on goods.id = T3.goods_id"
+               ") T3 LEFT JOIN shop on T3.shop_id = shop.id LEFT JOIN goods on goods.id = T3.goods_id where T3.shop_id is not NUlL and goods.upc is not NULL "
 
         salesold_inss = []
 
@@ -382,17 +382,33 @@ class SalesPredict:
                 self.add_sales_old_tmp(row, sales_old_tmp_dict)
 
     def add_sales_old_tmp(self,row,sales_old_tmp_dict):
-        shop_id = int(row[0])
-        goods_id = int(row[1])
+        shop_id = 0
+        if row[0] is not None and row[0] != '':
+            shop_id = int(row[0])
+        goods_id = 0
+        if row[1] is not None and row[1] != '':
+            goods_id = int(row[1])
         num = int(row[2])
-        city = row[3]
+        city = 0
+        if row[3] is not None and row[3] != '':
+            city = row[3]
         create_date = row[4]
-        upc = row[5]
+        upc = 0
+        if row[5] is not None and row[5] != '':
+            upc = row[5]
         goods_name = row[6]
-        price = float(row[7])
-        first_cate_id = int(row[8])
-        second_cate_id = int(row[9])
-        third_cate_id = int(row[10])
+        price = 0.0
+        if row[7] is not None and row[7] != '':
+            price = float(row[7])
+        first_cate_id = 0
+        if row[8] is not None and row[8] != '':
+            first_cate_id = int(row[8])
+            second_cate_id = 0
+        if row[9] is not None and row[9] != '':
+            second_cate_id = int(row[9])
+        third_cate_id = 0
+        if row[10] is not None and row[10] != '':
+            third_cate_id = int(row[10])
         sales_tmp_ins = sales_old_tmp.SalesOldTmp()
         sales_tmp_ins.shop_id = shop_id
         sales_tmp_ins.upc = upc
