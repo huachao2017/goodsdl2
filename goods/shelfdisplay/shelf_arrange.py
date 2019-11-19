@@ -185,6 +185,9 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
     :param category3_list:
     :return:
     """
+
+    # TODO 处理掉category3_list没有，但category3_intimate_weight有的三级分类
+
     sorted_intimate_list = sorted(category3_intimate_weight.items(), key=lambda item: item[1], reverse=True)
     print(sorted_intimate_list)
 
@@ -270,6 +273,19 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
             category_tree_parent.init_parent(category_tree_leaf_list)
             all_category_tree_only_parent.append(category_tree_parent)
 
+    # 创建不在亲密度里面的三级分类
+    for category in category3_list:
+        found_category = _find_category(category, all_category_tree_without_parent)
+        if not found_category:
+            category_tree = CategoryTree(tree_id, 0)
+            tree_id += 1
+            category_tree.init_only_child(category)
+            all_category_tree_without_parent.append(category_tree)
+            category_tree_parent = CategoryTree(tree_id, 0)
+            tree_id += 1
+            category_tree_parent.init_parent([category_tree])
+            all_category_tree_only_parent.append(category_tree_parent)
+
     id_to_root_parent_tree = {}
     for parent_tree in all_category_tree_only_parent:
         if parent_tree.parent == None:
@@ -278,6 +294,7 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
     for child_tree in all_category_tree_without_parent:
         if child_tree.category in category3_level_value:
             child_tree.level_value = category3_level_value[child_tree.category]
+
 
     return id_to_root_parent_tree.values()
 
