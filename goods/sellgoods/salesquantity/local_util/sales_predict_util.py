@@ -623,7 +623,7 @@ if __name__=='__main__':
     salesold_inss = sp_ins.generate_data(all_data=False)
     for salesold_ins in salesold_inss:
         # 103
-        pristr = "%s,%s,%s,%s,%s," \
+        pristr = ("%s,%s,%s,%s,%s," \
               "%s,%s,%s,%s,%s," \
               "%s,%s,%s,%s,%s," \
               "%s,%s,%s,%s,%s," \
@@ -649,7 +649,7 @@ if __name__=='__main__':
                  "%s,%s,%s,%s,%s," \
                  "%s,%s,%s,%s,%s," \
                  "%s,%s,%s,%s,%s," \
-                 "%s,%s,%s,%s" .format(
+                 "%s,%s,%s,%s" ) % (
         str(salesold_ins.shop_id),
         str(salesold_ins.upc),
         str(salesold_ins.goods_id),
