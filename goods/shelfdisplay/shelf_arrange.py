@@ -265,6 +265,14 @@ def _find_category(category, category_tree_list):
 
     return None
 
+def _get_root_result_list(root_category_tree):
+    """
+    获取根数的所有展开解
+    :param root_category_tree:
+    :return:category_list的list
+    """
+    ret = []
+    return ret
 
 class CategoryTree:
     id = None
