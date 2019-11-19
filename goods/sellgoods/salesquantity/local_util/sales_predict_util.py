@@ -158,41 +158,40 @@ class SalesPredict:
         week_4 = [].extend(week_dates[0:5])
         week_8 = [].extend(week_dates[0:9])
         week_12 = [].extend(week_dates)
-        key = str(sales_old_ins.shop_id) + "_" + str(sales_old_ins.upc)
-        for day in sales_old_tmp_ins[key].date_nums.keys():
+        for day in sales_old_tmp_ins.date_nums.keys():
             if day in week_1 :
-                if sales_old_tmp_ins[key].date_nums[day].week_type == 0:
-                    sales_old_ins.sale_1week_avg_in = sales_old_ins.sale_1week_avg_in + sales_old_tmp_ins[key].date_nums[day].num
+                if sales_old_tmp_ins.date_nums[day].week_type == 0:
+                    sales_old_ins.sale_1week_avg_in = sales_old_ins.sale_1week_avg_in + sales_old_tmp_ins.date_nums[day].num
                 else:
                     sales_old_ins.sale_1week_avg_out = sales_old_ins.sale_1week_avg_out + \
-                                                      sales_old_tmp_ins[key].date_nums[day].num
+                                                      sales_old_tmp_ins.date_nums[day].num
             if day in week_2 :
-                if sales_old_tmp_ins[key].date_nums[day].week_type == 0:
-                    sales_old_ins.sale_2week_avg_in = sales_old_ins.sale_2week_avg_in + sales_old_tmp_ins[key].date_nums[day].num
+                if sales_old_tmp_ins.date_nums[day].week_type == 0:
+                    sales_old_ins.sale_2week_avg_in = sales_old_ins.sale_2week_avg_in + sales_old_tmp_ins.date_nums[day].num
                 else:
                     sales_old_ins.sale_2week_avg_out = sales_old_ins.sale_2week_avg_out + \
-                                                      sales_old_tmp_ins[key].date_nums[day].num
+                                                      sales_old_tmp_ins.date_nums[day].num
 
             if day in week_4 :
-                if sales_old_tmp_ins[key].date_nums[day].week_type == 0:
-                    sales_old_ins.sale_4week_avg_in = sales_old_ins.sale_4week_avg_in + sales_old_tmp_ins[key].date_nums[day].num
+                if sales_old_tmp_ins.date_nums[day].week_type == 0:
+                    sales_old_ins.sale_4week_avg_in = sales_old_ins.sale_4week_avg_in + sales_old_tmp_ins.date_nums[day].num
                 else:
                     sales_old_ins.sale_4week_avg_out = sales_old_ins.sale_4week_avg_out + \
-                                                      sales_old_tmp_ins[key].date_nums[day].num
+                                                      sales_old_tmp_ins.date_nums[day].num
 
             if day in week_8 :
-                if sales_old_tmp_ins[key].date_nums[day].week_type == 0:
-                    sales_old_ins.sale_8week_avg_in = sales_old_ins.sale_8week_avg_in + sales_old_tmp_ins[key].date_nums[day].num
+                if sales_old_tmp_ins.date_nums[day].week_type == 0:
+                    sales_old_ins.sale_8week_avg_in = sales_old_ins.sale_8week_avg_in + sales_old_tmp_ins.date_nums[day].num
                 else:
                     sales_old_ins.sale_8week_avg_out = sales_old_ins.sale_8week_avg_out + \
-                                                      sales_old_tmp_ins[key].date_nums[day].num
+                                                      sales_old_tmp_ins.date_nums[day].num
 
             if day in week_12 :
-                if sales_old_tmp_ins[key].date_nums[day].week_type == 0:
-                    sales_old_ins.sale_12week_avg_in = sales_old_ins.sale_12week_avg_in + sales_old_tmp_ins[key].date_nums[day].num
+                if sales_old_tmp_ins.date_nums[day].week_type == 0:
+                    sales_old_ins.sale_12week_avg_in = sales_old_ins.sale_12week_avg_in + sales_old_tmp_ins.date_nums[day].num
                 else:
                     sales_old_ins.sale_12week_avg_out = sales_old_ins.sale_12week_avg_out + \
-                                                      sales_old_tmp_ins[key].date_nums[day].num
+                                                      sales_old_tmp_ins.date_nums[day].num
 
         sales_old_ins.sale_1week_avg_in = float(sales_old_ins.sale_1week_avg_in / 5.0)
         sales_old_ins.sale_1week_avg_out =  float(sales_old_ins.sale_1week_avg_out / 2.0)
@@ -208,8 +207,7 @@ class SalesPredict:
 
     def add_week_i_sales(self,sales_old_ins,sales_old_tmp_ins,week_days1):
         for day,i in zip(week_days1,range(len(week_days1))):
-            key = str(sales_old_ins.shop_id)+"_"+str(sales_old_ins.upc)
-            if day in sales_old_tmp_ins[key].date_nums.keys():
+            if day in sales_old_tmp_ins.date_nums.keys():
                 if i == 0:
                     sales_old_ins.sale_1 = sales_old_tmp_ins.date_nums[day].num
                 if i == 1:
@@ -236,10 +234,9 @@ class SalesPredict:
         week_4 = [].extend(week_dates[0:5])
         week_8 = [].extend(week_dates[0:9])
         week_12 = [].extend(week_dates)
-        key = str(sales_old_ins.shop_id) + "_" + str(sales_old_ins.upc)
         for day, i in zip(week_days1, range(len(week_days1))):
-            if day in sales_old_tmp_ins[key].date_nums.keys():
-                for create_date  in sales_old_tmp_ins[key].date_nums.keys:
+            if day in sales_old_tmp_ins.date_nums.keys():
+                for create_date  in sales_old_tmp_ins.date_nums.keys:
                     j = datetime.datetime.strptime(create_date, "%Y-%m-%d").weekday()+1
                     if i == 0 and j-1 == i:
                         if create_date in week_2:
