@@ -5,6 +5,7 @@
 3.1、高度差距小于10mm的分组可以交换位置输出解
 3.2、商品在同一分组中且高度差小于10mm并且宽度差大于10mm可交换解输出（此条暂不做）
 """
+from goods.shelfdisplay import single_algorithm
 
 def goods_arrange(goods_list):
     """
@@ -20,9 +21,12 @@ def goods_arrange(goods_list):
 
     # 1，初始化
     root_goods_tree = init_goods_tree(goods_list)
-    print(root_goods_tree)
 
     # 2，排序，调换
+    # 只做从低到高的，生成解的时候都有一个从高到低的解
+    root_goods_tree.sort_height()
+    root_goods_tree.calculate_result()
+    print(root_goods_tree)
 
     # 3，生成解列表
 
@@ -135,8 +139,62 @@ class GoodsTree:
             self.width = width
         return self.height, self.width
 
+    def sort_height(self):
+        if self.children is not None:
+            for child in self.children:
+                if child.children is not None:
+                    child.sort_height()
+            self.children.sort(key=lambda x:x.height)
+
     def calculate_result(self):
-        pass
+        """
+        仅按从低到高做解
+        高度差小于10mm并且宽度差大于10mm可交换解输出
+        :return:
+        """
+        if self.children is not None:
+            for child in self.children:
+                if child.children is not None:
+                    child.calculate_result()
+            self.result_list = [self.children.copy()]
+            last_child = None
+
+            i = -1
+            for child in self.children:
+                i += 1
+                if i == 0:
+                    continue
+                if abs(self.children[i-1].height-child.height) < 10 and abs(self.children[i-1].width - child.width) > 10:
+                    # FIXME 仅做近邻交换的解
+                    another_result = self.children.copy()
+                    another_result[i-1], another_result[i] = another_result[i] , another_result[i-1]
+                    self.result_list.append(another_result)
+
+    def get_all_simple_result(self):
+        if self.children is not None:
+            all_simple_result = []
+            for result in self.result_list:
+                index = 0
+                index_to_simple_result_list = {}
+                for one_tree in result:
+                    if one_tree.children is not None:
+                        child_all_simple_result = one_tree.get_all_simple_result()
+                        index_to_simple_result_list[index] = child_all_simple_result
+                        index += 1
+                    else:
+                        index_to_simple_result_list[index] = [one_tree.goods]
+                        index += 1
+                list_index_to_simple_result = single_algorithm.dict_arrange(index_to_simple_result_list)
+                for index_to_simple_result in list_index_to_simple_result:
+                    simple_result_list = []
+                    for i in range(index):
+                        if type(index_to_simple_result[i]) is list:
+                            for one_simple in index_to_simple_result[i]:
+                                simple_result_list.append(one_simple)
+                        else:
+                            simple_result_list.append(index_to_simple_result[i])
+                    all_simple_result.append(simple_result_list)
+            return all_simple_result
 
     def __str__(self):
         ret = ''
@@ -150,12 +208,24 @@ class GoodsTree:
             ret += str(self.height)
             ret += '-'
             ret += str(self.width)
-            # ret += '-'
-            # ret += str(len(self.result_list))
+            ret += '-'
+            ret += str(len(self.result_list))
             ret += ':('
             for child in self.children:
                 ret += str(child)
             ret += '),'
+            if self.parent is None:
+                simple_results = self.get_all_simple_result()
+                ret += str(len(simple_results))
+                ret += '-'
+                ret += '['
+                for result in simple_results:
+                    ret += '['
+                    for goods in result:
+                        ret += str(goods.name)
+                        ret += ','
+                    ret += ']'
+                ret += ']'
         return ret
 
 class TestGoods:
