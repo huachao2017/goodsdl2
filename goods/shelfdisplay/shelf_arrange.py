@@ -67,6 +67,10 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
     iter = itertools.permutations(category_tree_list, len(category_tree_list))
     category_tree_list_len = len(category_tree_list)
     print('category_tree_list_len:',category_tree_list_len)
+    if category_tree_list_len > 12:
+        print('有问题！！！')
+        for i in category_tree_list:
+            print(i.category)
     max_lengh = reduce(lambda x, y: x * y, range(1, category_tree_list_len + 1))  # 阶乘
     if max_lengh > threshold:  # 如果大于阈值，则根据步长设置进行下采样
         step_size = max_lengh // threshold
@@ -215,7 +219,7 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
                         t[1] = i[1]
     category3_intimate_weight = {}
     for i in intimate_list_temp:
-        category3_intimate_weight["".join(i[0])] = i[1]
+        category3_intimate_weight[",".join(i[0])] = i[1]
 
     print('新的category3_intimate_weight',category3_intimate_weight)
     # TODO 处理掉category3_list没有，但category3_intimate_weight有的三级分类
