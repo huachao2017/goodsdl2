@@ -130,6 +130,7 @@ def combine_all_result(candidate_category_tree_order):
     :return:
     """
     ret = []
+    temp_candidate = []
     for obj_arrange in candidate_category_tree_order:
         lengh = len(obj_arrange)
         i = 0
@@ -137,8 +138,8 @@ def combine_all_result(candidate_category_tree_order):
         while i < lengh:
             loop_val.append(obj_arrange[i].result_list)
 
-        for obj in obj_arrange:
-            list(itertools.product(*loop_val))
+        for i in list(itertools.product(*loop_val)):
+            temp_candidate.append(i)
 
 
     # TODO @李树
