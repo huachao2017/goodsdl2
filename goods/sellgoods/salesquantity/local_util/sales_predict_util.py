@@ -38,7 +38,7 @@ class SalesPredict:
 
         else:
             week_days1 = self.get_date(1)
-            week_days2 = self.get_date(8)
+            week_days2 = self.get_date(4)
             start_time = week_days2[0]
             end_time = week_days1[-1]
             sql1 = sql1.format(start_time, end_time, start_time, end_time)
