@@ -143,8 +143,8 @@ class SalesPredict:
             salesold_inss.append(sales_old_ins)
         return salesold_inss
     def add_sales_count(self,sales_old_ins,sales_old_tmp_ins,week_days1):
-        self.add_week_i_sales(sales_old_ins,sales_old_tmp_ins)
-        self.add_week_i_avg(sales_old_ins,sales_old_tmp_ins)
+        self.add_week_i_sales(sales_old_ins,sales_old_tmp_ins,week_days1)
+        self.add_week_i_avg(sales_old_ins,sales_old_tmp_ins,week_days1)
         self.add_week_avg_in_out(sales_old_ins, sales_old_tmp_ins)
 
 
