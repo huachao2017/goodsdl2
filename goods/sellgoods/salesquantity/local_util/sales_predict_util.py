@@ -126,7 +126,7 @@ class SalesPredict:
         sql4 = "select distinct(winddirect) from goods_ai_weather"
         results2 = mysql_ins.selectAll(sql4)
 
-        sql5 = "select day,type from holiday"
+        sql5 = "select day,type from goods_ai_holiday"
         results3 = mysql_ins.selectAll(sql5)
 
 
@@ -383,7 +383,15 @@ class SalesPredict:
                 if create_date in sales_old_tmp_dict[str(shop_id)+"_"+str(upc)].date_nums.keys():
                     sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date].num = sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date].num + num
                 else:
-                    sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date].num = num
+                    datenum_ins = sales_old_tmp.DateNum()
+                    datenum_ins.create_date = create_date
+                    datenum_ins.num = num
+                    datenum_ins.week_i = datetime.datetime.strptime(create_date, "%Y-%m-%d").weekday() + 1
+                    if datenum_ins.week_i <= 5:
+                        datenum_ins.week_type = 0
+                    else:
+                        datenum_ins.week_type = 1
+                    sales_old_tmp_dict[str(shop_id) + "_" + str(upc)].date_nums[create_date] = datenum_ins
             else:
                 self.add_sales_old_tmp(row, sales_old_tmp_dict)
 
@@ -418,7 +426,7 @@ class SalesPredict:
         sales_tmp_ins = sales_old_tmp.SalesOldTmp()
         sales_tmp_ins.shop_id = shop_id
         sales_tmp_ins.upc = upc
-        sales_tmp_ins.goodid = goods_id
+        sales_tmp_ins.goods_id = goods_id
         sales_tmp_ins.first_cate_id = first_cate_id
         sales_tmp_ins.second_cate_id = second_cate_id
         sales_tmp_ins.third_cate_id = third_cate_id
@@ -599,7 +607,7 @@ if __name__=='__main__':
               "%s,%s,%s,%s" .format(
         str(salesold_ins.shop_id),
         str(salesold_ins.upc),
-        str(salesold_ins.goodid),
+        str(salesold_ins.goods_id),
         str(salesold_ins.first_cate_id),
         str(salesold_ins.second_cate_id),
         str(salesold_ins.third_cate_id),
