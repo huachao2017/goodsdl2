@@ -456,24 +456,68 @@ class SalesPredict:
         day_types= {}
         for row in results3:
             day_types[row[0]] = row[1]
-        crt = datetime.datetime.strptime(sales_old_ins.create_date, "%Y-%m-%d")
-        sales_old_ins.week_i = crt.weekday()+1
-        sales_old_ins.month = crt.month
-        if sales_old_ins.month >= 1 and sales_old_ins.month <= 3:
-            sales_old_ins.season = 1
-        elif sales_old_ins.month >=4 and sales_old_ins.month <= 6:
-            sales_old_ins.season = 2
-        elif sales_old_ins.month >=7 and sales_old_ins.month <= 9:
-            sales_old_ins.season = 3
-        else:
-            sales_old_ins.season = 4
-        ind = week_days1.index(sales_old_ins.create_date)
-        if ind <=4:
-            sales_old_ins.week_type = 0
-        else:
-            sales_old_ins.week_type = 1
-        if sales_old_ins.create_date in day_types.keys():
-            sales_old_ins.holiday_type = day_types[sales_old_ins.create_date]
+
+        for day in week_days1:
+            crt = datetime.datetime.strptime(day, "%Y-%m-%d")
+            sales_old_ins.week_i.append(crt.weekday()+1)
+            sales_old_ins.month.append(crt.month)
+            if sales_old_ins.month >= 1 and sales_old_ins.month <= 3:
+                sales_old_ins.season.append(1)
+            elif sales_old_ins.month >=4 and sales_old_ins.month <= 6:
+                sales_old_ins.season.append(2)
+            elif sales_old_ins.month >=7 and sales_old_ins.month <= 9:
+                sales_old_ins.season.append(3)
+            else:
+                sales_old_ins.season.append(4)
+            ind = week_days1.index(day)
+            if ind <=4:
+                sales_old_ins.week_type.append(0)
+            else:
+                sales_old_ins.week_type.append(1)
+            if day in day_types.keys():
+                sales_old_ins.holiday_type.append(day_types[day])
+
+        sales_old_ins.week_i_1 = sales_old_ins.week_i[0]
+        sales_old_ins.season_1 = sales_old_ins.season[0]
+        sales_old_ins.week_type_1 = sales_old_ins.week_type[0]
+        sales_old_ins.month_1 = sales_old_ins.month[0]
+        sales_old_ins.holiday_type_1 = sales_old_ins.holiday_type[0]
+
+        sales_old_ins.week_i_2 = sales_old_ins.week_i[1]
+        sales_old_ins.season_2 = sales_old_ins.season[1]
+        sales_old_ins.week_type_2 = sales_old_ins.week_type[1]
+        sales_old_ins.month_2 = sales_old_ins.month[1]
+        sales_old_ins.holiday_type_2 = sales_old_ins.holiday_type[1]
+
+        sales_old_ins.week_i_3 = sales_old_ins.week_i[2]
+        sales_old_ins.season_3 = sales_old_ins.season[2]
+        sales_old_ins.week_type_3 = sales_old_ins.week_type[2]
+        sales_old_ins.month_3 = sales_old_ins.month[2]
+        sales_old_ins.holiday_type_3 = sales_old_ins.holiday_type[2]
+
+        sales_old_ins.week_i_4 = sales_old_ins.week_i[3]
+        sales_old_ins.season_4 = sales_old_ins.season[3]
+        sales_old_ins.week_type_4 = sales_old_ins.week_type[3]
+        sales_old_ins.month_4 = sales_old_ins.month[3]
+        sales_old_ins.holiday_type_4 = sales_old_ins.holiday_type[3]
+
+        sales_old_ins.week_i_5 = sales_old_ins.week_i[4]
+        sales_old_ins.season_5 = sales_old_ins.season[4]
+        sales_old_ins.week_type_5 = sales_old_ins.week_type[4]
+        sales_old_ins.month_5 = sales_old_ins.month[4]
+        sales_old_ins.holiday_type_5 = sales_old_ins.holiday_type[4]
+
+        sales_old_ins.week_i_6 = sales_old_ins.week_i[5]
+        sales_old_ins.season_6 = sales_old_ins.season[5]
+        sales_old_ins.week_type_6 = sales_old_ins.week_type[5]
+        sales_old_ins.month_6 = sales_old_ins.month[5]
+        sales_old_ins.holiday_type_6 = sales_old_ins.holiday_type[5]
+
+        sales_old_ins.week_i_7 = sales_old_ins.week_i[6]
+        sales_old_ins.season_7 = sales_old_ins.season[6]
+        sales_old_ins.week_type_7 = sales_old_ins.week_type[6]
+        sales_old_ins.month_7 = sales_old_ins.month[6]
+        sales_old_ins.holiday_type_7 = sales_old_ins.holiday_type[6]
 
 
 
@@ -543,9 +587,7 @@ class SalesPredict:
     def add_baseinfo(self,sales_old_ins,sales_old_tmp_ins):
         sales_old_ins.shop_id = int(sales_old_tmp_ins.shop_id)
         sales_old_ins.goods_id = int(sales_old_tmp_ins.goods_id)
-        sales_old_ins.num = int(sales_old_tmp_ins.num)
         sales_old_ins.city = sales_old_tmp_ins.city
-        sales_old_ins.create_date = sales_old_tmp_ins.create_date
         sales_old_ins.upc = sales_old_tmp_ins.upc
         sales_old_ins.goods_name = sales_old_tmp_ins.goods_name
         sales_old_ins.price = float(sales_old_tmp_ins.price)
@@ -604,7 +646,13 @@ if __name__=='__main__':
               "%s,%s,%s,%s,%s," \
               "%s,%s,%s,%s,%s," \
               "%s,%s,%s,%s,%s," \
-              "%s,%s,%s,%s" .format(
+              "%s,%s,%s,%s,%s," \
+              "%s,%s,%s,%s,%s," \
+                 "%s,%s,%s,%s,%s," \
+                 "%s,%s,%s,%s,%s," \
+                 "%s,%s,%s,%s,%s," \
+                 "%s,%s,%s,%s,%s," \
+                 "%s,%s,%s,%s" .format(
         str(salesold_ins.shop_id),
         str(salesold_ins.upc),
         str(salesold_ins.goods_id),
@@ -721,11 +769,47 @@ if __name__=='__main__':
         str(salesold_ins.windspeed_7 ),
 
     # 时间维度
-        str(salesold_ins.week_i ),
-        str( salesold_ins.season ),
-        str(salesold_ins.week_type ),
-        str(salesold_ins.month),
-        str(salesold_ins.holiday_type),
+        str(salesold_ins.week_i_1 ),
+        str( salesold_ins.season_1 ),
+        str(salesold_ins.week_type_1 ),
+        str(salesold_ins.month_1),
+        str(salesold_ins.holiday_type_1),
+
+            str(salesold_ins.week_i_2),
+            str(salesold_ins.season_2),
+            str(salesold_ins.week_type_2),
+            str(salesold_ins.month_2),
+            str(salesold_ins.holiday_type_2),
+
+            str(salesold_ins.week_i_3),
+            str(salesold_ins.season_3),
+            str(salesold_ins.week_type_3),
+            str(salesold_ins.month_3),
+            str(salesold_ins.holiday_type_3),
+
+            str(salesold_ins.week_i_4),
+            str(salesold_ins.season_4),
+            str(salesold_ins.week_type_4),
+            str(salesold_ins.month_4),
+            str(salesold_ins.holiday_type_4),
+
+            str(salesold_ins.week_i_5),
+            str(salesold_ins.season_5),
+            str(salesold_ins.week_type_5),
+            str(salesold_ins.month_5),
+            str(salesold_ins.holiday_type_5),
+
+            str(salesold_ins.week_i_6),
+            str(salesold_ins.season_6),
+            str(salesold_ins.week_type_6),
+            str(salesold_ins.month_6),
+            str(salesold_ins.holiday_type_6),
+
+            str(salesold_ins.week_i_7),
+            str(salesold_ins.season_7),
+            str(salesold_ins.week_type_7),
+            str(salesold_ins.month_7),
+            str(salesold_ins.holiday_type_7),
     # 地域维度
         str(salesold_ins.city_id),
         )
