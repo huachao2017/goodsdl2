@@ -236,7 +236,7 @@ class SalesPredict:
         week_12 = [].extend(week_dates)
         for day, i in zip(week_days1, range(len(week_days1))):
             if day in sales_old_tmp_ins.date_nums.keys():
-                for create_date  in sales_old_tmp_ins.date_nums.keys:
+                for create_date in sales_old_tmp_ins.date_nums.keys():
                     j = datetime.datetime.strptime(create_date, "%Y-%m-%d").weekday()+1
                     if i == 0 and j-1 == i:
                         if create_date in week_2:
