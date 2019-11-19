@@ -33,7 +33,8 @@ class SalesPredict:
                     start_time = week_days2[0]
                     end_time = week_days1[-1]
                     sql1 = sql1.format(start_time, end_time, start_time, end_time)
-                    results = cursor_dmstore.fetchall(sql1)
+                    cursor_dmstore.execute(sql1)
+                    results = cursor_dmstore.fetchall()
                     salesold_inss = self.get_data_week(results, week_days1, week_days2)
 
         else:
@@ -42,7 +43,8 @@ class SalesPredict:
             start_time = week_days2[0]
             end_time = week_days1[-1]
             sql1 = sql1.format(start_time, end_time, start_time, end_time)
-            results = cursor_dmstore.fetchall(sql1)
+            cursor_dmstore.execute(sql1)
+            results = cursor_dmstore.fetchall()
             salesold_inss = self.get_data_week(results,week_days1,week_days2)
         return salesold_inss
 
