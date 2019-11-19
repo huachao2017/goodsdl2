@@ -625,7 +625,7 @@ if __name__=='__main__':
     sp_ins = SalesPredict()
     # dates = sp_ins.get_date(1)
     # print (dates)
-    salesold_inss = sp_ins.generate_data(all_data=False)
+    salesold_inss = sp_ins.generate_data(all_data=True)
     for salesold_ins in salesold_inss:
         # 103
         pristr = ("%s,%s,%s,%s,%s," \
