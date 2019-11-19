@@ -1,15 +1,15 @@
-import django
-import os
 import time
 import datetime
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
-from django.db import connections
+from goods.sellgoods.salesquantity.utils import mysql_util
+from set_config import config
+ai = config.ai
+erp = config.erp
+
 from goods.sellgoods.salesquantity.bean import goods_ai_weather,ai_sales_old,sales_old_tmp
 class SalesPredict:
     def generate_data(self,all_data=False):
-        cursor_dmstore = connections['dmstore'].cursor()
-        cursor_ai = connections['default'].cursor()
+        mysql_ins = mysql_util.MysqlUtil(erp)
+
         sql1 = "select T3.shop_id,T3.goods_id,T3.num,shop.owned_city,T3.create_date,goods.upc,goods.`name`,goods.price,goods.first_cate_id,goods.second_cate_id,goods.third_cate_id from ( " \
                "SELECT T2.shop_id,T2.goods_id,SUM(T2.number) as num,T2.create_date from " \
                "(select T1.shop_id,T1.goods_id,T1.number,DATE_FORMAT(T1.create_time,'%Y-%m-%d') as create_date from ( " \
@@ -33,8 +33,7 @@ class SalesPredict:
                     start_time = week_days2[0]
                     end_time = week_days1[-1]
                     sql1 = sql1.format(start_time, end_time, start_time, end_time)
-                    cursor_dmstore.execute(sql1)
-                    results = cursor_dmstore.fetchall()
+                    results = mysql_ins.selectAll(sql1)
                     salesold_inss = self.get_data_week(results, week_days1, week_days2)
 
         else:
@@ -43,13 +42,13 @@ class SalesPredict:
             start_time = week_days2[0]
             end_time = week_days1[-1]
             sql1 = sql1.format(start_time, end_time, start_time, end_time)
-            cursor_dmstore.execute(sql1)
-            results = cursor_dmstore.fetchall()
+            results = mysql_ins.selectAll(sql1)
             salesold_inss = self.get_data_week(results,week_days1,week_days2)
         return salesold_inss
 
     def get_weather(self,week_days1,results1,results2):
-        cursor_ai = connections['default'].cursor()
+        mysql_ins = mysql_util.MysqlUtil(ai)
+
         # if city is None or city == '':
         #     return None
         #
@@ -58,10 +57,7 @@ class SalesPredict:
         # city = str(city).strip("市")
         sql2 = "select * from goods_ai_weather where create_date >= '{0}' and create_date <= '{1}' order by create_date asc "
         sql2 = sql2.format(week_days1[0],week_days1[-1])
-        cursor_ai.execute(sql2)
-        results = cursor_ai.fetchall()
-
-
+        results = mysql_ins.selectAll(sql2)
         weather_week = {}
         for row in list(results):
             weather_ins = goods_ai_weather.GoodsAiWeather()
@@ -117,18 +113,16 @@ class SalesPredict:
         for row in list(results):
             self.weekdata_row_2_salesoldtmp(sales_old_tmp_dict,row)
 
-        cursor_ai = connections['default'].cursor()
+        mysql_ins = mysql_util.MysqlUtil(ai)
         sql3 = "select distinct(weather_type) from goods_ai_weather"
-        cursor_ai.execute(sql3)
-        results1 = cursor_ai.fetchall()
+        results1 = mysql_ins.selectAll(sql3)
 
         sql4 = "select distinct(winddirect) from goods_ai_weather"
-        cursor_ai.execute(sql4)
-        results2 = cursor_ai.fetchall()
+        results2 = mysql_ins.selectAll(sql4)
 
         sql5 = "select day,type from holiday"
-        cursor_ai.execute(sql5)
-        results3 = cursor_ai.fetchall()
+        results3 = mysql_ins.selectAll(sql5)
+
 
         for key in sales_old_tmp_dict:
             sales_old_ins = ai_sales_old.SalesOld()
