@@ -65,32 +65,33 @@ class SalesPredict:
             weather_ins.winddirect = row[6]
             weather_ins.windpower = row[7]
             weather_ins.city_id = row[8]
-            if weather_ins.weather_type is None or  weather_ins.weather_type == '':
+            if weather_ins.weather_type is None or  weather_ins.weather_type == '' or weather_ins.weather_type == 'NULL':
                 weather_ins.weather_type = 0
             else:
-                weather_ins.weather_type = list(results1).index( weather_ins.weather_type)
+                print (weather_ins.weather_type)
+                weather_ins.weather_type = list(results1).index(weather_ins.weather_type)
 
-            if weather_ins.temphigh is None or weather_ins.temphigh == '':
+            if weather_ins.temphigh is None or weather_ins.temphigh == '' or weather_ins.temphigh == 'NULL':
                 weather_ins.temphigh = 0
             else:
                 weather_ins.temphigh = str(weather_ins.temphigh).strip("℃")
 
-            if weather_ins.templow is None or weather_ins.templow == '':
+            if weather_ins.templow is None or weather_ins.templow == '' or weather_ins.templow == 'NULL' :
                 weather_ins.templow = 0
             else:
                 weather_ins.templow = str(weather_ins.templow).strip("℃")
 
-            if weather_ins.windspeed is None or weather_ins.windspeed == '':
+            if weather_ins.windspeed is None or weather_ins.windspeed == '' or weather_ins.windspeed == 'NULL':
                 weather_ins.windspeed = 0
             else:
                 weather_ins.windspeed = float(weather_ins.windspeed)
 
-            if weather_ins.winddirect is None or weather_ins.winddirect == '':
+            if weather_ins.winddirect is None or weather_ins.winddirect == '' or weather_ins.winddirect == 'NULL':
                 weather_ins.winddirect = 0
             else:
                 weather_ins.winddirect =list(results2).index(weather_ins.winddirect)
 
-            if weather_ins.windpower is None or weather_ins.windpower == '':
+            if weather_ins.windpower is None or weather_ins.windpower == '' or weather_ins.windpower=='NULL':
                 weather_ins.windpower = 0
             else:
                 weather_ins.windpower = str(weather_ins.windpower).strip("级")
