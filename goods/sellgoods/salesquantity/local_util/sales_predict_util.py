@@ -13,8 +13,8 @@ class SalesPredict:
         sql1 = "select T3.shop_id,T3.goods_id,T3.num,shop.owned_city,T3.create_date,goods.upc,goods.`name`,goods.price,goods.first_cate_id,goods.second_cate_id,goods.third_cate_id from ( " \
                "SELECT T2.shop_id,T2.goods_id,SUM(T2.number) as num,T2.create_date from " \
                "(select T1.shop_id,T1.goods_id,T1.number,DATE_FORMAT(T1.create_time,'%Y-%m-%d') as create_date from ( " \
-               "select shop_id,goods_id,create_time,number,price from payment_detail where create_time > '{0} 00:00:00' and create_time < '{1} 00:00:00' and payment_id in ( " \
-               "select distinct(payment.id) from payment where payment.type != 50  and create_time > '{2} 00:00:00' and create_time < '{3] 00:00:00' " \
+               "select shop_id,goods_id,create_time,number,price from payment_detail where create_time >= '{0} 00:00:00' and create_time < '{1} 00:00:00' and payment_id in ( " \
+               "select distinct(payment.id) from payment where payment.type != 50  and create_time >= '{2} 00:00:00' and create_time < '{3} 00:00:00' " \
                ") " \
                ") T1 " \
                ") T2 GROUP BY T2.shop_id,T2.goods_id,T2.create_date " \
