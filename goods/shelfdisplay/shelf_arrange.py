@@ -7,7 +7,7 @@ a，b，c如分值都大于5，则以最大的计算
 a，b，c如分值都小于5，则以最小的计算
 a，b，c如分值既有大于5又有小于5，则为N（未定义）
 """
-import itertools, copy, random
+import itertools, copy, random,math
 from functools import reduce
 from goods.shelfdisplay import single_algorithm
 
@@ -76,17 +76,21 @@ def calculate_outer_result(category_tree_list, category3_level_value, category3_
         for i in category_tree_list:
             print(i.category)
     max_lengh = reduce(lambda x, y: x * y, range(1, category_tree_list_len + 1))  # 阶乘
+    print('max_lengh',max_lengh)
     if max_lengh > threshold:  # 如果大于阈值，则根据步长设置进行下采样
-        step_size = max_lengh // threshold
+        step_size = math.ceil(max_lengh / threshold)
     else:
         step_size = 1
+    print('step_size',step_size)
 
-    for i in iter:
-        if random.random() > 1 // step_size:  # 进行下采样
-            # print('进行下采样')
-            continue
-        else:
-            all_arrange.append(i)
+    for i,v in enumerate(iter):
+        # if random.random() > 1 // step_size:  # 进行下采样
+        #     print('进行下采样',i)
+        #     continue
+        # else:
+        #     all_arrange.append(v)
+        if i % step_size == 0: # 进行下采样
+            all_arrange.append(v)
 
     print('所有排列数:', len(all_arrange))
     # print('所有排列:', all_arrange)
@@ -487,14 +491,17 @@ class CategoryTree:
             list_len = len(self.children)
             max_lengh = reduce(lambda x, y: x * y, range(1, list_len + 1))  # 阶乘
             if max_lengh > threshold:  # 如果大于阈值，则根据步长设置进行下采样
-                step_size = max_lengh // threshold
+                step_size = math.ceil(max_lengh / threshold)
+
             else:
                 step_size = 1
 
-            for one_result in iter:
-                if random.random() > 1 // step_size:  # 进行下采样
-                    continue
-                else:
+            for i,one_result in enumerate(iter):
+                # if random.random() > 1 // step_size:  # 进行下采样
+                #     continue
+                # else:
+
+                if i % step_size == 0:  # 进行下采样
 
                     last_category_tree = None
                     is_valid = True
@@ -583,7 +590,7 @@ if __name__ == '__main__':
     ]
     category3_level_value = [
         {'b': 8, 'c': 10, 'e': 0},
-        {'e': 0},
+        {},
         {'b': 8, 'c': 10, 'e': 0},
         {'b': 8, 'c': 10, 'e': 0},
         {'b': 10, 'c': 0, 'e': 0, 'a': 0},
@@ -602,7 +609,7 @@ if __name__ == '__main__':
         {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'},
     ]
 
-    n = 4
+    n = 1
     a = main_calculate(category3_intimate_weight[n], category3_level_value[n], category3_list[n])
     print('--------------候选列表---------------')
     print('候选列表总数：', len(a))
