@@ -163,6 +163,7 @@ def _try_display_shelf(candidate_shelf):
             # 创建层
             level = _level_add_goods(candidate_shelf, level, goods, last_goods)
             last_goods = goods
+            print('goods:{},{}'.format(goods.width, goods.face_num))
             print(level)
             input("按任意键继续：")
 
@@ -225,8 +226,8 @@ def _solve_goods_face(shelf_depth, goods_data_list):
         total_width += goods.width * goods.face_num
         total_face_num += goods.face_num
 
-    print("total_num,totol_width,total_face_num:{},{},{}".format(len(goods_data_list),total_width,total_face_num))
-    input("按任意键继续：")
+    # print("total_num,totol_width,total_face_num:{},{},{}".format(len(goods_data_list),total_width,total_face_num))
+    # input("按任意键继续：")
 
 
 
