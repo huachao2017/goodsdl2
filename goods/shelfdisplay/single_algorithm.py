@@ -50,8 +50,8 @@ def goods_badcase_score(candidate_shelf_list):
     i = 0
     for candidate_shelf in candidate_shelf_list:
         i += 1
-        if i % 10 == 0:
-            print('计算第{}个候选解,共{}层：'.format(i,len(candidate_shelf.levels)))
+        # if i % 10 == 0:
+        print('计算第{}个候选解,共{}层：'.format(i,len(candidate_shelf.levels)))
         # 空缺层板宽度
         # 各层板的高度差
         last_level = None
