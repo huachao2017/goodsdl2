@@ -167,3 +167,5 @@ class SalesOld:
     holiday_type_7 = 0
     # 地域维度
     city_id = 0
+
+    y_labels = []

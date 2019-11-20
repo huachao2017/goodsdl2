@@ -1,6 +1,215 @@
 from goods.sellgoods.salesquantity.utils import mysql_util
 from set_config import config
 ai = config.ai
+
+
+def data_check(salesold_ins):
+    try :
+        float(salesold_ins.shop_id),
+    except:
+        salesold_ins.shop_id = 0.0
+    try:
+        float(salesold_ins.upc),
+    except:
+        salesold_ins.upc = 0.0
+    try:
+        float(salesold_ins.goods_id),
+    except:
+        salesold_ins.goods_id = 0.0
+    try:
+        float(salesold_ins.first_cate_id),
+    except:
+        salesold_ins.first_cate_id = 0.0
+    try:
+        float(salesold_ins.second_cate_id),
+    except:
+        salesold_ins.second_cate_id = 0.0
+    try:
+        float(salesold_ins.third_cate_id),
+    except:
+        salesold_ins.third_cate_id = 0.0
+
+    try:
+        float(salesold_ins.price),
+    except:
+        salesold_ins.price = 0.0
+
+    # 销量数据维度 不做数据校验
+
+
+    # 天气维度
+    try:
+        float(salesold_ins.templow_1),
+    except:
+        salesold_ins.templow_1 = 0.0
+    try:
+        float(salesold_ins.temphigh_1),
+    except:
+        salesold_ins.temphigh_1 = 0.0
+    try:
+        float(salesold_ins.weather_type_1),
+    except:
+        salesold_ins.weather_type_1 = 0.0
+    try:
+        float(salesold_ins.windpower_1),
+    except:
+        salesold_ins.windpower_1 = 0.0
+    try:
+        float(salesold_ins.winddirect_1),
+    except:
+        salesold_ins.winddirect_1 = 0.0
+    try:
+        float(salesold_ins.windspeed_1),
+    except:
+        salesold_ins.windspeed_1 = 0.0
+
+    try:
+        float(salesold_ins.templow_2),
+    except:
+        salesold_ins.templow_2 = 0.0
+    try:
+        float(salesold_ins.temphigh_2),
+    except:
+        salesold_ins.temphigh_2 = 0.0
+    try:
+        float(salesold_ins.weather_type_2),
+    except:
+        salesold_ins.weather_type_2 = 0.0
+    try:
+        float(salesold_ins.windpower_2),
+    except:
+        salesold_ins.windpower_2 = 0.0
+    try:
+        float(salesold_ins.winddirect_2),
+    except:
+        salesold_ins.winddirect_2 = 0.0
+    try:
+        float(salesold_ins.windspeed_2),
+    except:
+        salesold_ins.windspeed_2 = 0.0
+
+
+    try:
+        float(salesold_ins.templow_3),
+    except:
+        salesold_ins.templow_3 = 0.0
+    try:
+        float(salesold_ins.temphigh_3),
+    except:
+        salesold_ins.temphigh_3 = 0.0
+    try:
+        float(salesold_ins.weather_type_3),
+    except:
+        salesold_ins.weather_type_3 = 0.0
+    try:
+        float(salesold_ins.windpower_3),
+    except:
+        salesold_ins.windpower_3 = 0.0
+    try:
+        float(salesold_ins.winddirect_3),
+    except:
+        salesold_ins.winddirect_3 = 0.0
+    try:
+        float(salesold_ins.windspeed_3),
+    except:
+        salesold_ins.windspeed_3 = 0.0
+
+    try:
+        float(salesold_ins.templow_4),
+    except:
+        salesold_ins.templow_4 = 0.0
+    try:
+        float(salesold_ins.temphigh_4),
+    except:
+        salesold_ins.temphigh_4 = 0.0
+    try:
+        float(salesold_ins.weather_type_4),
+    except:
+        salesold_ins.weather_type_4 = 0.0
+    try:
+        float(salesold_ins.windpower_4),
+    except:
+        salesold_ins.windpower_4 = 0.0
+    try:
+        float(salesold_ins.winddirect_4),
+    except:
+        salesold_ins.winddirect_4 = 0.0
+    try:
+        float(salesold_ins.windspeed_4),
+    except:
+        salesold_ins.windspeed_4 = 0.0
+
+
+    float(salesold_ins.templow_5),
+    float(salesold_ins.temphigh_5),
+    float(salesold_ins.weather_type_5),
+    float(salesold_ins.windpower_5),
+    float(salesold_ins.winddirect_5),
+    float(salesold_ins.windspeed_5),
+
+    float(salesold_ins.templow_6),
+    float(salesold_ins.temphigh_6),
+    float(salesold_ins.weather_type_6),
+    float(salesold_ins.windpower_6),
+    float(salesold_ins.winddirect_6),
+    float(salesold_ins.windspeed_6),
+
+    float(salesold_ins.templow_7),
+    float(salesold_ins.temphigh_7),
+    float(salesold_ins.weather_type_7),
+    float(salesold_ins.windpower_7),
+    float(salesold_ins.winddirect_7),
+    float(salesold_ins.windspeed_7),
+
+    # 时间维度
+    float(salesold_ins.week_i_1),
+    float(salesold_ins.season_1),
+    float(salesold_ins.week_type_1),
+    float(salesold_ins.month_1),
+    float(salesold_ins.holiday_type_1),
+
+    float(salesold_ins.week_i_2),
+    float(salesold_ins.season_2),
+    float(salesold_ins.week_type_2),
+    float(salesold_ins.month_2),
+    float(salesold_ins.holiday_type_2),
+
+    float(salesold_ins.week_i_3),
+    float(salesold_ins.season_3),
+    float(salesold_ins.week_type_3),
+    float(salesold_ins.month_3),
+    float(salesold_ins.holiday_type_3),
+
+    float(salesold_ins.week_i_4),
+    float(salesold_ins.season_4),
+    float(salesold_ins.week_type_4),
+    float(salesold_ins.month_4),
+    float(salesold_ins.holiday_type_4),
+
+    float(salesold_ins.week_i_5),
+    float(salesold_ins.season_5),
+    float(salesold_ins.week_type_5),
+    float(salesold_ins.month_5),
+    float(salesold_ins.holiday_type_5),
+
+    float(salesold_ins.week_i_6),
+    float(salesold_ins.season_6),
+    float(salesold_ins.week_type_6),
+    float(salesold_ins.month_6),
+    float(salesold_ins.holiday_type_6),
+
+    float(salesold_ins.week_i_7),
+    float(salesold_ins.season_7),
+    float(salesold_ins.week_type_7),
+    float(salesold_ins.month_7),
+    float(salesold_ins.holiday_type_7),
+    # 地域维度
+    float(salesold_ins.city_id),
+    str(salesold_ins.week_i_1_date)
+
+
+
+
 def write_file(salesold_inss,n):
     with open("tmp_sales_week.txt_"+str(n), 'a') as f:
         for salesold_ins in salesold_inss:
@@ -364,7 +573,7 @@ def save_db(salesold_inss):
                 float(salesold_ins.first_cate_id),
                 float(salesold_ins.second_cate_id),
                 float(salesold_ins.third_cate_id),
-                float(salesold_ins.goods_name),
+                str(salesold_ins.goods_name),
                 float(salesold_ins.price),
                 str(salesold_ins.city),
 
