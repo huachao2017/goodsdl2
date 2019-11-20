@@ -217,12 +217,14 @@ def _solve_goods_face(shelf_depth, goods_data_list):
     # FIXME 这个计算需要放到摆放时现算
 
     total_width = 0
+    total_face_num = 0
     for goods in goods_data_list:
         max_one_face = int(shelf_depth / goods.depth)
         goods.face_num = int(3 * goods.psd / max_one_face)
         total_width += goods.width * goods.face_num
+        total_face_num += goods.face_num
 
-    print("totol_width:{}".format(total_width))
+    print("total_num,totol_width,total_face_num:{},{},{}".format(len(goods_data_list),total_width,total_face_num))
     input("按任意键继续：")
 
 
