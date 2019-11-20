@@ -167,7 +167,8 @@ class GoodsTree:
                 i += 1
                 if i == 0:
                     continue
-                if abs(self.children[i-1].height-child.height) < 10 and abs(self.children[i-1].width - child.width) > 10:
+                if abs(self.children[i-1].height-child.height) < 5 and abs(self.children[i-1].width - child.width) > 20:
+                    # FIXME 宽高加大
                     # FIXME 仅做近邻交换的解
                     another_result = self.children.copy()
                     another_result[i-1], another_result[i] = another_result[i] , another_result[i-1]
