@@ -141,5 +141,43 @@ class GoodsData:
             return self.height - another_goods.height
         return 0
 
+    def __str__(self):
+        ret = '('
+        ret += str(self.mch_code)
+        ret += ','
+        ret += str(self.goods_name)
+        ret += ','
+        ret += str(self.upc)
+        ret += ','
+        ret += str(self.tz_display_img)
+        ret += ','
+        ret += str(self.category1)
+        ret += ','
+        ret += str(self.category2)
+        ret += ','
+        ret += str(self.category3)
+        ret += ','
+        ret += str(self.category4)
+        ret += ','
+        ret += str(self.package_type)
+        ret += ','
+        ret += str(self.brand)
+        ret += ','
+        ret += str(self.name)
+        ret += ','
+        ret += str(self.height)
+        ret += ','
+        ret += str(self.width)
+        ret += ')'
+        return ret
 
 
+if __name__ == "__main__":
+    # category_area_ratio: 分类陈列面积比例表
+    # category3_intimate_weight: 三级分类亲密度
+    # category3_level_value: 三级分类层数分值
+    # goods_data_list: GoodsData列表
+    base_data = init_data(806)
+    print(base_data.category_area_ratio)
+    print(base_data.category3_intimate_weight)
+    print(base_data.category3_level_value)
