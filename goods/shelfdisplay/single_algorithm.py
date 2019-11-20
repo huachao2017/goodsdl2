@@ -54,7 +54,7 @@ def goods_badcase_score(candidate_shelf_list):
         for level in candidate_shelf.levels:
             candidate_shelf.badcase_value += level.get_nono_goods_width() * 0.02
             if last_level is not None:
-                candidate_shelf.badcase_value += abs(level.height - last_level.height) * 0.02
+                candidate_shelf.badcase_value += abs(level.goods_height - last_level.goods_height) * 0.02
             last_level = level
         if min_badcase_value > candidate_shelf.badcase_value:
             min_badcase_value = candidate_shelf.badcase_value
