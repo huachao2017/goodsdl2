@@ -124,6 +124,7 @@ class SalesOld:
     holiday_type = []
 
     week_i_1 = 0
+    week_i_1_date=''
     season_1 = 0
     week_type_1 = 0
     month_1 = 0
