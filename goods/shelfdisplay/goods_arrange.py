@@ -154,16 +154,15 @@ def _display_shelf(candidate_shelf):
 
 
 def _try_display_shelf(candidate_shelf):
+    level = None
+    last_goods = None
     for categoryid in candidate_shelf.categoryid_list:
-
         arrange_goods_list = candidate_shelf.get_real_arrange_goods_list(categoryid)
-        level = None
-        last_goods = None
         for goods in arrange_goods_list:
             # 创建层
             level = _level_add_goods(candidate_shelf, level, goods, last_goods)
             last_goods = goods
-        input("按任意键继续：")
+            input("按任意键继续：")
 
 
 def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
