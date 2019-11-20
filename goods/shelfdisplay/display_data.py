@@ -86,10 +86,11 @@ def init_data(uc_shopid, tz_id, base_data):
 
 class Taizhang:
     tz_id = None
-    shelfs = []
+    # shelfs = []
 
     def __init__(self, tz_id):
         self.tz_id = tz_id
+        self.shelfs = []
 
     def to_json(self):
         """
@@ -189,7 +190,7 @@ class Shelf:
     shelf_category3_intimate_weight = None  # 货架分类涉及的亲密度分值
     shelf_category3_level_value = None  # 货架分类涉及的层数分值
     shelf_category3_area_ratio = None  # 货架内分类面积比例
-    shelf_goods_data_list = []  # 货架候选商品列表
+    shelf_goods_data_list = None  # 货架候选商品列表
 
     # 以上都是初始化后就会有的数据
 
@@ -220,20 +221,25 @@ class Shelf:
 
 
 class CandidateShelf:
-    shelf = None
-    categoryid_list = None
-    categoryid_to_used_sorted_goods_list = {}
-    categoryid_to_candidate_sorted_goods_list = {}
-
-    categoryid_to_arrange_goods_list = None
-    levels = []
-    badcase_value = 0.0
-    goods_mean_width = 0
+    # shelf = None
+    # categoryid_list = None
+    # categoryid_to_used_sorted_goods_list = None
+    # categoryid_to_candidate_sorted_goods_list = None
+    #
+    # categoryid_to_arrange_goods_list = None
+    # levels = None
+    # badcase_value = 0.0
+    # goods_mean_width = 0
 
     def __init__(self, shelf, categoryid_list, categoryid_to_arrange_goods_list):
         self.shelf = shelf
         self.categoryid_list = categoryid_list
         self.categoryid_to_arrange_goods_list = categoryid_to_arrange_goods_list
+        self.levels = []
+        self.categoryid_to_used_sorted_goods_list = {}
+        self.categoryid_to_candidate_sorted_goods_list = {}
+        self.badcase_value = 0.0
+        self.goods_mean_width = 0
 
         goods_total_width = 0
         goods_num = 0
