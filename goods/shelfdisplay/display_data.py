@@ -134,31 +134,30 @@ class Taizhang:
             json_ret["shelfs"].append(json_shelf)
             if shelf.best_candidate_shelf is not None:
                 for level in shelf.best_candidate_shelf.levels:
-                    if level.isTrue:
-                        json_level = {
-                            "level_id": level.level_id,
-                            "height": level.level_height,
-                            "goods": []
+                    json_level = {
+                        "level_id": level.level_id,
+                        "height": level.level_height,
+                        "goods": []
+                    }
+                    json_shelf["levels"].append(json_level)
+                    for display_goods in level.get_left_right_display_goods_list():
+                        json_goods = {
+                            "mch_good_code": display_goods.goods_data.mch_code,
+                            "upc": display_goods.goods_data.upc,
+                            "width": display_goods.goods_data.width,
+                            "height": display_goods.goods_data.height,
+                            "depth": display_goods.goods_data.depth,
+                            "displays": []
                         }
-                        json_shelf["levels"].append(json_level)
-                        for display_goods in level.get_left_right_display_goods_list():
-                            json_goods = {
-                                "mch_good_code": display_goods.goods_data.mch_code,
-                                "upc": display_goods.goods_data.upc,
-                                "width": display_goods.goods_data.width,
-                                "height": display_goods.goods_data.height,
-                                "depth": display_goods.goods_data.depth,
-                                "displays": []
+                        json_level["goods"].append(json_goods)
+                        for goods_display_info in display_goods.get_display_info(level):
+                            json_display = {
+                                "top": goods_display_info.top,
+                                "left": goods_display_info.left,
+                                "row": goods_display_info.row,
+                                "col": goods_display_info.col,
                             }
-                            json_level["goods"].append(json_goods)
-                            for goods_display_info in display_goods.get_display_info(level):
-                                json_display = {
-                                    "top": goods_display_info.top,
-                                    "left": goods_display_info.left,
-                                    "row": goods_display_info.row,
-                                    "col": goods_display_info.col,
-                                }
-                                json_goods["displays"].append(json_display)
+                            json_goods["displays"].append(json_display)
 
         return json_ret
 
@@ -175,6 +174,7 @@ class Shelf:
     level_board_height = 20  # 层板高度 # TODO 需考虑初始化
     level_buff_height = 30  # 层冗余高度 # TODO 需考虑初始化
     last_level_min_remain_height = 150  # 最后一层最小剩余高度
+    average_level_height = 300 # 平均高度，用于计算剩余货架宽度
 
     shelf_category3_list = None  # 货架指定分类列表
     shelf_category3_intimate_weight = None  # 货架分类涉及的亲密度分值
@@ -276,8 +276,11 @@ class CandidateShelf:
             # 超出层
             ret += last_level.goods_width
         else:
-            # 空缺宽度
             ret -= self.shelf.width - last_level.goods_width
+            # 货架高度剩余很多就加一个货架宽度
+            if (self.shelf.height - last_level.start_height) > 2*self.shelf.average_level_height:
+                ret -= self.shelf.width
+            # 空缺宽度
 
         return ret
 
