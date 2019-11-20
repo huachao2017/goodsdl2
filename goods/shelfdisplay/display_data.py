@@ -6,6 +6,10 @@ def init_data(uc_shopid, tz_id, displayid, base_data):
     taizhang = Taizhang(tz_id)
     cursor = connections['ucenter'].cursor()
 
+    # 获取fx系统的shopid,台账系统的商家mch_id
+    cursor.execute("select mch_shop_code,mch_id from uc_shop where id = {}".format(uc_shopid))
+    (shopid, mch_id) = cursor.fetchone()
+
     # 获取台账
     try:
         cursor.execute(
@@ -39,7 +43,22 @@ def init_data(uc_shopid, tz_id, displayid, base_data):
     (shelf_no, length, height, depth, hole_height, hole_distance) = cursor.fetchone()
 
     # 计算五个值
-    shelf_category3_list = associated_catids.split(',')
+    display_category3_list = associated_catids.split(',')
+    shelf_category3_list = []
+    # 检查所有三级分类
+    for category3 in display_category3_list:
+        try:
+            cursor.execute(
+                "select id from uc_category where mch_id={} and cat_id='{}' and level=3".format(
+                    mch_id, category3))
+            (id,) = cursor.fetchone()
+            shelf_category3_list.append(category3)
+        except:
+            print('台账陈列类别无法找到：{}！'.format(category3))
+
+    if len(shelf_category3_list) == 0:
+        raise ValueError('no display category:{},{},{}'.format(uc_shopid, taizhang_id, displayid))
+
     shelf_category3_intimate_weight = {}
     shelf_category3_level_value = {}
     for shelf_category in shelf_category3_list:
