@@ -29,7 +29,9 @@ def goods_arrange(goods_list):
     print(root_goods_tree)
 
     # 3，生成解列表
-    return root_goods_tree.get_all_simple_result()
+    ret = root_goods_tree.get_all_simple_result()
+    # TODO 需要生成所有从高到低的解
+    return ret
 
 
 def init_goods_tree(goods_list):

@@ -45,16 +45,19 @@ def goods_arrange(shelf):
             shelf.categoryid_to_sorted_goods_list[categoryid])
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
 
-    print("打印生成的解的集合：")
-    print(shelf.shelf_category3_list)
-    print(shelf.candidate_category_list)
-    print(categoryid_to_arrange_goods_list_list)
+    i = 0
     for categoryid_list in shelf.candidate_category_list:
+        i += 1
+        print("开始第{}个分类解：".format(i))
         candidate_shelf_list = create_candidate_shelf_list(
             shelf,
             categoryid_list,
             categoryid_to_arrange_goods_list_list)
+        print("开始第{}个分类解（共{}个商品解）：".format(i,len(candidate_shelf_list)))
+        j = 0
         for candidate_shelf in candidate_shelf_list:
+            j += 1
+            print("开始第{}个商品组合解：".format(j))
             if _display_shelf(candidate_shelf):
                 candidate_result_shelf_list.append(candidate_shelf)
 
