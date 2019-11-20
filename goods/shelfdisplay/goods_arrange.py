@@ -13,6 +13,7 @@ spu：四级分类、品牌、规格（包装）、尺寸（只选宽和高）�
 import goods.shelfdisplay.goods_arrange_category3
 from goods.shelfdisplay import display_data
 from goods.shelfdisplay import single_algorithm
+import math
 
 def goods_arrange(shelf):
     """
@@ -220,7 +221,7 @@ def _solve_goods_face(shelf_depth, goods_data_list):
     total_face_num = 0
     for goods in goods_data_list:
         max_one_face = int(shelf_depth / goods.depth)
-        goods.face_num = int(3 * goods.psd / max_one_face)
+        goods.face_num = math.ceil(3 * goods.psd / max_one_face)
         total_width += goods.width * goods.face_num
         total_face_num += goods.face_num
 
