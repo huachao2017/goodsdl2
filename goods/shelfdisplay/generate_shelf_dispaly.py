@@ -13,7 +13,7 @@ from goods.shelfdisplay import goods_arrange
 from goods.shelfdisplay import shelf_arrange
 
 
-def generate_displays(uc_shopid, tz_id, displayid=0):
+def generate_displays(uc_shopid, tz_id):
     """
     :param uc_shopid:
     :param tz_id:
@@ -24,7 +24,7 @@ def generate_displays(uc_shopid, tz_id, displayid=0):
     base_data = db_data.init_data(uc_shopid)
 
     # 初始化台账数据
-    taizhang = display_data.init_data(uc_shopid, tz_id, displayid, base_data)
+    taizhang = display_data.init_data(uc_shopid, tz_id, base_data)
 
     # 第三步
     # FIXME 这版仅支持一个货架的台账
@@ -92,5 +92,5 @@ def print_taizhang(taizhang, image_dir):
 
 
 if __name__ == "__main__":
-    taizhang = generate_displays(806, 1173, 1041)
+    taizhang = generate_displays(806, 1187)
     print(taizhang.to_json())

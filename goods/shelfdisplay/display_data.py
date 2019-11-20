@@ -2,7 +2,7 @@ from django.db import connections
 from goods.shelfdisplay.single_algorithm import calculate_shelf_category3_area_ratio
 
 
-def init_data(uc_shopid, tz_id, displayid, base_data):
+def init_data(uc_shopid, tz_id, base_data):
     taizhang = Taizhang(tz_id)
     cursor = connections['ucenter'].cursor()
 
@@ -13,29 +13,12 @@ def init_data(uc_shopid, tz_id, displayid, base_data):
     # 获取台账
     try:
         cursor.execute(
-            "select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
+            "select t.id, t.shelf_id, t.shelf_count, st.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
                 uc_shopid, tz_id))
-        (taizhang_id, shelf_id, count) = cursor.fetchone()
+        (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
     except:
         print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
         raise ValueError('taizhang error:{},{}'.format(uc_shopid, tz_id))
-
-    # 获取商店台账可放的品类
-    try:
-        if displayid is None or displayid == 0:
-            cursor.execute(
-                "select associated_catids from sf_taizhang_display where taizhang_id = {} and status in (0,1) and approval_status = 0".format(
-                    taizhang_id))
-        else:
-            cursor.execute(
-                "select associated_catids from sf_taizhang_display where taizhang_id = {} and id = {}".format(
-                    taizhang_id, displayid))
-        (associated_catids,) = cursor.fetchone()
-    except:
-        print('获取台账陈列失败：{},{}！'.format(taizhang_id, displayid))
-        raise ValueError('taizhang display error:{},{},{}'.format(uc_shopid, taizhang_id, displayid))
-    if associated_catids is None or associated_catids == '':
-        raise ValueError('taizhang display associated_catids is none:{},{},{}'.format(uc_shopid, taizhang_id, displayid))
 
     cursor.execute(
         "select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(
@@ -43,7 +26,7 @@ def init_data(uc_shopid, tz_id, displayid, base_data):
     (shelf_no, length, height, depth, hole_height, hole_distance) = cursor.fetchone()
 
     # 计算五个值
-    display_category3_list = associated_catids.split(',')
+    display_category3_list = third_cate_ids.split(',')
     shelf_category3_list = []
     # 检查所有三级分类
     for category3 in display_category3_list:
@@ -398,5 +381,5 @@ if __name__ == "__main__":
 
     base_data = db_data.init_data(806)
 
-    taizhang = init_data(806, 1173, 1041, base_data)
+    taizhang = init_data(806, 1187, base_data)
     print(taizhang.to_json())
