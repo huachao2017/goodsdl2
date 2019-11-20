@@ -7,7 +7,7 @@
 {
 taizhang_id:xx
 shelfs:[{
-    shelf:xx
+    shelf_id:xx
     levels:[{
         level_id:xx   #0是底层,1,2,3,4...
         height:xx

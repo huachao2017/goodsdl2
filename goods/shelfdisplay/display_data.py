@@ -128,7 +128,7 @@ class Taizhang:
         }
         for shelf in self.shelfs:
             json_shelf = {
-                "shelf": shelf.shelf_id,
+                "shelf_id": shelf.shelf_id,
                 "levels": []
             }
             json_ret["shelfs"].append(json_shelf)
