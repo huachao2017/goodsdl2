@@ -64,7 +64,7 @@ def print_taizhang(taizhang, image_dir):
         for level in shelf.best_candidate_shelf.levels:
             level_start_height = level.start_height
             for display_goods in level.display_goods_list:
-                picurl = '{}{}'.format(settings.UC_PIC_HOST, display_goods.goods_data.icon)
+                picurl = '{}{}'.format(settings.UC_PIC_HOST, display_goods.goods_data.tz_display_img)
                 if picurl in picurl_to_goods_image:
                     goods_image = picurl_to_goods_image[picurl]
                 else:
