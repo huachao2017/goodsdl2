@@ -285,7 +285,7 @@ class Level:
     candidate_shelf = None  # 候选货架
     level_id = None  # 层id
     is_left_right_direction = True  # True从左向右，False从右向左
-    goods_width = None  # 层宽度
+    goods_width = 0  # 层宽度
     start_height = None  # 层板相对货架的起始高度
     goods_height = 0  # 商品最高高度
     # level_depth = None  # 层深度

@@ -101,7 +101,6 @@ def dict_arrange(key_to_candidate_list):
     :return: list_key_to_candidate
     """
 
-    print(key_to_candidate_list)
     ret = []
     data_len = []
     index1 = []
