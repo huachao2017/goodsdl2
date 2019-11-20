@@ -69,7 +69,7 @@ def print_taizhang(taizhang, image_dir):
                     goods_image = picurl_to_goods_image[picurl]
                 else:
                     try:
-                        goods_image_name = '{}.jpg'.format(display_goods.goods_data.mch_good_code)
+                        goods_image_name = '{}.jpg'.format(display_goods.goods_data.mch_code)
                         goods_image_path = os.path.join(image_dir, goods_image_name)
                         urllib.request.urlretrieve(picurl, goods_image_path)
                         goods_image = cv2.imread(goods_image_path)
