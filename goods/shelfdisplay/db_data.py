@@ -181,3 +181,5 @@ if __name__ == "__main__":
     print(base_data.category_area_ratio)
     print(base_data.category3_intimate_weight)
     print(base_data.category3_level_value)
+    for goods in base_data.goods_data_list:
+        print(goods)
