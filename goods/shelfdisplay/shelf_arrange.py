@@ -180,7 +180,7 @@ def combine_all_result(candidate_category_tree_order, category3_level_value):
     :param candidate_category_tree_order:
     :return:
     """
-    print('candidate_category_tree_order', candidate_category_tree_order)
+    # print('candidate_category_tree_order', candidate_category_tree_order)
     ret = []
     temp_candidate = []
     for obj_arrange in candidate_category_tree_order:
