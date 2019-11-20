@@ -490,6 +490,12 @@ class CategoryTree:
                     is_valid = True
                     for category_tree in one_result:
                         if last_category_tree is not None:
+                            if last_category_tree.level_value is None and category_tree.level_value == 0:
+                                is_valid = False
+                                break
+                            if category_tree.level_value is None and last_category_tree.level_value == 10:
+                                is_valid = False
+                                break
                             if last_category_tree.level_value is not None and category_tree.level_value is not None and last_category_tree.level_value > category_tree.level_value:
                                 is_valid = False
                                 break
