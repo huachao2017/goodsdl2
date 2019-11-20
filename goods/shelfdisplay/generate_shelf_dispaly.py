@@ -62,41 +62,40 @@ def print_taizhang(taizhang, image_dir):
         image = image * 255
 
         for level in shelf.best_candidate_shelf.levels:
-            if level.isTrue:
-                level_start_height = level.start_height
-                for display_goods in level.display_goods_list:
-                    picurl = '{}{}'.format(settings.UC_PIC_HOST, display_goods.goods_data.icon)
-                    if picurl in picurl_to_goods_image:
-                        goods_image = picurl_to_goods_image[picurl]
-                    else:
-                        try:
-                            goods_image_name = '{}.jpg'.format(display_goods.goods_data.mch_good_code)
-                            goods_image_path = os.path.join(image_dir, goods_image_name)
-                            urllib.request.urlretrieve(picurl, goods_image_path)
-                            goods_image = cv2.imread(goods_image_path)
-                            goods_image = cv2.resize(goods_image,
-                                                     (display_goods.goods_data.width, display_goods.goods_data.height))
-                        except Exception as e:
-                            print('get goods pic error:{}'.format(e))
-                            goods_image = None
-                        picurl_to_goods_image[picurl] = goods_image
+            level_start_height = level.start_height
+            for display_goods in level.display_goods_list:
+                picurl = '{}{}'.format(settings.UC_PIC_HOST, display_goods.goods_data.icon)
+                if picurl in picurl_to_goods_image:
+                    goods_image = picurl_to_goods_image[picurl]
+                else:
+                    try:
+                        goods_image_name = '{}.jpg'.format(display_goods.goods_data.mch_good_code)
+                        goods_image_path = os.path.join(image_dir, goods_image_name)
+                        urllib.request.urlretrieve(picurl, goods_image_path)
+                        goods_image = cv2.imread(goods_image_path)
+                        goods_image = cv2.resize(goods_image,
+                                                 (display_goods.goods_data.width, display_goods.goods_data.height))
+                    except Exception as e:
+                        print('get goods pic error:{}'.format(e))
+                        goods_image = None
+                    picurl_to_goods_image[picurl] = goods_image
 
-                    for goods_display_info in display_goods.get_display_info(level):
-                        point1 = (goods_display_info.left, shelf.height - (
-                        goods_display_info.top + level_start_height + display_goods.goods_data.height))
-                        point2 = (goods_display_info.left + display_goods.goods_data.width,
-                                  shelf.height - (goods_display_info.top + level_start_height))
-                        cv2.rectangle(image, point1, point2, (0, 0, 255), 2)
-                        # if goods_image is None:
-                        #     cv2.rectangle(image,point1,point2,(0,0,255),2)
-                        # else:
-                        #     h = goods_image.shape[0]
-                        #     w = goods_image.shape[1]
-                        #     image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image
-                        txt_point = (goods_display_info.left, shelf.height - (
-                        goods_display_info.top + level_start_height + int(display_goods.goods_data.height / 2)))
-                        cv2.putText(image, '{}'.format(display_goods.goods_data.mch_good_code), txt_point,
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
+                for goods_display_info in display_goods.get_display_info(level):
+                    point1 = (goods_display_info.left, shelf.height - (
+                    goods_display_info.top + level_start_height + display_goods.goods_data.height))
+                    point2 = (goods_display_info.left + display_goods.goods_data.width,
+                              shelf.height - (goods_display_info.top + level_start_height))
+                    cv2.rectangle(image, point1, point2, (0, 0, 255), 2)
+                    # if goods_image is None:
+                    #     cv2.rectangle(image,point1,point2,(0,0,255),2)
+                    # else:
+                    #     h = goods_image.shape[0]
+                    #     w = goods_image.shape[1]
+                    #     image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image
+                    txt_point = (goods_display_info.left, shelf.height - (
+                    goods_display_info.top + level_start_height + int(display_goods.goods_data.height / 2)))
+                    cv2.putText(image, '{}'.format(display_goods.goods_data.mch_good_code), txt_point,
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
         cv2.imwrite(image_path, image)
 
 
