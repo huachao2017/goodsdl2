@@ -11,7 +11,7 @@ def choose_goods_for_category3(shelf, categoryid, extra_add=0):
     :param extra_add: 返回商品数=最佳比例+extra_add，
     :return:商品列表GoodsData
     """
-    shelf_area = shelf.width * shelf.heigth
+    shelf_area = shelf.width * shelf.height
     ratio = shelf.shelf_category3_area_ratio[categoryid]
     category3_area = shelf_area * ratio
     category3_list = []
