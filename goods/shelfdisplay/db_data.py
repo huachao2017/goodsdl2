@@ -46,6 +46,7 @@ def init_data(uc_shopid):
     all_selection_goods = FirstGoodsSelection.objects.filter(shopid=shopid)
 
     # 获取选品详细信息
+    not_found_goods = 0
     for selection_goods in all_selection_goods:
         # 获取商品属性
         mch_goods_code = selection_goods.mch_goods_code
@@ -54,7 +55,7 @@ def init_data(uc_shopid):
             (goods_id, goods_name, upc, tz_display_img, category1_id, category2_id, category3_id, package_type, brand, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
             # TODO 需要获取四级分类的数据
         except:
-            print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_goods_code))
+            not_found_goods += 1
             continue
 
         base_data.goods_data_list.append(GoodsData(mch_goods_code,
@@ -74,6 +75,7 @@ def init_data(uc_shopid):
                              is_suspension,
                              selection_goods.predict_sales_num))
 
+    print('台账找不到选品表的商品共有:{}个！'.format(not_found_goods))
     cursor.close()
 
     return base_data
