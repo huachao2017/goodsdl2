@@ -85,9 +85,9 @@ def print_taizhang(taizhang, image_dir):
 
                 for goods_display_info in display_goods.get_display_info(level):
                     point1 = (goods_display_info.left, shelf.height - (
-                    goods_display_info.top + level_start_height + display_goods.goods_data.height))
+                    goods_display_info.top + level_start_height))
                     point2 = (goods_display_info.left + display_goods.goods_data.width,
-                              shelf.height - (goods_display_info.top + level_start_height))
+                              shelf.height - (goods_display_info.top + level_start_height) + display_goods.goods_data.height)
                     cv2.rectangle(image, point1, point2, (0, 0, 255), 2)
                     # if goods_image is None:
                     #     cv2.rectangle(image,point1,point2,(0,0,255),2)
