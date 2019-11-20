@@ -60,7 +60,7 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
     return ret
 
 
-def calculate_outer_result(category_tree_list, category3_level_value, category3_list, threshold=100):
+def calculate_outer_result(category_tree_list, category3_level_value, category3_list, threshold=2):
     """
     计算外层解
     :param category_tree_list:
@@ -472,7 +472,7 @@ class CategoryTree:
                 if max_level_value < 5:
                     self.level_value = min_level_value
 
-    def calculate_result(self, threshold=100):
+    def calculate_result(self, threshold=2):
         """
 
         :param threshold: 最大排列数的阈值
