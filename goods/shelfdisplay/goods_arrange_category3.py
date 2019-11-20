@@ -83,7 +83,7 @@ class GoodsTree:
             self.children = []
         else:
             self.goods = goods
-            self.name = goods.name
+            self.name = goods.goods_name
             self.height = goods.height
             self.width = goods.width
 
