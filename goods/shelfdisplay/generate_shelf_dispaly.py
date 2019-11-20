@@ -93,3 +93,4 @@ def print_taizhang(taizhang, image_dir):
 
 if __name__ == "__main__":
     taizhang = generate_displays(806, 1173)
+    print(taizhang.to_json())
