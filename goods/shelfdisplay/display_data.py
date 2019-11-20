@@ -270,7 +270,7 @@ class CandidateShelf:
                     real_arrange_goods_list.append(arrange_goods)
                     break
 
-        print(len(real_arrange_goods_list))
+        # print(len(real_arrange_goods_list))
         return real_arrange_goods_list
 
     def recalculate(self):
