@@ -3,7 +3,7 @@ from goods.shelfdisplay.single_algorithm import calculate_shelf_category_area_ra
 
 
 def init_data(uc_shopid, tz_id, base_data):
-    taizhang = Taizhang()
+    taizhang = Taizhang(tz_id)
     cursor = connections['ucenter'].cursor()
     # 获取fx系统的shopid,台账系统的商家mch_id
     cursor.execute("select mch_shop_code,mch_id from uc_shop where id = {}".format(uc_shopid))
@@ -73,6 +73,9 @@ def init_data(uc_shopid, tz_id, base_data):
 class Taizhang:
     tz_id = None
     shelfs = []
+
+    def __init__(self, tz_id):
+        self.tz_id = tz_id
 
     def to_json(self):
         """
