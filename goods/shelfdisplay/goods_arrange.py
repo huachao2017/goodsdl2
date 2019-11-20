@@ -215,9 +215,9 @@ def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
         if goods.is_spu(last_goods):
             candidate_shelf.badcase_value += 0.3  # 计算spu badcase
     else:
-        candidate_shelf.badcase_value += abs(goods.height_diff(last_goods)) * 0.2  # 计算同层板相邻品高度差 badcase
+        candidate_shelf.badcase_value += abs(goods.height_diff(last_goods)) * 0.02  # 计算同层板相邻品高度差 badcase
         if last_goods is not None and goods.category3 == last_goods.category3:
-            candidate_shelf.badcase_value += abs(goods.height_diff(last_goods)) * 0.02  # 计算同三级分类相邻品高度差 badcase
+            candidate_shelf.badcase_value += abs(goods.height_diff(last_goods)) * 0.2  # 计算同三级分类相邻品高度差 badcase
 
     return cur_level
 
