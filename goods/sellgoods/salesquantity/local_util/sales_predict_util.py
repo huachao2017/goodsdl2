@@ -182,13 +182,14 @@ class SalesPredict:
     def add_sales_count(self,sales_old_ins,sales_old_tmp_ins,week_days1):
         self.add_week_i_sales(sales_old_ins,sales_old_tmp_ins,week_days1)
         self.add_week_i_avg(sales_old_ins,sales_old_tmp_ins,week_days1)
-        self.add_week_avg_in_out(sales_old_ins, sales_old_tmp_ins)
+        self.add_week_avg_in_out(sales_old_ins, sales_old_tmp_ins,week_days1)
 
 
-    def add_week_avg_in_out(self,sales_old_ins,sales_old_tmp_ins):
+    def add_week_avg_in_out(self,sales_old_ins,sales_old_tmp_ins,week_days1):
         week_dates = []
-        for i in range(1, 13):
-            wd = self.get_date(i)
+        week_dates.extend(week_days1)
+        for i in range(1, 12):
+            wd = self.get_date(i, week_days1[0])
             week_dates.extend(wd)
         week_1 = week_dates[0:1 * 7]
         week_2 = week_dates[0:2 * 7]
@@ -263,8 +264,9 @@ class SalesPredict:
 
     def add_week_i_avg(self,sales_old_ins,sales_old_tmp_ins,week_days1):
         week_dates = []
-        for i in range(1, 13):
-            wd = self.get_date(i)
+        week_dates.extend(week_days1)
+        for i in range(1, 12):
+            wd = self.get_date(i,week_days1[0])
             week_dates.extend(wd)
         week_1 = week_dates[0:1*7]
         week_2 = week_dates[0:2*7]
