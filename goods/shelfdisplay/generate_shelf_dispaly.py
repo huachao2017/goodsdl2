@@ -96,7 +96,7 @@ def print_taizhang(taizhang, image_dir):
                     #     image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image
                     txt_point = (goods_display_info.left, shelf.height - (
                     goods_display_info.top + level_start_height + int(display_goods.goods_data.height / 2)))
-                    cv2.putText(image, '{}'.format(display_goods.goods_data.mch_good_code), txt_point,
+                    cv2.putText(image, '{}'.format(display_goods.goods_data.mch_code), txt_point,
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
         cv2.imwrite(image_path, image)
 
