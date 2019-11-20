@@ -61,7 +61,7 @@ def goods_arrange(shelf):
                 candidate_result_shelf_list.append(candidate_shelf)
 
     # 计算候选解的badcase得分
-    print('从{}中计算最优解'.format(len(candidate_result_shelf_list)))
+    print('共找到{}个候选解'.format(len(candidate_result_shelf_list)))
     best_candidate_shelf = single_algorithm.goods_badcase_score(candidate_result_shelf_list)
 
     shelf.best_candidate_shelf = best_candidate_shelf
