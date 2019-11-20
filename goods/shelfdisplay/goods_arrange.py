@@ -156,7 +156,7 @@ def _display_shelf(candidate_shelf):
                     if add_width > positive_addition_width:
                         break
 
-    if abs(addition_width) < candidate_shelf.shelf/5:
+    if abs(addition_width) < candidate_shelf.shelf.width/5:
         # 剩余1/5货架宽内就是正确解
         if addition_width > 0:
             # 舍弃最后一层，并退出试错
