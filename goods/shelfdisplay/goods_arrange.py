@@ -102,6 +102,7 @@ def _display_shelf(candidate_shelf):
     :param candidate_shelf: 候选货架
     :return: True or False
     """
+    addition_width = None
     for i in range(3):  # 试错3次
         candidate_shelf.recalculate()
         _try_display_shelf(candidate_shelf)
@@ -121,13 +122,15 @@ def _display_shelf(candidate_shelf):
             reduce_width = 0
             for j in range(3):  # 每个品最多减三轮
                 for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
-                    goods = candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid][-1]
-                    reduce_width += goods.width * goods.face_num
-                    candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid] = \
-                    candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid][:-1]
-                    candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid].insert(0, goods)
-                    if reduce_width > addition_width:
-                        break
+                    if len(candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid]) > 2:
+                        # 数量太少的不减
+                        goods = candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid][-1]
+                        reduce_width += goods.width * goods.face_num
+                        candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid] = \
+                        candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid][:-1]
+                        candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid].insert(0, goods)
+                        if reduce_width > addition_width:
+                            break
 
                 if reduce_width > addition_width:
                     break
@@ -141,7 +144,7 @@ def _display_shelf(candidate_shelf):
 
             # 增加候选品
             add_width = 0
-            for j in range(2):  # 每个品最多减两轮
+            for j in range(2):  # 每个品最多加两轮
                 for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
                     if len(candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid]) > 0:  # 防止没有候选商品
                         goods = candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid][0]
@@ -153,7 +156,14 @@ def _display_shelf(candidate_shelf):
                     if add_width > positive_addition_width:
                         break
 
-    return False
+    if abs(addition_width) < candidate_shelf.shelf/5:
+        # 剩余1/5货架宽内就是正确解
+        if addition_width > 0:
+            # 舍弃最后一层，并退出试错
+            candidate_shelf.levels = candidate_shelf.levels[:-1]
+        return True
+    else:
+        return False
 
 
 def _try_display_shelf(candidate_shelf):

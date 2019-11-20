@@ -238,10 +238,14 @@ class CandidateShelf:
         goods_total_width = 0
         goods_num = 0
         for categoryid in shelf.categoryid_to_sorted_goods_list.keys():
-            self.categoryid_to_used_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid][
-                                                                    :-shelf.extra_add_num]
-            self.categoryid_to_candidate_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[
-                                                                             categoryid][-shelf.extra_add_num:]
+            if len(shelf.categoryid_to_sorted_goods_list[categoryid]) > shelf.extra_add_num:
+                self.categoryid_to_used_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid][
+                                                                        :-shelf.extra_add_num]
+                self.categoryid_to_candidate_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[
+                                                                                 categoryid][-shelf.extra_add_num:]
+            else:
+                self.categoryid_to_used_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid]
+                self.categoryid_to_candidate_sorted_goods_list[categoryid] = []
 
             for goods in self.categoryid_to_used_sorted_goods_list[categoryid]:
                 goods_num += 1
@@ -266,6 +270,7 @@ class CandidateShelf:
                     real_arrange_goods_list.append(arrange_goods)
                     break
 
+        print(len(real_arrange_goods_list))
         return real_arrange_goods_list
 
     def recalculate(self):
