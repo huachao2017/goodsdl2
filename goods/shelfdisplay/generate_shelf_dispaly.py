@@ -42,6 +42,8 @@ def generate_displays(uc_shopid, tz_id):
         from pathlib import Path
         if not Path(image_dir).exists():
             os.makedirs(image_dir)
+
+        print(image_dir)
         print_taizhang(taizhang, image_dir)
     return taizhang
 
