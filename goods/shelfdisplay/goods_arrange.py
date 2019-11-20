@@ -64,6 +64,8 @@ def goods_arrange(shelf):
 
     # 计算候选解的badcase得分
     print('共找到{}个候选解'.format(len(candidate_result_shelf_list)))
+    if len(candidate_result_shelf_list) == 0:
+        return False
     best_candidate_shelf = single_algorithm.goods_badcase_score(candidate_result_shelf_list)
 
     shelf.best_candidate_shelf = best_candidate_shelf
@@ -102,6 +104,9 @@ def _display_shelf(candidate_shelf):
         addition_width = candidate_shelf.calculate_addition_width()
 
         if addition_width > 0:
+            print("陈列超出：")
+            print(addition_width)
+            print(candidate_shelf.goods_mean_width * 2)
             # 陈列越界
             if addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
                 # 舍弃最后一层，并退出试错
@@ -123,6 +128,9 @@ def _display_shelf(candidate_shelf):
                 if reduce_width > addition_width:
                     break
         else:
+            print("陈列不足：")
+            print(addition_width)
+            print(candidate_shelf.goods_mean_width * 2)
             # 成列不足
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？

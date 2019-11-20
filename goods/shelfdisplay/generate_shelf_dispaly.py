@@ -33,15 +33,16 @@ def generate_displays(uc_shopid, tz_id):
     taizhang.shelfs[0].candidate_category_list = candidate_category_list
 
     # 第四步
-    goods_arrange.goods_arrange(taizhang.shelfs[0])
+    is_ok = goods_arrange.goods_arrange(taizhang.shelfs[0])
 
-    # 打印陈列图
-    print(taizhang.to_json())
-    image_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(taizhang.tz_id))
-    from pathlib import Path
-    if not Path(image_dir).exists():
-        os.makedirs(image_dir)
-    print_taizhang(taizhang, image_dir)
+    if is_ok:
+        # 打印陈列图
+        print(taizhang.to_json())
+        image_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(taizhang.tz_id))
+        from pathlib import Path
+        if not Path(image_dir).exists():
+            os.makedirs(image_dir)
+        print_taizhang(taizhang, image_dir)
     return taizhang
 
 
