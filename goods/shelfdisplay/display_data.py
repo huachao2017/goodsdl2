@@ -66,7 +66,7 @@ def init_data(uc_shopid, tz_id, base_data):
                 shelf_category3_intimate_weight[category3_list_str] = base_data.category3_intimate_weight[
                     category3_list_str]
         if shelf_category in base_data.category3_level_value:
-            shelf_category3_intimate_weight[shelf_category] = base_data.shelf_category3_level_value[shelf_category]
+            shelf_category3_intimate_weight[shelf_category] = base_data.category3_level_value[shelf_category]
 
     # 重新计算货架的三级分类比例
     shelf_category3_area_ratio = calculate_shelf_category3_area_ratio(shelf_category3_list, base_data.category_area_ratio)
