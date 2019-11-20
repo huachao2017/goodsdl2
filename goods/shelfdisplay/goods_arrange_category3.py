@@ -29,6 +29,7 @@ def goods_arrange(goods_list):
     print(root_goods_tree)
 
     # 3，生成解列表
+    return root_goods_tree.get_all_simple_result()
 
 
 def init_goods_tree(goods_list):
