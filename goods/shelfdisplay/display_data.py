@@ -325,13 +325,6 @@ class Level:
 
 
 class DisplayGoods:
-    # 初始化数据
-    goods_data = None
-
-    # 计算信息
-    # face_num = 1 # 陈列几个face
-    # superimpose_rows = 1 # 叠放几行
-
     def __init__(self, goods_data):
         self.goods_data = goods_data
 
@@ -365,14 +358,9 @@ class DisplayGoods:
 
 
 class DisplayOneGoodsInfo:
-    col = None  # 在level上的列
-    row = None  # 行
-    top = None
-    left = None
-
     def __init__(self, col, row, top, left):
-        self.col = col
-        self.row = row
+        self.col = col  # 在level上的列
+        self.row = row  # 行
         self.top = top
         self.left = left
 
