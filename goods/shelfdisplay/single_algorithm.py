@@ -74,10 +74,22 @@ def calculate_shelf_category_area_ratio(categoryid_list, category_area_ratio):
 
     shelf_category_area_ratio = {}
     total_ratio = 0.0
+    ratio_valid = True #
     for categoryid in categoryid_list:
+        if categoryid not in category_area_ratio:
+            ratio_valid = False
+            print('error: category_area_ratio data is not valid!')
+            break
         total_ratio += category_area_ratio[categoryid]
-    for categoryid in categoryid_list:
-        shelf_category_area_ratio[categoryid] = category_area_ratio[categoryid] / total_ratio
+
+    if ratio_valid:
+        for categoryid in categoryid_list:
+            shelf_category_area_ratio[categoryid] = category_area_ratio[categoryid] / total_ratio
+    else:
+        # FIXME 如果分类面积比例是无效的，则每个类平均分配货架
+        for categoryid in categoryid_list:
+            shelf_category_area_ratio[categoryid] = 1 / len(categoryid_list)
+
 
     return shelf_category_area_ratio
 
