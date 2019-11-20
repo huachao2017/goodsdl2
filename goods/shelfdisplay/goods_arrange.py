@@ -39,6 +39,7 @@ def goods_arrange(shelf):
     # 生成所有的候选解
     candidate_result_shelf_list = []
     categoryid_to_arrange_goods_list_list = {}
+    print(shelf.categoryid_to_sorted_goods_list)
     for categoryid in shelf.shelf_category3_list:
         arrange_goods_list_list = goods.shelfdisplay.goods_arrange_category3.goods_arrange(
             shelf.categoryid_to_sorted_goods_list[categoryid])
