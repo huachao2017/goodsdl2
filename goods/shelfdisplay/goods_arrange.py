@@ -34,6 +34,7 @@ def goods_arrange(shelf):
                                                                         extra_add=extra_add_num)
         categoryid_to_sorted_goods_list[categoryid] = sorted_goods_list
 
+    print(categoryid_to_sorted_goods_list)
     # 设定shelf的全局计算参数
     shelf.categoryid_to_sorted_goods_list = categoryid_to_sorted_goods_list
     shelf.extra_add_num = extra_add_num
