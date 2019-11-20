@@ -28,6 +28,7 @@ def goods_arrange(shelf):
     # 3、每一个三级分类获得排序商品
     extra_add_num = 2  # FIXME 冗余数量怎么定，如果没有了呢？
     categoryid_to_sorted_goods_list = {}
+
     for categoryid in shelf.shelf_category3_list:
         sorted_goods_list = single_algorithm.choose_goods_for_category3(shelf,categoryid,
                                                                         extra_add=extra_add_num)
@@ -43,16 +44,26 @@ def goods_arrange(shelf):
         arrange_goods_list_list = goods.shelfdisplay.goods_arrange_category3.goods_arrange(
             shelf.categoryid_to_sorted_goods_list[categoryid])
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
+
+    print("共{}个分类解：".format(len(shelf.candidate_category_list)))
+    input("按任何键继续：")
+    i = 0
     for categoryid_list in shelf.candidate_category_list:
+        i += 1
         candidate_shelf_list = create_candidate_shelf_list(
             shelf,
             categoryid_list,
             categoryid_to_arrange_goods_list_list)
+        print("开始第{}个分类解（共{}个商品解）：".format(i,len(candidate_shelf_list)))
+        j = 0
         for candidate_shelf in candidate_shelf_list:
+            j += 1
+            print("开始第{}.{}个商品组合解：".format(i, j))
             if _display_shelf(candidate_shelf):
                 candidate_result_shelf_list.append(candidate_shelf)
 
     # 计算候选解的badcase得分
+    print('共找到{}个候选解'.format(len(candidate_result_shelf_list)))
     best_candidate_shelf = single_algorithm.goods_badcase_score(candidate_result_shelf_list)
 
     shelf.best_candidate_shelf = best_candidate_shelf

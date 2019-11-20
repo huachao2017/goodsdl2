@@ -60,6 +60,7 @@ shellgoods_params={
         "gb_tree": "/home/ai/model/regressor/GBTRegressionModel",
         "random_forest": "/home/ai/model/regressor/RandomForestRegressionModel"
     },
+    # 'sales2_old_traindata':'D:\\opt\\data\\goods\\ales2_old\\',
     # 销量预测
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,

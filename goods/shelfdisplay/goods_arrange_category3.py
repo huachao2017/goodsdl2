@@ -29,6 +29,9 @@ def goods_arrange(goods_list):
     print(root_goods_tree)
 
     # 3，生成解列表
+    ret = root_goods_tree.get_all_simple_result()
+    # TODO 需要生成所有从高到低的解
+    return ret
 
 
 def init_goods_tree(goods_list):
@@ -222,7 +225,7 @@ class GoodsTree:
                 for result in simple_results:
                     ret += '['
                     for goods in result:
-                        ret += str(goods.name)
+                        ret += str(goods.goods_name)
                         ret += ','
                     ret += ']'
                 ret += ']'
@@ -232,15 +235,15 @@ class TestGoods:
     category4 = None
     package_type = None
     brand = None
-    name = None
+    goods_name = None
     height = None
     width = None
 
-    def __init__(self, category4, package_type, brand, name, height, width):
+    def __init__(self, category4, package_type, brand, goods_name, height, width):
         self.category4 = category4
         self.package_type = package_type
         self.brand = brand
-        self.name = name
+        self.goods_name = goods_name
         self.height = height
         self.width = width
 
@@ -252,7 +255,7 @@ class TestGoods:
         ret += ','
         ret += str(self.brand)
         ret += ','
-        ret += str(self.name)
+        ret += str(self.goods_name)
         ret += ','
         ret += str(self.height)
         ret += ','

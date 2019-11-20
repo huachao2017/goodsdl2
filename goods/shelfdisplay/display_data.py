@@ -2,36 +2,23 @@ from django.db import connections
 from goods.shelfdisplay.single_algorithm import calculate_shelf_category3_area_ratio
 
 
-def init_data(uc_shopid, tz_id, displayid, base_data):
+def init_data(uc_shopid, tz_id, base_data):
     taizhang = Taizhang(tz_id)
     cursor = connections['ucenter'].cursor()
+
+    # 获取fx系统的shopid,台账系统的商家mch_id
+    cursor.execute("select mch_shop_code,mch_id from uc_shop where id = {}".format(uc_shopid))
+    (shopid, mch_id) = cursor.fetchone()
 
     # 获取台账
     try:
         cursor.execute(
-            "select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
+            "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
                 uc_shopid, tz_id))
-        (taizhang_id, shelf_id, count) = cursor.fetchone()
+        (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
     except:
         print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
         raise ValueError('taizhang error:{},{}'.format(uc_shopid, tz_id))
-
-    # 获取商店台账可放的品类
-    try:
-        if displayid is None or displayid == 0:
-            cursor.execute(
-                "select associated_catids from sf_taizhang_display where taizhang_id = {} and status in (0,1) and approval_status = 0".format(
-                    taizhang_id))
-        else:
-            cursor.execute(
-                "select associated_catids from sf_taizhang_display where taizhang_id = {} and id = {}".format(
-                    taizhang_id, displayid))
-        (associated_catids,) = cursor.fetchone()
-    except:
-        print('获取台账陈列失败：{},{}！'.format(taizhang_id, displayid))
-        raise ValueError('taizhang display error:{},{},{}'.format(uc_shopid, taizhang_id, displayid))
-    if associated_catids is None or associated_catids == '':
-        raise ValueError('taizhang display associated_catids is none:{},{},{}'.format(uc_shopid, taizhang_id, displayid))
 
     cursor.execute(
         "select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(
@@ -39,7 +26,36 @@ def init_data(uc_shopid, tz_id, displayid, base_data):
     (shelf_no, length, height, depth, hole_height, hole_distance) = cursor.fetchone()
 
     # 计算五个值
-    shelf_category3_list = associated_catids.split(',')
+    display_category3_list = third_cate_ids.split(',')
+    appoint_shelf_category3_list = []
+    # 检查所有三级分类
+    for category3 in display_category3_list:
+        try:
+            cursor.execute(
+                "select id from uc_category where mch_id={} and cat_id='{}' and level=3".format(
+                    mch_id, category3))
+            (id,) = cursor.fetchone()
+            appoint_shelf_category3_list.append(category3)
+        except:
+            print('台账陈列类别无法找到：{}！'.format(category3))
+
+    if len(appoint_shelf_category3_list) == 0:
+        raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
+
+    # 根据商品筛选三级分类 FIXME 三级分类目前一定是超量的
+    shelf_category3_to_goods_cnt = {}
+    shelf_goods_data_list = []
+    for goods in base_data.goods_data_list:
+        if goods.category3 in appoint_shelf_category3_list:
+            shelf_goods_data_list.append(goods)
+            if goods.category3 in shelf_category3_to_goods_cnt:
+                shelf_category3_to_goods_cnt[goods.category3] += 1
+            else:
+                shelf_category3_to_goods_cnt[goods.category3] = 1
+    print('总共获取的候选陈列商品: ')
+    print(shelf_category3_to_goods_cnt)
+    shelf_category3_list = shelf_category3_to_goods_cnt.keys()
+
     shelf_category3_intimate_weight = {}
     shelf_category3_level_value = {}
     for shelf_category in shelf_category3_list:
@@ -50,14 +66,10 @@ def init_data(uc_shopid, tz_id, displayid, base_data):
                 shelf_category3_intimate_weight[category3_list_str] = base_data.category3_intimate_weight[
                     category3_list_str]
         if shelf_category in base_data.category3_level_value:
-            shelf_category3_intimate_weight[shelf_category] = base_data.shelf_category3_level_value[shelf_category]
+            shelf_category3_intimate_weight[shelf_category] = base_data.category3_level_value[shelf_category]
 
     # 重新计算货架的三级分类比例
     shelf_category3_area_ratio = calculate_shelf_category3_area_ratio(shelf_category3_list, base_data.category_area_ratio)
-    shelf_goods_data_list = []
-    for goods in base_data.goods_data_list:
-        if goods.category3 in shelf_category3_list:
-            shelf_goods_data_list.append(goods)
 
     for i in range(count):
         shelf = Shelf(shelf_id, shelf_no, length, height, depth,
@@ -85,7 +97,7 @@ class Taizhang:
         {
         taizhang_id:xx
         shelfs:[{
-            shelf_id:xx
+            shelf:xx
             levels:[{
                 level_id:xx   #0是底层,1,2,3,4...
                 height:xx
@@ -125,37 +137,36 @@ class Taizhang:
         }
         for shelf in self.shelfs:
             json_shelf = {
-                "shelf": shelf.shelf_id,
+                "shelf_id": shelf.shelf_id,
                 "levels": []
             }
             json_ret["shelfs"].append(json_shelf)
             if shelf.best_candidate_shelf is not None:
                 for level in shelf.best_candidate_shelf.levels:
-                    if level.isTrue:
-                        json_level = {
-                            "level_id": level.level_id,
-                            "height": level.level_height,
-                            "goods": []
+                    json_level = {
+                        "level_id": level.level_id,
+                        "height": level.level_height,
+                        "goods": []
+                    }
+                    json_shelf["levels"].append(json_level)
+                    for display_goods in level.get_left_right_display_goods_list():
+                        json_goods = {
+                            "mch_good_code": display_goods.goods_data.mch_code,
+                            "upc": display_goods.goods_data.upc,
+                            "width": display_goods.goods_data.width,
+                            "height": display_goods.goods_data.height,
+                            "depth": display_goods.goods_data.depth,
+                            "displays": []
                         }
-                        json_shelf["levels"].append(json_level)
-                        for display_goods in level.get_left_right_display_goods_list():
-                            json_goods = {
-                                "mch_good_code": display_goods.goods_data.mch_code,
-                                "upc": display_goods.goods_data.upc,
-                                "width": display_goods.goods_data.width,
-                                "height": display_goods.goods_data.height,
-                                "depth": display_goods.goods_data.depth,
-                                "displays": []
+                        json_level["goods"].append(json_goods)
+                        for goods_display_info in display_goods.get_display_info(level):
+                            json_display = {
+                                "top": goods_display_info.top,
+                                "left": goods_display_info.left,
+                                "row": goods_display_info.row,
+                                "col": goods_display_info.col,
                             }
-                            json_level["goods"].append(json_goods)
-                            for goods_display_info in display_goods.get_display_info(level):
-                                json_display = {
-                                    "top": goods_display_info.top,
-                                    "left": goods_display_info.left,
-                                    "row": goods_display_info.row,
-                                    "col": goods_display_info.col,
-                                }
-                                json_goods["displays"].append(json_display)
+                            json_goods["displays"].append(json_display)
 
         return json_ret
 
@@ -172,6 +183,7 @@ class Shelf:
     level_board_height = 20  # 层板高度 # TODO 需考虑初始化
     level_buff_height = 30  # 层冗余高度 # TODO 需考虑初始化
     last_level_min_remain_height = 150  # 最后一层最小剩余高度
+    average_level_height = 300 # 平均高度，用于计算剩余货架宽度
 
     shelf_category3_list = None  # 货架指定分类列表
     shelf_category3_intimate_weight = None  # 货架分类涉及的亲密度分值
@@ -273,8 +285,11 @@ class CandidateShelf:
             # 超出层
             ret += last_level.goods_width
         else:
-            # 空缺宽度
             ret -= self.shelf.width - last_level.goods_width
+            # 货架高度剩余很多就加一个货架宽度
+            if (self.shelf.height - last_level.start_height) > 2*self.shelf.average_level_height:
+                ret -= self.shelf.width
+            # 空缺宽度
 
         return ret
 
@@ -283,7 +298,7 @@ class Level:
     candidate_shelf = None  # 候选货架
     level_id = None  # 层id
     is_left_right_direction = True  # True从左向右，False从右向左
-    goods_width = None  # 层宽度
+    goods_width = 0  # 层宽度
     start_height = None  # 层板相对货架的起始高度
     goods_height = 0  # 商品最高高度
     # level_depth = None  # 层深度
@@ -295,6 +310,7 @@ class Level:
         self.level_id = level_id
         self.is_left_right_direction = is_left_right_direction
         self.start_height = start_height
+        candidate_shelf.levels.append(self)
 
     def display_goods(self, display_goods):
         if display_goods.get_width() + self.goods_width > self.candidate_shelf.shelf.width:
@@ -379,5 +395,5 @@ if __name__ == "__main__":
 
     base_data = db_data.init_data(806)
 
-    taizhang = init_data(806, 1173, 1041, base_data)
+    taizhang = init_data(806, 1198, base_data)
     print(taizhang.to_json())
