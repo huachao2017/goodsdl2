@@ -33,14 +33,16 @@ def generate_displays(uc_shopid, tz_id):
     taizhang.shelfs[0].candidate_category_list = candidate_category_list
 
     # 第四步
-    goods_arrange.goods_arrange(taizhang.shelfs[0])
+    is_ok = goods_arrange.goods_arrange(taizhang.shelfs[0])
 
-    # 打印陈列图
-    image_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',taizhang.tz_id)
-    from pathlib import Path
-    if not Path(image_dir).exists():
-        os.makedirs(image_dir)
-    print_taizhang(taizhang, image_dir)
+    if is_ok:
+        # 打印陈列图
+        print(taizhang.to_json())
+        image_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(taizhang.tz_id))
+        from pathlib import Path
+        if not Path(image_dir).exists():
+            os.makedirs(image_dir)
+        print_taizhang(taizhang, image_dir)
     return taizhang
 
 
@@ -61,7 +63,7 @@ def print_taizhang(taizhang, image_dir):
 
         for level in shelf.best_candidate_shelf.levels:
             if level.isTrue:
-                level_start_height = level.level_start_height
+                level_start_height = level.start_height
                 for display_goods in level.display_goods_list:
                     picurl = '{}{}'.format(settings.UC_PIC_HOST, display_goods.goods_data.icon)
                     if picurl in picurl_to_goods_image:
@@ -101,4 +103,3 @@ def print_taizhang(taizhang, image_dir):
 if __name__ == "__main__":
     # taizhang = generate_displays(806, 1187)
     taizhang = generate_displays(806, 1199)
-    print(taizhang.to_json())

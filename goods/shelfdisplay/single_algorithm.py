@@ -47,15 +47,19 @@ def goods_badcase_score(candidate_shelf_list):
 
     min_badcase_value = 100000
     best_candidate_shelf = None
+    i = 0
     for candidate_shelf in candidate_shelf_list:
+        i += 1
+        # if i % 10 == 0:
         # 空缺层板宽度
         # 各层板的高度差
         last_level = None
         for level in candidate_shelf.levels:
             candidate_shelf.badcase_value += level.get_nono_goods_width() * 0.02
             if last_level is not None:
-                candidate_shelf.badcase_value += abs(level.height - last_level.height) * 0.02
+                candidate_shelf.badcase_value += abs(level.goods_height - last_level.goods_height) * 0.02
             last_level = level
+        print('计算第{}个候选解,共{}层,value={}：'.format(i,len(candidate_shelf.levels),candidate_shelf.badcase_value))
         if min_badcase_value > candidate_shelf.badcase_value:
             min_badcase_value = candidate_shelf.badcase_value
             best_candidate_shelf = candidate_shelf

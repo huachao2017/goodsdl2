@@ -145,7 +145,7 @@ class Taizhang:
                 for level in shelf.best_candidate_shelf.levels:
                     json_level = {
                         "level_id": level.level_id,
-                        "height": level.level_height,
+                        "height": level.start_height,
                         "goods": []
                     }
                     json_shelf["levels"].append(json_level)
@@ -238,10 +238,14 @@ class CandidateShelf:
         goods_total_width = 0
         goods_num = 0
         for categoryid in shelf.categoryid_to_sorted_goods_list.keys():
-            self.categoryid_to_used_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid][
-                                                                    :-shelf.extra_add_num]
-            self.categoryid_to_candidate_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[
-                                                                             categoryid][-shelf.extra_add_num:]
+            if len(shelf.categoryid_to_sorted_goods_list[categoryid]) > shelf.extra_add_num:
+                self.categoryid_to_used_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid][
+                                                                        :-shelf.extra_add_num]
+                self.categoryid_to_candidate_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[
+                                                                                 categoryid][-shelf.extra_add_num:]
+            else:
+                self.categoryid_to_used_sorted_goods_list[categoryid] = shelf.categoryid_to_sorted_goods_list[categoryid]
+                self.categoryid_to_candidate_sorted_goods_list[categoryid] = []
 
             for goods in self.categoryid_to_used_sorted_goods_list[categoryid]:
                 goods_num += 1
@@ -266,6 +270,7 @@ class CandidateShelf:
                     real_arrange_goods_list.append(arrange_goods)
                     break
 
+        # print(len(real_arrange_goods_list))
         return real_arrange_goods_list
 
     def recalculate(self):
@@ -335,6 +340,14 @@ class Level:
             return self.display_goods_list
         else:
             return self.display_goods_list[::-1]
+
+    def __str__(self):
+        ret = str(self.level_id)
+        ret += ','
+        ret += str(self.start_height)
+        ret += ','
+        ret += str(self.goods_width)
+        return ret
 
 
 class DisplayGoods:
