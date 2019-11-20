@@ -342,6 +342,7 @@ class Level:
         ret += str(self.start_height)
         ret += ','
         ret += str(self.goods_width)
+        return ret
 
 
 class DisplayGoods:
