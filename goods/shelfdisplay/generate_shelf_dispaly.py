@@ -6,6 +6,7 @@ import django
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
+from django.conf import settings
 
 from goods.shelfdisplay import db_data
 from goods.shelfdisplay import display_data
@@ -35,7 +36,7 @@ def generate_displays(uc_shopid, tz_id):
     goods_arrange.goods_arrange(taizhang.shelfs[0])
 
     # 打印陈列图
-    image_dir = '/home/src/goodsdl2/media/images/taizhang/{}'.format(taizhang.tz_id)
+    image_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',taizhang.tz_id)
     from pathlib import Path
     if not Path(image_dir).exists():
         os.makedirs(image_dir)
@@ -99,5 +100,5 @@ def print_taizhang(taizhang, image_dir):
 
 if __name__ == "__main__":
     # taizhang = generate_displays(806, 1187)
-    taizhang = generate_displays(806, 1198)
+    taizhang = generate_displays(806, 1199)
     print(taizhang.to_json())
