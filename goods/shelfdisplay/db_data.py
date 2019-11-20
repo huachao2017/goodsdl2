@@ -173,6 +173,11 @@ class GoodsData:
 
 
 if __name__ == "__main__":
+    import os
+    import django
+
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+    django.setup()
     # category_area_ratio: 分类陈列面积比例表
     # category3_intimate_weight: 三级分类亲密度
     # category3_level_value: 三级分类层数分值
