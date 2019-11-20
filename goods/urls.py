@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 
-from goods import views,views_shelf,views_shelf2,views_datav,views_sellgoods
+from goods import views,views_shelf,views_shelf2,views_datav,views_sellgoods, views_display
 
 router = DefaultRouter()
 
@@ -36,9 +36,10 @@ urlpatterns = [
     url(r'^api/createshelfimage2', views_shelf2.CreateShelfImage.as_view()),
     url(r'^api/rectifyshelfimage2', views_shelf2.RectifyShelfImage.as_view()),
     url(r'^api/notify_generate_shop_add', views_sellgoods.SellGoodsViewSet.as_view()),
-    url(r'^api/interface1', views_datav.Interface1.as_view()),
-    url(r'^api/interface2', views_datav.Interface2.as_view()),
-    url(r'^api/interface3', views_datav.Interface3.as_view()),
-    url(r'^api/interface4', views_datav.Interface4.as_view()),
+    url(r'^api/autoDisplay', views_display.AutoDisplay.as_view()),
+    # url(r'^api/interface1', views_datav.Interface1.as_view()),
+    # url(r'^api/interface2', views_datav.Interface2.as_view()),
+    # url(r'^api/interface3', views_datav.Interface3.as_view()),
+    # url(r'^api/interface4', views_datav.Interface4.as_view()),
     url(r'^api/', include(router.urls))
 ]
