@@ -145,7 +145,7 @@ class Taizhang:
                 for level in shelf.best_candidate_shelf.levels:
                     json_level = {
                         "level_id": level.level_id,
-                        "height": level.level_height,
+                        "height": level.start_height,
                         "goods": []
                     }
                     json_shelf["levels"].append(json_level)
