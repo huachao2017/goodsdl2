@@ -44,6 +44,9 @@ def goods_arrange(shelf):
         arrange_goods_list_list = goods.shelfdisplay.goods_arrange_category3.goods_arrange(
             shelf.categoryid_to_sorted_goods_list[categoryid])
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
+
+    print(shelf.candidate_category_list)
+    print(categoryid_to_arrange_goods_list_list)
     for categoryid_list in shelf.candidate_category_list:
         candidate_shelf_list = create_candidate_shelf_list(
             shelf,
