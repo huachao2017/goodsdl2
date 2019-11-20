@@ -40,7 +40,7 @@ def init_data(uc_shopid, tz_id, base_data):
             print('台账陈列类别无法找到：{}！'.format(category3))
 
     if len(shelf_category3_list) == 0:
-        raise ValueError('no display category:{},{},{}'.format(uc_shopid, taizhang_id, displayid))
+        raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
 
     shelf_category3_intimate_weight = {}
     shelf_category3_level_value = {}
