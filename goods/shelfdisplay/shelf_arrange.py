@@ -56,7 +56,7 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
 
     return ret
 
-def calculate_outer_result(category_tree_list,category3_level_value,category3_list,threshold=10000):
+def calculate_outer_result(category_tree_list,category3_level_value,category3_list,threshold=100):
     """
     计算外层解
     :param category_tree_list:
@@ -78,7 +78,7 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
         step_size = 1
 
     for i in iter:
-        if random.random() > 1 / step_size:  # 进行下采样
+        if random.random() > 1 // step_size:  # 进行下采样
             # print('进行下采样')
             continue
         else:
@@ -458,7 +458,7 @@ class CategoryTree:
                 if max_level_value < 5:
                     self.level_value = min_level_value
 
-    def calculate_result(self,threshold=10000):
+    def calculate_result(self,threshold=100):
         """
 
         :param threshold: 最大排列数的阈值
@@ -482,7 +482,7 @@ class CategoryTree:
                 step_size = 1
 
             for one_result in iter:
-                if random.random() > 1/step_size:        #  进行下采样
+                if random.random() > 1//step_size:        #  进行下采样
                     continue
                 else:
 
