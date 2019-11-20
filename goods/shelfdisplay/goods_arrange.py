@@ -28,12 +28,14 @@ def goods_arrange(shelf):
     # 3、每一个三级分类获得排序商品
     extra_add_num = 2  # FIXME 冗余数量怎么定，如果没有了呢？
     categoryid_to_sorted_goods_list = {}
+    print("候选商品：")
     print(shelf.shelf_goods_data_list)
     for categoryid in shelf.shelf_category3_list:
         sorted_goods_list = single_algorithm.choose_goods_for_category3(shelf,categoryid,
                                                                         extra_add=extra_add_num)
         categoryid_to_sorted_goods_list[categoryid] = sorted_goods_list
 
+    print("排序的商品：")
     print(categoryid_to_sorted_goods_list)
     # 设定shelf的全局计算参数
     shelf.categoryid_to_sorted_goods_list = categoryid_to_sorted_goods_list
