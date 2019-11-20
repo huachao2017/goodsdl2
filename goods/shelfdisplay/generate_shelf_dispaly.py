@@ -38,7 +38,8 @@ def generate_displays(uc_shopid, tz_id):
     if is_ok:
         # 打印陈列图
         print(taizhang.to_json())
-        image_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(taizhang.tz_id))
+        image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(taizhang.tz_id))
+        image_dir = os.path.join(settings.MEDIA_ROOT, image_relative_dir)
         from pathlib import Path
         if not Path(image_dir).exists():
             os.makedirs(image_dir)
