@@ -52,7 +52,7 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
     candidate_category_tree_order = calculate_outer_result(root_category_tree_list,category3_level_value,category3_list)
 
     # 5, 里外合并
-    ret = combine_all_result(candidate_category_tree_order)
+    ret = combine_all_result(candidate_category_tree_order,category3_level_value)
 
     return ret
 
@@ -118,7 +118,19 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
         for obj in arrange:
             tem_list.append(obj.level_value)
             # print(obj.level_value)
-        if is_equal(tem_list[:len(min_list)], min_list) and is_equal(tem_list[-len(max_list):], max_list):
+        # print('tem_list',tem_list)
+        # print('tem_list11',is_equal(tem_list[-len(max_list):], max_list))
+        # print('tem_list11',tem_list[-len(max_list):])
+        if min_list and max_list:
+            if is_equal(tem_list[:len(min_list)], min_list) and is_equal(tem_list[-len(max_list):], max_list):
+                ret.append(arrange)
+        elif min_list:
+            if is_equal(tem_list[:len(min_list)], min_list):
+                ret.append(arrange)
+        elif max_list:
+            if is_equal(tem_list[-len(max_list):], max_list):
+                ret.append(arrange)
+        else:
             ret.append(arrange)
 
     # TODO @李树
@@ -151,12 +163,13 @@ def arrange_all(list1):
     # print(result)
     return result
 
-def combine_all_result(candidate_category_tree_order):
+def combine_all_result(candidate_category_tree_order,category3_level_value):
     """
     遍历并组合所有内部解和外部解，并把对象转为category
     :param candidate_category_tree_order:
     :return:
     """
+    print('candidate_category_tree_order',candidate_category_tree_order)
     ret = []
     temp_candidate = []
     for obj_arrange in candidate_category_tree_order:
@@ -165,7 +178,19 @@ def combine_all_result(candidate_category_tree_order):
         loop_val = []
         while i < lengh:
             loop_val.append(_get_root_result_list(obj_arrange[i]))
+
+            # root_result_list = _get_root_result_list(obj_arrange[i])
+            # t_list = []
+            # for i in root_result_list:
+            #     if is_match_up_down_relation(i,category3_level_value):    # 检查亲密度内部是否满足上下关系
+            #         t_list.append(i)
+            # if t_list == []:       # 有一个亲密度大组合不符合，那就都不符合
+            #     return []
+            # else:
+            #     loop_val.append(t_list)
+
             i += 1
+        # print('loop_val',loop_val)
         for i in list(itertools.product(*loop_val)):
             temp_candidate.append(i)
 
@@ -181,6 +206,26 @@ def combine_all_result(candidate_category_tree_order):
     # return temp_candidate
     return ret
 
+def is_match_up_down_relation(list,category3_level_value):
+    """
+    是否符合上下关系
+    :param list:
+    :param category3_level_value:
+    :return:
+    """
+
+    tem_list = []
+    for i in list:
+        # 没考虑没定义的
+        if i in category3_level_value:
+            v = category3_level_value[i]
+            tem_list.append(v)
+
+    for i,v in enumerate(tem_list[:-1]):
+        if tem_list[i] > tem_list[i+1]:
+            return False
+
+    return True
 
 def init_category_tree(category3_intimate_weight, category3_level_value, category3_list):
     """
@@ -513,25 +558,37 @@ if __name__ == '__main__':
     # TODO 李树
     category3_intimate_weight = [
                                 {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f': 6,'d,e,f,g': 5},
+                                {},
+                                {'a,b': 10,'a,b,c': 5,'d,a': 10,'d,e,f': 6,'d,e,f,g': 5},
+                                {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f': 6,'d,e,f,g': 5},
+                                {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f': 6,'d,e,f,g': 5},
                                 {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,m': 8,'d,e,f,g,h,i,j,k,l,m': 5},
                                 {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f': 6,'d,e,f,g': 5},
                                  {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
                                  ]
     category3_level_value = [
                                 {'b':8, 'c':10, 'e':0},
+                                { 'e':0},
                                 {'b':8, 'c':10, 'e':0},
                                 {'b':8, 'c':10, 'e':0},
+                                {'b':10, 'c':0, 'e':0,'a':0},
                                 {'b':8, 'c':10, 'e':0},
+                                {'b':8, 'c':10, 'e':0},
+                                {'b':8, 'c':10, 'e':10},
                              ]
     category3_list = [
                     {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
                     {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-                    {'a', 'b', 'c', 'd', 'e', 'f'},
+                    {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
+                    {'a', 'd'},
+                    {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
+                    {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
+                    {'a', 'b', 'c', 'd', 'f'},
                       {'a', 'b', 'c', 'd', 'e', 'f', 'g','h','i','j','k'},
                       ]
 
-    n = 3
+    n = 4
     a = main_calculate(category3_intimate_weight[n], category3_level_value[n], category3_list[n])
     print('--------------候选列表---------------')
     print('候选列表总数：',len(a))
-    # print(a)
+    print(a)
