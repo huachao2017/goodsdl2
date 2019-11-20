@@ -34,6 +34,10 @@ def goods_arrange(shelf):
                                                                         extra_add=extra_add_num)
         categoryid_to_sorted_goods_list[categoryid] = sorted_goods_list
 
+        print('排序商品列表：{},{}'.format(categoryid,len(sorted_goods_list)))
+
+    input("输任意键继续")
+
     # 设定shelf的全局计算参数
     shelf.categoryid_to_sorted_goods_list = categoryid_to_sorted_goods_list
     shelf.extra_add_num = extra_add_num
@@ -97,16 +101,13 @@ def _display_shelf(candidate_shelf):
     :param candidate_shelf: 候选货架
     :return: True or False
     """
-    for i in range(3):  # 试错3次
+    for i in range(5):  # 试错3次
         candidate_shelf.recalculate()
         _try_display_shelf(candidate_shelf)
         # 计算货架多余或缺失宽度
         addition_width = candidate_shelf.calculate_addition_width()
 
         if addition_width > 0:
-            print("陈列超出：")
-            print(addition_width)
-            print(candidate_shelf.goods_mean_width * 2)
             # 陈列越界
             if addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
                 # 舍弃最后一层，并退出试错
@@ -128,9 +129,7 @@ def _display_shelf(candidate_shelf):
                 if reduce_width > addition_width:
                     break
         else:
-            print("陈列不足：")
             print(addition_width)
-            print(candidate_shelf.goods_mean_width * 2)
             # 成列不足
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
