@@ -2,12 +2,9 @@ from django.db import connections
 from goods.shelfdisplay.single_algorithm import calculate_shelf_category3_area_ratio
 
 
-def init_data(uc_shopid, tz_id, base_data):
+def init_data(uc_shopid, tz_id, displayid, base_data):
     taizhang = Taizhang(tz_id)
     cursor = connections['ucenter'].cursor()
-    # 获取fx系统的shopid,台账系统的商家mch_id
-    cursor.execute("select mch_shop_code,mch_id from uc_shop where id = {}".format(uc_shopid))
-    (shopid, mch_id) = cursor.fetchone()
 
     # 获取台账
     try:
@@ -21,15 +18,20 @@ def init_data(uc_shopid, tz_id, base_data):
 
     # 获取商店台账可放的品类
     try:
-        cursor.execute(
-            "select associated_catids from sf_taizhang_display where taizhang_id = {} and status in (0,1) and approval_status = 0".format(
-                taizhang_id))
+        if displayid is None or displayid == 0:
+            cursor.execute(
+                "select associated_catids from sf_taizhang_display where taizhang_id = {} and status in (0,1) and approval_status = 0".format(
+                    taizhang_id))
+        else:
+            cursor.execute(
+                "select associated_catids from sf_taizhang_display where taizhang_id = {} and id = {}".format(
+                    taizhang_id, displayid))
         (associated_catids,) = cursor.fetchone()
     except:
-        print('获取台账陈列失败：{}！'.format(taizhang_id))
-        associated_catids = None
+        print('获取台账陈列失败：{},{}！'.format(taizhang_id, displayid))
+        raise ValueError('taizhang display error:{},{},{}'.format(uc_shopid, taizhang_id, displayid))
     if associated_catids is None or associated_catids == '':
-        associated_catids = '0501,0502,0503,0504,0505,0506'  # FIXME only for test
+        raise ValueError('taizhang display associated_catids is none:{},{},{}'.format(uc_shopid, taizhang_id, displayid))
 
     cursor.execute(
         "select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(
@@ -377,5 +379,5 @@ if __name__ == "__main__":
 
     base_data = db_data.init_data(806)
 
-    taizhang = init_data(806, 1173, base_data)
+    taizhang = init_data(806, 1173, 1041, base_data)
     print(taizhang.to_json())
