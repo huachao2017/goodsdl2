@@ -88,7 +88,7 @@ class Taizhang:
         {
         taizhang_id:xx
         shelfs:[{
-            shelf_id:xx
+            shelf:xx
             levels:[{
                 level_id:xx   #0是底层,1,2,3,4...
                 height:xx
