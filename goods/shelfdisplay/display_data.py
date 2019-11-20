@@ -27,7 +27,7 @@ def init_data(uc_shopid, tz_id, base_data):
 
     # 计算五个值
     display_category3_list = third_cate_ids.split(',')
-    shelf_category3_list = []
+    appoint_shelf_category3_list = []
     # 检查所有三级分类
     for category3 in display_category3_list:
         try:
@@ -35,12 +35,26 @@ def init_data(uc_shopid, tz_id, base_data):
                 "select id from uc_category where mch_id={} and cat_id='{}' and level=3".format(
                     mch_id, category3))
             (id,) = cursor.fetchone()
-            shelf_category3_list.append(category3)
+            appoint_shelf_category3_list.append(category3)
         except:
             print('台账陈列类别无法找到：{}！'.format(category3))
 
-    if len(shelf_category3_list) == 0:
+    if len(appoint_shelf_category3_list) == 0:
         raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
+
+    # 根据商品筛选三级分类 FIXME 三级分类目前一定是超量的
+    shelf_category3_to_goods_cnt = {}
+    shelf_goods_data_list = []
+    for goods in base_data.goods_data_list:
+        if goods.category3 in appoint_shelf_category3_list:
+            shelf_goods_data_list.append(goods)
+            if goods.category3 in shelf_category3_to_goods_cnt:
+                shelf_category3_to_goods_cnt[goods.category3] += 1
+            else:
+                shelf_category3_to_goods_cnt[goods.category3] = 1
+    print('总共获取的候选陈列商品: ')
+    print(shelf_category3_to_goods_cnt)
+    shelf_category3_list = shelf_category3_to_goods_cnt.keys()
 
     shelf_category3_intimate_weight = {}
     shelf_category3_level_value = {}
@@ -56,11 +70,6 @@ def init_data(uc_shopid, tz_id, base_data):
 
     # 重新计算货架的三级分类比例
     shelf_category3_area_ratio = calculate_shelf_category3_area_ratio(shelf_category3_list, base_data.category_area_ratio)
-    shelf_goods_data_list = []
-    for goods in base_data.goods_data_list:
-        if goods.category3 in shelf_category3_list:
-            shelf_goods_data_list.append(goods)
-    print('总共获取的候选陈列商品：{}个'.format(len(shelf_goods_data_list)))
 
     for i in range(count):
         shelf = Shelf(shelf_id, shelf_no, length, height, depth,
