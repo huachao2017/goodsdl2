@@ -109,6 +109,8 @@ def _display_shelf(candidate_shelf):
         addition_width = candidate_shelf.calculate_addition_width()
 
         if addition_width > 0:
+            print(addition_width)
+            input("按任意键继续：")
             # 陈列越界
             if addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
                 # 舍弃最后一层，并退出试错
@@ -131,6 +133,7 @@ def _display_shelf(candidate_shelf):
                     break
         else:
             print(addition_width)
+            input("按任意键继续：")
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
                 # 退出试错
@@ -162,8 +165,6 @@ def _try_display_shelf(candidate_shelf):
             # 创建层
             level = _level_add_goods(candidate_shelf, level, goods, last_goods)
             last_goods = goods
-            input("按任意键继续：")
-
 
 def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
     """
@@ -177,8 +178,6 @@ def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
 
     cur_level = input_level
     display_goods = display_data.DisplayGoods(goods)
-    print('display_goods:{}'.format(display_goods.get_width()))
-    print(input_level)
     if cur_level is None:
         # 初始陈列
         cur_level = display_data.Level(candidate_shelf, 0, candidate_shelf.shelf.bottom_height, True)
@@ -206,7 +205,6 @@ def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
         if last_goods is not None and goods.category3 == last_goods.category3:
             candidate_shelf.badcase_value += goods.height_diff(last_goods) * 0.2  # 计算同三级分类相邻品高度差 badcase
 
-    print(cur_level)
     return cur_level
 
 
