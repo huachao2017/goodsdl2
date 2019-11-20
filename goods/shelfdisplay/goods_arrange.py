@@ -163,40 +163,43 @@ def _try_display_shelf(candidate_shelf):
             # 创建层
             level = _level_add_goods(candidate_shelf, level, goods, last_goods)
             last_goods = goods
-            print('goods:{},{}'.format(goods.width, goods.face_num))
-            print(level)
-            input("按任意键继续：")
+        input("按任意键继续：")
 
 
-def _level_add_goods(candidate_shelf, cur_level, goods, last_goods):
+def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
     """
     处理层添加和层的width和height变化
     :param candidate_shelf:
-    :param cur_level:
+    :param input_level:
     :param goods:
     :param last_goods: 上一个goods
     :return: 商品添加的层
     """
 
+    cur_level = input_level
     display_goods = display_data.DisplayGoods(goods)
+    print('display_goods:{}'.format(display_goods.get_width()))
+    print(input_level)
     if cur_level is None:
         # 初始陈列
         cur_level = display_data.Level(candidate_shelf, 0, candidate_shelf.shelf.bottom_height, True)
-    ret_level = cur_level
 
     # 陈列商品 FIXME 需要处理陈列同商品跨层拆分
-    success = ret_level.display_goods(display_goods)
+    success = cur_level.display_goods(display_goods)
 
     if not success:
+        # FIXME 需要考虑整层无法摆下的拆分
+        if cur_level != input_level:
+            print('无法成列商品，商品在一层无法摆下！')
+            raise ValueError('无法成列商品，商品在一层无法摆下！')
         # 无法陈列商品
-        ret_level = display_data.Level(
+        cur_level = display_data.Level(
             candidate_shelf,
             cur_level.level_id + 1,
             cur_level.start_height + cur_level.goods_height + candidate_shelf.shelf.level_buff_height + candidate_shelf.shelf.level_board_height,
             bool(1 - cur_level.is_left_right_direction)
         )
-        # FIXME 需要考虑整层无法摆下的拆分
-        ret_level.display_goods(display_goods)
+        cur_level.display_goods(display_goods)
         if goods.is_spu(last_goods):
             candidate_shelf.badcase_value += 0.3  # 计算spu badcase
     else:
@@ -204,7 +207,8 @@ def _level_add_goods(candidate_shelf, cur_level, goods, last_goods):
         if last_goods is not None and goods.category3 == last_goods.category3:
             candidate_shelf.badcase_value += goods.height_diff(last_goods) * 0.2  # 计算同三级分类相邻品高度差 badcase
 
-    return ret_level
+    print(cur_level)
+    return cur_level
 
 
 def _solve_goods_face(shelf_depth, goods_data_list):
