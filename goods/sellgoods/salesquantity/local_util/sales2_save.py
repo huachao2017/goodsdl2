@@ -1,8 +1,8 @@
 from goods.sellgoods.salesquantity.utils import mysql_util
 from set_config import config
 ai = config.ai
-def write_file(salesold_inss):
-    with open("tmp_sales_week.txt", 'a') as f:
+def write_file(salesold_inss,n):
+    with open("tmp_sales_week.txt_"+str(n), 'a') as f:
         for salesold_ins in salesold_inss:
             # 103
             pristr = ("%s,%s,%s,%s,%s," \
