@@ -34,9 +34,9 @@ def goods_arrange(shelf):
                                                                         extra_add=extra_add_num)
         categoryid_to_sorted_goods_list[categoryid] = sorted_goods_list
 
-        print('排序商品列表：{},{}'.format(categoryid,len(sorted_goods_list)))
+        # print('排序商品列表：{},{}'.format(categoryid,len(sorted_goods_list)))
 
-    input("输任意键继续")
+    # input("输任意键继续")
 
     # 设定shelf的全局计算参数
     shelf.categoryid_to_sorted_goods_list = categoryid_to_sorted_goods_list
@@ -101,7 +101,7 @@ def _display_shelf(candidate_shelf):
     :param candidate_shelf: 候选货架
     :return: True or False
     """
-    for i in range(5):  # 试错3次
+    for i in range(3):  # 试错3次
         candidate_shelf.recalculate()
         _try_display_shelf(candidate_shelf)
         # 计算货架多余或缺失宽度
@@ -215,9 +215,15 @@ def _solve_goods_face(shelf_depth, goods_data_list):
     # FIXME 层板深度问题处理怎么解决？
     # TODO 需要考虑叠放
     # FIXME 这个计算需要放到摆放时现算
+
+    total_width = 0
     for goods in goods_data_list:
         max_one_face = int(shelf_depth / goods.depth)
         goods.face_num = int(3 * goods.psd / max_one_face)
-    pass
+        total_width += goods.width * goods.face_num
+
+    print("totol_width:{}".format(total_width))
+    input("按任意键继续：")
+
 
 
