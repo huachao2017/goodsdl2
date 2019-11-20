@@ -10,10 +10,15 @@ def init_data(uc_shopid, tz_id, base_data):
     (shopid, mch_id) = cursor.fetchone()
 
     # 获取台账
-    cursor.execute(
-        "select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
-            uc_shopid, tz_id))
-    (taizhang_id, shelf_id, count) = cursor.fetchone()
+    try:
+        cursor.execute(
+            "select t.id, t.shelf_id, t.shelf_count from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
+                uc_shopid, tz_id))
+        (taizhang_id, shelf_id, count) = cursor.fetchone()
+    except:
+        print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
+        raise ValueError('taizhang error:{},{}'.format(uc_shopid, tz_id))
+
     # 获取商店台账可放的品类
     try:
         cursor.execute(
@@ -366,5 +371,5 @@ if __name__ == "__main__":
     from goods.shelfdisplay import db_data
     base_data = db_data.init_data(806)
 
-    taizhang = init_data(806, 1046, base_data)
+    taizhang = init_data(806, 1173, base_data)
     print(taizhang)
