@@ -60,6 +60,7 @@ def init_data(uc_shopid, tz_id, base_data):
     for goods in base_data.goods_data_list:
         if goods.category3 in shelf_category3_list:
             shelf_goods_data_list.append(goods)
+    print('总共获取的候选陈列商品：{}个'.format(len(shelf_goods_data_list)))
 
     for i in range(count):
         shelf = Shelf(shelf_id, shelf_no, length, height, depth,
