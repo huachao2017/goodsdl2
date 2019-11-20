@@ -48,7 +48,6 @@ def goods_arrange(shelf):
     i = 0
     for categoryid_list in shelf.candidate_category_list:
         i += 1
-        print("开始第{}个分类解：".format(i))
         candidate_shelf_list = create_candidate_shelf_list(
             shelf,
             categoryid_list,

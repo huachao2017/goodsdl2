@@ -298,6 +298,7 @@ class Level:
         self.level_id = level_id
         self.is_left_right_direction = is_left_right_direction
         self.start_height = start_height
+        candidate_shelf.levels.append(self)
 
     def display_goods(self, display_goods):
         if display_goods.get_width() + self.goods_width > self.candidate_shelf.shelf.width:
