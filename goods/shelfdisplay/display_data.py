@@ -150,24 +150,24 @@ class Taizhang:
                         "goods": []
                     }
                     json_shelf["levels"].append(json_level)
-                    # for display_goods in level.get_left_right_display_goods_list():
-                    #     json_goods = {
-                    #         "mch_good_code": display_goods.goods_data.mch_code,
-                    #         "upc": display_goods.goods_data.upc,
-                    #         "width": display_goods.goods_data.width,
-                    #         "height": display_goods.goods_data.height,
-                    #         "depth": display_goods.goods_data.depth,
-                    #         "displays": []
-                    #     }
-                    #     json_level["goods"].append(json_goods)
-                    #     for goods_display_info in display_goods.get_display_info(level):
-                    #         json_display = {
-                    #             "top": goods_display_info.top,
-                    #             "left": goods_display_info.left,
-                    #             "row": goods_display_info.row,
-                    #             "col": goods_display_info.col,
-                    #         }
-                    #         json_goods["displays"].append(json_display)
+                    for display_goods in level.get_left_right_display_goods_list():
+                        json_goods = {
+                            "mch_good_code": display_goods.goods_data.mch_code,
+                            "upc": display_goods.goods_data.upc,
+                            "width": display_goods.goods_data.width,
+                            "height": display_goods.goods_data.height,
+                            "depth": display_goods.goods_data.depth,
+                            "displays": []
+                        }
+                        json_level["goods"].append(json_goods)
+                        for goods_display_info in display_goods.get_display_info(level):
+                            json_display = {
+                                "top": goods_display_info.top,
+                                "left": goods_display_info.left,
+                                "row": goods_display_info.row,
+                                "col": goods_display_info.col,
+                            }
+                            json_goods["displays"].append(json_display)
 
         return json_ret
 
@@ -255,7 +255,7 @@ class CandidateShelf:
         return real_arrange_goods_list
 
     def recalculate(self):
-        self.leves = []
+        self.levels = []
         self.badcase_value = 0.0
 
     def calculate_addition_width(self):
