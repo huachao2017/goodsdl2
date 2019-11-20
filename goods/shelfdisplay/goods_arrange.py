@@ -103,7 +103,7 @@ def _display_shelf(candidate_shelf):
     :return: True or False
     """
     addition_width = None
-    for i in range(3):  # 试错3次
+    for i in range(4):  # 试错4次
         candidate_shelf.recalculate()
         _try_display_shelf(candidate_shelf)
         # 计算货架多余或缺失宽度
