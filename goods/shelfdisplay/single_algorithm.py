@@ -3,7 +3,7 @@
 子算法4.3 打分规则
 """
 
-def choose_goods_for_category3(categoryid, shelf, extra_add=0):
+def choose_goods_for_category3(shelf, categoryid, extra_add=0):
     """
     根据面积比例选该分类下预测销量最大的品
     :param categoryid:
