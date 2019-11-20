@@ -88,13 +88,13 @@ def print_taizhang(taizhang, image_dir):
                     goods_display_info.top + level_start_height))
                     point2 = (goods_display_info.left + display_goods.goods_data.width,
                               shelf.height - (goods_display_info.top + level_start_height) + display_goods.goods_data.height)
-                    cv2.rectangle(image, point1, point2, (0, 0, 255), 2)
-                    # if goods_image is None:
-                    #     cv2.rectangle(image,point1,point2,(0,0,255),2)
-                    # else:
-                    #     h = goods_image.shape[0]
-                    #     w = goods_image.shape[1]
-                    #     image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image
+                    # cv2.rectangle(image, point1, point2, (0, 0, 255), 2)
+                    if goods_image is None:
+                        cv2.rectangle(image,point1,point2,(0,0,255),2)
+                    else:
+                        h = goods_image.shape[0]
+                        w = goods_image.shape[1]
+                        image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image
                     txt_point = (goods_display_info.left, shelf.height - (
                     goods_display_info.top + level_start_height - int(display_goods.goods_data.height / 2)))
                     cv2.putText(image, '{}'.format(display_goods.goods_data.mch_code), txt_point,
