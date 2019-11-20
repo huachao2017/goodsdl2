@@ -173,33 +173,14 @@ class Taizhang:
 
 
 class Shelf:
-    shelf_id = None
-    type = None
-
-    # 空间参数
-    width = None
-    height = None
-    depth = None
+    # 空间常量
     bottom_height = 50  # 底层到地面的高度 # TODO 需考虑初始化
     level_board_height = 20  # 层板高度 # TODO 需考虑初始化
     level_buff_height = 30  # 层冗余高度 # TODO 需考虑初始化
     last_level_min_remain_height = 150  # 最后一层最小剩余高度
     average_level_height = 300 # 平均高度，用于计算剩余货架宽度
 
-    shelf_category3_list = None  # 货架指定分类列表
-    shelf_category3_intimate_weight = None  # 货架分类涉及的亲密度分值
-    shelf_category3_level_value = None  # 货架分类涉及的层数分值
-    shelf_category3_area_ratio = None  # 货架内分类面积比例
-    shelf_goods_data_list = None  # 货架候选商品列表
-
-    # 以上都是初始化后就会有的数据
-
-    # 计算用到的参数
-    candidate_category_list = None
-    categoryid_to_sorted_goods_list = None  # 候选商品列表
     extra_add_num = 2  # 每类冗余数量
-
-    best_candidate_shelf = None
 
     def __init__(self, shelf_id, type, width, height, depth,
                  shelf_category3_list,
@@ -213,24 +194,18 @@ class Shelf:
         self.height = height
         self.depth = depth
 
-        self.shelf_category3_list = shelf_category3_list
-        self.shelf_category3_intimate_weight = shelf_category3_intimate_weight
-        self.shelf_category3_level_value = shelf_category3_level_value
-        self.shelf_category3_area_ratio = shelf_category3_area_ratio
-        self.shelf_goods_data_list = shelf_goods_data_list
+        self.shelf_category3_list = shelf_category3_list  # 货架指定分类列表
+        self.shelf_category3_intimate_weight = shelf_category3_intimate_weight  # 货架分类涉及的亲密度分值
+        self.shelf_category3_level_value = shelf_category3_level_value  # 货架分类涉及的层数分值
+        self.shelf_category3_area_ratio = shelf_category3_area_ratio  # 货架内分类面积比例
+        self.shelf_goods_data_list = shelf_goods_data_list  # 货架候选商品列表
 
+        # 计算用到的参数
+        self.candidate_category_list = None
+        self.categoryid_to_sorted_goods_list = None  # 候选商品列表
+        self.best_candidate_shelf = None
 
 class CandidateShelf:
-    # shelf = None
-    # categoryid_list = None
-    # categoryid_to_used_sorted_goods_list = None
-    # categoryid_to_candidate_sorted_goods_list = None
-    #
-    # categoryid_to_arrange_goods_list = None
-    # levels = None
-    # badcase_value = 0.0
-    # goods_mean_width = 0
-
     def __init__(self, shelf, categoryid_list, categoryid_to_arrange_goods_list):
         self.shelf = shelf
         self.categoryid_list = categoryid_list
@@ -306,22 +281,15 @@ class CandidateShelf:
 
 
 class Level:
-    candidate_shelf = None  # 候选货架
-    level_id = None  # 层id
-    is_left_right_direction = True  # True从左向右，False从右向左
-    goods_width = 0  # 层宽度
-    start_height = None  # 层板相对货架的起始高度
-    goods_height = 0  # 商品最高高度
-    # level_depth = None  # 层深度
-
-    display_goods_list = []  # 陈列商品集合
-
     def __init__(self, candidate_shelf, level_id, start_height, is_left_right_direction):
-        self.candidate_shelf = candidate_shelf
-        self.level_id = level_id
-        self.is_left_right_direction = is_left_right_direction
+        self.candidate_shelf = candidate_shelf  # 候选货架
+        self.level_id = level_id  # 层id
+        self.is_left_right_direction = is_left_right_direction  # True从左向右，False从右向左
+        self.goods_width = 0   # 层宽度
         self.start_height = start_height
+        self.goods_height = 0 # 商品最高高度
         candidate_shelf.levels.append(self)
+        self.display_goods_list = []  # 陈列商品集合
 
     def display_goods(self, display_goods):
         if display_goods.get_width() + self.goods_width > self.candidate_shelf.shelf.width:
