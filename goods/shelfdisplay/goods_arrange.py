@@ -110,7 +110,7 @@ def _display_shelf(candidate_shelf):
         addition_width = candidate_shelf.calculate_addition_width()
 
         if addition_width > 0:
-            print(addition_width)
+            print('{},{}'.format(i,addition_width))
             input("按任意键继续：")
             # 陈列越界
             if addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
@@ -135,7 +135,7 @@ def _display_shelf(candidate_shelf):
                 if reduce_width > addition_width:
                     break
         else:
-            print(addition_width)
+            print('{},{}'.format(i,addition_width))
             input("按任意键继续：")
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
