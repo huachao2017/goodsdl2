@@ -386,5 +386,5 @@ if __name__ == "__main__":
 
     base_data = db_data.init_data(806)
 
-    taizhang = init_data(806, 1187, base_data)
+    taizhang = init_data(806, 1198, base_data)
     print(taizhang.to_json())
