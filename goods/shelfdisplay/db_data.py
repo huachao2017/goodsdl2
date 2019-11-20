@@ -93,29 +93,6 @@ class BaseData:
     goods_data_list = []
 
 class GoodsData:
-    """
-    商品的纯信息数据
-    """
-    mch_code = None
-    goods_name = None
-    upc = None
-    tz_display_img = None
-    category1 = None
-    category2 = None
-    category3 = None
-    category4 = None
-    package_type = None # 包装方式
-    brand = None # 品牌
-    width = None
-    height = None
-    depth = None
-    is_superimpose = None # 1可叠放，2不可叠放
-    is_suspension = None # 1可挂放，2不可挂放
-    psd = None # 预测销量
-
-    face_num = 1 #在某个货架时填入 # FIXME 临时方案
-    superimpose_num = 1 #在商品初始化时填入
-
     def __init__(self, mch_code, goods_name, upc, tz_display_img, category1, category2, category3, category4, package_type, brand, width, height, depth, is_superimpose, is_suspension, psd):
         self.mch_code = mch_code
         self.goods_name = goods_name
@@ -130,9 +107,11 @@ class GoodsData:
         self.width = width
         self.height = height
         self.depth = depth
-        self.is_superimpose = is_superimpose
-        self.is_suspension = is_suspension
-        self.psd = psd
+        self.is_superimpose = is_superimpose  # 1可叠放，2不可叠放
+        self.is_suspension = is_suspension  # 1可挂放，2不可挂放
+        self.psd = psd  # 预测销量
+        self.face_num = 1 #在某个货架时填入 # FIXME 临时方案
+        self.superimpose_num = 1 #在商品初始化时填入
 
     def equal(self, another_goods):
         if another_goods is not None:
