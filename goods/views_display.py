@@ -11,12 +11,11 @@ class AutoDisplay(APIView):
         try:
             shopid = int(request.query_params['shopid'])
             tzid = int(request.query_params['tzid'])
-            displayid = int(request.query_params['displayid'])
         except Exception as e:
             logger.error('Shelf auto display error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
 
-        taizhang = generate_displays(shopid,tzid,displayid)
+        taizhang = generate_displays(shopid, tzid)
         ret = json.dumps(taizhang.to_json())
 
         return Response(ret, status=status.HTTP_200_OK)

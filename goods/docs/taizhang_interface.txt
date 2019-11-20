@@ -1,6 +1,6 @@
 台账接口
 台账系统自动陈列提交：（post）http://alphataizhang.aicvs.cn/api/autoDisplay
-台账系统向ai请求：（get）http://ai.aicvs.cn/api/autoDisplay?shipid=xx&tzid=xx&displayid=xx
+台账系统向ai请求：（get）http://ai.aicvs.cn/api/autoDisplay?shipid=xx&tzid=xx
 
 返回
 {
