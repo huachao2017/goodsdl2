@@ -131,7 +131,6 @@ def _display_shelf(candidate_shelf):
                     break
         else:
             print(addition_width)
-            # 成列不足
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
                 # 退出试错
@@ -145,8 +144,7 @@ def _display_shelf(candidate_shelf):
                         goods = candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid][0]
                         add_width += goods.width * goods.face_num
                         candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid].append(goods)
-                        candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid] = \
-                        candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid][1:]
+                        candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid] = candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid][1:]
                         if add_width > positive_addition_width:
                             break
                     if add_width > positive_addition_width:
@@ -165,6 +163,8 @@ def _try_display_shelf(candidate_shelf):
             # 创建层
             level = _level_add_goods(candidate_shelf, level, goods, last_goods)
             last_goods = goods
+            print(level)
+            input("按任意键继续：")
 
 
 def _level_add_goods(candidate_shelf, cur_level, goods, last_goods):

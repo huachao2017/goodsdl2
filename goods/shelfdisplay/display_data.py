@@ -336,6 +336,13 @@ class Level:
         else:
             return self.display_goods_list[::-1]
 
+    def __str__(self):
+        ret = str(self.level_id)
+        ret += ','
+        ret += str(self.start_height)
+        ret += ','
+        ret += str(self.goods_width)
+
 
 class DisplayGoods:
     # 初始化数据
