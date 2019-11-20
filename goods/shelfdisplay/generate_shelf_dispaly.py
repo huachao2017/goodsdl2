@@ -34,6 +34,12 @@ def generate_displays(uc_shopid, tz_id):
     # 第四步
     goods_arrange.goods_arrange(taizhang.shelfs[0])
 
+    # 打印陈列图
+    image_dir = '/home/src/goodsdl2/media/images/taizhang/{}'.format(taizhang.tz_id)
+    from pathlib import Path
+    if not Path(image_dir).exists():
+        os.makedirs(image_dir)
+    print_taizhang(taizhang, image_dir)
     return taizhang
 
 
