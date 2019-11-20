@@ -168,7 +168,7 @@ class GoodsData:
         ret += ','
         ret += str(self.brand)
         ret += ','
-        ret += str(self.name)
+        ret += str(self.goods_name)
         ret += ','
         ret += str(self.height)
         ret += ','
