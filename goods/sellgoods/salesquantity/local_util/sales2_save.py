@@ -354,9 +354,9 @@ def save_db(salesold_inss):
           "%s,%s,%s,%s,%s," \
           "%s,%s,%s,%s,%s," \
           "%s,%s,%s)"
+    data = []
     for salesold_ins in salesold_inss:
         try:
-            data=[]
             data.append((
                 float(salesold_ins.shop_id),
                 float(salesold_ins.upc),
@@ -516,9 +516,12 @@ def save_db(salesold_inss):
                 float(salesold_ins.city_id),
                 str(salesold_ins.week_i_1_date)
             ))
-            mysql_ins.insert_many_sql(data,sql)
         except:
-            print ("insert db error")
+            print ("format error")
             continue
+    try:
+        mysql_ins.insert_many_sql(data, sql)
+    except :
+        print("insert db error")
 
 
