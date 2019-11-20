@@ -60,9 +60,10 @@ def goods_badcase_score(candidate_shelf_list):
             last_level = level
         if i % 100 == 0:
             print('计算第{}个候选解,共{}层,value={}：'.format(i,len(candidate_shelf.levels),candidate_shelf.badcase_value))
-        if min_badcase_value > candidate_shelf.badcase_value:
+        if candidate_shelf.badcase_value < min_badcase_value:
             min_badcase_value = candidate_shelf.badcase_value
             best_candidate_shelf = candidate_shelf
+    print(min_badcase_value)
 
     return best_candidate_shelf
 
