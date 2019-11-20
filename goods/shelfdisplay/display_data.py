@@ -361,3 +361,10 @@ class DisplayOneGoodsInfo:
         self.row = row
         self.top = top
         self.left = left
+
+if __name__ == "__main__":
+    from goods.shelfdisplay import db_data
+    base_data = db_data.init_data(806)
+
+    taizhang = init_data(806, 1046, base_data)
+    print(taizhang)

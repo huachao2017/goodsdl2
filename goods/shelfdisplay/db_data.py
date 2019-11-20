@@ -1,3 +1,8 @@
+import os
+import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+django.setup()
 from django.db import connections
 from goods.models import FirstGoodsSelection
 
@@ -17,18 +22,21 @@ def init_data(uc_shopid):
     (shopid, mch_id) = cursor.fetchone()
 
     # category_area_ratio: 分类陈列面积比例表
+    base_data.category_area_ratio = {}
     cursor.execute("select a.cat_id,a.ratio from sf_goods_categoryarearatio as a, sf_goods_shoptoshoptype as b where a.mch_id=b.mch_id and a.shop_type=b.shop_type and b.shop_id={}".format(uc_shopid))
     all_category_area_ratio = cursor.fetchall()
     for one in all_category_area_ratio:
         base_data.category_area_ratio[one[0]] = one[1]
 
     # category3_intimate_weight: 三级分类亲密度
+    base_data.category3_intimate_weight = {}
     cursor.execute("select cat_ids, score from sf_goods_categoryintimacy where mch_id={}".format(mch_id))
     all_categoryintimacy = cursor.fetchall()
     for one in all_categoryintimacy:
         base_data.category3_intimate_weight[one[0]] = one[1]
 
     # category3_level_value: 三级分类层数分值
+    base_data.category3_level_value = {}
     cursor.execute("select cat_id, score from sf_goods_categorylevelrelation where mch_id={}".format(mch_id))
     all_categorylevelrelation = cursor.fetchall()
     for one in all_categorylevelrelation:
@@ -141,5 +149,45 @@ class GoodsData:
             return self.height - another_goods.height
         return 0
 
+    def __str__(self):
+        ret = '('
+        ret += str(self.mch_code)
+        ret += ','
+        ret += str(self.goods_name)
+        ret += ','
+        ret += str(self.upc)
+        ret += ','
+        ret += str(self.tz_display_img)
+        ret += ','
+        ret += str(self.category1)
+        ret += ','
+        ret += str(self.category2)
+        ret += ','
+        ret += str(self.category3)
+        ret += ','
+        ret += str(self.category4)
+        ret += ','
+        ret += str(self.package_type)
+        ret += ','
+        ret += str(self.brand)
+        ret += ','
+        ret += str(self.goods_name)
+        ret += ','
+        ret += str(self.height)
+        ret += ','
+        ret += str(self.width)
+        ret += ')'
+        return ret
 
 
+if __name__ == "__main__":
+    # category_area_ratio: 分类陈列面积比例表
+    # category3_intimate_weight: 三级分类亲密度
+    # category3_level_value: 三级分类层数分值
+    # goods_data_list: GoodsData列表
+    base_data = init_data(806)
+    print(base_data.category_area_ratio)
+    print(base_data.category3_intimate_weight)
+    print(base_data.category3_level_value)
+    for goods in base_data.goods_data_list:
+        print(goods)
