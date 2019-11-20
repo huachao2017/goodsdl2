@@ -354,7 +354,7 @@ class DisplayGoods:
                 left = init_left + i * self.goods_data.width
                 display_goods_info.append(DisplayOneGoodsInfo(col, row, top, left))
 
-        return []
+        return display_goods_info
 
 
 class DisplayOneGoodsInfo:
