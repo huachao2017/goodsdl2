@@ -7,9 +7,11 @@ a，b，c如分值都大于5，则以最大的计算
 a，b，c如分值都小于5，则以最小的计算
 a，b，c如分值既有大于5又有小于5，则为N（未定义）
 """
-import itertools,copy,random
+import itertools, copy, random,math
 from functools import reduce
 from goods.shelfdisplay import single_algorithm
+
+
 def shelf_arrange(shelf):
     """
     流程：
@@ -19,10 +21,10 @@ def shelf_arrange(shelf):
     :param shelf: display_data中的shelf对象
     :return: 候选分类列表，例如[[a,b,c,d],[d,c,b,a]]
     """
-    category3_intimate_weight = shelf.category3_intimate_weight
-    category3_level_value = shelf.category3_level_value
+    category3_intimate_weight = shelf.shelf_category3_intimate_weight
+    category3_level_value = shelf.shelf_category3_level_value
 
-    original_category3_list = shelf.shelf_category_list
+    category3_list = shelf.shelf_category3_list
     return main_calculate(category3_intimate_weight, category3_level_value, category3_list)
 
 
@@ -49,14 +51,16 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
         print(root_category_tree)
 
     # 4，外层排序解集
-    candidate_category_tree_order = calculate_outer_result(root_category_tree_list,category3_level_value,category3_list)
+    candidate_category_tree_order = calculate_outer_result(root_category_tree_list, category3_level_value,
+                                                           category3_list)
 
     # 5, 里外合并
-    ret = combine_all_result(candidate_category_tree_order,category3_level_value)
+    ret = combine_all_result(candidate_category_tree_order, category3_level_value)
 
     return ret
 
-def calculate_outer_result(category_tree_list,category3_level_value,category3_list,threshold=10000):
+
+def calculate_outer_result(category_tree_list, category3_level_value, category3_list, threshold=100):
     """
     计算外层解
     :param category_tree_list:
@@ -66,30 +70,34 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
     all_arrange = []
     iter = itertools.permutations(category_tree_list, len(category_tree_list))
     category_tree_list_len = len(category_tree_list)
-    print('category_tree_list_len:',category_tree_list_len)
+    print('category_tree_list_len:', category_tree_list_len)
     if category_tree_list_len > 12:
         print('有问题！！！')
         for i in category_tree_list:
             print(i.category)
     max_lengh = reduce(lambda x, y: x * y, range(1, category_tree_list_len + 1))  # 阶乘
+    print('max_lengh',max_lengh)
     if max_lengh > threshold:  # 如果大于阈值，则根据步长设置进行下采样
-        step_size = max_lengh // threshold
+        step_size = math.ceil(max_lengh / threshold)
     else:
         step_size = 1
+    print('step_size',step_size)
 
-    for i in iter:
-        if random.random() > 1 / step_size:  # 进行下采样
-            # print('进行下采样')
-            continue
-        else:
-            all_arrange.append(i)
+    for i,v in enumerate(iter):
+        # if random.random() > 1 // step_size:  # 进行下采样
+        #     print('进行下采样',i)
+        #     continue
+        # else:
+        #     all_arrange.append(v)
+        if i % step_size == 0: # 进行下采样
+            all_arrange.append(v)
 
     print('所有排列数:', len(all_arrange))
     # print('所有排列:', all_arrange)
     all_arrange_2 = copy.deepcopy(all_arrange)
     for arrange in all_arrange:
         for obj in arrange:
-            #是否符合上下关系
+            # 是否符合上下关系
             tem_list = []
             if obj.level_value:
                 # 这步考虑没定义的
@@ -100,7 +108,7 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
                         all_arrange_2.remove(arrange)
 
     print('所有排列数2:', len(all_arrange_2))
-    #查看未定义的是否在0分和10分之间,即可以转化为0和10是否都在两头
+    # 查看未定义的是否在0分和10分之间,即可以转化为0和10是否都在两头
     tree_leval_value_list = []
     for i in all_arrange_2[0]:
         tree_leval_value_list.append(i.level_value)
@@ -138,7 +146,8 @@ def calculate_outer_result(category_tree_list,category3_level_value,category3_li
 
     return ret
 
-def is_equal(a,b):
+
+def is_equal(a, b):
     """
     检查a、b是否元素相等，只是排列组合不同而已
     :param a:
@@ -152,6 +161,7 @@ def is_equal(a,b):
             return False
     return True
 
+
 def arrange_all(list1):
     """
     :return: 输出无约束情况下所有排列的可能
@@ -163,13 +173,14 @@ def arrange_all(list1):
     # print(result)
     return result
 
-def combine_all_result(candidate_category_tree_order,category3_level_value):
+
+def combine_all_result(candidate_category_tree_order, category3_level_value):
     """
     遍历并组合所有内部解和外部解，并把对象转为category
     :param candidate_category_tree_order:
     :return:
     """
-    print('candidate_category_tree_order',candidate_category_tree_order)
+    print('candidate_category_tree_order', candidate_category_tree_order)
     ret = []
     temp_candidate = []
     for obj_arrange in candidate_category_tree_order:
@@ -194,7 +205,7 @@ def combine_all_result(candidate_category_tree_order,category3_level_value):
         for i in list(itertools.product(*loop_val)):
             temp_candidate.append(i)
 
-    for arrange in temp_candidate:    # 变成一维平铺的
+    for arrange in temp_candidate:  # 变成一维平铺的
         temp_list = []
         for category_list in arrange:
             for category in category_list:
@@ -206,7 +217,8 @@ def combine_all_result(candidate_category_tree_order,category3_level_value):
     # return temp_candidate
     return ret
 
-def is_match_up_down_relation(list,category3_level_value):
+
+def is_match_up_down_relation(list, category3_level_value):
     """
     是否符合上下关系
     :param list:
@@ -221,11 +233,12 @@ def is_match_up_down_relation(list,category3_level_value):
             v = category3_level_value[i]
             tem_list.append(v)
 
-    for i,v in enumerate(tem_list[:-1]):
-        if tem_list[i] > tem_list[i+1]:
+    for i, v in enumerate(tem_list[:-1]):
+        if tem_list[i] > tem_list[i + 1]:
             return False
 
     return True
+
 
 def init_category_tree(category3_intimate_weight, category3_level_value, category3_list):
     """
@@ -248,8 +261,8 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
         for i in group.split(','):
             if i in category3_list:
                 belong_part_category3.append(i)
-        if len(belong_part_category3) > 1:      # 长度等于1或者0，亲密度就没意义了
-            intimate_list.append([belong_part_category3,value])  # 列表套列表[[[a,b],10],[[d,e,f],5]]
+        if len(belong_part_category3) > 1:  # 长度等于1或者0，亲密度就没意义了
+            intimate_list.append([belong_part_category3, value])  # 列表套列表[[[a,b],10],[[d,e,f],5]]
     # 以下是去重
     intimate_list_temp_category = []
     intimate_list_temp = []
@@ -259,14 +272,14 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
             intimate_list_temp_category.append(i[0])
         else:
             for t in intimate_list_temp:
-                if t[0] == i[0]:          # 如果重复，要分值高得那个
+                if t[0] == i[0]:  # 如果重复，要分值高得那个
                     if i[1] > t[1]:
                         t[1] = i[1]
     category3_intimate_weight = {}
     for i in intimate_list_temp:
         category3_intimate_weight[",".join(i[0])] = i[1]
 
-    print('新的category3_intimate_weight',category3_intimate_weight)
+    print('新的category3_intimate_weight', category3_intimate_weight)
     # TODO 处理掉category3_list没有，但category3_intimate_weight有的三级分类
 
     sorted_intimate_list = sorted(category3_intimate_weight.items(), key=lambda item: item[1], reverse=True)
@@ -323,7 +336,7 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
                         if category_to_category_tree[category] is None:
                             category_tree = CategoryTree(tree_id, intimate_value)
                             tree_id += 1
-                            category_tree.init_child_with_parent(category,min_intimate_parent_tree)
+                            category_tree.init_child_with_parent(category, min_intimate_parent_tree)
                             all_category_tree_without_parent.append(category_tree)
                 elif min_intimate_value > intimate_value:
                     # 3、扩层创建，和一个parent同层创建，并组合创建共同的parent
@@ -376,7 +389,6 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
         if child_tree.category in category3_level_value:
             child_tree.level_value = category3_level_value[child_tree.category]
 
-
     return id_to_root_parent_tree.values()
 
 
@@ -388,6 +400,7 @@ def _find_category(category, category_tree_list):
 
     return None
 
+
 def _get_root_result_list(root_category_tree):
     """
     获取根数的所有展开解
@@ -396,6 +409,7 @@ def _get_root_result_list(root_category_tree):
     """
 
     return root_category_tree.get_all_simple_result()
+
 
 class CategoryTree:
     id = None
@@ -458,7 +472,7 @@ class CategoryTree:
                 if max_level_value < 5:
                     self.level_value = min_level_value
 
-    def calculate_result(self,threshold=10000):
+    def calculate_result(self, threshold=100):
         """
 
         :param threshold: 最大排列数的阈值
@@ -473,23 +487,32 @@ class CategoryTree:
             self.result_list = []
             # temp_result = arrange_all(self.children)
 
-            iter = itertools.permutations(self.children, len(self.children))     # 所有排列的生成器
+            iter = itertools.permutations(self.children, len(self.children))  # 所有排列的生成器
             list_len = len(self.children)
-            max_lengh = reduce(lambda x,y:x * y,range(1,list_len+1))     # 阶乘
-            if max_lengh > threshold:       # 如果大于阈值，则根据步长设置进行下采样
-                step_size = max_lengh // threshold
+            max_lengh = reduce(lambda x, y: x * y, range(1, list_len + 1))  # 阶乘
+            if max_lengh > threshold:  # 如果大于阈值，则根据步长设置进行下采样
+                step_size = math.ceil(max_lengh / threshold)
+
             else:
                 step_size = 1
 
-            for one_result in iter:
-                if random.random() > 1/step_size:        #  进行下采样
-                    continue
-                else:
+            for i,one_result in enumerate(iter):
+                # if random.random() > 1 // step_size:  # 进行下采样
+                #     continue
+                # else:
+
+                if i % step_size == 0:  # 进行下采样
 
                     last_category_tree = None
                     is_valid = True
                     for category_tree in one_result:
                         if last_category_tree is not None:
+                            if last_category_tree.level_value is None and category_tree.level_value == 0:
+                                is_valid = False
+                                break
+                            if category_tree.level_value is None and last_category_tree.level_value == 10:
+                                is_valid = False
+                                break
                             if last_category_tree.level_value is not None and category_tree.level_value is not None and last_category_tree.level_value > category_tree.level_value:
                                 is_valid = False
                                 break
@@ -522,7 +545,6 @@ class CategoryTree:
                             simple_result_list.append(index_to_simple_result[i])
                     all_simple_result.append(simple_result_list)
             return all_simple_result
-
 
     def __str__(self):
         ret = ''
@@ -557,38 +579,38 @@ class CategoryTree:
 if __name__ == '__main__':
     # TODO 李树
     category3_intimate_weight = [
-                                {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f': 6,'d,e,f,g': 5},
-                                {},
-                                {'a,b': 10,'a,b,c': 5,'d,a': 10,'d,e,f': 6,'d,e,f,g': 5},
-                                {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f': 6,'d,e,f,g': 5},
-                                {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f': 6,'d,e,f,g': 5},
-                                {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,m': 8,'d,e,f,g,h,i,j,k,l,m': 5},
-                                {'a,b': 10,'a,b,c': 5,'d,e': 10,'d,e,f': 6,'d,e,f,g': 5},
-                                 {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
-                                 ]
+        {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
+        {},
+        {'a,b': 10, 'a,b,c': 5, 'd,a': 10, 'd,e,f': 6, 'd,e,f,g': 5},
+        {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
+        {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
+        {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,m': 8, 'd,e,f,g,h,i,j,k,l,m': 5},
+        {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
+        {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
+    ]
     category3_level_value = [
-                                {'b':8, 'c':10, 'e':0},
-                                { 'e':0},
-                                {'b':8, 'c':10, 'e':0},
-                                {'b':8, 'c':10, 'e':0},
-                                {'b':10, 'c':0, 'e':0,'a':0},
-                                {'b':8, 'c':10, 'e':0},
-                                {'b':8, 'c':10, 'e':0},
-                                {'b':8, 'c':10, 'e':10},
-                             ]
+        {'b': 8, 'c': 10, 'e': 0},
+        {},
+        {'b': 8, 'c': 10, 'e': 0},
+        {'b': 8, 'c': 10, 'e': 0},
+        {'b': 10, 'c': 0, 'e': 0, 'a': 0},
+        {'b': 8, 'c': 10, 'e': 0},
+        {'b': 8, 'c': 10, 'e': 0},
+        {'b': 8, 'c': 10, 'e': 10},
+    ]
     category3_list = [
-                    {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-                    {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-                    {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-                    {'a', 'd'},
-                    {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-                    {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-                    {'a', 'b', 'c', 'd', 'f'},
-                      {'a', 'b', 'c', 'd', 'e', 'f', 'g','h','i','j','k'},
-                      ]
+        {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
+        {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
+        {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
+        {'a', 'd'},
+        {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
+        {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
+        {'a', 'b', 'c', 'd', 'f'},
+        {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'},
+    ]
 
-    n = 4
+    n = 1
     a = main_calculate(category3_intimate_weight[n], category3_level_value[n], category3_list[n])
     print('--------------候选列表---------------')
-    print('候选列表总数：',len(a))
+    print('候选列表总数：', len(a))
     print(a)

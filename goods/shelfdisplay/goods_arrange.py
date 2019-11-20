@@ -28,7 +28,7 @@ def goods_arrange(shelf):
     # 3、每一个三级分类获得排序商品
     extra_add_num = 2  # FIXME 冗余数量怎么定，如果没有了呢？
     categoryid_to_sorted_goods_list = {}
-    for categoryid in shelf.shelf_category_list:
+    for categoryid in shelf.shelf_category3_list:
         sorted_goods_list = single_algorithm.choose_goods_for_category3(shelf,categoryid,
                                                                         extra_add=extra_add_num)
         categoryid_to_sorted_goods_list[categoryid] = sorted_goods_list
@@ -39,7 +39,7 @@ def goods_arrange(shelf):
     # 生成所有的候选解
     candidate_result_shelf_list = []
     categoryid_to_arrange_goods_list_list = {}
-    for categoryid in shelf.shelf_category_list:
+    for categoryid in shelf.shelf_category3_list:
         arrange_goods_list_list = goods.shelfdisplay.goods_arrange_category3.goods_arrange(
             shelf.categoryid_to_sorted_goods_list[categoryid])
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list

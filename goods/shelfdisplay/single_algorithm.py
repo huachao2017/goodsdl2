@@ -12,7 +12,7 @@ def choose_goods_for_category3(categoryid, shelf, extra_add=0):
     :return:商品列表GoodsData
     """
     shelf_area = shelf.width * shelf.heigth
-    ratio = shelf.shelf_category_area_ratio[categoryid]
+    ratio = shelf.shelf_category3_area_ratio[categoryid]
     category3_area = shelf_area * ratio
     category3_list = []
     for i in shelf.shelf_goods_data_list:
@@ -63,7 +63,7 @@ def goods_badcase_score(candidate_shelf_list):
     return best_candidate_shelf
 
 
-def calculate_shelf_category_area_ratio(categoryid_list, category_area_ratio):
+def calculate_shelf_category3_area_ratio(categoryid_list, category_area_ratio):
     """
     计算出本货架的比例
     :param shelf:
@@ -72,14 +72,26 @@ def calculate_shelf_category_area_ratio(categoryid_list, category_area_ratio):
     :return: 修正的category_area_ratio
     """
 
-    shelf_category_area_ratio = {}
+    shelf_category3_area_ratio = {}
     total_ratio = 0.0
+    ratio_valid = True #
     for categoryid in categoryid_list:
+        if categoryid not in category_area_ratio:
+            ratio_valid = False
+            print('error: category_area_ratio data is not valid!')
+            break
         total_ratio += category_area_ratio[categoryid]
-    for categoryid in categoryid_list:
-        shelf_category_area_ratio[categoryid] = category_area_ratio[categoryid] / total_ratio
 
-    return shelf_category_area_ratio
+    if ratio_valid:
+        for categoryid in categoryid_list:
+            shelf_category3_area_ratio[categoryid] = category_area_ratio[categoryid] / total_ratio
+    else:
+        # FIXME 如果分类面积比例是无效的，则每个类平均分配货架
+        for categoryid in categoryid_list:
+            shelf_category3_area_ratio[categoryid] = 1 / len(categoryid_list)
+
+
+    return shelf_category3_area_ratio
 
 
 def dict_arrange(key_to_candidate_list):
