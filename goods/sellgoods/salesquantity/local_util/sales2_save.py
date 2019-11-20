@@ -139,74 +139,91 @@ def data_check(salesold_ins):
     except:
         salesold_ins.windspeed_4 = 0.0
 
+    try:
+        float(salesold_ins.templow_5),
+    except:
+        salesold_ins.templow_5 = 0.0
+    try:
+        float(salesold_ins.temphigh_5),
+    except:
+        salesold_ins.temphigh_5 = 0.0
+    try:
+        float(salesold_ins.weather_type_5),
+    except:
+        salesold_ins.weather_type_5 = 0.0
+    try:
+        float(salesold_ins.windpower_5),
+    except:
+        salesold_ins.windpower_5 = 0.0
+    try:
+        float(salesold_ins.winddirect_5),
+    except:
+        salesold_ins.winddirect_5 = 0.0
+    try:
+        float(salesold_ins.windspeed_5),
+    except:
+        salesold_ins.windspeed_5 = 0.0
 
-    float(salesold_ins.templow_5),
-    float(salesold_ins.temphigh_5),
-    float(salesold_ins.weather_type_5),
-    float(salesold_ins.windpower_5),
-    float(salesold_ins.winddirect_5),
-    float(salesold_ins.windspeed_5),
 
-    float(salesold_ins.templow_6),
-    float(salesold_ins.temphigh_6),
-    float(salesold_ins.weather_type_6),
-    float(salesold_ins.windpower_6),
-    float(salesold_ins.winddirect_6),
-    float(salesold_ins.windspeed_6),
 
-    float(salesold_ins.templow_7),
-    float(salesold_ins.temphigh_7),
-    float(salesold_ins.weather_type_7),
-    float(salesold_ins.windpower_7),
-    float(salesold_ins.winddirect_7),
-    float(salesold_ins.windspeed_7),
+    try:
+        float(salesold_ins.templow_6),
+    except:
+        salesold_ins.templow_6 = 0.0
+    try:
+        float(salesold_ins.temphigh_6),
+    except:
+        salesold_ins.temphigh_6 = 0.0
+    try:
+        float(salesold_ins.weather_type_6),
+    except:
+        salesold_ins.weather_type_6 = 0.0
+    try:
+        float(salesold_ins.windpower_6),
+    except:
+        salesold_ins.windpower_6 = 0.0
+    try:
+        float(salesold_ins.winddirect_6),
+    except:
+        salesold_ins.winddirect_6 = 0.0
+    try:
+        float(salesold_ins.windspeed_6),
+    except:
+        salesold_ins.windspeed_6 = 0.0
 
-    # 时间维度
-    float(salesold_ins.week_i_1),
-    float(salesold_ins.season_1),
-    float(salesold_ins.week_type_1),
-    float(salesold_ins.month_1),
-    float(salesold_ins.holiday_type_1),
 
-    float(salesold_ins.week_i_2),
-    float(salesold_ins.season_2),
-    float(salesold_ins.week_type_2),
-    float(salesold_ins.month_2),
-    float(salesold_ins.holiday_type_2),
+    try:
+        float(salesold_ins.templow_7),
+    except:
+        salesold_ins.templow_7 = 0.0
+    try:
+        float(salesold_ins.temphigh_7),
+    except:
+        salesold_ins.temphigh_7 = 0.0
+    try:
+        float(salesold_ins.weather_type_7),
+    except:
+        salesold_ins.weather_type_7 = 0.0
+    try:
+        float(salesold_ins.windpower_7),
+    except:
+        salesold_ins.windpower_7 = 0.0
+    try:
+        float(salesold_ins.winddirect_7),
+    except:
+        salesold_ins.winddirect_7 = 0.0
+    try:
+        float(salesold_ins.windspeed_7),
+    except:
+        salesold_ins.windspeed_7 = 0.0
 
-    float(salesold_ins.week_i_3),
-    float(salesold_ins.season_3),
-    float(salesold_ins.week_type_3),
-    float(salesold_ins.month_3),
-    float(salesold_ins.holiday_type_3),
-
-    float(salesold_ins.week_i_4),
-    float(salesold_ins.season_4),
-    float(salesold_ins.week_type_4),
-    float(salesold_ins.month_4),
-    float(salesold_ins.holiday_type_4),
-
-    float(salesold_ins.week_i_5),
-    float(salesold_ins.season_5),
-    float(salesold_ins.week_type_5),
-    float(salesold_ins.month_5),
-    float(salesold_ins.holiday_type_5),
-
-    float(salesold_ins.week_i_6),
-    float(salesold_ins.season_6),
-    float(salesold_ins.week_type_6),
-    float(salesold_ins.month_6),
-    float(salesold_ins.holiday_type_6),
-
-    float(salesold_ins.week_i_7),
-    float(salesold_ins.season_7),
-    float(salesold_ins.week_type_7),
-    float(salesold_ins.month_7),
-    float(salesold_ins.holiday_type_7),
     # 地域维度
-    float(salesold_ins.city_id),
-    str(salesold_ins.week_i_1_date)
+    try:
+        float(salesold_ins.city_id),
+    except:
+        salesold_ins.city_id = 0.0
 
+    return salesold_ins
 
 
 
@@ -566,6 +583,7 @@ def save_db(salesold_inss):
     data = []
     for salesold_ins in salesold_inss:
         try:
+            salesold_ins = data_check(salesold_ins)
             data.append((
                 float(salesold_ins.shop_id),
                 float(salesold_ins.upc),

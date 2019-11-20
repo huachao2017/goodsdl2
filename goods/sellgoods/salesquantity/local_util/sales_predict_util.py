@@ -27,7 +27,7 @@ class SalesPredict:
                 if end_time2 in week_days1:
                     return
                 else:
-                    results = self.get_weeks_results(sql1)
+                    results = self.get_weeks_results(sql1,week_days1)
                     salesold_inss = self.get_data_week(results, week_days1, week_days2)
                     try:
                         sales2_save.write_file(salesold_inss,week_days1[0])
@@ -41,7 +41,7 @@ class SalesPredict:
         else:
             week_days1 = self.get_date(1)
             week_days2 = self.get_date(4)
-            results = self.get_weeks_results(sql1)
+            results = self.get_weeks_results(sql1,week_days1)
             salesold_inss = self.get_data_week(results,week_days1,week_days2)
             try:
                 sales2_save.write_file(salesold_inss,week_days1[0])
@@ -58,11 +58,18 @@ class SalesPredict:
 
 
 
-    def get_weeks_results(self,sql1):
+    def get_weeks_results(self,sql1,week_days):
         mysql_ins = mysql_util.MysqlUtil(erp)
         resultss = []
-        for i in range(1,13):
-            week_days1 = self.get_date(i)
+
+        start_time = week_days[0]
+        end_time = week_days[-1]
+        sql1 = sql1.format(start_time, end_time, start_time, end_time)
+        results = mysql_ins.selectAll(sql1)
+        resultss.extend(list(results))
+        create_date = week_days[0]
+        for i in range(1,12):
+            week_days1 = self.get_date(i,create_date)
             start_time = week_days1[0]
             end_time = week_days1[-1]
             sql1 = sql1.format(start_time, end_time, start_time, end_time)
@@ -72,8 +79,6 @@ class SalesPredict:
 
 
     def get_weather(self,weather_types,winddirects,results):
-
-
         # mysql_ins = mysql_util.MysqlUtil(ai)
         weather_week = {}
         for row in list(results):
@@ -623,7 +628,7 @@ class SalesPredict:
         sales_old_ins.third_cate_id = int(sales_old_tmp_ins.third_cate_id)
 
 
-    def get_date(self,n):
+    def get_date(self,n,create_date = None):
         """
         获取多少周之前 周一到周日的时间
         :param n:  多少周
@@ -635,10 +640,16 @@ class SalesPredict:
         week_one_date = str(
             (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                 days=-(wd-1))).strftime("%Y-%m-%d"))
-        #获取n周以前的周一时间
-        start_date =  str(
-            (datetime.datetime.strptime(week_one_date, "%Y-%m-%d") + datetime.timedelta(
-                days=-n*7)).strftime("%Y-%m-%d"))
+        start_date = None
+        if create_date == None :
+            #获取n周以前的周一时间
+            start_date =  str(
+                (datetime.datetime.strptime(week_one_date, "%Y-%m-%d") + datetime.timedelta(
+                    days=-n*7)).strftime("%Y-%m-%d"))
+        else:
+            start_date = str(
+                (datetime.datetime.strptime(create_date, "%Y-%m-%d") + datetime.timedelta(
+                    days=-n * 7)).strftime("%Y-%m-%d"))
         week_days = []
         #获取周一到周日的时间
         for i in range(7):
@@ -646,6 +657,7 @@ class SalesPredict:
                 (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
                     days = i)).strftime("%Y-%m-%d"))
             week_days.append(start_date_i)
+
         return week_days
 
 if __name__=='__main__':
