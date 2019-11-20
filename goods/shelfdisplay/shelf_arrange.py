@@ -19,10 +19,10 @@ def shelf_arrange(shelf):
     :param shelf: display_data中的shelf对象
     :return: 候选分类列表，例如[[a,b,c,d],[d,c,b,a]]
     """
-    category3_intimate_weight = shelf.category3_intimate_weight
-    category3_level_value = shelf.category3_level_value
+    category3_intimate_weight = shelf.shelf_category3_intimate_weight
+    category3_level_value = shelf.shelf_category3_level_value
 
-    original_category3_list = shelf.shelf_category_list
+    category3_list = shelf.shelf_category_list
     return main_calculate(category3_intimate_weight, category3_level_value, category3_list)
 
 
