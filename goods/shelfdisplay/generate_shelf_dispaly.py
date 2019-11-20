@@ -36,7 +36,8 @@ def generate_displays(uc_shopid, tz_id):
     goods_arrange.goods_arrange(taizhang.shelfs[0])
 
     # 打印陈列图
-    image_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',taizhang.tz_id)
+    print(taizhang.to_json())
+    image_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(taizhang.tz_id))
     from pathlib import Path
     if not Path(image_dir).exists():
         os.makedirs(image_dir)
@@ -101,4 +102,3 @@ def print_taizhang(taizhang, image_dir):
 if __name__ == "__main__":
     # taizhang = generate_displays(806, 1187)
     taizhang = generate_displays(806, 1199)
-    print(taizhang.to_json())

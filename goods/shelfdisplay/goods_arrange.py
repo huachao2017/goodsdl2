@@ -46,7 +46,7 @@ def goods_arrange(shelf):
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
 
     print("共{}个分类解：".format(len(shelf.candidate_category_list)))
-    input("按任何键继续：")
+    # input("按任何键继续：")
     i = 0
     for categoryid_list in shelf.candidate_category_list:
         i += 1
@@ -58,7 +58,7 @@ def goods_arrange(shelf):
         j = 0
         for candidate_shelf in candidate_shelf_list:
             j += 1
-            print("开始第{}.{}个商品组合解：".format(i, j))
+            # print("开始第{}.{}个商品组合解：".format(i, j))
             if _display_shelf(candidate_shelf):
                 candidate_result_shelf_list.append(candidate_shelf)
 
