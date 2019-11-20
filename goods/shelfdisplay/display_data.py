@@ -124,32 +124,33 @@ class Taizhang:
                 "levels": []
             }
             json_ret["shelfs"].append(json_shelf)
-            for level in shelf.best_candidate_shelf.levels:
-                if level.isTrue:
-                    json_level = {
-                        "level_id": level.level_id,
-                        "height": level.level_height,
-                        "goods": []
-                    }
-                    json_shelf["levels"].append(json_level)
-                    for display_goods in level.get_left_right_display_goods_list():
-                        json_goods = {
-                            "mch_good_code": display_goods.goods_data.mch_code,
-                            "upc": display_goods.goods_data.upc,
-                            "width": display_goods.goods_data.width,
-                            "height": display_goods.goods_data.height,
-                            "depth": display_goods.goods_data.depth,
-                            "displays": []
+            if shelf.best_candidate_shelf is not None:
+                for level in shelf.best_candidate_shelf.levels:
+                    if level.isTrue:
+                        json_level = {
+                            "level_id": level.level_id,
+                            "height": level.level_height,
+                            "goods": []
                         }
-                        json_level["goods"].append(json_goods)
-                        for goods_display_info in display_goods.get_display_info(level):
-                            json_display = {
-                                "top": goods_display_info.top,
-                                "left": goods_display_info.left,
-                                "row": goods_display_info.row,
-                                "col": goods_display_info.col,
+                        json_shelf["levels"].append(json_level)
+                        for display_goods in level.get_left_right_display_goods_list():
+                            json_goods = {
+                                "mch_good_code": display_goods.goods_data.mch_code,
+                                "upc": display_goods.goods_data.upc,
+                                "width": display_goods.goods_data.width,
+                                "height": display_goods.goods_data.height,
+                                "depth": display_goods.goods_data.depth,
+                                "displays": []
                             }
-                            json_goods["displays"].append(json_display)
+                            json_level["goods"].append(json_goods)
+                            for goods_display_info in display_goods.get_display_info(level):
+                                json_display = {
+                                    "top": goods_display_info.top,
+                                    "left": goods_display_info.left,
+                                    "row": goods_display_info.row,
+                                    "col": goods_display_info.col,
+                                }
+                                json_goods["displays"].append(json_display)
 
         return json_ret
 
@@ -367,8 +368,10 @@ class DisplayOneGoodsInfo:
         self.top = top
         self.left = left
 
+
 if __name__ == "__main__":
     from goods.shelfdisplay import db_data
+
     base_data = db_data.init_data(806)
 
     taizhang = init_data(806, 1173, base_data)
