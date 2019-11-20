@@ -135,8 +135,8 @@ def _display_shelf(candidate_shelf):
                 if reduce_width > addition_width:
                     break
         else:
-            print('{},{}'.format(i,addition_width))
-            input("按任意键继续：")
+            # print('{},{}'.format(i,addition_width))
+            # input("按任意键继续：")
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
                 # 退出试错
@@ -169,16 +169,16 @@ def _display_shelf(candidate_shelf):
 def _try_display_shelf(candidate_shelf):
     level = None
     last_goods = None
-    total_num = 0
+    # total_num = 0
     for categoryid in candidate_shelf.categoryid_list:
         arrange_goods_list = candidate_shelf.get_real_arrange_goods_list(categoryid)
-        total_num += len(arrange_goods_list)
+        # total_num += len(arrange_goods_list)
         for goods in arrange_goods_list:
             # 创建层
             level = _level_add_goods(candidate_shelf, level, goods, last_goods)
             last_goods = goods
 
-    print(total_num)
+    # print(total_num)
 
 def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
     """
