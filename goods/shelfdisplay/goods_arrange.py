@@ -45,6 +45,8 @@ def goods_arrange(shelf):
             shelf.categoryid_to_sorted_goods_list[categoryid])
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
 
+    print("共{}个分类解：".format(len(shelf.candidate_category_list)))
+    input("按任何键继续：")
     i = 0
     for categoryid_list in shelf.candidate_category_list:
         i += 1
