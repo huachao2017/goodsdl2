@@ -70,7 +70,7 @@ def get_insert_safedays_data(shop_id,safedays_inss,result):
             config_safedays_inss.append(config_safedays_ins)
     data = []
     for config_safedays_ins in config_safedays_inss:
-        data.append((config_safedays_ins.shop_id,config_safedays_ins.upc,config_safedays_ins.safe_day_nums,config_safedays_ins.goods_name))
+        data.append((config_safedays_ins.shop_id,config_safedays_ins.upc,config_safedays_ins.safe_day_nums,config_safedays_ins.goods_name,config_safedays_ins.create_time,config_safedays_ins.update_time))
 
     return data
 def get_insert_disnums_data(shop_id ,disnums_inss,result):
