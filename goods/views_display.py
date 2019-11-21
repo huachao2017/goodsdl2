@@ -23,8 +23,8 @@ class AutoDisplay(APIView):
         tz_id = None
         try:
             uc_shopid = int(request.query_params['ucshopid'])
-            if 'tzid' in request.query_params['tzid']:
-                tz_id = int(request.query_params['tzid'])
+            # if 'tzid' in request.query_params['tzid']:
+            tz_id = int(request.query_params['tzid'])
         except Exception as e:
             logger.error('Shelf auto display error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
@@ -32,22 +32,22 @@ class AutoDisplay(APIView):
         taizhangid_list = []
         if tz_id is not None:
             taizhangid_list.append(tz_id)
-        else:
-            cursor = connections['ucenter'].cursor()
-
-            # 获取所有台账
-            try:
-                cursor.execute(
-                    "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(
-                        uc_shopid))
-                taizhang_infos = cursor.fetchall()
-                for taizhang_info in taizhang_infos:
-                    taizhangid_list.append(taizhang_info[0])
-            except:
-                print('获取台账失败：{}！'.format(uc_shopid))
-                raise ValueError('taizhang error:{}'.format(uc_shopid))
-            finally:
-                cursor.close()
+        # else:
+        #     cursor = connections['ucenter'].cursor()
+        #
+        #     # 获取所有台账
+        #     try:
+        #         cursor.execute(
+        #             "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(
+        #                 uc_shopid))
+        #         taizhang_infos = cursor.fetchall()
+        #         for taizhang_info in taizhang_infos:
+        #             taizhangid_list.append(taizhang_info[0])
+        #     except:
+        #         print('获取台账失败：{}！'.format(uc_shopid))
+        #         raise ValueError('taizhang error:{}'.format(uc_shopid))
+        #     finally:
+        #         cursor.close()
 
         url = "https://taizhang.aicvs.cn/api/autoDisplay"
         headers = {

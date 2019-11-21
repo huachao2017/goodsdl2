@@ -35,6 +35,8 @@ def init_data(uc_shopid, tz_id, base_data):
         print(shelf_id)
         print(count)
         print(third_cate_ids)
+        if third_cate_ids is None or third_cate_ids == '':
+            raise ValueError()
     except:
         print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
         raise ValueError('taizhang error:{},{}'.format(uc_shopid, tz_id))
