@@ -78,16 +78,16 @@ class ConfigTableUtil:
            if  row[4] is not None and row[4] != '':
                if ',' in str(row[4]):
                    for hour in str(row[4]).split(","):
-                       cshops_ins.hours_time.extend(int(hour))
+                       cshops_ins.hours_time.append(int(hour))
                else:
-                   cshops_ins.hours_time.extend(int(row[4]))
+                   cshops_ins.hours_time.append(int(row[4]))
 
            if row[5] is not None and row[5] != '':
                if ',' in str(row[5]):
                    for day in str(row[5]).split(","):
-                       cshops_ins.weekdays_time.extend(int(day))
+                       cshops_ins.weekdays_time.append(int(day))
                else:
-                   cshops_ins.weekdays_time.extend(int(row[5]))
+                   cshops_ins.weekdays_time.append(int(row[5]))
            cshops_inss.append(cshops_ins)
 
 
