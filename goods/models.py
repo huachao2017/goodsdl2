@@ -163,6 +163,7 @@ class GoodsImage(models.Model):
 
 class ShelfDisplayDebug(models.Model):
     tz_id = models.IntegerField()
+    json_ret = models.TextField(default='')
     display_source = models.CharField(max_length=200, default='')
     category_intimacy_source = models.CharField(max_length=200, default='')
     create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
