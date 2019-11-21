@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,GoodsImage
+from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,GoodsImage,ShelfDisplayDebug,ShelfDisplayDebugGoods
 import os
 from django.conf import settings
 
@@ -155,6 +155,58 @@ class GoodsImageSerializer(serializers.ModelSerializer):
                                                                    host=request.get_host(),
                                                                    path=settings.MEDIA_URL,
                                                                    visual=os.path.join(image_dir,'_output_{}'.format(image_name)))
+            return current_uri
+
+        else:
+            return None
+
+
+class ShelfDisplayDebugGoodsSerializer(serializers.ModelSerializer):
+    goods_tree_source_url = serializers.SerializerMethodField()
+    class Meta:
+        model = ShelfDisplayDebugGoods
+        fields = ('pk', 'category', 'goods_tree_source','goods_tree_source_url'
+                  'create_time')
+
+    def get_goods_tree_source_url(self, shelf_display_debug_goods):
+        request = self.context.get('request')
+        if shelf_display_debug_goods.goods_tree_source:
+            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
+                                                           host=request.get_host(),
+                                                           path=settings.MEDIA_URL,
+                                                           visual=shelf_display_debug_goods.goods_tree_source)
+            return current_uri
+
+        else:
+            return None
+
+class ShelfDisplayDebugSerializer(serializers.ModelSerializer):
+    image_problem_goods = ShelfDisplayDebugGoodsSerializer(many=True, read_only=True)
+    display_source_url = serializers.SerializerMethodField()
+    category_intimacy_source_url = serializers.SerializerMethodField()
+    class Meta:
+        model = ShelfDisplayDebug
+        fields = ('pk', 'tz_id', 'display_source','display_source_url', 'category_intimacy_source','category_intimacy_source_url'
+                  'image_problem_goods', 'create_time')
+
+    def get_display_source_url(self, shelf_display_debug):
+        request = self.context.get('request')
+        if shelf_display_debug.display_source:
+            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
+                                                           host=request.get_host(),
+                                                           path=settings.MEDIA_URL,
+                                                           visual=shelf_display_debug.display_source)
+            return current_uri
+
+        else:
+            return None
+    def get_category_intimacy_source_url(self, shelf_display_debug):
+        request = self.context.get('request')
+        if shelf_display_debug.category_intimacy_source:
+            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
+                                                           host=request.get_host(),
+                                                           path=settings.MEDIA_URL,
+                                                           visual=shelf_display_debug.category_intimacy_source)
             return current_uri
 
         else:

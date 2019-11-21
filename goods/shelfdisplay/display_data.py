@@ -179,6 +179,7 @@ class Shelf:
     level_buff_height = 30  # 层冗余高度 # TODO 需考虑初始化
     last_level_min_remain_height = 150  # 最后一层最小剩余高度
     average_level_height = 300 # 平均高度，用于计算剩余货架宽度
+    category_combination_threshhold = 2 # TODO 分类组合阈值需要根据实际情况计算
 
     extra_add_num = 2  # 每类冗余数量
 

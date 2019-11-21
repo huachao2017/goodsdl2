@@ -25,15 +25,17 @@ def shelf_arrange(shelf):
     category3_level_value = shelf.shelf_category3_level_value
 
     category3_list = shelf.shelf_category3_list
-    return main_calculate(category3_intimate_weight, category3_level_value, category3_list)
+    category_combination_threshhold = shelf.category_combination_threshhold
+    return main_calculate(category3_intimate_weight, category3_level_value, category3_list, category_combination_threshhold)
 
 
-def main_calculate(category3_intimate_weight, category3_level_value, category3_list):
+def main_calculate(category3_intimate_weight, category3_level_value, category3_list, category_combination_threshhold):
     """
     根据亲密度，层数分计算
     :param category3_intimate_weight: 亲密度
     :param category3_level_value: 层数分
     :param category3_list: 分类列表
+    :param category_combination_threshhold: 分类组合的数量阈值
     :return: 总体后选列表
     """
 
@@ -46,7 +48,7 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
 
     # 3, 输出里层排序
     for category_tree in root_category_tree_list:
-        category_tree.calculate_result()
+        category_tree.calculate_result(category_combination_threshhold)
     for root_category_tree in root_category_tree_list:
         print(root_category_tree)
 

@@ -1,14 +1,22 @@
 import json
 import logging
 from rest_framework.response import Response
+from rest_framework import mixins
+from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import status
 from goods.shelfdisplay.generate_shelf_dispaly import generate_displays
 import urllib.request
 from django.db import connections
+from .serializers import *
 
 
 logger = logging.getLogger("django")
+
+class ShelfDisplayDebugViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                               viewsets.GenericViewSet):
+    queryset = ShelfDisplayDebug.objects.order_by('-id')
+    serializer_class = ShelfDisplayDebugSerializer
 
 class AutoDisplay(APIView):
     def get(self,request):
