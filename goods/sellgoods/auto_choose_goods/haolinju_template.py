@@ -200,7 +200,7 @@ def save_data(data):
 
     insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id) values (%s,%s,%s,%s,%s,2,%s,%s,%s,{})"
     insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id) values (%s,%s,%s,%s,%s,2,%s,%s,%s,{})"
-    selete_sql = ""
+    delete_sql = "delete from goods_firstgoodsselection where shopid={} and batch_id={}"
 
     # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
 
@@ -210,18 +210,19 @@ def save_data(data):
         # conn.commit()
         # time.sleep(0.5)
 
-    # try:
-    cursor.executemany(insert_sql_01.format(int(batch_id)+1), upc_tuple[:])
-    cursor.executemany(insert_sql_02.format(int(batch_id)+1), upc_tuple[:])
-    connections['default'].commit()
-    print('ok')
-    # except:
-    #     # 如果发生错误则回滚
-    #     connections['default'].rollback()
-    #     # 关闭数据库连接
-    #     cursor.close()
-    #     connections['default'].close()
-    #     print('error')
+    try:
+        cursor.executemany(insert_sql_01.format(int(batch_id)+1), upc_tuple[:])
+        cursor.executemany(insert_sql_02.format(int(batch_id)+1), upc_tuple[:])
+        cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
+        connections['default'].commit()
+        print('ok')
+    except:
+        # 如果发生错误则回滚
+        connections['default'].rollback()
+        # 关闭数据库连接
+        cursor.close()
+        connections['default'].close()
+        print('error')
 
 def second_choose(data):
     """
