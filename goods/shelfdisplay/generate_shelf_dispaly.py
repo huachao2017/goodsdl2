@@ -1,6 +1,3 @@
-import os
-import django
-
 from goods.shelfdisplay import db_data
 from goods.shelfdisplay import display_data
 
