@@ -55,9 +55,9 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
         shelf_name = ''
         try:
             cursor.execute("select id,shelf_type_id from sf_shelf where id = ".format(shelf_id))
-            (shelf_id,shelf_type_id) = cursor.fetchone()
+            (id,shelf_type_id) = cursor.fetchone()
             cursor.execute("select id,type_name from sf_shelf_type where id = ".format(shelf_type_id))
-            (shelf_type_id, type_name) = cursor.fetchone()
+            (id,type_name) = cursor.fetchone()
             shelf_name = type_name
         except:
             print ("台账找不到货架 ， shelf_id="+str(shelf_id))

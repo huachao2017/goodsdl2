@@ -124,3 +124,5 @@ def init_configdisnums(shop_id,shelf_ins,drg_ins):
     if config_disnums_ins.shelf_depth >= config_disnums_ins.goods_depth :
         config_disnums_ins.single_face_min_disnums = 1
         config_disnums_ins.single_face_max_disnums = math.floor(float(config_disnums_ins.shelf_depth)/config_disnums_ins.goods_depth)
+
+    return config_disnums_ins
