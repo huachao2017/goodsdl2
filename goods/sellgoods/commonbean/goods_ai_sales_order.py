@@ -17,3 +17,5 @@ class SalesOrder:
     supply_stock = None
     sales_nums = None
     delivery_type = None
+
+
