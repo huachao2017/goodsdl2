@@ -1,12 +1,5 @@
 import os
-import cv2
-import numpy as np
-import json
 import django
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
-from django.conf import settings
 
 from goods.shelfdisplay import db_data
 from goods.shelfdisplay import display_data
@@ -39,4 +32,6 @@ def generate_displays(uc_shopid, tz_id):
 
 if __name__ == "__main__":
     # taizhang = generate_displays(806, 1187)
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+    django.setup()
     taizhang = generate_displays(806, 1199)
