@@ -126,6 +126,7 @@ class Taizhang:
             image_name = self.to_image(self.image_dir)
             self.shelf_display_debug.json_ret = json.dumps(json_ret)
             self.shelf_display_debug.display_source = os.path.join(self.image_relative_dir, image_name)
+            self.shelf_display_debug.save()
             return True
         else:
             return False
