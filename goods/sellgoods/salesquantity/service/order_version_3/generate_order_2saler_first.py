@@ -8,6 +8,7 @@ from goods.sellgoods.salesquantity.service.order_version_3.data_util import cacu
 
 shop_type = config.shellgoods_params['shop_types'][1]  # 二批
 def generate(shop_id = None):
+    print("二批向供货商非日配的首次订货,shop_id" + str(shop_id))
     if shop_id == None:
         return
     sales_order_inss = []
