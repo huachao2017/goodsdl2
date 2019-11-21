@@ -19,6 +19,8 @@ def generate_displays(uc_shopid, tz_id):
     :return: taizhang对象
     """
 
+    print("begin generate_displays:{},{}".format(uc_shopid,tz_id))
+
     # 初始化基础数据
     base_data = db_data.init_data(uc_shopid)
 
