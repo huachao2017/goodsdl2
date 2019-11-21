@@ -93,8 +93,6 @@ def storage_day_choose(data):
     print("storage_result:", len(results))
     return results
 
-
-
 def choose_goods(data,ratio=0.99):
     """
     进行选品的筛选
@@ -195,8 +193,15 @@ def save_data(data):
     # cursor = conn.cursor()
     cursor = connections['default'].cursor()
 
+    select_sql = "select batch_id from goods_firstgoodsselection where shopid={}"
+    cursor.execute(select_sql.format(upc_tuple[0][0]))
+    batch_id = cursor.fetchone()[0]
+    print('batch_id',batch_id)
 
-    insert_sql = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name) values (%s,%s,%s,%s,%s,2,%s,%s,%s)"
+    insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id) values (%s,%s,%s,%s,%s,2,%s,%s,%s,{})"
+    insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id) values (%s,%s,%s,%s,%s,2,%s,%s,%s,{})"
+    delete_sql = "delete from goods_firstgoodsselection where shopid={} and batch_id={}"
+
     # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
 
     # for i in data:
@@ -206,7 +211,9 @@ def save_data(data):
         # time.sleep(0.5)
 
     try:
-        cursor.executemany(insert_sql, upc_tuple[:])
+        cursor.executemany(insert_sql_01.format(int(batch_id)+1), upc_tuple[:])
+        cursor.executemany(insert_sql_02.format(int(batch_id)+1), upc_tuple[:])
+        cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
         connections['default'].commit()
         print('ok')
     except:

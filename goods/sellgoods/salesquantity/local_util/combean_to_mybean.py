@@ -5,15 +5,15 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     upc_depth = drg_ins.depth
     shelf_depth = drg_ins.shelf_depth
     faces = drg_ins.face_num
-    stock = drg_ins.stock
     multiple = drg_ins.multiple
+    stock = drg_ins.stock
     start_sum = drg_ins.start_sum
     sale = drg_ins.sales
     goods_name = drg_ins.goods_name
     max_stock, min_stock = calu_stock.get_stock(upc_depth, shelf_depth, faces)
-    print("goods_base_info....  upc=%s,name=%s,faces=%s,upc_depth=%s,shelf_depth=%s,max_stock=%s" % (
-    str(upc), str(goods_name),str(faces),str(upc_depth),
-    str(shelf_depth),str(max_stock)))
+    # print("goods_base_info....  upc=%s,name=%s,faces=%s,upc_depth=%s,shelf_depth=%s,max_stock=%s" % (
+    # str(upc), str(goods_name),str(faces),str(upc_depth),
+    # str(shelf_depth),str(max_stock)))
     if stock is None or stock < 0:
         stock = 0
     if multiple is None or multiple == 0:
