@@ -19,6 +19,8 @@ def generate(shop_id = None):
         # print ("规则1： 补货触发条件 商品的库存 < 最大陈列量   （饮料 ） ，  其他的<=最小陈列量")
         if (drg_ins.stock < drg_ins.max_disnums and drg_ins.category_id in yinliao_cat_ids)  or (drg_ins.stock <= drg_ins.min_disnums and drg_ins.category_id not in yinliao_cat_ids):
             order_sale = min(drg_ins.max_disnums-drg_ins.stock,drg_ins.supply_stock)
+            if order_sale <= 0:
+                continue
             sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id,shop_type)
             sales_order_ins.order_sale = order_sale
             sales_order_inss.append(sales_order_ins)
