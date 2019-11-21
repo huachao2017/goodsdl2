@@ -14,9 +14,9 @@ def generate(shop_id = None ):
     print("规则0 商品数：" + str(len(result.keys())))
     for mch_code in result:
         drg_ins = result[mch_code]
-        print("规则1 ： 最大陈列数与当前库存")
+        # print("规则1 ： 最大陈列数与当前库存")
         order_sale = drg_ins.max_disnums - drg_ins.stock
-        print("规则2： 起订量规则")
+        # print("规则2： 起订量规则")
         order_sale = order_rule.rule_start_num2(order_sale, drg_ins.start_sum)
         sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id, shop_type)
         sales_order_ins.order_sale = order_sale
