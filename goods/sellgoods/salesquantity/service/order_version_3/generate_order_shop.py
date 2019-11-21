@@ -1,0 +1,35 @@
+"""
+门店向二批补货  （1284 --> 1284）
+"""
+from set_config import config
+from goods.sellgoods.salesquantity.local_util import erp_interface
+from goods.sellgoods.salesquantity.proxy import order_rule
+from goods.sellgoods.salesquantity.service.order_version_3.data_util import cacul_util
+shop_type = config.shellgoods_params['shop_types'][0]  # 门店
+yinliao_cat_ids = config.shellgoods_params['yinliao_cat_ids'] # 饮料台账分类
+def generate(shopid1 = None):
+    shop_id = shopid1
+    if shop_id == None:
+        return
+    sales_order_inss = []
+    result = cacul_util.data_process(shop_id,shop_type)
+    print ("规则0 商品数："+str(len(result.keys())))
+    for mch_code  in result:
+        drg_ins = result[mch_code]
+        print ("规则1： 补货触发条件 商品的库存 < 最大陈列量   （饮料 ） ，  其他的<=最小陈列量")
+        if (drg_ins.stock < drg_ins.max_disnums and drg_ins.category_id in yinliao_cat_ids)  or (drg_ins.stock <= drg_ins.min_disnums and drg_ins.category_id not in yinliao_cat_ids):
+            order_sale = min(drg_ins.max_disnums-drg_ins.stock,drg_ins.supply_stock)
+            sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id,shop_type)
+            sales_order_ins.order_sale = order_sale
+            sales_order_inss.append(sales_order_ins)
+            print("补货单..... upc=%s,name=%s,order_sale=%s,supply_stock=%s" % (
+            str(sales_order_ins.upc), str(sales_order_ins.goods_name), str(sales_order_ins.order_sale),
+            str(sales_order_ins.supply_stock)))
+    sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
+    print("规则三：商品数：" + str(len(sales_order_inss)))
+    if len(sales_order_inss) > 0:
+        # erp_interface.order_commit(shop_id,shop_type,sales_order_inss)
+        print("erp_interface.order_commit success!")
+
+if __name__=='__main__':
+    generate(1284)

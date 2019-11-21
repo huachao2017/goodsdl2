@@ -72,3 +72,14 @@ def rule_filter_order_sale(sales_order_inss):
             sales_order_inss_new.append(sales_order_ins)
     return sales_order_inss_new
 
+def rule_start_num2(order_sale,start_sum):
+    if start_sum is None or start_sum == 0 :
+        return 0
+    if order_sale <= start_sum:
+        order_sale = start_sum
+    else:
+        order_sale = math.ceil(
+            float((order_sale/ start_sum))) * start_sum
+    return order_sale
+
+

@@ -6,9 +6,10 @@ shellgoods_params={
         "linear": "D:\\opt\\code\\model\\regressor\\LinearRegressionModel2",
         "decision_tree": "D:\\opt\\code\\model\\regressor\\DecisionTreeRegressionModel",
         "gb_tree": "D:\\opt\\code\\model\\regressor\\GBTRegressionModel",
-        "random_forest": "D:\\opt\\code\\model\\regressor\\RandomForestRegressionModel"
+        "random_forest": "D:\\opt\\code\\model\\regressor\\RandomForestRegressionModel",
+        "keras_regress":"D:\\opt\\code\\model\\regressor\\keras_regress\\"
     },
-    'sales2_old_traindata': 'D:\\opt\\data\\goods\\ales2_old\\',
+    'sales2_old_traindata': 'D:\\opt\\data\\goods\\sales2_old\\',
     'predict_shop_ids': '(3598,1284)',
     "predict_ext_days": 7,
     'order_shop_ids': [1284],
