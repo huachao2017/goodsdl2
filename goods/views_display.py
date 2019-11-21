@@ -49,7 +49,7 @@ class AutoDisplay(APIView):
         #     finally:
         #         cursor.close()
 
-        url = "https://taizhang.aicvs.cn/api/autoDisplay"
+        url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
         headers = {
             "Accept":"application/json",
             "Content-Type":"application/json"
