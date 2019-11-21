@@ -104,7 +104,7 @@ class Taizhang:
         self.tz_id = tz_id
         self.shelfs = []
         self.shelf_display_debug = shelf_display_debug
-        self.image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(taizhang.tz_id))
+        self.image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(self.tz_id))
         self.image_dir = os.path.join(settings.MEDIA_ROOT, self.image_relative_dir)
         from pathlib import Path
         if not Path(self.image_dir).exists():
