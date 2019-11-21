@@ -211,8 +211,8 @@ def save_data(data):
         # time.sleep(0.5)
 
     try:
-        # cursor.executemany(insert_sql_01.format(int(batch_id)+1), upc_tuple[:])
-        # cursor.executemany(insert_sql_02.format(int(batch_id)+1), upc_tuple[:])
+        cursor.executemany(insert_sql_01.format(int(batch_id)+1), upc_tuple[:])
+        cursor.executemany(insert_sql_02.format(int(batch_id)+1), upc_tuple[:])
         cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
         connections['default'].commit()
         print('ok')
