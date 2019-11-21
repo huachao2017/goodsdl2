@@ -198,8 +198,8 @@ def save_data(data):
     batch_id = cursor.fetchone()[0]
     print('batch_id',batch_id)
 
-    insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,{}) values (%s,%s,%s,%s,%s,2,%s,%s,%s,%s)"
-    insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,{}) values (%s,%s,%s,%s,%s,2,%s,%s,%s,%s)"
+    insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,{}) values (%s,%s,%s,%s,%s,2,%s,%s,%s)"
+    insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,{}) values (%s,%s,%s,%s,%s,2,%s,%s,%s)"
     selete_sql = ""
 
     # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
