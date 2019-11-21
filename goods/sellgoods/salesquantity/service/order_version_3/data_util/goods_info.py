@@ -6,6 +6,7 @@ import time
 import datetime
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
+import math
 from django.db import connections
 def get_shop_order_goods(shopid, erp_shop_type=0):
     """
@@ -262,9 +263,9 @@ class DataRawGoods():
         max_disnums = 0
         min_disnums = 0
         for shelf_ins in shelf_inss:
-            min_disnums += shelf_ins.face_num
             if shelf_ins.mch_code == mch_code:
-                max_disnums = shelf_ins.face_num * shelf_ins.level_depth / self.depth
+                min_disnums += shelf_ins.face_num
+                max_disnums = int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / self.depth))
                 new_shelf_inss.append(shelf_ins)
         self.shelf_inss = new_shelf_inss
         self.max_disnums = max_disnums
