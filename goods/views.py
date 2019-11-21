@@ -15,6 +15,7 @@ from dl import freezer2detection
 from django.conf import settings
 from goods.edge.contour_detect_3d import Contour_3d
 import urllib.request
+import urllib.parse
 
 logger = logging.getLogger("django")
 from goods.freezer.keras_yolo3.yolo3 import yolo_freezer
@@ -25,6 +26,8 @@ yolov3 = None
 class Test(APIView):
     def get(self, request):
         url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn:80/api/autoDisplay"
+        url = urllib.parse.quote(url)
+        print(url)
         headers = {
             "Accept":"application/json",
             "Content-Type":"application/json"
