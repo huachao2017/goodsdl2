@@ -7,6 +7,7 @@ from goods.sellgoods.salesquantity.proxy import order_rule
 from goods.sellgoods.salesquantity.service.order_version_3.data_util import cacul_util
 shop_type = config.shellgoods_params['shop_types'][1]  # 二批
 def generate(shop_id = None):
+    print("二批向供货商日配订货  ,shop_id" + str(shop_id))
     if shop_id != None:
         sales_order_inss = []
         result = cacul_util.data_process(shop_id, shop_type)

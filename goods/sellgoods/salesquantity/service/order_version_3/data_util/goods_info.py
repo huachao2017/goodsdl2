@@ -247,17 +247,37 @@ class DataRawGoods():
             self.depth = 0.001
         else:
             self.depth = depth
-        self.start_sum = start_sum
+
+        if start_sum is None :
+            self.start_sum = 0
+        else:
+            self.start_sum = start_sum
         self.multiple = multiple
-        self.stock = stock   # 门店库存
-        self.predict_sales = predict_sales
-        self.old_sales = old_sales
-        self.supply_stock = supply_stock  #小仓库库存
-        self.old_sales = old_sales
+        if stock is None:
+            self.stock = 0
+        else:
+            self.stock = stock   # 门店库存
+        if predict_sales is None:
+            self.predict_sales = 0
+        else:
+            self.predict_sales = predict_sales
+        if old_sales is None :
+            self.old_sales = 0
+        else:
+            self.old_sales = old_sales
+
+        if supply_stock is None:
+            self.supply_stock = 0
+        else:
+            self.supply_stock = supply_stock  #小仓库库存
         self.delivery_type = delivery_type
         self.category1_id = category1_id  # 台账分类
         self.category2_id = category2_id
-        self.category_id = category_id
+
+        if category_id is None:
+            self.category_id = 0
+        else:
+            self.category_id = category_id
         self.storage_day = storage_day
         new_shelf_inss = []
         max_disnums = 0

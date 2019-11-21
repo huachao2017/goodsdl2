@@ -4,9 +4,7 @@ import os
 import shutil
 from set_config import config
 import time
-import datetime
-from goods.sellgoods.salesquantity.service import generate_order_2saler_add,generate_order_2saler_add_day
-from goods.sellgoods.salesquantity.local_util import file_util
+
 from goods.sellgoods.salesquantity.local_util import save_mysql_sales
 regressor_model_path = config.shellgoods_params['regressor_model_path']
 test_data_save_path = config.shellgoods_params['test_data_save_path']
@@ -42,9 +40,9 @@ def train_regressor(model_time):
     # file_util.save_test_dataRdd(test_d, result, test_path)
     # 目前非日配的品 没有给订货周期， 给出了在加入定时任务
     #  generate_order_2saler_add.generate()
-    # 日配品订单生成
-    if datetime.datetime.now().weekday()+1 in day_order_time_weekday:
-        generate_order_2saler_add_day.generate()
+    # # 日配品订单生成
+    # if datetime.datetime.now().weekday()+1 in day_order_time_weekday:
+    #     generate_order_2saler_add_day.generate()
     print("###########################################################")
 
 
