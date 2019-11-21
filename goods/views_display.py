@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import status
 from goods.shelfdisplay.generate_shelf_dispaly import generate_displays
-import urllib.request
+import requests
 from django.db import connections
 from .serializers import *
 
@@ -58,10 +58,8 @@ class AutoDisplay(APIView):
             taizhang = generate_displays(uc_shopid, taizhangid)
             json_info = json.dumps(taizhang.to_json())
             data = bytes(json_info, 'utf8')
-            request = urllib.request.Request(url=url, data=data, headers=headers)
-
-            response = urllib.request.urlopen(request)
-            print(response.read().decode())
+            resp = requests.post(url=url, data=data, headers=headers)
+            print(resp)
 
         return Response('OK', status=status.HTTP_200_OK)
 
