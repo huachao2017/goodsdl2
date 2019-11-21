@@ -28,10 +28,3 @@ def generate_displays(uc_shopid, tz_id):
 
     return taizhang
 
-
-
-if __name__ == "__main__":
-    # taizhang = generate_displays(806, 1187)
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-    django.setup()
-    taizhang = generate_displays(806, 1199)
