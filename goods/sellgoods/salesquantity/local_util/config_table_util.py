@@ -51,6 +51,8 @@ class ConfigTableUtil:
                 safedays_ins.goods_name = row[4]
                 safedays_ins.create_time = row[5]
                 safedays_ins.update_time = row[6]
+                safedays_inss.append(safedays_ins)
+        return safedays_inss
 
     def insert_many_safedays(self,data):
         cursor_ai = connections['default'].cursor()
