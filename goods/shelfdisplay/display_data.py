@@ -29,6 +29,14 @@ def init_data(uc_shopid, tz_id, base_data):
             "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
                 uc_shopid, tz_id))
         (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
+        print(uc_shopid)
+        print(tz_id)
+        print(taizhang_id)
+        print(shelf_id)
+        print(count)
+        print(third_cate_ids)
+        if third_cate_ids is None or third_cate_ids == '':
+            raise ValueError()
     except:
         print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
         raise ValueError('taizhang error:{},{}'.format(uc_shopid, tz_id))
