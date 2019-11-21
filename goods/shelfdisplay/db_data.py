@@ -1,8 +1,3 @@
-import os
-import django
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
 from django.db import connections
 from goods.models import FirstGoodsSelection
 
