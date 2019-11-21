@@ -209,18 +209,18 @@ def save_data(data):
         # conn.commit()
         # time.sleep(0.5)
 
-    try:
-        cursor.executemany(insert_sql_01.format(int(batch_id)+1), upc_tuple[:])
-        cursor.executemany(insert_sql_02.format(int(batch_id)+1), upc_tuple[:])
-        connections['default'].commit()
-        print('ok')
-    except:
-        # 如果发生错误则回滚
-        connections['default'].rollback()
-        # 关闭数据库连接
-        cursor.close()
-        connections['default'].close()
-        print('error')
+    # try:
+    cursor.executemany(insert_sql_01.format(int(batch_id)+1), upc_tuple[:])
+    cursor.executemany(insert_sql_02.format(int(batch_id)+1), upc_tuple[:])
+    connections['default'].commit()
+    print('ok')
+    # except:
+    #     # 如果发生错误则回滚
+    #     connections['default'].rollback()
+    #     # 关闭数据库连接
+    #     cursor.close()
+    #     connections['default'].close()
+    #     print('error')
 
 def second_choose(data):
     """
