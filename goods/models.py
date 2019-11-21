@@ -161,14 +161,13 @@ class GoodsImage(models.Model):
     create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
 
 
-# class CategoryIntimacy(models.Model):
-#     cat_ids = models.CharField(max_length=200,unique=True)
-#     score = models.IntegerField(default=0)
-#
-# class CategoryLevelRelation(models.Model):
-#     cat_id = models.IntegerField(unique=True)
-#     score = models.IntegerField(default=0)
-#
-# class CategoryAreaRatio(models.Model):
-#     cat_id = models.IntegerField(unique=True)
-#     ratio = models.FloatField()
+class ShelfDisplayDebug(models.Model):
+    tz_id = models.IntegerField()
+    display_source = models.CharField(max_length=200, default='')
+    category_intimacy_source = models.CharField(max_length=200, default='')
+    create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
+
+class ShelfDisplayDebugGoods(models.Model):
+    shelf_display_debug = models.ForeignKey(ShelfImage2, related_name="shelf_display_debug_goods", on_delete=models.CASCADE)
+    category = models.CharField(max_length=20)
+    goods_tree_source = models.CharField(max_length=200, default='')
