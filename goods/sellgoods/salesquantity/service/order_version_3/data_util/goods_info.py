@@ -55,7 +55,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
         shelf_type = ''
         shelf_type_id = None
         try:
-            cursor.execute("select id,shelf_type_id from sf_shelf where id = ".format(shelf_id))
+            cursor.execute("select id,shelf_type_id from sf_shelf where id = ".format(str(int(shelf_id))))
             (id,shelf_type_id) = cursor.fetchone()
         except:
             print ("台账找不到货架 ， shelf_id="+str(shelf_id))
