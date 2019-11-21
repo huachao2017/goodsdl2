@@ -24,7 +24,7 @@ freezer_check_yolov3_switch = config.common_params['freezer_check_yolov3_switch'
 yolov3 = None
 class Test(APIView):
     def get(self, request):
-        url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
+        url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn:80/api/autoDisplay"
         headers = {
             "Accept":"application/json",
             "Content-Type":"application/json"
