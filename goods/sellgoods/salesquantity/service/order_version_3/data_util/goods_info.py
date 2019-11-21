@@ -214,7 +214,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
                                                       start_sum,multiple,
                                                      stock = stock,
-                                                     pridect_sales = sales,
+                                                     predict_sales = sales,
                                                      supply_stock=supply_stock,old_sales = sales_nums,delivery_type=delivery_type,category1_id=category1_id,category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss)
 
     cursor.close()
@@ -226,7 +226,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
-                 stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,storage_day=None,shelf_inss=[]):
+                 stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,storage_day=None,shelf_inss=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
