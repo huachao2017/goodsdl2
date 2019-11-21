@@ -3,7 +3,7 @@ import datetime
 class ConfigDisnums:
     shop_id = None
     shelf_id = None
-    shelf_name = None
+    shelf_type = None
     shelf_depth = None
     upc=None
     goods_name=None

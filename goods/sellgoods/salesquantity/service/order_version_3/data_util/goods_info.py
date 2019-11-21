@@ -52,15 +52,20 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
         shelf_id = taizhang[1]
-        shelf_name = ''
+        shelf_type = ''
+        shelf_type_id = None
         try:
             cursor.execute("select id,shelf_type_id from sf_shelf where id = ".format(shelf_id))
             (id,shelf_type_id) = cursor.fetchone()
-            cursor.execute("select id,type_name from sf_shelf_type where id = ".format(shelf_type_id))
-            (id,type_name) = cursor.fetchone()
-            shelf_name = type_name
         except:
             print ("台账找不到货架 ， shelf_id="+str(shelf_id))
+
+        try:
+            cursor.execute("select id,type_name from sf_shelf_type where id = ".format(shelf_type_id))
+            (id, type_name) = cursor.fetchone()
+            shelf_type = type_name
+        except:
+            print("台账找不到货架类型名称 ， shelf_type_id=" + str(shelf_type_id))
         display_shelf_info = taizhang[2]
         display_goods_info = taizhang[3]
         display_shelf_info = json.loads(display_shelf_info)
@@ -90,7 +95,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         shelf_ins = Shelf()
                         shelf_ins.taizhang_id = taizhang_id
                         shelf_ins.shelf_id = shelf_id
-                        shelf_ins.shelf_name = shelf_name
+                        shelf_ins.shelf_type = shelf_type
                         shelf_ins.mch_code = mch_code
                         shelf_ins.goods_level_id = i
                         shelf_ins.level_depth = level_depth
@@ -278,7 +283,7 @@ class DataRawGoods():
 class Shelf:
     taizhang_id = None
     shelf_id = None
-    shelf_name = None
+    shelf_type = None
     mch_code = None
     goods_level_id = None
     level_depth = 0

@@ -98,7 +98,7 @@ def get_insert_disnums_data(shop_id ,disnums_inss,result):
     data = []
     if len(config_disnums_inss) > 0 :
         for config_disnums_ins in config_disnums_inss:
-            data.append((config_disnums_ins.shop_id,config_disnums_ins.shelf_id,config_disnums_ins.shelf_name,config_disnums_ins.shelf_depth,config_disnums_ins.upc,config_disnums_ins.goods_name,config_disnums_ins.goods_depth,config_disnums_ins.single_face_min_disnums,config_disnums_ins.single_face_max_disnums,config_disnums_ins.create_time,config_disnums_ins.update_time))
+            data.append((config_disnums_ins.shop_id,config_disnums_ins.shelf_id,config_disnums_ins.shelf_type,config_disnums_ins.shelf_depth,config_disnums_ins.upc,config_disnums_ins.goods_name,config_disnums_ins.goods_depth,config_disnums_ins.single_face_min_disnums,config_disnums_ins.single_face_max_disnums,config_disnums_ins.create_time,config_disnums_ins.update_time))
     return data
 
 def init_configsafedays(shop_id,drg_ins):
@@ -120,7 +120,7 @@ def init_configdisnums(shop_id,shelf_ins,drg_ins):
     config_disnums_ins.shelf_depth = shelf_ins.level_depth
     config_disnums_ins.goods_name = drg_ins.goods_name
     config_disnums_ins.goods_depth = drg_ins.depth
-    config_disnums_ins.shelf_name = shelf_ins.shelf_name
+    config_disnums_ins.shelf_type = shelf_ins.shelf_type
     if config_disnums_ins.shelf_depth >= config_disnums_ins.goods_depth :
         config_disnums_ins.single_face_min_disnums = 1
         config_disnums_ins.single_face_max_disnums = math.floor(float(config_disnums_ins.shelf_depth)/config_disnums_ins.goods_depth)
