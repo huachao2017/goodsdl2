@@ -12,38 +12,157 @@ class Sales2LoadData:
 
     def load_all_data(self):
         filenames = os.listdir(sales2_old_traindata)
+        X_all = None
+        Y_all = None
         for i in range(1,40):
-            y_dates = sales_predict_util.SalesPredict().get_date(i)
-            x_dates = sales_predict_util.SalesPredict().get_date(i+1)
+            y_dates = sales_predict_util.SalesPredict().get_date(i,'2019-11-18')
+            x_dates = sales_predict_util.SalesPredict().get_date(i+1,'2019-11-18')
             flag = False
             for filename in filenames:
                 if x_dates[0] in filename:
                     flag = True
                     break
-            X,Y = self.load_data(x_dates[0],y_dates[0])
-            return X,Y
+            if flag:
+                X,Y = self.load_data(x_dates[0],y_dates[0])
+                if X!= None and Y!= None and i == 1:
+                    X_all = X
+                    Y_all = Y
+                elif ( X!= None and Y!= None):
+                    X_all.extend(X)
+                    Y_all.extend(Y)
+        return X_all,Y_all
+
+
 
     def load_data(self,train_x_date=None,train_y_date=None):
         salesold_inss_x = {}
         salesold_inss_y = {}
         if train_x_date != None:
-            salesold_inss_x = self.load_from_localfile(train_x_date)
+            salesold_inss_x,salesold_inss_shop_dict_x = self.load_from_localfile(train_x_date)
         if train_y_date != None:
-            salesold_inss_y = self.load_from_localfile(train_y_date)
+            salesold_inss_y,salesold_inss_shop_dict_y = self.load_from_localfile(train_y_date)
 
         if len(list(salesold_inss_x.keys())) > 0 :
-            X,Y = self.train_data(self.get_train_data(salesold_inss_x,salesold_inss_y))
+            X,Y = self.train_data(self.get_train_data(salesold_inss_x,salesold_inss_y,salesold_inss_shop_dict_x,salesold_inss_shop_dict_y))
             return X,Y
 
-    def get_train_data (self,salesold_inss_x,salesold_inss_y):
+    def get_train_data (self,salesold_inss_x,salesold_inss_y,salesold_inss_shop_dict_x,salesold_inss_shop_dict_y):
         for key1 in salesold_inss_x:
             if key1 in salesold_inss_y.keys():
                 salesold_inss_x[key1].y_labels = salesold_inss_y[key1].y_labels
-            else: #  TODO  把 下周有销量的数据  也加入到训练数据中去 待完成
+            else: #
                 salesold_inss_x[key1].y_labels = [0,0,0,0,0,0,0]
+        # 把 下周该门店有销量的数据也加入到训练数据中去
+        for key2 in salesold_inss_y :
+            salesold_ins_y = salesold_inss_y[key2]
+            if key2 not in salesold_inss_x:
+                salesold_ins_y = self.add_alter_trainweekdata(salesold_ins_y,salesold_inss_x,key2,salesold_inss_shop_dict_x)
+                if salesold_ins_y != None:
+                    salesold_inss_x[key2] = salesold_ins_y
+
         return salesold_inss_x
 
+    def add_alter_trainweekdata(self,salesold_ins_y,salesold_inss_x,key_y,salesold_inss_shop_dict_x):
+        salesold_ins_x = None
+        shop_id = int(str(key_y).split("_")[0])
+        if shop_id in list(salesold_inss_shop_dict_x.keys()):
+            salesold_ins_x = salesold_inss_shop_dict_x[shop_id]
+        # 替换天气维度 时间 地点等
+        if salesold_ins_x != None:
+            salesold_ins_y.templow_1 = salesold_ins_x.templow_1
+            salesold_ins_y.temphigh_1 = salesold_ins_x.temphigh_1
+            salesold_ins_y.weather_type_1=  salesold_ins_x.weather_type_1,
+            salesold_ins_y.windpower_1 =  salesold_ins_x.windpower_1
+            salesold_ins_y.winddirect_1 =salesold_ins_x.winddirect_1
+            salesold_ins_y.windspeed_1 =salesold_ins_x.windspeed_1
 
+            salesold_ins_y.templow_2 = salesold_ins_x.templow_2
+            salesold_ins_y.temphigh_2 = salesold_ins_x.temphigh_2
+            salesold_ins_y.weather_type_2 =salesold_ins_x.weather_type_2
+            salesold_ins_y.windpower_2= salesold_ins_x.windpower_2
+            salesold_ins_y.winddirect_2 = salesold_ins_x.winddirect_2
+            salesold_ins_y.windspeed_2 = salesold_ins_x.windspeed_2
+
+            salesold_ins_y.templow_3 = salesold_ins_x.templow_3
+            salesold_ins_y.temphigh_3 = salesold_ins_x.temphigh_3
+            salesold_ins_y.weather_type_3 = salesold_ins_x.weather_type_3
+            salesold_ins_y.windpower_3 = salesold_ins_x.windpower_3
+            salesold_ins_y.winddirect_3=salesold_ins_x.winddirect_3
+            salesold_ins_y.windspeed_3= salesold_ins_x.windspeed_3
+
+            salesold_ins_y.templow_4= salesold_ins_x.templow_4
+            salesold_ins_y.temphigh_4= salesold_ins_x.temphigh_4
+            salesold_ins_y.weather_type_4= salesold_ins_x.weather_type_4
+            salesold_ins_y.windpower_4= salesold_ins_x.windpower_4
+            salesold_ins_y.winddirect_4= salesold_ins_x.winddirect_4
+            salesold_ins_y.windspeed_4= salesold_ins_x.windspeed_4
+
+            salesold_ins_y.templow_5= salesold_ins_x.templow_5
+            salesold_ins_y.temphigh_5= salesold_ins_x.temphigh_5
+            salesold_ins_y.weather_type_5= salesold_ins_x.weather_type_5
+            salesold_ins_y.windpower_5= salesold_ins_x.windpower_5
+            salesold_ins_y.winddirect_5= salesold_ins_x.winddirect_5
+            salesold_ins_y.windspeed_5= salesold_ins_x.windspeed_5
+
+            salesold_ins_y.templow_6= salesold_ins_x.templow_6
+            salesold_ins_y.temphigh_6= salesold_ins_x.temphigh_6
+            salesold_ins_y.weather_type_6= salesold_ins_x.weather_type_6
+            salesold_ins_y.windpower_6= salesold_ins_x.windpower_6
+            salesold_ins_y.winddirect_6= salesold_ins_x.winddirect_6
+            salesold_ins_y.windspeed_6= salesold_ins_x.windspeed_6
+
+            salesold_ins_y.templow_7= salesold_ins_x.templow_7
+            salesold_ins_y.temphigh_7= salesold_ins_x.temphigh_7
+            salesold_ins_y.weather_type_7= salesold_ins_x.weather_type_7
+            salesold_ins_y.windpower_7= salesold_ins_x.windpower_7
+            salesold_ins_y.winddirect_7= salesold_ins_x.winddirect_7
+            salesold_ins_y.windspeed_7= salesold_ins_x.windspeed_7
+
+            # 时间维度
+            salesold_ins_y.week_i_1= salesold_ins_x.week_i_1
+            salesold_ins_y.season_1= salesold_ins_x.season_1
+            salesold_ins_y.week_type_1= salesold_ins_x.week_type_1
+            salesold_ins_y.month_1= salesold_ins_x.month_1
+            salesold_ins_y.holiday_type_1= salesold_ins_x.holiday_type_1
+
+            salesold_ins_y.week_i_2= salesold_ins_x.week_i_2
+            salesold_ins_y.season_2= salesold_ins_x.season_2
+            salesold_ins_y.week_type_2 = salesold_ins_x.week_type_2
+            salesold_ins_y.month_2= salesold_ins_x.month_2
+            salesold_ins_y.holiday_type_2=salesold_ins_x.holiday_type_2
+
+            salesold_ins_y.week_i_3= salesold_ins_x.week_i_3
+            salesold_ins_y.season_3= salesold_ins_x.season_3
+            salesold_ins_y.week_type_3= salesold_ins_x.week_type_3
+            salesold_ins_y.month_3= salesold_ins_x.month_3
+            salesold_ins_y.holiday_type_3= salesold_ins_x.holiday_type_3
+
+            salesold_ins_y.week_i_4= salesold_ins_x.week_i_4
+            salesold_ins_y.season_4= salesold_ins_x.season_4
+            salesold_ins_y.week_type_4= salesold_ins_x.week_type_4
+            salesold_ins_y.month_4= salesold_ins_x.month_4
+            salesold_ins_y.holiday_type_4= salesold_ins_x.holiday_type_4
+
+            salesold_ins_y.week_i_5= salesold_ins_x.week_i_5
+            salesold_ins_y.season_5= salesold_ins_x.season_5
+            salesold_ins_y.week_type_5= salesold_ins_x.week_type_5
+            salesold_ins_y.month_5= salesold_ins_x.month_5
+            salesold_ins_y.holiday_type_5= salesold_ins_x.holiday_type_5
+
+            salesold_ins_y.week_i_6= salesold_ins_x.week_i_6
+            salesold_ins_y.season_6= salesold_ins_x.season_6
+            salesold_ins_y.week_type_6= salesold_ins_x.week_type_6
+            salesold_ins_y.month_6= salesold_ins_x.month_6
+            salesold_ins_y.holiday_type_6= salesold_ins_x.holiday_type_6
+
+            salesold_ins_y.week_i_7= salesold_ins_x.week_i_7
+            salesold_ins_y.season_7= salesold_ins_x.season_7
+            salesold_ins_y.week_type_7= salesold_ins_x.week_type_7
+            salesold_ins_y.month_7= salesold_ins_x.month_7
+            salesold_ins_y.holiday_type_7= salesold_ins_x.holiday_type_7
+            return salesold_ins_y
+        else:
+            return salesold_ins_x
     def train_data(self,salesold_inss_x):
         X = []
         Y = []
@@ -216,6 +335,8 @@ class Sales2LoadData:
         xfile = self.file_operator+str(train_x_date)
         xfile = os.path.join(sales2_old_traindata,xfile)
         salesold_inss_dict  = {}
+        salesold_inss_shop_dict = {}
+
         with open(xfile,'r',encoding='UTF-8') as f :
             lines = f.readlines()
             for line in lines:
@@ -229,7 +350,8 @@ class Sales2LoadData:
                         ]
                         if int(salesold_ins.shop_id) != 0 and int(salesold_ins.upc) != 0 :
                             salesold_inss_dict[str(int(salesold_ins.shop_id)) + "_" + str(int(salesold_ins.upc))] = salesold_ins
-        return salesold_inss_dict
+                            salesold_inss_shop_dict[str(int(salesold_ins.shop_id))] = salesold_ins
+        return salesold_inss_dict,salesold_inss_shop_dict
 
 
     def words2bean(self,words):
@@ -399,8 +521,9 @@ if __name__=='__main__':
     loaddata_ins = Sales2LoadData()
     X,Y = loaddata_ins.load_all_data()
     Y = np.array(Y)
-    Y  = Y[:,0]
-    X= np.array(X)
-    kg_ins = keras_regress.KRegress()
-    end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-    kg_ins.train(X,Y,None,None,end_date)
+    X = np.array(X)
+    for i in range(len(Y[0])):
+        Y = Y[:,i]
+        kg_ins = keras_regress.KRegress()
+        end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+        kg_ins.train(X,Y,end_date+"_"+str(i))

@@ -6,6 +6,7 @@ import time
 import datetime
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
+import math
 from django.db import connections
 def get_shop_order_goods(shopid, erp_shop_type=0):
     """
@@ -52,15 +53,20 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
         shelf_id = taizhang[1]
-        shelf_name = ''
+        shelf_type = ''
+        shelf_type_id = None
         try:
-            cursor.execute("select id,shelf_type_id from sf_shelf where id = ".format(shelf_id))
-            (shelf_id,shelf_type_id) = cursor.fetchone()
-            cursor.execute("select id,type_name from sf_shelf_type where id = ".format(shelf_type_id))
-            (shelf_type_id, type_name) = cursor.fetchone()
-            shelf_name = type_name
+            cursor.execute("select id,shelf_type_id from sf_shelf where id = {}".format(shelf_id))
+            (id,shelf_type_id) = cursor.fetchone()
         except:
             print ("台账找不到货架 ， shelf_id="+str(shelf_id))
+
+        try:
+            cursor.execute("select id,type_name from sf_shelf_type where id = {} ".format(shelf_type_id))
+            (id, type_name) = cursor.fetchone()
+            shelf_type = type_name
+        except:
+            print("台账找不到货架类型名称 ， shelf_type_id=" + str(shelf_type_id))
         display_shelf_info = taizhang[2]
         display_goods_info = taizhang[3]
         display_shelf_info = json.loads(display_shelf_info)
@@ -90,7 +96,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         shelf_ins = Shelf()
                         shelf_ins.taizhang_id = taizhang_id
                         shelf_ins.shelf_id = shelf_id
-                        shelf_ins.shelf_name = shelf_name
+                        shelf_ins.shelf_type = shelf_type
                         shelf_ins.mch_code = mch_code
                         shelf_ins.goods_level_id = i
                         shelf_ins.level_depth = level_depth
@@ -214,7 +220,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
                                                       start_sum,multiple,
                                                      stock = stock,
-                                                     pridect_sales = sales,
+                                                     predict_sales = sales,
                                                      supply_stock=supply_stock,old_sales = sales_nums,delivery_type=delivery_type,category1_id=category1_id,category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss)
 
     cursor.close()
@@ -226,7 +232,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
-                 stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,storage_day=None,shelf_inss=[]):
+                 stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,storage_day=None,shelf_inss=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -241,25 +247,45 @@ class DataRawGoods():
             self.depth = 0.001
         else:
             self.depth = depth
-        self.start_sum = start_sum
+
+        if start_sum is None :
+            self.start_sum = 0
+        else:
+            self.start_sum = start_sum
         self.multiple = multiple
-        self.stock = stock   # 门店库存
-        self.predict_sales = predict_sales
-        self.old_sales = old_sales
-        self.supply_stock = supply_stock  #小仓库库存
-        self.old_sales = old_sales
+        if stock is None:
+            self.stock = 0
+        else:
+            self.stock = stock   # 门店库存
+        if predict_sales is None:
+            self.predict_sales = 0
+        else:
+            self.predict_sales = predict_sales
+        if old_sales is None :
+            self.old_sales = 0
+        else:
+            self.old_sales = old_sales
+
+        if supply_stock is None:
+            self.supply_stock = 0
+        else:
+            self.supply_stock = supply_stock  #小仓库库存
         self.delivery_type = delivery_type
         self.category1_id = category1_id  # 台账分类
         self.category2_id = category2_id
-        self.category_id = category_id
+
+        if category_id is None:
+            self.category_id = 0
+        else:
+            self.category_id = category_id
         self.storage_day = storage_day
         new_shelf_inss = []
         max_disnums = 0
         min_disnums = 0
         for shelf_ins in shelf_inss:
-            min_disnums += shelf_ins.face_num
             if shelf_ins.mch_code == mch_code:
-                max_disnums = shelf_ins.face_num * shelf_ins.level_depth / self.depth
+                min_disnums += shelf_ins.face_num
+                max_disnums = int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / self.depth))
                 new_shelf_inss.append(shelf_ins)
         self.shelf_inss = new_shelf_inss
         self.max_disnums = max_disnums
@@ -278,7 +304,7 @@ class DataRawGoods():
 class Shelf:
     taizhang_id = None
     shelf_id = None
-    shelf_name = None
+    shelf_type = None
     mch_code = None
     goods_level_id = None
     level_depth = 0
