@@ -58,9 +58,10 @@ shellgoods_params={
         "linear": "/home/ai/model/regressor/LinearRegressionModel",
         "decision_tree": "/home/ai/model/regressor/DecisionTreeRegressionModel",
         "gb_tree": "/home/ai/model/regressor/GBTRegressionModel",
-        "random_forest": "/home/ai/model/regressor/RandomForestRegressionModel"
+        "random_forest": "/home/ai/model/regressor/RandomForestRegressionModel",
+        "keras_regress":"/home/ai/model/regressor/keras_regress/"
     },
-    # 'sales2_old_traindata':'D:\\opt\\data\\goods\\ales2_old\\',
+    'sales2_old_traindata':'/home/ai/data/keras_sales2_data/',
     # 销量预测
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,
