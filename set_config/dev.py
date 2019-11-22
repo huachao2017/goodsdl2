@@ -61,7 +61,7 @@ shellgoods_params={
         "random_forest": "/home/ai/model/regressor/RandomForestRegressionModel",
         "keras_regress":"/home/ai/model/regressor/keras_regress/"
     },
-    'sales2_old_traindata':'/home/ai/data/keras_sales2_data/',
+    'sales2_old_traindata':'/data/ai/data/keras_sales2_data/',
     # 销量预测
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,
