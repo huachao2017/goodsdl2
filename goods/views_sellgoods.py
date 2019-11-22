@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor,wait
 logger = logging.getLogger("django")
 class Test(APIView):
     def get(self, request):
-        print(request.query_params)
+        logger.info(request.query_params)
         import sys
         path = sys.path
         return Response({'Test': path})
@@ -23,6 +23,6 @@ class SellGoodsViewSet(APIView):
         #         wait(task1, timeout=2)
         #     except:
         #         return Response(status=status.HTTP_200_OK)
-        print ("shop_id=%s, notify_shop_order_generate success..."% str(shop_id))
+        logger.info ("shop_id=%s, notify_shop_order_generate success..."% str(shop_id))
         return Response(status=status.HTTP_200_OK)
 
