@@ -190,10 +190,15 @@ class Taizhang:
             }
             json_ret["shelfs"].append(json_shelf)
             if shelf.best_candidate_shelf is not None:
+                last_level = None
                 for level in shelf.best_candidate_shelf.levels:
+                    if last_level is not None:
+                        level_height = level.start_height - last_level.start_height
+                    else:
+                        level_height = level.start_height
                     json_level = {
                         "level_id": level.level_id,
-                        "height": level.start_height,
+                        "height": level_height,
                         "goods": []
                     }
                     json_shelf["levels"].append(json_level)
@@ -216,6 +221,7 @@ class Taizhang:
                             }
                             json_goods["displays"].append(json_display)
 
+                    last_level = level
         return json_ret
 
     def to_image(self, image_dir):
