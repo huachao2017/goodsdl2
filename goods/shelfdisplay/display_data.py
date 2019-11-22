@@ -29,14 +29,8 @@ def init_data(uc_shopid, tz_id, base_data):
             "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
                 uc_shopid, tz_id))
         (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
-        print(uc_shopid)
-        print(tz_id)
-        print(taizhang_id)
-        print(shelf_id)
-        print(count)
-        print(third_cate_ids)
         if third_cate_ids is None or third_cate_ids == '':
-            raise ValueError()
+            raise ValueError('third_cate_ids is None:{},{},{}'.format(taizhang_id,shelf_id,count))
     except:
         print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
         raise ValueError('taizhang error:{},{}'.format(uc_shopid, tz_id))
@@ -195,7 +189,11 @@ class Taizhang:
                     if last_level is not None:
                         level_height = level.start_height - last_level.start_height
                     else:
-                        level_height = level.start_height
+                        # 第一层特殊处理
+                        if len(shelf.best_candidate_shelf.levels) == 1:
+                            level_height = shelf.height - level.start_height
+                        else:
+                            level_height = shelf.best_candidate_shelf.levels[1].start_height - level.start_height
                     json_level = {
                         "level_id": level.level_id,
                         "height": level_height,
