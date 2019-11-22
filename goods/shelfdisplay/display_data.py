@@ -184,16 +184,14 @@ class Taizhang:
             }
             json_ret["shelfs"].append(json_shelf)
             if shelf.best_candidate_shelf is not None:
-                last_level = None
+                index = -1
                 for level in shelf.best_candidate_shelf.levels:
-                    if last_level is not None:
-                        level_height = level.start_height - last_level.start_height
+                    index += 1
+                    if index == len(shelf.best_candidate_shelf.levels)-1:
+                        # 最后一层殊处理
+                        level_height = shelf.height - level.start_height
                     else:
-                        # 第一层特殊处理
-                        if len(shelf.best_candidate_shelf.levels) == 1:
-                            level_height = shelf.height - level.start_height
-                        else:
-                            level_height = shelf.best_candidate_shelf.levels[1].start_height - level.start_height
+                        level_height = shelf.best_candidate_shelf.levels[index+1].start_height - level.start_height
                     json_level = {
                         "level_id": level.level_id,
                         "height": level_height,
