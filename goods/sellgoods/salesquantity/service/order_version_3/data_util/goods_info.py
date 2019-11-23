@@ -291,7 +291,7 @@ class DataRawGoods():
         self.max_disnums = max_disnums
         self.min_disnums = min_disnums
         self.safe_day_nums = 7
-		self.isnew_goods = False
+        self.isnew_goods = False
         try:
             if self.storage_day != None and int(storage_day) > 0:
                 if  int(storage_day) >=30:
