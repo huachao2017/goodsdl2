@@ -14,6 +14,8 @@ def generate(shop_id = None):
         print("规则0 商品数：" + str(len(result.keys())))
         for mch_code in result:
             drg_ins = result[mch_code]
+            if drg_ins.delivery_type != 2:
+                continue
             if drg_ins.isnew_goods:
                 order_sale = drg_ins.max_disnums
             else:

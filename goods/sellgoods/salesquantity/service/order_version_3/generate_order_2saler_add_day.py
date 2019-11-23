@@ -13,6 +13,8 @@ def generate(shop_id = None):
         result = cacul_util.data_process(shop_id, shop_type)
         print("规则0 商品数：" + str(len(result.keys())))
         for mch_code in result:
+            if drg_ins.delivery_type != 1:
+                continue
             drg_ins = result[mch_code]
             if drg_ins.isnew_goods:
                 order_sale = drg_ins.max_disnums
