@@ -9,7 +9,7 @@ from goods.shelfdisplay.db_data import init_data
 if __name__ == "__main__":
     # taizhang = generate_displays(806, 1187)
 
-    taizhang = generate_displays(806, 1209)
+    taizhang = generate_displays(806, 1203)
 
 
     # category_area_ratio: 分类陈列面积比例表
