@@ -89,7 +89,7 @@ def get_insert_disnums_data(shop_id ,disnums_inss,result):
                 min_disnums += disnums_inss_dict[key].single_face_min_disnums
                 max_disnums += shelf_ins.face_num * disnums_inss_dict[key].single_face_max_disnums
             else:
-			    drg_ins.isnew_goods = True
+                drg_ins.isnew_goods = True
                 config_disnums_ins = init_configdisnums(shop_id, shelf_ins, drg_ins)
                 config_disnums_inss.append(config_disnums_ins)
         if drg_ins.min_disnums != min_disnums and min_disnums != 0 :
