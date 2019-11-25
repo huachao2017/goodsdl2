@@ -47,6 +47,7 @@ def main_calculate(category3_to_category3_obj, category3_intimate_weight, catego
 
     # 2，计算level_value
     root_category_tree.calculate_level_value()
+    print(root_category_tree)
 
     # 3, 输出组合
     root_category_tree.calculate_result(category_combination_threshhold)
@@ -333,7 +334,7 @@ class CategoryTree:
         if self.children is not None:
             for child in self.children:
                 if child.children is not None:
-                    child.calculate_result()
+                    child.calculate_result(threshold)
 
             self.result_list = []
             # temp_result = arrange_all(self.children)
@@ -347,29 +348,32 @@ class CategoryTree:
             else:
                 step_size = 1
 
+            j = -1
             for i, one_result in enumerate(iter):
                 # if random.random() > 1 // step_size:  # 进行下采样
                 #     continue
                 # else:
 
-                if i % step_size == 0:  # 进行下采样
-
-                    last_category_tree = None
-                    is_valid = True
-                    for category_tree in one_result:
-                        if last_category_tree is not None:
-                            if last_category_tree.level_value is None and category_tree.level_value == 0:
-                                is_valid = False
-                                break
-                            if category_tree.level_value is None and last_category_tree.level_value == 10:
-                                is_valid = False
-                                break
-                            if last_category_tree.level_value is not None and category_tree.level_value is not None and last_category_tree.level_value > category_tree.level_value:
-                                is_valid = False
-                                break
-                        last_category_tree = category_tree
-                    if is_valid:
+                last_category_tree = None
+                is_valid = True
+                for category_tree in one_result:
+                    if last_category_tree is not None:
+                        if last_category_tree.level_value is None and category_tree.level_value == 0:
+                            is_valid = False
+                            break
+                        if category_tree.level_value is None and last_category_tree.level_value == 10:
+                            is_valid = False
+                            break
+                        if last_category_tree.level_value is not None and category_tree.level_value is not None and last_category_tree.level_value > category_tree.level_value:
+                            is_valid = False
+                            break
+                    last_category_tree = category_tree
+                if is_valid:
+                    j += 1
+                    if j % step_size == 0:  # 进行下采样
                         self.result_list.append(one_result)
+            if len(self.result_list) == 0:
+                raise ValueError('货架层级规则导致没有有效解: {}'.format(str(self)))
 
     def get_all_simple_result(self):
         if self.children is not None:
@@ -405,27 +409,28 @@ class CategoryTree:
         if self.children is None:
             return str(self.level_value) + ':' + self.category + ','
         else:
-            ret += str(self.level_value)
-            ret += '-'
-            ret += str(len(self.result_list))
-            # ret += '['
-            # for one_result in self.result_list:
-            #     ret += '['
-            #     for one_tree in one_result:
-            #         ret += str(one_tree.id)
-            #         ret += ','
-            #     ret += '],'
-            # ret += ']:('
-            ret += ':('
-            for child in self.children:
-                ret += str(child)
-            ret += '),'
-
-            if self.parent is None:
-                simple_results = self.get_all_simple_result()
-                ret += str(len(simple_results))
+            if self.result_list is not None:
+                ret += str(self.level_value)
                 ret += '-'
-                ret += str(simple_results)
+                ret += str(len(self.result_list))
+                ret += ':('
+                for child in self.children:
+                    ret += str(child)
+                ret += '),'
+
+                if self.parent is None:
+                    ret += '\n'
+                    simple_results = self.get_all_simple_result()
+                    ret += str(len(simple_results))
+                    ret += '-'
+                    ret += str(simple_results)
+            else:
+                ret += str(self.level_value)
+                ret += ':('
+                for child in self.children:
+                    ret += str(child)
+                ret += '),'
+
 
         return ret
 
@@ -468,7 +473,7 @@ if __name__ == '__main__':
     ]
 
     n = 6
-    a = main_calculate(category3_to_category3_obj[n], category3_intimate_weight[n], category3_level_value[n], 100)
+    a = main_calculate(category3_to_category3_obj[n], category3_intimate_weight[n], category3_level_value[n], 2)
     print('--------------候选列表---------------')
     print('候选列表总数：', len(a))
     print(a)
