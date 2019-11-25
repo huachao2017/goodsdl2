@@ -21,17 +21,19 @@ def shelf_arrange(shelf):
     :param shelf: display_data中的shelf对象
     :return: 候选分类列表，例如[[a,b,c,d],[d,c,b,a]]
     """
+    category3_to_category3_obj = shelf.shelf_category3_to_category3_obj
     category3_intimate_weight = shelf.shelf_category3_intimate_weight
     category3_level_value = shelf.shelf_category3_level_value
 
     category3_list = shelf.shelf_category3_list
     category_combination_threshhold = shelf.category_combination_threshhold
-    return main_calculate(category3_intimate_weight, category3_level_value, category3_list, category_combination_threshhold)
+    return main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list, category_combination_threshhold)
 
 
-def main_calculate(category3_intimate_weight, category3_level_value, category3_list, category_combination_threshhold):
+def main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list, category_combination_threshhold):
     """
     根据亲密度，层数分计算
+    :param category3_to_category3_obj: 三级分类详细信息
     :param category3_intimate_weight: 亲密度
     :param category3_level_value: 层数分
     :param category3_list: 分类列表
@@ -40,7 +42,7 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
     """
 
     # 1，初始化数据
-    root_category_tree_list = init_category_tree(category3_intimate_weight, category3_level_value, category3_list)
+    root_category_tree_list = init_category_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list)
 
     # 2，计算level_value
     for category_tree in root_category_tree_list:
@@ -53,16 +55,15 @@ def main_calculate(category3_intimate_weight, category3_level_value, category3_l
         print(root_category_tree)
 
     # 4，外层排序解集
-    candidate_category_tree_order = calculate_outer_result(root_category_tree_list, category3_level_value,
-                                                           category3_list)
+    candidate_category_tree_order = calculate_outer_result(root_category_tree_list, threshold = category_combination_threshhold)
 
     # 5, 里外合并
-    ret = combine_all_result(candidate_category_tree_order, category3_level_value)
+    ret = combine_all_result(candidate_category_tree_order)
 
     return ret
 
 
-def calculate_outer_result(category_tree_list, category3_level_value, category3_list, threshold=5):
+def calculate_outer_result(category_tree_list, threshold=5):
     """
     计算外层解
     :param category_tree_list:
@@ -176,7 +177,7 @@ def arrange_all(list1):
     return result
 
 
-def combine_all_result(candidate_category_tree_order, category3_level_value):
+def combine_all_result(candidate_category_tree_order):
     """
     遍历并组合所有内部解和外部解，并把对象转为category
     :param candidate_category_tree_order:
@@ -242,7 +243,7 @@ def is_match_up_down_relation(list, category3_level_value):
     return True
 
 
-def init_category_tree(category3_intimate_weight, category3_level_value, category3_list):
+def init_category_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list):
     """
     返回CategoryTree列表，初始类似的结构：（（a，b），c），（（d，e），f），g）
     a、b	=10
@@ -251,6 +252,7 @@ def init_category_tree(category3_intimate_weight, category3_level_value, categor
     d、e、f=6
     d、e、f、g=5
 
+    :param category3_to_category3_obj
     :param category3_intimate_weight:
     :param category3_level_value:
     :param category3_list:

@@ -43,14 +43,16 @@ def init_data(uc_shopid, tz_id, base_data):
     # 计算五个值
     display_category3_list = third_cate_ids.split(',')
     appoint_shelf_category3_list = []
+    category3_to_category3_obj = {}
     # 检查所有三级分类
     for category3 in display_category3_list:
         try:
             cursor.execute(
-                "select id from uc_category where mch_id={} and cat_id='{}' and level=3".format(
+                "select cat_id, name, pid from uc_category where mch_id={} and cat_id='{}' and level=3".format(
                     mch_id, category3))
-            (id,) = cursor.fetchone()
+            (cat_id, name, pid) = cursor.fetchone()
             appoint_shelf_category3_list.append(category3)
+            category3_to_category3_obj[cat_id] = Category3(cat_id, name, pid)
         except:
             print('台账陈列类别无法找到：{}！'.format(category3))
 
@@ -73,15 +75,18 @@ def init_data(uc_shopid, tz_id, base_data):
 
     shelf_category3_intimate_weight = {}
     shelf_category3_level_value = {}
-    for shelf_category in shelf_category3_list:
+    shelf_category3_to_category3_obj = {}
+    for category3 in shelf_category3_list:
         for category3_list_str in base_data.category3_intimate_weight.keys():
             # 做部分删减
             category3_list = category3_list_str.split(',')
-            if shelf_category in category3_list:
+            if category3 in category3_list:
                 shelf_category3_intimate_weight[category3_list_str] = base_data.category3_intimate_weight[
                     category3_list_str]
-        if shelf_category in base_data.category3_level_value:
-            shelf_category3_intimate_weight[shelf_category] = base_data.category3_level_value[shelf_category]
+        if category3 in base_data.category3_level_value:
+            shelf_category3_intimate_weight[category3] = base_data.category3_level_value[category3]
+        if category3 in category3_to_category3_obj:
+            shelf_category3_to_category3_obj[category3] = category3_to_category3_obj[category3]
 
     # 重新计算货架的三级分类比例
     shelf_category3_area_ratio = calculate_shelf_category3_area_ratio(shelf_category3_list, base_data.category_area_ratio)
@@ -91,6 +96,7 @@ def init_data(uc_shopid, tz_id, base_data):
                       shelf_category3_list,
                       shelf_category3_intimate_weight,
                       shelf_category3_level_value,
+                      shelf_category3_to_category3_obj,
                       shelf_category3_area_ratio,
                       shelf_goods_data_list)
         taizhang.shelfs.append(shelf)
@@ -98,6 +104,11 @@ def init_data(uc_shopid, tz_id, base_data):
     cursor.close()
     return taizhang
 
+class Category3:
+    def __init__(self, category3, name, pid):
+        self.category3 = category3
+        self.name = name
+        self.pid = pid
 
 class Taizhang:
 
@@ -290,6 +301,7 @@ class Shelf:
                  shelf_category3_list,
                  shelf_category3_intimate_weight,
                  shelf_category3_level_value,
+                 shelf_category3_to_category3_obj,
                  shelf_category3_area_ratio,
                  shelf_goods_data_list):
         self.shelf_id = shelf_id
@@ -301,6 +313,7 @@ class Shelf:
         self.shelf_category3_list = shelf_category3_list  # 货架指定分类列表
         self.shelf_category3_intimate_weight = shelf_category3_intimate_weight  # 货架分类涉及的亲密度分值
         self.shelf_category3_level_value = shelf_category3_level_value  # 货架分类涉及的层数分值
+        self.shelf_category3_to_category3_obj = shelf_category3_to_category3_obj # 货架分类的详细信息
         self.shelf_category3_area_ratio = shelf_category3_area_ratio  # 货架内分类面积比例
         self.shelf_goods_data_list = shelf_goods_data_list  # 货架候选商品列表
 
