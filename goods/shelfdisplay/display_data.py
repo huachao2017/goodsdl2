@@ -61,11 +61,11 @@ def init_data(uc_shopid, tz_id, base_data):
                     total_height += goods.height
                     shelf_goods_data_list.append(goods)
                     if goods.category3 in shelf_category3_to_goods_cnt:
-                        shelf_category3_to_goods_cnt[category3] += 1
+                        shelf_category3_to_goods_cnt[cat_id] += 1
                     else:
-                        shelf_category3_to_goods_cnt[category3] = 1
-            if len(shelf_category3_to_goods_cnt[category3]) > 0:
-                average_height = total_height/shelf_category3_to_goods_cnt[category3]
+                        shelf_category3_to_goods_cnt[cat_id] = 1
+            if len(shelf_category3_to_goods_cnt[cat_id]) > 0:
+                average_height = total_height/shelf_category3_to_goods_cnt[cat_id]
                 category3_to_category3_obj[cat_id] = Category3(cat_id, name, pid, average_height)
         except:
             print('台账陈列类别无法找到：{}！'.format(category3))
