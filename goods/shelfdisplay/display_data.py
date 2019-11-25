@@ -50,12 +50,15 @@ def init_data(uc_shopid, tz_id, base_data):
     shelf_goods_data_list = []
     # 检查所有三级分类
     for category3 in display_category3_list:
+        cat_id = None
         try:
             cursor.execute(
                 "select cat_id, name, pid from uc_category where mch_id={} and cat_id='{}' and level=3".format(
                     mch_id, category3))
             (cat_id, name, pid) = cursor.fetchone()
-            print(cat_id)
+        except:
+            print('台账陈列类别无法找到：{}！'.format(category3))
+        if cat_id is not None:
             total_height = 0
             for goods in base_data.goods_data_list:
                 if goods.category3 == cat_id:
@@ -66,10 +69,8 @@ def init_data(uc_shopid, tz_id, base_data):
                     else:
                         shelf_category3_to_goods_cnt[cat_id] = 1
             if len(shelf_category3_to_goods_cnt[cat_id]) > 0:
-                average_height = total_height/shelf_category3_to_goods_cnt[cat_id]
+                average_height = total_height / shelf_category3_to_goods_cnt[cat_id]
                 category3_to_category3_obj[cat_id] = Category3(cat_id, name, pid, average_height)
-        except:
-            print('台账陈列类别无法找到：{}！'.format(category3))
 
     # 根据商品筛选三级分类 FIXME 三级分类目前一定是超量的
     print('总共获取的候选陈列商品: ')
