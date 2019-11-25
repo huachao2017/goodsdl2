@@ -25,8 +25,12 @@ def init_data(uc_shopid, tz_id, base_data):
 
     # 获取台账
     try:
+        # cursor.execute(
+        #     "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
+        #         uc_shopid, tz_id))
+        # FIXME 没有指定商店
         cursor.execute(
-            "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
+            "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_taizhang t where and t.id = {}".format(
                 uc_shopid, tz_id))
         (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
         if third_cate_ids is None or third_cate_ids == '':
