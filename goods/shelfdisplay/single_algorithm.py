@@ -48,7 +48,7 @@ def goods_badcase_score(candidate_shelf_list):
     min_badcase_value = 100000
     best_candidate_shelf = None
     i = 0
-    step = int(candidate_shelf_list/10)
+    step = int(len(candidate_shelf_list)/10)
     for candidate_shelf in candidate_shelf_list:
         i += 1
         # 空缺层板宽度
