@@ -84,7 +84,7 @@ def init_data(uc_shopid, tz_id, base_data):
                 shelf_category3_intimate_weight[category3_list_str] = base_data.category3_intimate_weight[
                     category3_list_str]
         if category3 in base_data.category3_level_value:
-            shelf_category3_intimate_weight[category3] = base_data.category3_level_value[category3]
+            shelf_category3_level_value[category3] = base_data.category3_level_value[category3]
         if category3 in category3_to_category3_obj:
             shelf_category3_to_category3_obj[category3] = category3_to_category3_obj[category3]
 

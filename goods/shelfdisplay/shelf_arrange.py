@@ -25,27 +25,25 @@ def shelf_arrange(shelf):
     category3_intimate_weight = shelf.shelf_category3_intimate_weight
     category3_level_value = shelf.shelf_category3_level_value
 
-    category3_list = shelf.shelf_category3_list
     category_combination_threshhold = shelf.category_combination_threshhold
-    return main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list,
+    return main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
                           category_combination_threshhold)
 
 
-def main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list,
+def main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
                    category_combination_threshhold):
     """
     根据亲密度，层数分计算
     :param category3_to_category3_obj: 三级分类详细信息
     :param category3_intimate_weight: 亲密度
     :param category3_level_value: 层数分
-    :param category3_list: 分类列表
     :param category_combination_threshhold: 分类组合的数量阈值
     :return: 总体后选列表
     """
 
     # 1，初始化数据
     root_category_tree = init_category_tree(category3_to_category3_obj, category3_intimate_weight,
-                                            category3_level_value, category3_list)
+                                            category3_level_value)
 
     # 2，计算level_value
     root_category_tree.calculate_level_value()
@@ -57,21 +55,52 @@ def main_calculate(category3_to_category3_obj, category3_intimate_weight, catego
     return root_category_tree.get_all_simple_result()
 
 
-def init_category_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list):
+def init_category_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value):
     """
 
     :param category3_to_category3_obj:
     :param category3_intimate_weight:
     :param category3_level_value:
-    :param category3_list:
     :return:
     """
-    return init_one_category2_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
-                                   category3_list, tree_id = 1)
+    # 获取所有2级分类的分组
+    category2_to_category3_list = {}
+    for category3 in category3_to_category3_obj.keys():
+        category3_obj = category3_to_category3_obj[category3]
+        if category3_obj.pid in category2_to_category3_list:
+            category2_to_category3_list[category3_obj.pid].append(category3)
+        else:
+            category2_to_category3_list[category3_obj.pid] = [category3]
+
+    tree_id = 1
+    root_tree_list = []
+    for category2 in category2_to_category3_list.keys():
+        # 筛选三个参数
+        one_category3_list = category2_to_category3_list[category2]
+        one_category3_intimate_weight = {}
+        one_category3_level_value = {}
+        for category3 in one_category3_list:
+            for category3_list_str in category3_intimate_weight.keys():
+                # 做部分删减
+                category3_list = category3_list_str.split(',')
+                if category3 in category3_list:
+                    one_category3_intimate_weight[category3_list_str] = category3_intimate_weight[
+                        category3_list_str]
+            if category3 in category3_level_value:
+                one_category3_level_value[category3] = category3_level_value[category3]
+
+        one_root_tree = init_one_category2_tree(one_category3_intimate_weight, one_category3_level_value,
+                                                one_category3_list, tree_id=tree_id)
+        root_tree_list.append(one_root_tree)
+        tree_id = one_root_tree.id + 1
+
+    category2_tree_root = CategoryTree(tree_id, 0)
+    category2_tree_root.init_parent(root_tree_list)
+    return category2_tree_root
 
 
-def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
-                            category3_list, tree_id = 1):
+def init_one_category2_tree(category3_intimate_weight, category3_level_value,
+                            category3_list, tree_id=1):
     """
     返回CategoryTree列表，初始类似的结构：（（a，b），c），（（d，e），f），g）
     a、b	=10
@@ -80,7 +109,6 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
     d、e、f=6
     d、e、f、g=5
 
-    :param category3_to_category3_obj
     :param category3_intimate_weight:
     :param category3_level_value:
     :param category3_list:
@@ -357,7 +385,10 @@ class CategoryTree:
                     else:
                         index_to_simple_result_list[index] = [one_tree.category]
                         index += 1
+                # try:
                 list_index_to_simple_result = single_algorithm.dict_arrange(index_to_simple_result_list)
+                # except:
+                #     print(1)
                 for index_to_simple_result in list_index_to_simple_result:
                     simple_result_list = []
                     for i in range(index):
@@ -399,6 +430,12 @@ class CategoryTree:
         return ret
 
 
+class Category3Demo:
+    def __init__(self, category3, name, pid):
+        self.category3 = category3
+        self.name = name
+        self.pid = pid
+
 if __name__ == '__main__':
     # TODO 李树
     category3_intimate_weight = [
@@ -408,7 +445,6 @@ if __name__ == '__main__':
         {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
         {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
         {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,m': 8, 'd,e,f,g,h,i,j,k,l,m': 5},
-        {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
         {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 6, 'd,e,f,g': 5},
     ]
     category3_level_value = [
@@ -421,19 +457,18 @@ if __name__ == '__main__':
         {'b': 8, 'c': 10, 'e': 0},
         {'b': 8, 'c': 10, 'e': 10},
     ]
-    category3_list = [
-        {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-        {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-        {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-        {'a', 'd'},
-        {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-        {'a', 'b', 'c', 'd', 'e', 'f', 'g'},
-        {'a', 'b', 'c', 'd', 'f'},
-        {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'},
+    category3_to_category3_obj = [
+        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'e': Category3Demo('e','e','A'), 'f': Category3Demo('f','f','A'),'g': Category3Demo('g','g','A')},
+        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'e': Category3Demo('e','e','A'), 'f': Category3Demo('f','f','A'),'g': Category3Demo('g','g','A')},
+        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A')},
+        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'e': Category3Demo('e','e','A'), 'f': Category3Demo('f','f','A'),'g': Category3Demo('g','g','A')},
+        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'e': Category3Demo('e','e','A'), 'f': Category3Demo('f','f','A'),'g': Category3Demo('g','g','A')},
+        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'f': Category3Demo('f','f','A')},
+        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'e': Category3Demo('e','e','A'), 'f': Category3Demo('f','f','A'),'g': Category3Demo('g','g','A'),'h': Category3Demo('h','h','A'),'i': Category3Demo('i','i','B'), 'j': Category3Demo('j','j','B'),'k': Category3Demo('k','k','B')},
     ]
 
     n = 6
-    a = main_calculate({}, category3_intimate_weight[n], category3_level_value[n], category3_list[n], 2)
+    a = main_calculate(category3_to_category3_obj[n], category3_intimate_weight[n], category3_level_value[n], 100)
     print('--------------候选列表---------------')
     print('候选列表总数：', len(a))
     print(a)
