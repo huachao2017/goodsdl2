@@ -237,6 +237,8 @@ def _solve_goods_face(shelf_depth, goods_data_list):
     total_face_num = 0
     for goods in goods_data_list:
         max_one_face = int(shelf_depth / goods.depth)
+        if max_one_face == 0:
+            max_one_face = 1
         goods.face_num = math.ceil(3 * goods.psd / max_one_face)
         total_width += goods.width * goods.face_num
         total_face_num += goods.face_num
