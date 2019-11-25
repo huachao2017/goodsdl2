@@ -67,11 +67,11 @@ def init_category_tree(category3_to_category3_obj, category3_intimate_weight, ca
     :return:
     """
     return init_one_category2_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
-                                   category3_list)
+                                   category3_list, tree_id = 1)
 
 
 def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
-                            category3_list):
+                            category3_list, tree_id = 1):
     """
     返回CategoryTree列表，初始类似的结构：（（a，b），c），（（d，e），f），g）
     a、b	=10
@@ -119,7 +119,6 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
 
     all_category_tree_without_parent = []
     all_category_tree_only_parent = []
-    tree_id = 1
 
     for intimate in sorted_intimate_list:
         cat_ids = intimate[0]
