@@ -125,6 +125,10 @@ def init_configdisnums(shop_id,shelf_ins,drg_ins):
     if drg_ins.storage_day < 15 :
         config_disnums_ins.single_face_min_disnums = 1
     else:
-        config_disnums_ins.single_face_min_disnums = 3
+        if shelf_ins.level_depth <= drg_ins.depth:
+            min_face_disnum = 1
+        else:
+            min_face_disnum = math.floor(shelf_ins.level_depth / drg_ins.depth)
+        config_disnums_ins.single_face_min_disnums = min(3,min_face_disnum)
     config_disnums_ins.single_face_max_disnums = math.floor(float(config_disnums_ins.shelf_depth)/config_disnums_ins.goods_depth)
     return config_disnums_ins
