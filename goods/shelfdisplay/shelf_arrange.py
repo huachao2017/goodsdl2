@@ -7,7 +7,7 @@ a，b，c如分值都大于5，则以最大的计算
 a，b，c如分值都小于5，则以最小的计算
 a，b，c如分值既有大于5又有小于5，则为N（未定义）
 """
-import itertools, copy, random,math
+import itertools, copy, random, math
 from functools import reduce
 from goods.shelfdisplay import single_algorithm
 
@@ -27,10 +27,12 @@ def shelf_arrange(shelf):
 
     category3_list = shelf.shelf_category3_list
     category_combination_threshhold = shelf.category_combination_threshhold
-    return main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list, category_combination_threshhold)
+    return main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list,
+                          category_combination_threshhold)
 
 
-def main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list, category_combination_threshhold):
+def main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list,
+                   category_combination_threshhold):
     """
     根据亲密度，层数分计算
     :param category3_to_category3_obj: 三级分类详细信息
@@ -42,7 +44,8 @@ def main_calculate(category3_to_category3_obj, category3_intimate_weight, catego
     """
 
     # 1，初始化数据
-    root_category_tree = init_category_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list)
+    root_category_tree = init_category_tree(category3_to_category3_obj, category3_intimate_weight,
+                                            category3_level_value, category3_list)
 
     # 2，计算level_value
     root_category_tree.calculate_level_value()
@@ -53,6 +56,7 @@ def main_calculate(category3_to_category3_obj, category3_intimate_weight, catego
 
     return root_category_tree.get_all_simple_result()
 
+
 def init_category_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list):
     """
 
@@ -62,9 +66,12 @@ def init_category_tree(category3_to_category3_obj, category3_intimate_weight, ca
     :param category3_list:
     :return:
     """
-    return init_one_category2_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list)
+    return init_one_category2_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
+                                   category3_list)
 
-def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value, category3_list):
+
+def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
+                            category3_list):
     """
     返回CategoryTree列表，初始类似的结构：（（a，b），c），（（d，e），f），g）
     a、b	=10
@@ -218,6 +225,7 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
     category_tree_root.init_parent(id_to_root_parent_tree.values())
     return category_tree_root
 
+
 def _find_category(category, category_tree_list):
     for category_tree in category_tree_list:
         ret = category_tree.find(category)
@@ -312,7 +320,7 @@ class CategoryTree:
             else:
                 step_size = 1
 
-            for i,one_result in enumerate(iter):
+            for i, one_result in enumerate(iter):
                 # if random.random() > 1 // step_size:  # 进行下采样
                 #     continue
                 # else:
@@ -425,8 +433,8 @@ if __name__ == '__main__':
         {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'},
     ]
 
-    n = 1
-    a = main_calculate({},category3_intimate_weight[n], category3_level_value[n], category3_list[n])
+    n = 6
+    a = main_calculate({}, category3_intimate_weight[n], category3_level_value[n], category3_list[n], 2)
     print('--------------候选列表---------------')
     print('候选列表总数：', len(a))
     print(a)
