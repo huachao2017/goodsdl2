@@ -8,7 +8,7 @@ class ConfigTableUtil:
     # goods_config_disnums 表
     def select_all_disnums(self,shop_id):
         cursor_ai = connections['default'].cursor()
-        cursor_ai.execute('select * from goods_config_disnums where shop_id = {}'.format(shop_id))
+        cursor_ai.execute('select * from goods_config_disnums where create_time < "2019-11-23 00:00:00" and shop_id = {}'.format(shop_id))
         results = cursor_ai.fetchall()
         disnums_inss = []
         if results != None and len(list(results))> 0:
@@ -39,7 +39,7 @@ class ConfigTableUtil:
     # goods_config_safedays 操作
     def select_all_safedays(self, shop_id):
         cursor_ai = connections['default'].cursor()
-        cursor_ai.execute('select * from goods_config_safedays where shop_id = {}'.format(shop_id))
+        cursor_ai.execute('select * from goods_config_safedays where create_time < "2019-11-23 00:00:00" and  shop_id = {}'.format(shop_id))
         results = cursor_ai.fetchall()
         safedays_inss = []
         if results != None and len(list(results)) > 0:

@@ -273,7 +273,8 @@ class DataRawGoods():
         self.delivery_type = delivery_type
         self.category1_id = category1_id  # 台账分类
         self.category2_id = category2_id
-
+        if delivery_type is None:
+            self.delivery_type = 2
         if category_id is None:
             self.category_id = 0
         else:
