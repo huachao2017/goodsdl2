@@ -30,7 +30,7 @@ def init_data(uc_shopid, tz_id, base_data):
         #         uc_shopid, tz_id))
         # FIXME 没有指定商店
         cursor.execute(
-            "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_taizhang t where and t.id = {}".format(tz_id))
+            "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_taizhang t where t.id = {}".format(tz_id))
         (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
         if third_cate_ids is None or third_cate_ids == '':
             raise ValueError('third_cate_ids is None:{},{},{}'.format(taizhang_id,shelf_id,count))
