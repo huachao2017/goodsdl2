@@ -68,7 +68,7 @@ def init_data(uc_shopid, tz_id, base_data):
                         shelf_category3_to_goods_cnt[cat_id] += 1
                     else:
                         shelf_category3_to_goods_cnt[cat_id] = 1
-            if len(shelf_category3_to_goods_cnt[cat_id]) > 0:
+            if shelf_category3_to_goods_cnt[cat_id] > 0:
                 average_height = total_height / shelf_category3_to_goods_cnt[cat_id]
                 category3_to_category3_obj[cat_id] = Category3(cat_id, name, pid, average_height)
 
