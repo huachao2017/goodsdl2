@@ -55,6 +55,7 @@ def init_data(uc_shopid, tz_id, base_data):
                 "select cat_id, name, pid from uc_category where mch_id={} and cat_id='{}' and level=3".format(
                     mch_id, category3))
             (cat_id, name, pid) = cursor.fetchone()
+            print(cat_id)
             total_height = 0
             for goods in base_data.goods_data_list:
                 if goods.category3 == cat_id:
