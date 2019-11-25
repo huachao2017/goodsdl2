@@ -122,8 +122,9 @@ def init_configdisnums(shop_id,shelf_ins,drg_ins):
     config_disnums_ins.goods_name = drg_ins.goods_name
     config_disnums_ins.goods_depth = drg_ins.depth
     config_disnums_ins.shelf_type = shelf_ins.shelf_type
-    if config_disnums_ins.shelf_depth >= config_disnums_ins.goods_depth :
+    if drg_ins.storage_day < 15 :
         config_disnums_ins.single_face_min_disnums = 1
-        config_disnums_ins.single_face_max_disnums = math.floor(float(config_disnums_ins.shelf_depth)/config_disnums_ins.goods_depth)
-
+    else:
+        config_disnums_ins.single_face_min_disnums = 3
+    config_disnums_ins.single_face_max_disnums = math.floor(float(config_disnums_ins.shelf_depth)/config_disnums_ins.goods_depth)
     return config_disnums_ins
