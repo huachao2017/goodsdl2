@@ -17,7 +17,10 @@ def generate(shop_id = None):
     for mch_code  in result:
         drg_ins = result[mch_code]
         # print ("规则1 ： 最大陈列数与当前库存")
-        order_sale = drg_ins.max_disnums - drg_ins.stock - drg_ins.supply_stock
+        if drg_ins.delivery_type == 1:
+            order_sale = drg_ins.max_disnums - drg_ins.stock - drg_ins.supply_stock
+        elif drg_ins.delivery_type == 2:
+            order_sale = drg_ins.max_disnums - drg_ins.stock - drg_ins.supply_stock
         if order_sale <= 0:
             continue
         # print ("规则2： 起订量规则")
@@ -33,10 +36,10 @@ def generate(shop_id = None):
             str(sales_order_ins.order_sale), str(sales_order_ins.upc), str(sales_order_ins.goods_name),
             str(sales_order_ins.max_stock), str(sales_order_ins.min_stock), str(sales_order_ins.stock),
             str(sales_order_ins.supply_stock)))
-    if len(sales_order_inss) > 0:
-        erp_interface.order_commit(shop_id,shop_type,sales_order_inss)
-        print("erp_interface.order_commit success!")
-
+    # if len(sales_order_inss) > 0:
+    #     erp_interface.order_commit(shop_id,shop_type,sales_order_inss)
+    #     print("erp_interface.order_commit success!")
+    return sales_order_inss
 
 
 if __name__=='__main__':

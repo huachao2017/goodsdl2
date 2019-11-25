@@ -6,14 +6,14 @@ from goods.sellgoods.salesquantity.local_util import sales2_save
 ai = config.ai
 erp = config.erp
 
-from goods.sellgoods.salesquantity.bean import goods_ai_weather,ai_sales_old,sales_old_tmp
+from goods.sellgoods.salesquantity.bean import goods_ai_weather,ai_sales_old_spark,sales_old_tmp
 class SalesPredict:
     def generate_data(self,all_data=False):
         sql1 = "select T3.shop_id,T3.goods_id,T3.num,shop.owned_city,T3.create_date,goods.upc,goods.`name`,goods.price,goods.first_cate_id,goods.second_cate_id,goods.third_cate_id from ( " \
                "SELECT T2.shop_id,T2.goods_id,SUM(T2.number) as num,T2.create_date from " \
                "(select T1.shop_id,T1.goods_id,T1.number,DATE_FORMAT(T1.create_time,'%Y-%m-%d') as create_date from ( " \
                "select shop_id,goods_id,create_time,number,price from payment_detail where create_time >= '{0} 00:00:00' and create_time <= '{1} 23:59:59' and payment_id in ( " \
-               "select distinct(payment.id) from payment where payment.type != 50  and create_time >= '{2} 00:00:00' and create_time <= '{3} 23:59:59' " \
+               "select distinct(payment.id) from payment where payment.status = 10  and create_time >= '{2} 00:00:00' and create_time <= '{3} 23:59:59' " \
                ") " \
                ") T1 " \
                ") T2 GROUP BY T2.shop_id,T2.goods_id,T2.create_date " \
@@ -28,7 +28,7 @@ class SalesPredict:
                     return
                 else:
                     results = self.get_weeks_results(sql1,week_days1)
-                    salesold_inss = self.get_data_week(results, week_days1)
+                    salesold_inss = self.get_data_week(results, week_days1, week_days2)
                     try:
                         sales2_save.write_file(salesold_inss,week_days1[0])
                     except:
@@ -125,7 +125,7 @@ class SalesPredict:
         return weather_week
 
 
-    def get_data_week(self,results,week_days1,week_days2):
+    def get_data_week(self,results,week_days1):
         """
         获取某段时间内的销量数据
         :param results:
@@ -164,7 +164,7 @@ class SalesPredict:
 
         for key in sales_old_tmp_dict:
             try:
-                sales_old_ins = ai_sales_old.SalesOld()
+                sales_old_ins = ai_sales_old_spark.SalesOld()
                 # 添加基础维度 和 地域维度
                 self.add_baseinfo(sales_old_ins,sales_old_tmp_dict[key])
                 # 添加天气维度
@@ -619,6 +619,7 @@ class SalesPredict:
                         sales_old_ins.windspeed_7 =  weather_ins.windspeed
 
     def add_baseinfo(self,sales_old_ins,sales_old_tmp_ins):
+        sales_old_tmp_ins
         sales_old_ins.shop_id = int(sales_old_tmp_ins.shop_id)
         sales_old_ins.goods_id = int(sales_old_tmp_ins.goods_id)
         sales_old_ins.city = sales_old_tmp_ins.city
