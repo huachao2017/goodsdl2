@@ -59,7 +59,8 @@ def goods_arrange(shelf):
             shelf,
             categoryid_list,
             categoryid_to_arrange_goods_list_list)
-        print("开始第{}个分类解（共{}个商品解）：".format(i,len(candidate_shelf_list)))
+        if i % 10 == 1:
+            print("开始第{}个分类解（共{}个商品解）：".format(i,len(candidate_shelf_list)))
         j = 0
         for candidate_shelf in candidate_shelf_list:
             j += 1
@@ -156,15 +157,14 @@ def _display_shelf(candidate_shelf):
                     if add_width > positive_addition_width:
                         break
 
-    if abs(addition_width) < candidate_shelf.shelf.width/5:
-        # 剩余1/5货架宽内就是正确解
-        if addition_width > 0:
-            # 舍弃最后一层，并退出试错
-            candidate_shelf.levels = candidate_shelf.levels[:-1]
-        return True
-    else:
-        return False
+    # if abs(addition_width) < candidate_shelf.shelf.width/5:
+    #     # 剩余1/5货架宽内就是正确解
+    if addition_width > 0:
+        # 舍弃最后一层，并退出试错
+        candidate_shelf.levels = candidate_shelf.levels[:-1]
 
+    # FIXME 永远返回正确解，如货架剩余太多，应考虑扩大排面
+    return True
 
 def _try_display_shelf(candidate_shelf):
     level = None
