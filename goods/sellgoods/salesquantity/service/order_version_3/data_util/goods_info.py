@@ -280,6 +280,7 @@ class DataRawGoods():
         else:
             self.category_id = category_id
         self.storage_day = storage_day
+
         new_shelf_inss = []
         max_disnums = 0
         min_disnums = 0
@@ -301,6 +302,8 @@ class DataRawGoods():
                     self.safe_day_nums = 2
         except:
             print("商品的保质期error,mch_code=" + str(self.mch_code)+",goods_name="+str(self.goods_name))
+            self.storage_day = 0
+            self.safe_day_nums = 2
             pass
 
 class Shelf:
