@@ -59,7 +59,8 @@ def goods_arrange(shelf):
             shelf,
             categoryid_list,
             categoryid_to_arrange_goods_list_list)
-        print("开始第{}个分类解（共{}个商品解）：".format(i,len(candidate_shelf_list)))
+        if i % 10 == 1:
+            print("开始第{}个分类解（共{}个商品解）：".format(i,len(candidate_shelf_list)))
         j = 0
         for candidate_shelf in candidate_shelf_list:
             j += 1
