@@ -249,7 +249,7 @@ def init_one_category2_tree(category3_intimate_weight, category3_level_value,
         if child_tree.category in category3_level_value:
             child_tree.level_value = category3_level_value[child_tree.category]
 
-    category_tree_root = CategoryTree(tree_id, 0)
+    category_tree_root = CategoryTree(tree_id, 100)
     category_tree_root.init_parent(id_to_root_parent_tree.values())
     return category_tree_root
 
@@ -341,6 +341,9 @@ class CategoryTree:
 
             iter = itertools.permutations(self.children, len(self.children))  # 所有排列的生成器
             list_len = len(self.children)
+
+            if list_len > 8:
+                raise ValueError('候选解太多：{}'.format(str(self)))
             max_lengh = reduce(lambda x, y: x * y, range(1, list_len + 1))  # 阶乘
             if max_lengh > threshold:  # 如果大于阈值，则根据步长设置进行下采样
                 step_size = math.ceil(max_lengh / threshold)
