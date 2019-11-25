@@ -25,19 +25,15 @@ def shelf_arrange(shelf):
     category3_intimate_weight = shelf.shelf_category3_intimate_weight
     category3_level_value = shelf.shelf_category3_level_value
 
-    category_combination_threshhold = shelf.category_combination_threshhold
-    return main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
-                          category_combination_threshhold)
+    return main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value)
 
 
-def main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
-                   category_combination_threshhold):
+def main_calculate(category3_to_category3_obj, category3_intimate_weight, category3_level_value):
     """
     根据亲密度，层数分计算
     :param category3_to_category3_obj: 三级分类详细信息
     :param category3_intimate_weight: 亲密度
     :param category3_level_value: 层数分
-    :param category_combination_threshhold: 分类组合的数量阈值
     :return: 总体后选列表
     """
 
@@ -45,12 +41,13 @@ def main_calculate(category3_to_category3_obj, category3_intimate_weight, catego
     root_category_tree = init_category_tree(category3_to_category3_obj, category3_intimate_weight,
                                             category3_level_value)
 
+    print(root_category_tree)
     # 2，计算level_value
     root_category_tree.calculate_level_value()
     print(root_category_tree)
 
     # 3, 输出组合
-    root_category_tree.calculate_result(category_combination_threshhold)
+    root_category_tree.calculate_result()
     print(root_category_tree)
 
     return root_category_tree.get_all_simple_result()
@@ -90,7 +87,7 @@ def init_category_tree(category3_to_category3_obj, category3_intimate_weight, ca
             if category3 in category3_level_value:
                 one_category3_level_value[category3] = category3_level_value[category3]
 
-        one_root_tree = init_one_category2_tree(one_category3_intimate_weight, one_category3_level_value,
+        one_root_tree = init_one_category2_tree(category3_to_category3_obj, one_category3_intimate_weight, one_category3_level_value,
                                                 one_category3_list, tree_id=tree_id)
         root_tree_list.append(one_root_tree)
         tree_id = one_root_tree.id + 1
@@ -100,7 +97,7 @@ def init_category_tree(category3_to_category3_obj, category3_intimate_weight, ca
     return category2_tree_root
 
 
-def init_one_category2_tree(category3_intimate_weight, category3_level_value,
+def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weight, category3_level_value,
                             category3_list, tree_id=1):
     """
     返回CategoryTree列表，初始类似的结构：（（a，b），c），（（d，e），f），g）
@@ -110,6 +107,7 @@ def init_one_category2_tree(category3_intimate_weight, category3_level_value,
     d、e、f=6
     d、e、f、g=5
 
+    :param category3_to_category3_obj
     :param category3_intimate_weight:
     :param category3_level_value:
     :param category3_list:
@@ -147,7 +145,7 @@ def init_one_category2_tree(category3_intimate_weight, category3_level_value,
     print(sorted_intimate_list)
 
     all_category_tree_without_parent = []
-    all_category_tree_only_parent = []
+    all_intimate_category_tree_only_parent = []
 
     for intimate in sorted_intimate_list:
         cat_ids = intimate[0]
@@ -159,9 +157,9 @@ def init_one_category2_tree(category3_intimate_weight, category3_level_value,
         category_to_category_tree = {}
         is_found = False
         all_found = True
-        for category in category_list:
-            found_category = _find_category(category, all_category_tree_without_parent)
-            category_to_category_tree[category] = found_category
+        for category3 in category_list:
+            found_category = _find_category(category3, all_category_tree_without_parent)
+            category_to_category_tree[category3] = found_category
             if found_category is not None:
                 is_found = True
             if found_category is None:
@@ -172,85 +170,125 @@ def init_one_category2_tree(category3_intimate_weight, category3_level_value,
             if all_found:
                 # 1、parent和parent组合
                 id_to_parent_tree = {}
-                for category in category_to_category_tree.keys():
-                    parent = category_to_category_tree[category].parent
+                for category3 in category_to_category_tree.keys():
+                    parent = category_to_category_tree[category3].parent
                     id_to_parent_tree[parent.id] = parent
                 category_tree_parent = CategoryTree(tree_id, intimate_value)
                 tree_id += 1
                 category_tree_parent.init_parent(id_to_parent_tree.values())
-                all_category_tree_only_parent.append(category_tree_parent)
+                all_intimate_category_tree_only_parent.append(category_tree_parent)
 
             else:
                 # 查找最小的亲密度值
                 min_intimate_value = 1000
                 min_intimate_parent_tree = None
-                for category in category_to_category_tree.keys():
-                    if category_to_category_tree[category] is not None:
-                        if category_to_category_tree[category].intimate_value < min_intimate_value:
-                            min_intimate_value = category_to_category_tree[category].intimate_value
-                            min_intimate_parent_tree = category_to_category_tree[category].parent
+                for category3 in category_to_category_tree.keys():
+                    if category_to_category_tree[category3] is not None:
+                        if category_to_category_tree[category3].intimate_value < min_intimate_value:
+                            min_intimate_value = category_to_category_tree[category3].intimate_value
+                            min_intimate_parent_tree = category_to_category_tree[category3].parent
 
                 if min_intimate_value == intimate_value:
                     # 2、在一个存在的parent下面创建一个叶子
-                    for category in category_to_category_tree.keys():
-                        if category_to_category_tree[category] is None:
+                    for category3 in category_to_category_tree.keys():
+                        if category_to_category_tree[category3] is None:
                             category_tree = CategoryTree(tree_id, intimate_value)
                             tree_id += 1
-                            category_tree.init_child_with_parent(category, min_intimate_parent_tree)
+                            category_tree.init_child_with_parent(category3, min_intimate_parent_tree)
                             all_category_tree_without_parent.append(category_tree)
                 elif min_intimate_value > intimate_value:
                     # 3、扩层创建，和一个parent同层创建，并组合创建共同的parent
                     category_tree_leaf_list = []
                     category_tree_leaf_list.append(min_intimate_parent_tree)
-                    for category in category_to_category_tree.keys():
-                        if category_to_category_tree[category] is None:
+                    for category3 in category_to_category_tree.keys():
+                        if category_to_category_tree[category3] is None:
                             category_tree = CategoryTree(tree_id, intimate_value)
                             tree_id += 1
-                            category_tree.init_only_child(category)
+                            category_tree.init_only_child(category3)
                             category_tree_leaf_list.append(category_tree)
                             all_category_tree_without_parent.append(category_tree)
                     category_tree_parent = CategoryTree(tree_id, intimate_value)
                     tree_id += 1
                     category_tree_parent.init_parent(category_tree_leaf_list)
-                    all_category_tree_only_parent.append(category_tree_parent)
+                    all_intimate_category_tree_only_parent.append(category_tree_parent)
         else:
             # 4、全新创建
             category_tree_leaf_list = []
-            for category in category_list:
+            for category3 in category_list:
                 category_tree = CategoryTree(tree_id, intimate_value)
                 tree_id += 1
-                category_tree.init_only_child(category)
+                category_tree.init_only_child(category3)
                 category_tree_leaf_list.append(category_tree)
                 all_category_tree_without_parent.append(category_tree)
             category_tree_parent = CategoryTree(tree_id, intimate_value)
             tree_id += 1
             category_tree_parent.init_parent(category_tree_leaf_list)
-            all_category_tree_only_parent.append(category_tree_parent)
+            all_intimate_category_tree_only_parent.append(category_tree_parent)
+
+    id_to_intimate_root_parent_tree = {}
+    for parent_tree in all_intimate_category_tree_only_parent:
+        if parent_tree.parent == None:
+            id_to_intimate_root_parent_tree[parent_tree.id] = parent_tree
+
+    all_root_tree_children = []
+    for id in id_to_intimate_root_parent_tree.keys():
+        all_root_tree_children.append(id_to_intimate_root_parent_tree[id])
 
     # 创建不在亲密度里面的三级分类
-    for category in category3_list:
-        found_category = _find_category(category, all_category_tree_without_parent)
+    top_create_category3_list = []
+    for category3 in category3_list:
+        found_category = _find_category(category3, all_category_tree_without_parent)
         if not found_category:
-            category_tree = CategoryTree(tree_id, 0)
-            tree_id += 1
-            category_tree.init_only_child(category)
-            all_category_tree_without_parent.append(category_tree)
+            top_create_category3_list.append(category3)
+
+    top_category3_create_num = len(top_create_category3_list)
+    if top_category3_create_num > 4:
+        # 根据高度做4，4分组
+        category3_obj_list = []
+        for category3 in top_create_category3_list:
+            category3_obj_list.append(category3_to_category3_obj[category3])
+        sorted_category3_obj_list = sorted(category3_obj_list, key=lambda item: item.average_height, reverse=True)
+        need_create_category3_2dlist = []
+        for i in range(math.ceil(top_category3_create_num/4)):
+            one_list = []
+            need_create_category3_2dlist.append(one_list)
+            for j in range(4):
+                if i*4+j >= top_category3_create_num:
+                    break
+                one_list.append(sorted_category3_obj_list[i*4+j].category3)
+
+        category_tree_parent_list = []
+        for one_level in need_create_category3_2dlist:
+            child_category_tree_list = []
+            for category3 in one_level:
+                category_tree = CategoryTree(tree_id, 0)
+                tree_id += 1
+                category_tree.init_only_child(category3)
+                all_category_tree_without_parent.append(category_tree)
+                child_category_tree_list.append(category_tree)
             category_tree_parent = CategoryTree(tree_id, 0)
             tree_id += 1
-            category_tree_parent.init_parent([category_tree])
-            all_category_tree_only_parent.append(category_tree_parent)
+            category_tree_parent.init_parent(child_category_tree_list)
+            category_tree_parent_list.append(category_tree_parent)
+        another_category3_root_tree = CategoryTree(tree_id, 0)
+        tree_id += 1
+        another_category3_root_tree.init_parent(category_tree_parent_list)
+        all_root_tree_children.append(another_category3_root_tree)
+    elif top_category3_create_num>1:
+        for category3 in top_create_category3_list:
+            category_tree = CategoryTree(tree_id, 0)
+            tree_id += 1
+            category_tree.init_only_child(category3)
+            all_category_tree_without_parent.append(category_tree)
+            all_root_tree_children.append(category_tree)
 
-    id_to_root_parent_tree = {}
-    for parent_tree in all_category_tree_only_parent:
-        if parent_tree.parent == None:
-            id_to_root_parent_tree[parent_tree.id] = parent_tree
-
+    # 初始化非节点tree的level_value
     for child_tree in all_category_tree_without_parent:
         if child_tree.category in category3_level_value:
             child_tree.level_value = category3_level_value[child_tree.category]
 
     category_tree_root = CategoryTree(tree_id, 100)
-    category_tree_root.init_parent(id_to_root_parent_tree.values())
+    category_tree_root.init_parent(all_root_tree_children)
     return category_tree_root
 
 
@@ -264,17 +302,17 @@ def _find_category(category, category_tree_list):
 
 
 class CategoryTree:
-    id = None
-    children = None
-    parent = None
-    intimate_value = None
-    level_value = None
-    category = None
-    result_list = None  # 这里面是对象解：[(Child1,Child2,Child3),(Child2,Child3,Child1)]
+    one_category_combination_threshhold = 10 # 一个分类组合阈值需要根据实际情况计算
+    all_category_combination_threshhold = 100 # 所有分类组合的阈值
 
     def __init__(self, id, intimate_value):
         self.id = id
         self.intimate_value = intimate_value
+        self.children = None
+        self.parent = None
+        self.level_value = None
+        self.category = None
+        self.result_list = None  # 这里面是对象解：[(Child1,Child2,Child3),(Child2,Child3,Child1)]
 
     def init_only_child(self, category):
         # 初始叶子对象
@@ -324,7 +362,7 @@ class CategoryTree:
                 if max_level_value < 5:
                     self.level_value = min_level_value
 
-    def calculate_result(self, threshold=5):
+    def calculate_result(self):
         """
 
         :param threshold: 最大排列数的阈值
@@ -334,7 +372,7 @@ class CategoryTree:
         if self.children is not None:
             for child in self.children:
                 if child.children is not None:
-                    child.calculate_result(threshold)
+                    child.calculate_result()
 
             self.result_list = []
             # temp_result = arrange_all(self.children)
@@ -344,9 +382,9 @@ class CategoryTree:
 
             if list_len > 8:
                 raise ValueError('候选解太多：{}'.format(str(self)))
-            max_lengh = reduce(lambda x, y: x * y, range(1, list_len + 1))  # 阶乘
-            if max_lengh > threshold:  # 如果大于阈值，则根据步长设置进行下采样
-                step_size = math.ceil(max_lengh / threshold)
+            max_length = reduce(lambda x, y: x * y, range(1, list_len + 1))  # 阶乘
+            if max_length > self.one_category_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
+                step_size = math.ceil(max_length / self.one_category_combination_threshhold)
 
             else:
                 step_size = 1
@@ -381,6 +419,8 @@ class CategoryTree:
     def get_all_simple_result(self):
         if self.children is not None:
             all_simple_result = []
+            if self.parent is None:
+                j = -1
             for result in self.result_list:
                 index = 0
                 index_to_simple_result_list = {}
@@ -396,15 +436,26 @@ class CategoryTree:
                 list_index_to_simple_result = single_algorithm.dict_arrange(index_to_simple_result_list)
                 # except:
                 #     print(1)
+                if self.parent is None:
+                    max_length = len(list_index_to_simple_result)
+                    if max_length > self.one_category_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
+                        step_size = math.ceil(max_length / self.all_category_combination_threshhold)
+
+                    else:
+                        step_size = 1
+
                 for index_to_simple_result in list_index_to_simple_result:
-                    simple_result_list = []
-                    for i in range(index):
-                        if type(index_to_simple_result[i]) is list:
-                            for one_simple in index_to_simple_result[i]:
-                                simple_result_list.append(one_simple)
-                        else:
-                            simple_result_list.append(index_to_simple_result[i])
-                    all_simple_result.append(simple_result_list)
+                    if self.parent is None:
+                        j += 1
+                    if self.parent is not None or j % step_size == 0:  # 进行下采样
+                        simple_result_list = []
+                        for i in range(index):
+                            if type(index_to_simple_result[i]) is list:
+                                for one_simple in index_to_simple_result[i]:
+                                    simple_result_list.append(one_simple)
+                            else:
+                                simple_result_list.append(index_to_simple_result[i])
+                        all_simple_result.append(simple_result_list)
             return all_simple_result
 
     def __str__(self):
@@ -434,15 +485,16 @@ class CategoryTree:
                     ret += str(child)
                 ret += '),'
 
-
         return ret
 
 
 class Category3Demo:
-    def __init__(self, category3, name, pid):
+    def __init__(self, category3, name, pid, average_height):
         self.category3 = category3
         self.name = name
         self.pid = pid
+        self.average_height = average_height
+
 
 if __name__ == '__main__':
     # TODO 李树
@@ -466,17 +518,65 @@ if __name__ == '__main__':
         {'b': 8, 'c': 10, 'e': 10},
     ]
     category3_to_category3_obj = [
-        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'e': Category3Demo('e','e','A'), 'f': Category3Demo('f','f','A'),'g': Category3Demo('g','g','A')},
-        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'e': Category3Demo('e','e','A'), 'f': Category3Demo('f','f','A'),'g': Category3Demo('g','g','A')},
-        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A')},
-        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'e': Category3Demo('e','e','A'), 'f': Category3Demo('f','f','A'),'g': Category3Demo('g','g','A')},
-        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'e': Category3Demo('e','e','A'), 'f': Category3Demo('f','f','A'),'g': Category3Demo('g','g','A')},
-        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'f': Category3Demo('f','f','A')},
-        {'a': Category3Demo('a','a','A'),'b': Category3Demo('b','b','A'),'c': Category3Demo('c','c','A'),'d': Category3Demo('d','d','A'),'e': Category3Demo('e','e','A'), 'f': Category3Demo('f','f','A'),'g': Category3Demo('g','g','A'),'h': Category3Demo('h','h','A'),'i': Category3Demo('i','i','B'), 'j': Category3Demo('j','j','B'),'k': Category3Demo('k','k','B')},
+        {'a': Category3Demo('a', 'a', 'A', 200),
+         'b': Category3Demo('b', 'b', 'A', 200),
+         'c': Category3Demo('c', 'c', 'A', 200),
+         'd': Category3Demo('d', 'd', 'A', 200),
+         'e': Category3Demo('e', 'e', 'A', 200),
+         'f': Category3Demo('f', 'f', 'A', 200),
+         'g': Category3Demo('g', 'g', 'A', 200)
+         },
+        {'a': Category3Demo('a', 'a', 'A', 200),
+         'b': Category3Demo('b', 'b', 'A', 200),
+         'c': Category3Demo('c', 'c', 'A', 200),
+         'd': Category3Demo('d', 'd', 'A', 200),
+         'e': Category3Demo('e', 'e', 'A', 200),
+         'f': Category3Demo('f', 'f', 'A', 200),
+         'g': Category3Demo('g', 'g', 'A', 200)
+         },
+        {'a': Category3Demo('a', 'a', 'A', 200),
+         'b': Category3Demo('b', 'b', 'A', 200)},
+        {'a': Category3Demo('a', 'a', 'A', 200),
+         'b': Category3Demo('b', 'b', 'A', 200),
+         'c': Category3Demo('c', 'c', 'A', 200),
+         'd': Category3Demo('d', 'd', 'A', 200),
+         'e': Category3Demo('e', 'e', 'A', 200),
+         'f': Category3Demo('f', 'f', 'A', 200),
+         'g': Category3Demo('g', 'g', 'A', 200)},
+        {'a': Category3Demo('a', 'a', 'A', 200),
+         'b': Category3Demo('b', 'b', 'A', 200),
+         'c': Category3Demo('c', 'c', 'A', 200),
+         'd': Category3Demo('d', 'd', 'A', 200),
+         'e': Category3Demo('e', 'e', 'A', 200),
+         'f': Category3Demo('f', 'f', 'A', 200),
+         'g': Category3Demo('g', 'g', 'A', 200)
+         },
+        {'a': Category3Demo('a', 'a', 'A', 200),
+         'b': Category3Demo('b', 'b', 'A', 200),
+         'c': Category3Demo('c', 'c', 'A', 200),
+         'd': Category3Demo('d', 'd', 'A', 200),
+         'f': Category3Demo('f', 'f', 'A', 200)
+         },
+        {'a': Category3Demo('a', 'a', 'A', 200),
+         'b': Category3Demo('b', 'b', 'A', 200),
+         'c': Category3Demo('c', 'c', 'A', 200),
+         'd': Category3Demo('d', 'd', 'A', 200),
+         'e': Category3Demo('e', 'e', 'A', 200),
+         'f': Category3Demo('f', 'f', 'A', 200),
+         'g': Category3Demo('g', 'g', 'A', 200),
+         'h': Category3Demo('h', 'h', 'A', 200),
+         'i': Category3Demo('i', 'i', 'A', 200),
+         'j': Category3Demo('j', 'j', 'A', 200),
+         'k': Category3Demo('k', 'k', 'A', 200),
+         'l': Category3Demo('l', 'l', 'A', 200),
+         'm': Category3Demo('m', 'm', 'A', 200),
+         'bi': Category3Demo('bi', 'bi', 'B', 200),
+         'bj': Category3Demo('bj', 'bj', 'B', 200),
+         'bk': Category3Demo('bk', 'bk', 'B', 200)},
     ]
 
     n = 6
-    a = main_calculate(category3_to_category3_obj[n], category3_intimate_weight[n], category3_level_value[n], 2)
+    a = main_calculate(category3_to_category3_obj[n], category3_intimate_weight[n], category3_level_value[n])
     print('--------------候选列表---------------')
     print('候选列表总数：', len(a))
     print(a)

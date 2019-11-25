@@ -160,7 +160,6 @@ class GoodsTree:
                 if child.children is not None:
                     child.calculate_result()
             self.result_list = [self.children.copy()]
-            last_child = None
 
             i = -1
             for child in self.children:

@@ -42,8 +42,9 @@ def init_data(uc_shopid, tz_id, base_data):
 
     # 计算五个值
     display_category3_list = third_cate_ids.split(',')
-    appoint_shelf_category3_list = []
     category3_to_category3_obj = {}
+    shelf_category3_to_goods_cnt = {}
+    shelf_goods_data_list = []
     # 检查所有三级分类
     for category3 in display_category3_list:
         try:
@@ -51,26 +52,26 @@ def init_data(uc_shopid, tz_id, base_data):
                 "select cat_id, name, pid from uc_category where mch_id={} and cat_id='{}' and level=3".format(
                     mch_id, category3))
             (cat_id, name, pid) = cursor.fetchone()
-            appoint_shelf_category3_list.append(category3)
-            category3_to_category3_obj[cat_id] = Category3(cat_id, name, pid)
+            total_height = 0
+            for goods in base_data.goods_data_list:
+                if goods.category3 == cat_id:
+                    total_height += goods.height
+                    shelf_goods_data_list.append(goods)
+                    if goods.category3 in shelf_category3_to_goods_cnt:
+                        shelf_category3_to_goods_cnt[category3] += 1
+                    else:
+                        shelf_category3_to_goods_cnt[category3] = 1
+            if len(shelf_category3_to_goods_cnt[category3]) > 0:
+                average_height = total_height/shelf_category3_to_goods_cnt[category3]
+                category3_to_category3_obj[cat_id] = Category3(cat_id, name, pid, average_height)
         except:
             print('台账陈列类别无法找到：{}！'.format(category3))
 
-    if len(appoint_shelf_category3_list) == 0:
-        raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
-
     # 根据商品筛选三级分类 FIXME 三级分类目前一定是超量的
-    shelf_category3_to_goods_cnt = {}
-    shelf_goods_data_list = []
-    for goods in base_data.goods_data_list:
-        if goods.category3 in appoint_shelf_category3_list:
-            shelf_goods_data_list.append(goods)
-            if goods.category3 in shelf_category3_to_goods_cnt:
-                shelf_category3_to_goods_cnt[goods.category3] += 1
-            else:
-                shelf_category3_to_goods_cnt[goods.category3] = 1
     print('总共获取的候选陈列商品: ')
     print(shelf_category3_to_goods_cnt)
+    if len(shelf_goods_data_list) == 0:
+        raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
     shelf_category3_list = shelf_category3_to_goods_cnt.keys()
 
     shelf_category3_intimate_weight = {}
@@ -105,10 +106,11 @@ def init_data(uc_shopid, tz_id, base_data):
     return taizhang
 
 class Category3:
-    def __init__(self, category3, name, pid):
+    def __init__(self, category3, name, pid, average_height):
         self.category3 = category3
         self.name = name
         self.pid = pid
+        self.average_height = average_height
 
 class Taizhang:
 
@@ -293,7 +295,6 @@ class Shelf:
     level_buff_height = 30  # 层冗余高度 # TODO 需考虑初始化
     last_level_min_remain_height = 150  # 最后一层最小剩余高度
     average_level_height = 300 # 平均高度，用于计算剩余货架宽度
-    category_combination_threshhold = 2 # TODO 分类组合阈值需要根据实际情况计算
 
     extra_add_num = 2  # 每类冗余数量
 
