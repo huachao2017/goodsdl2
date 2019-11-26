@@ -24,6 +24,8 @@ class Sales2LoadData:
             if flag:
                 X,Y = self.load_data(x_dates[0],y_dates[0])
                 if  X!= None and Y!= None:
+                    X=np.array(X)
+                    Y=np.array(Y)
                     X,Y =  self.process_data(Y[:,1],X)
                 yield X,Y
 
