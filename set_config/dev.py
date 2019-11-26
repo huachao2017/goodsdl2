@@ -62,6 +62,7 @@ shellgoods_params={
         "keras_regress":"/home/ai/model/regressor/keras_regress/"
     },
     'sales2_old_traindata':'/data/ai/data/keras_sales2_data/',
+    'keras_day_sales_model_1':'/home/ai/model/regressor/keras_regress/2019-11-26_1.h5',
     # 销量预测
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,

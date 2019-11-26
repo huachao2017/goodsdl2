@@ -1,6 +1,5 @@
 from django.db import connections
 from goods.shelfdisplay.single_algorithm import calculate_shelf_category3_area_ratio
-from goods.models import ShelfDisplayDebug
 import urllib.request
 from django.conf import settings
 import os
@@ -9,14 +8,10 @@ import cv2
 from goods.shelfdisplay import goods_arrange
 from goods.shelfdisplay import shelf_arrange
 import datetime
-import json
 
 
 def init_data(uc_shopid, tz_id, base_data):
-    shelf_display_debug = ShelfDisplayDebug.objects.create(
-        tz_id = tz_id
-    )
-    taizhang = Taizhang(tz_id, shelf_display_debug)
+    taizhang = Taizhang(tz_id)
     cursor = connections['ucenter'].cursor()
 
     # 获取fx系统的shopid,台账系统的商家mch_id
@@ -25,9 +20,12 @@ def init_data(uc_shopid, tz_id, base_data):
 
     # 获取台账
     try:
+        # cursor.execute(
+        #     "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
+        #         uc_shopid, tz_id))
+        # FIXME 没有指定商店
         cursor.execute(
-            "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
-                uc_shopid, tz_id))
+            "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_taizhang t where t.id = {}".format(tz_id))
         (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
         if third_cate_ids is None or third_cate_ids == '':
             raise ValueError('third_cate_ids is None:{},{},{}'.format(taizhang_id,shelf_id,count))
@@ -42,35 +40,39 @@ def init_data(uc_shopid, tz_id, base_data):
 
     # 计算五个值
     display_category3_list = third_cate_ids.split(',')
-    appoint_shelf_category3_list = []
+    display_category3_list = list(set(display_category3_list))
     category3_to_category3_obj = {}
+    shelf_category3_to_goods_cnt = {}
+    shelf_goods_data_list = []
     # 检查所有三级分类
     for category3 in display_category3_list:
+        cat_id = None
         try:
             cursor.execute(
                 "select cat_id, name, pid from uc_category where mch_id={} and cat_id='{}' and level=3".format(
                     mch_id, category3))
             (cat_id, name, pid) = cursor.fetchone()
-            appoint_shelf_category3_list.append(category3)
-            category3_to_category3_obj[cat_id] = Category3(cat_id, name, pid)
         except:
             print('台账陈列类别无法找到：{}！'.format(category3))
-
-    if len(appoint_shelf_category3_list) == 0:
-        raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
+        if cat_id is not None:
+            total_height = 0
+            for goods in base_data.goods_data_list:
+                if goods.category3 == cat_id:
+                    total_height += goods.height
+                    shelf_goods_data_list.append(goods)
+                    if goods.category3 in shelf_category3_to_goods_cnt:
+                        shelf_category3_to_goods_cnt[cat_id] += 1
+                    else:
+                        shelf_category3_to_goods_cnt[cat_id] = 1
+            if cat_id in shelf_category3_to_goods_cnt:
+                average_height = total_height / shelf_category3_to_goods_cnt[cat_id]
+                category3_to_category3_obj[cat_id] = Category3(cat_id, name, pid, average_height)
 
     # 根据商品筛选三级分类 FIXME 三级分类目前一定是超量的
-    shelf_category3_to_goods_cnt = {}
-    shelf_goods_data_list = []
-    for goods in base_data.goods_data_list:
-        if goods.category3 in appoint_shelf_category3_list:
-            shelf_goods_data_list.append(goods)
-            if goods.category3 in shelf_category3_to_goods_cnt:
-                shelf_category3_to_goods_cnt[goods.category3] += 1
-            else:
-                shelf_category3_to_goods_cnt[goods.category3] = 1
     print('总共获取的候选陈列商品: ')
     print(shelf_category3_to_goods_cnt)
+    if len(shelf_goods_data_list) == 0:
+        raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
     shelf_category3_list = shelf_category3_to_goods_cnt.keys()
 
     shelf_category3_intimate_weight = {}
@@ -105,18 +107,16 @@ def init_data(uc_shopid, tz_id, base_data):
     return taizhang
 
 class Category3:
-    def __init__(self, category3, name, pid):
+    def __init__(self, category3, name, pid, average_height):
         self.category3 = category3
         self.name = name
         self.pid = pid
+        self.average_height = average_height
 
 class Taizhang:
-
-
-    def __init__(self, tz_id, shelf_display_debug):
+    def __init__(self, tz_id):
         self.tz_id = tz_id
         self.shelfs = []
-        self.shelf_display_debug = shelf_display_debug
         self.image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(self.tz_id))
         self.image_dir = os.path.join(settings.MEDIA_ROOT, self.image_relative_dir)
         from pathlib import Path
@@ -131,18 +131,7 @@ class Taizhang:
         self.shelfs[0].candidate_category_list = candidate_category_list
 
         # 第四步
-        is_ok = goods_arrange.goods_arrange(self.shelfs[0])
-
-        if is_ok:
-            # 打印陈列图
-            json_ret = self.to_json()
-            image_name = self.to_image(self.image_dir)
-            self.shelf_display_debug.json_ret = json.dumps(json_ret)
-            self.shelf_display_debug.display_source = os.path.join(self.image_relative_dir, image_name)
-            self.shelf_display_debug.save()
-            return True
-        else:
-            return False
+        goods_arrange.goods_arrange(self.shelfs[0])
 
     def to_json(self):
         """
@@ -277,7 +266,19 @@ class Taizhang:
                         else:
                             h = goods_image.shape[0]
                             w = goods_image.shape[1]
-                            image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image
+                            if point1[1] < 0:
+                                print(point1)
+                                print(point2)
+                                # 上部超出货架
+                                if point1[0] + w > shelf.width:
+                                    image[0:point1[1] + h, point1[0]:shelf.width, :] = goods_image[-point1[1]:h, 0:shelf.width-point1[0],:]
+                                else:
+                                    image[0:point1[1] + h, point1[0]:point1[0] + w, :] = goods_image[-point1[1]:h, 0:w, :]
+                            elif point1[0] + w > shelf.width:
+                                # 右侧超出货架
+                                image[point1[1]:point1[1]+h, point1[0]:shelf.width,:] = goods_image[0:h, 0:shelf.width-point1[0], :]
+                            else:
+                                image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image[0:h, 0:w, :]
                         txt_point = (goods_display_info.left, shelf.height - (
                         goods_display_info.top + level_start_height - int(display_goods.goods_data.height / 2)))
                         cv2.putText(image, '{}'.format(display_goods.goods_data.mch_code), txt_point,
@@ -291,9 +292,8 @@ class Shelf:
     bottom_height = 50  # 底层到地面的高度 # TODO 需考虑初始化
     level_board_height = 20  # 层板高度 # TODO 需考虑初始化
     level_buff_height = 30  # 层冗余高度 # TODO 需考虑初始化
-    last_level_min_remain_height = 150  # 最后一层最小剩余高度
-    average_level_height = 300 # 平均高度，用于计算剩余货架宽度
-    category_combination_threshhold = 2 # TODO 分类组合阈值需要根据实际情况计算
+    last_level_min_remain_height = 50  # FIXME 最后一层最小剩余高度，有顶和没有顶需要区分
+    average_level_height = 250 # 平均高度，用于计算剩余货架宽度
 
     extra_add_num = 2  # 每类冗余数量
 
@@ -387,10 +387,12 @@ class CandidateShelf:
         if self.shelf.height - last_level.start_height < self.shelf.last_level_min_remain_height:
             # 超出层
             ret += last_level.goods_width
+            if last_level.start_height > self.shelf.height:
+                ret += self.shelf.width
         else:
             ret -= self.shelf.width - last_level.goods_width
             # 货架高度剩余很多就加一个货架宽度
-            if (self.shelf.height - last_level.start_height) > 2*self.shelf.average_level_height:
+            if (self.shelf.height - last_level.start_height) > last_level.goods_height + self.shelf.level_buff_height + self.shelf.level_board_height + self.shelf.average_level_height:
                 ret -= self.shelf.width
             # 空缺宽度
 
@@ -411,7 +413,10 @@ class Level:
     def display_goods(self, display_goods):
         if display_goods.get_width() + self.goods_width > self.candidate_shelf.shelf.width:
             # TODO 需要考虑拆分
-            return False
+            addition_width = display_goods.get_width() + self.goods_width - self.candidate_shelf.shelf.width
+            if addition_width > int(display_goods.goods_data.width/5):
+                # 可以超出一些货架，超出商品宽的1/5则失败
+                return False
         self.display_goods_list.append(display_goods)
 
         # 更新宽度

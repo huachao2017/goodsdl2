@@ -32,9 +32,10 @@ def generate(shop_id = None ):
             str(sales_order_ins.order_sale), str(sales_order_ins.upc), str(sales_order_ins.goods_name),
             str(sales_order_ins.max_stock), str(sales_order_ins.min_stock), str(sales_order_ins.stock),
             str(sales_order_ins.supply_stock)))
-    if len(sales_order_inss) > 0:
-        erp_interface.order_commit(shop_id, shop_type, sales_order_inss)
-        print("erp_interface.order_commit success!")
+    # if len(sales_order_inss) > 0:
+    #     erp_interface.order_commit(shop_id, shop_type, sales_order_inss)
+    #     print("erp_interface.order_commit success!")
+    return sales_order_inss
 
 
 if __name__=='__main__':
