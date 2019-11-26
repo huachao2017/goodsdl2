@@ -67,7 +67,7 @@ def goods_arrange(shelf):
         arrange_goods_list_list = []
         for arrange_goods_list in candidate_arrange_goods_list_list:
             i += 1
-            if i % i == 0:
+            if i % step_size == 0:
                 arrange_goods_list_list.append(arrange_goods_list)
 
         if len(arrange_goods_list_list) == 0:
