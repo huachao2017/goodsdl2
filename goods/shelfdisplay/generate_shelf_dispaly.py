@@ -29,7 +29,7 @@ def generate_displays(uc_shopid, tz_id):
         # 打印陈列图
         try:
             image_name = taizhang.to_image(taizhang.image_dir)
-            taizhang.shelf_display_debug_model.display_source = os.path.join(taizhang.image_relative_dir, image_name)
+            shelf_display_debug_model.display_source = os.path.join(taizhang.image_relative_dir, image_name)
         except Exception as e:
             print('陈列图生成错误：{}'.format(e))
             traceback.print_exc()
