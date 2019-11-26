@@ -417,9 +417,9 @@ class Level:
     def display_goods(self, display_goods):
         if display_goods.get_width() + self.goods_width > self.candidate_shelf.shelf.width:
             # TODO 需要考虑拆分
-            addition_width = self.candidate_shelf.shelf.width - display_goods.get_width() - self.goods_width
+            addition_width = display_goods.get_width() + self.goods_width - self.candidate_shelf.shelf.width
             if addition_width > int(display_goods.goods.width/5):
-                # 可以超出一些货架
+                # 可以超出一些货架，超出商品宽的1/5则失败
                 return False
         self.display_goods_list.append(display_goods)
 
