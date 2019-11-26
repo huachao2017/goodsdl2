@@ -42,7 +42,7 @@ class SalesPredict:
             week_days1 = self.get_date(1)
             week_days2 = self.get_date(4)
             results = self.get_weeks_results(sql1,week_days1)
-            salesold_inss = self.get_data_week(results,week_days1,week_days2)
+            salesold_inss = self.get_data_week(results,week_days1)
             try:
                 sales2_save.write_file(salesold_inss,week_days1[0])
             except:
