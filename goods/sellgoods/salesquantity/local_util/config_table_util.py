@@ -39,7 +39,7 @@ class ConfigTableUtil:
 
     def update_disnums(self,disnums_ins):
         cursor_ai = connections['default'].cursor()
-        sql = "update goods_config_disnums set shelf_type={},shelf_depth={},goods_name={},goods_depth={},create_time={},update_time={} where id = {} "
+        sql = "update goods_config_disnums set shelf_type='{}',shelf_depth={},goods_name='{}',goods_depth={},create_time='{}',update_time='{}' where id = {} "
         sql = sql.format(disnums_ins.shelf_type,disnums_ins.shelf_depth,disnums_ins.goods_name,disnums_ins.goods_depth,disnums_ins.create_time,disnums_ins.update_time,disnums_ins.id)
         cursor_ai.execute(sql)
         cursor_ai.connection.commit()
