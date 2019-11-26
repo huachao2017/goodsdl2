@@ -666,5 +666,5 @@ if __name__=='__main__':
     sp_ins = SalesPredict()
     # dates = sp_ins.get_date(1)
     # print (dates)
-    sp_ins.generate_data(all_data=True)
+    sp_ins.generate_data(all_data=False)
 
