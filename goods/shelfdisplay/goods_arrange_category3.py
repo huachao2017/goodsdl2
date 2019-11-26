@@ -78,8 +78,8 @@ class GoodsTree:
     name = None
     goods = None
     result_list = None # 这里面是对象解：[[Child1,Child2,Child3],[Child2,Child3,Child1]]
-    one_goods_combination_threshhold = 2 # 一个商品组合阈值
-    all_goods_combination_threshhold = 5 # 所有商品组合的阈值
+    one_goods_combination_threshhold = 5 # 一个商品组合阈值
+    all_goods_combination_threshhold = 10 # 所有商品组合的阈值
 
     def __init__(self, type, parent=None, goods = None, name = None):
         self.type = type
