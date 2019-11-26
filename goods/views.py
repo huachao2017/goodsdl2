@@ -130,3 +130,8 @@ class GoodsImageViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.R
         time2 = time.time()
         logger.info('end detect goods: %.2f, %.2f, %.2f' % (time2-time0, time1-time0, time2-time1))
         return Response(ret, status=status.HTTP_201_CREATED, headers=headers)
+
+class AllWorkFlowBatchViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                   viewsets.GenericViewSet):
+    queryset = AllWorkFlowBatch.objects.order_by('-id')
+    serializer_class = AllWorkFlowBatchSerializer

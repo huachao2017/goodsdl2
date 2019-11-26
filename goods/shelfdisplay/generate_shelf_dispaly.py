@@ -19,6 +19,7 @@ def generate_displays(uc_shopid, tz_id):
     base_data = db_data.init_data(uc_shopid)
 
     shelf_display_debug_model = ShelfDisplayDebug.objects.create(
+        uc_shopid=uc_shopid,
         tz_id=tz_id
     )
 

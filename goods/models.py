@@ -81,7 +81,7 @@ class FreezerImage(models.Model):
 
 class FirstGoodsSelection(models.Model):
     shopid = models.IntegerField(db_index=True)
-    batch_id = models.IntegerField(default=1)
+    batch_id = models.CharField(max_length=20)
     upc = models.CharField(max_length=20)
     name = models.CharField(max_length=50, default='')
     code = models.CharField(max_length=20)
@@ -94,7 +94,7 @@ class FirstGoodsSelection(models.Model):
 
 class GoodsSelectionHistory(models.Model):
     shopid = models.IntegerField(db_index=True)
-    batch_id = models.IntegerField(default=1)
+    batch_id = models.CharField(max_length=20)
     upc = models.CharField(max_length=20)
     name = models.CharField(max_length=50, default='')
     code = models.CharField(max_length=20)
@@ -160,13 +160,22 @@ class GoodsImage(models.Model):
     result = models.TextField()
     create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
 
+class AllWorkFlowBatch(models.Model):
+    batch_id = models.CharField(max_length=20)
+    uc_shopid = models.IntegerField()
+    select_goods_status = models.IntegerField(default=0) # 0发起，1进行中，2计算结束
+    auto_display_status = models.IntegerField() # 0发起，1进行中，2计算结束
+    order_goods_status = models.IntegerField() # 0发起，1进行中，2计算结束
+    create_time = models.DateTimeField('date created', auto_now_add=True)
 
 class ShelfDisplayDebug(models.Model):
+    batch_id = models.CharField(max_length=20,default='0')
+    uc_shopid = models.IntegerField(db_index=True,default=806)
     tz_id = models.IntegerField()
     json_ret = models.TextField(default='')
     display_source = models.CharField(max_length=200, default='')
     category_intimacy_source = models.CharField(max_length=200, default='')
-    create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
+    create_time = models.DateTimeField('date created', auto_now_add=True)
 
 class ShelfDisplayDebugGoods(models.Model):
     shelf_display_debug = models.ForeignKey(ShelfImage2, related_name="shelf_display_debug_goods", on_delete=models.CASCADE)

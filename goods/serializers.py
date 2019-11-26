@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,GoodsImage,ShelfDisplayDebug,ShelfDisplayDebugGoods
+from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,GoodsImage,ShelfDisplayDebug,ShelfDisplayDebugGoods,AllWorkFlowBatch
 import os
 from django.conf import settings
 
@@ -160,6 +160,11 @@ class GoodsImageSerializer(serializers.ModelSerializer):
         else:
             return None
 
+class AllWorkFlowBatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AllWorkFlowBatch
+        fields = ('pk', 'batch_id', 'uc_shopid','select_goods_status','auto_display_status','order_goods_status',
+                  'create_time')
 
 class ShelfDisplayDebugGoodsSerializer(serializers.ModelSerializer):
     goods_tree_source_url = serializers.SerializerMethodField()
@@ -186,7 +191,7 @@ class ShelfDisplayDebugSerializer(serializers.ModelSerializer):
     category_intimacy_source_url = serializers.SerializerMethodField()
     class Meta:
         model = ShelfDisplayDebug
-        fields = ('pk', 'tz_id', 'json_ret', 'display_source','display_source_url', 'category_intimacy_source','category_intimacy_source_url',
+        fields = ('pk', 'batch_id', 'uc_shopid', 'tz_id', 'json_ret', 'display_source','display_source_url', 'category_intimacy_source','category_intimacy_source_url',
                   'image_problem_goods', 'create_time')
 
     def get_display_source_url(self, shelf_display_debug):

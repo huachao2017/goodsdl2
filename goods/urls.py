@@ -26,6 +26,7 @@ router.register(r'shelfimage2', views_shelf2.ShelfImageViewSet)
 router.register(r'shelfgoods2', views_shelf2.ShelfGoodsViewSet)
 router.register(r'freezerimage', views.FreezerImageViewSet)
 router.register(r'goodswh', views.GoodsImageViewSet)
+router.register(r'workflowbatch', views.AllWorkFlowBatchViewSet)
 router.register(r'shelfdisplay', views_display.ShelfDisplayDebugViewSet)
 urlpatterns = [
     url(r'^test', views.Test.as_view()),
