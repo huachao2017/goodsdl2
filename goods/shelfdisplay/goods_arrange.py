@@ -16,6 +16,7 @@ from goods.shelfdisplay import single_algorithm
 import math
 
 def goods_arrange(shelf):
+    all_goods_combination_threshhold = 100 # 所有商品组合的阈值
     """
     第四步，商品布局主体函数
     :param shelf:货架
@@ -44,10 +45,33 @@ def goods_arrange(shelf):
     shelf.extra_add_num = extra_add_num
     # 生成所有的候选解
     candidate_result_shelf_list = []
-    categoryid_to_arrange_goods_list_list = {}
+    candidate_categoryid_to_arrange_goods_list_list = {}
+    max_goods_combination = 1
     for categoryid in shelf.shelf_category3_list:
         arrange_goods_list_list = goods.shelfdisplay.goods_arrange_category3.goods_arrange(
             shelf.categoryid_to_sorted_goods_list[categoryid])
+        candidate_categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
+        max_goods_combination *= len(arrange_goods_list_list)
+
+    print(max_goods_combination)
+    if max_goods_combination > all_goods_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
+        step_size = math.ceil(max_goods_combination / all_goods_combination_threshhold)
+    else:
+        step_size = 1
+
+    # 做商品组合总量控制
+    categoryid_to_arrange_goods_list_list = {}
+    i = -1
+    for categoryid in candidate_categoryid_to_arrange_goods_list_list:
+        candidate_arrange_goods_list_list = candidate_categoryid_to_arrange_goods_list_list[categoryid]
+        arrange_goods_list_list = []
+        for arrange_goods_list in candidate_arrange_goods_list_list:
+            i += 1
+            if i % i == 0:
+                arrange_goods_list_list.append(arrange_goods_list)
+
+        if len(arrange_goods_list_list) == 0:
+            arrange_goods_list_list.append(candidate_arrange_goods_list_list[0])
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
 
     print("共{}个分类解：".format(len(shelf.candidate_category_list)))
