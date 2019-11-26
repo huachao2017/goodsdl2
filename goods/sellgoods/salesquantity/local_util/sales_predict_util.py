@@ -125,7 +125,7 @@ class SalesPredict:
         return weather_week
 
 
-    def get_data_week(self,results,week_days1,week_days2):
+    def get_data_week(self,results,week_days1):
         """
         获取某段时间内的销量数据
         :param results:
