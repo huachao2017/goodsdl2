@@ -78,6 +78,7 @@ class GoodsTree:
     name = None
     goods = None
     result_list = None # 这里面是对象解：[[Child1,Child2,Child3],[Child2,Child3,Child1]]
+    one_goods_combination_threshhold = 10 # 一个商品组合阈值
     all_goods_combination_threshhold = 100 # 所有商品组合的阈值
 
     def __init__(self, type, parent=None, goods = None, name = None):
@@ -164,15 +165,19 @@ class GoodsTree:
             self.result_list = [self.children.copy()]
 
             i = -1
+            j = -1
             for child in self.children:
                 i += 1
                 if i == 0:
                     continue
-                if abs(self.children[i-1].height-child.height) < 10 and abs(self.children[i-1].width - child.width) > 30:
+                if abs(self.children[i-1].height-child.height) < 10 and abs(self.children[i-1].width - child.width) > 10:
                     # FIXME 放大宽加大
                     # FIXME 仅做近邻交换的解
                     another_result = self.children.copy()
                     another_result[i-1], another_result[i] = another_result[i] , another_result[i-1]
+                    j += 1
+                    if j > self.one_goods_combination_threshhold:
+                        break
                     self.result_list.append(another_result)
 
     def get_all_simple_result(self):
