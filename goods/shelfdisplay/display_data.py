@@ -10,6 +10,7 @@ from goods.shelfdisplay import goods_arrange
 from goods.shelfdisplay import shelf_arrange
 import datetime
 import json
+import traceback
 
 
 def init_data(uc_shopid, tz_id, base_data):
@@ -143,9 +144,14 @@ class Taizhang:
         if is_ok:
             # 打印陈列图
             json_ret = self.to_json()
-            image_name = self.to_image(self.image_dir)
+            try:
+                image_name = self.to_image(self.image_dir)
+                self.shelf_display_debug.display_source = os.path.join(self.image_relative_dir, image_name)
+            except Exception as e:
+                print('陈列图生成错误：{}'.format(e))
+                traceback.print_exc()
+
             self.shelf_display_debug.json_ret = json.dumps(json_ret)
-            self.shelf_display_debug.display_source = os.path.join(self.image_relative_dir, image_name)
             self.shelf_display_debug.save()
             return True
         else:
