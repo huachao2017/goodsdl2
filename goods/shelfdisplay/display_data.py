@@ -299,7 +299,7 @@ class Shelf:
     level_board_height = 20  # 层板高度 # TODO 需考虑初始化
     level_buff_height = 30  # 层冗余高度 # TODO 需考虑初始化
     last_level_min_remain_height = 50  # FIXME 最后一层最小剩余高度，有顶和没有顶需要区分
-    average_level_height = 300 # 平均高度，用于计算剩余货架宽度
+    average_level_height = 250 # 平均高度，用于计算剩余货架宽度
 
     extra_add_num = 2  # 每类冗余数量
 
