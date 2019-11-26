@@ -61,7 +61,7 @@ def goods_badcase_score(candidate_shelf_list):
                 candidate_shelf.badcase_value += abs(level.goods_height - last_level.goods_height) * 0.02
             last_level = level
         # 顶部高度剩余
-        candidate_shelf.badcase_value += (candidate_shelf.shelf.height - last_level.start_height + last_level.goods_height) * 0.1
+        candidate_shelf.badcase_value += (candidate_shelf.shelf.height - last_level.start_height + last_level.goods_height) * 0.04
         if i % step == 0:
             print('计算第{}个候选解,共{}层,value={}：'.format(i,len(candidate_shelf.levels),candidate_shelf.badcase_value))
         if candidate_shelf.badcase_value < min_badcase_value:
