@@ -258,8 +258,6 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
             if len(one_list) > 0:
                 need_create_category3_2dlist.append(one_list)
 
-        print(need_create_category3_2dlist)
-        input('输入任意键继续：')
         category_tree_parent_list = []
         for one_level in need_create_category3_2dlist:
             child_category_tree_list = []
@@ -277,7 +275,9 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
         tree_id += 1
         another_category3_root_tree.init_parent(category_tree_parent_list)
         all_root_tree_children.append(another_category3_root_tree)
-    elif top_category3_create_num>1:
+    elif top_category3_create_num >= 1:
+        print(top_create_category3_list)
+        input('输入任意键继续：')
         for category3 in top_create_category3_list:
             category_tree = CategoryTree(tree_id, 0)
             tree_id += 1
