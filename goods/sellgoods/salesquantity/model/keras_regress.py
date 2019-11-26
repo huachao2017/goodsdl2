@@ -12,6 +12,7 @@ from goods.sellgoods.salesquantity.local_util import sales2_loaddata
 
 import time
 keras_model_path = config.shellgoods_params['regressor_model_path']['keras_regress']
+keras_day_sales_model_1 = config.shellgoods_params['regressor_model_path']['keras_day_sales_model_1']
 class KRegress:
     # exe_time = str(time.strftime('%Y-%m-%d', time.localtime()))
     def train(self):
@@ -38,7 +39,20 @@ class KRegress:
         return model
 
     def predict(self):
-        load_model()
+        model = load_model(keras_day_sales_model_1)
+        loaddata_ins = sales2_loaddata.Sales2LoadData()
+        X, Y, X_p, Y_p, ss_X, ss_Y, mm_X, mm_Y = loaddata_ins.load_predict_data('2019-11-11')
+        X_pridect = model.predict(X_p)
+        X_pridect = ss_Y.inverse_transform(X_pridect)
+        X_pridect = mm_Y.inverse_transform(X_pridect)
+        return X_pridect,X,Y
+
+    def save_file(self,X_pridect,X,Y):
+        with open("1.txt","a+") as f:
+            for x_pre,x_t,y_t in zip(X_pridect,X,Y):
+                line = str(str(x_t[0])+","+str(x_t[1])+","+str(x_pre[0])+","+str(y_t))
+                f.write(line+"\n")
+
 
 if __name__=='__main__':
     kr_ins = KRegress()
