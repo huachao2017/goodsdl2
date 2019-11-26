@@ -161,12 +161,13 @@ class GoodsImage(models.Model):
     create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
 
 class AllWorkFlowBatch(models.Model):
-    batch_id = models.CharField(max_length=20)
+    batch_id = models.CharField(max_length=20, unique=True)
     uc_shopid = models.IntegerField()
-    select_goods_status = models.IntegerField(default=0) # 0发起，1进行中，2计算结束
-    auto_display_status = models.IntegerField() # 0发起，1进行中，2计算结束
-    order_goods_status = models.IntegerField() # 0发起，1进行中，2计算结束
+    select_goods_status = models.IntegerField(default=1) # 0未发起，1进行中，2计算结束
+    auto_display_status = models.IntegerField(default=0) # 0未发起，1进行中，2计算结束
+    order_goods_status = models.IntegerField(default=0) # 0未发起，1进行中，2计算结束
     create_time = models.DateTimeField('date created', auto_now_add=True)
+    update_time = models.DateTimeField('date updated', auto_now=True)
 
 class ShelfDisplayDebug(models.Model):
     batch_id = models.CharField(max_length=20,default='0')

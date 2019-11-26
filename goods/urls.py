@@ -39,9 +39,8 @@ urlpatterns = [
     url(r'^api/rectifyshelfimage2', views_shelf2.RectifyShelfImage.as_view()),
     url(r'^api/notify_generate_shop_add', views_sellgoods.SellGoodsViewSet.as_view()),
     url(r'^api/autoDisplay', views_display.AutoDisplay.as_view()),
-    # url(r'^api/interface1', views_datav.Interface1.as_view()),
-    # url(r'^api/interface2', views_datav.Interface2.as_view()),
-    # url(r'^api/interface3', views_datav.Interface3.as_view()),
-    # url(r'^api/interface4', views_datav.Interface4.as_view()),
+    url(r'^api/beginselectgoods', views.BeginSelectGoods.as_view()),
+    url(r'^api/beginautodisplay', views.BeginAutoDisplay.as_view()),
+    url(r'^api/beginordergoods', views.BeginOrderGoods.as_view()),
     url(r'^api/', include(router.urls))
 ]
