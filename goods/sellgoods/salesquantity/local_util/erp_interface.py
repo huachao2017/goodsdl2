@@ -20,7 +20,7 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales):
 
         create_date = str(time.strftime('%Y-%m-%d', time.localtime()))
         # urltest = "http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}"
-        url = "http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}"
+        url = "http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}&erpShopType={}"
         headers = {
             "Accept":"application/json",
             "Content-Type":"application/json"
@@ -38,7 +38,7 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales):
             try:
                 json_info = json.dumps(order_data)
                 data = bytes(json_info, 'utf8')
-                request = urllib.request.Request(url=url.format(erp_shopid), data=data, headers=headers)
+                request = urllib.request.Request(url=url.format(erp_shopid,erp_shop_type), data=data, headers=headers)
 
                 response = urllib.request.urlopen(request)
                 print(response.read().decode())

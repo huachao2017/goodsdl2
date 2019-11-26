@@ -4,16 +4,15 @@ from set_config import config
 from goods.sellgoods.salesquantity.local_util import sales_predict_util
 from goods.sellgoods.salesquantity.model import keras_regress
 import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 import time
 import os
 sales2_old_traindata = config.shellgoods_params['sales2_old_traindata']
 class Sales2LoadData:
     file_operator = 'tmp_sales_week.txt_'
-
     def load_all_data(self):
         filenames = os.listdir(sales2_old_traindata)
-        X_all = None
-        Y_all = None
         for i in range(1,40):
             y_dates = sales_predict_util.SalesPredict().get_date(i,'2019-11-18')
             x_dates = sales_predict_util.SalesPredict().get_date(i+1,'2019-11-18')
@@ -24,14 +23,24 @@ class Sales2LoadData:
                     break
             if flag:
                 X,Y = self.load_data(x_dates[0],y_dates[0])
-                if X!= None and Y!= None and i == 1:
-                    X_all = X
-                    Y_all = Y
-                elif ( X!= None and Y!= None):
-                    X_all.extend(X)
-                    Y_all.extend(Y)
-        return X_all,Y_all
+                if  X!= None and Y!= None:
+                    X,Y =  self.process_data(Y[:,1],X)
+                yield X,Y
 
+    def process_data(self,Y,X):
+        train_samples = len(Y)
+        Y = np.array(Y)
+        X = np.array(X)
+        mm_X = MinMaxScaler()
+        X = mm_X.fit_transform(X)
+        mm_Y = MinMaxScaler()
+        Y = mm_Y.fit_transform(Y.reshape(train_samples, 1))
+        # 数据标准化
+        ss_X = StandardScaler()
+        X = ss_X.fit_transform(X)
+        ss_Y = StandardScaler()
+        Y = ss_Y.fit_transform(Y)
+        return X,Y
 
 
     def load_data(self,train_x_date=None,train_y_date=None):
