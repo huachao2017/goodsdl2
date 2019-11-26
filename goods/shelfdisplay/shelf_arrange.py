@@ -258,6 +258,8 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
             if len(one_list) > 0:
                 need_create_category3_2dlist.append(one_list)
 
+        print(need_create_category3_2dlist)
+        input('输入任意键继续：')
         category_tree_parent_list = []
         for one_level in need_create_category3_2dlist:
             child_category_tree_list = []
