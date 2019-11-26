@@ -285,6 +285,8 @@ class Taizhang:
                             h = goods_image.shape[0]
                             w = goods_image.shape[1]
                             if point1[1] < 0:
+                                print(point1)
+                                print(point2)
                                 # 上部超出货架
                                 if point1[0] + w > shelf.width:
                                     image[0:point1[1] + h, point1[0]:shelf.width, :] = goods_image[-point1[1]:h, 0:shelf.width-point1[0],:]
