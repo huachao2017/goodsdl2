@@ -3,6 +3,7 @@ from goods.sellgoods.salesquantity.local_util import sales2_save
 from set_config import config
 from goods.sellgoods.salesquantity.local_util import sales_predict_util
 from goods.sellgoods.salesquantity.model import keras_regress
+from sklearn.model_selection import train_test_split
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
@@ -11,23 +12,29 @@ import os
 sales2_old_traindata = config.shellgoods_params['sales2_old_traindata']
 class Sales2LoadData:
     file_operator = 'tmp_sales_week.txt_'
-    def load_all_data(self):
+    def load_all_data(self,data_split=0.3):
         filenames = os.listdir(sales2_old_traindata)
-        for i in range(1,40):
-            y_dates = sales_predict_util.SalesPredict().get_date(i,'2019-11-18')
-            x_dates = sales_predict_util.SalesPredict().get_date(i+1,'2019-11-18')
-            flag = False
-            for filename in filenames:
-                if x_dates[0] in filename:
-                    flag = True
-                    break
-            if flag:
-                X,Y = self.load_data(x_dates[0],y_dates[0])
-                if  X!= None and Y!= None:
-                    X=np.array(X)
-                    Y=np.array(Y)
-                    X,Y =  self.process_data(Y[:,1],X)
-                yield X,Y
+        while 1:
+            for i in range(1,40):
+                y_dates = sales_predict_util.SalesPredict().get_date(i,'2019-11-18')
+                x_dates = sales_predict_util.SalesPredict().get_date(i+1,'2019-11-18')
+                flag = False
+                for filename in filenames:
+                    if x_dates[0] in filename:
+                        flag = True
+                        break
+                if flag:
+                    X,Y = self.load_data(x_dates[0],y_dates[0])
+                    if  X!= None and Y!= None:
+                        X=np.array(X)
+                        Y=np.array(Y)
+                        X,Y =  self.process_data(Y[:,1],X)
+                        X_train, X_test, y_train, y_test = train_test_split(
+                            X, Y, test_size=data_split, random_state=20)
+                    yield X_train,y_train
+                else:
+                    X=[]
+                    Y=[]
 
     def process_data(self,Y,X):
         train_samples = len(Y)
