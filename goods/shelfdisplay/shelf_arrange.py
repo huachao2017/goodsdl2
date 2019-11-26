@@ -276,8 +276,6 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
         another_category3_root_tree.init_parent(category_tree_parent_list)
         all_root_tree_children.append(another_category3_root_tree)
     elif top_category3_create_num >= 1:
-        print(top_create_category3_list)
-        input('输入任意键继续：')
         for category3 in top_create_category3_list:
             category_tree = CategoryTree(tree_id, 0)
             tree_id += 1
