@@ -396,7 +396,7 @@ class CandidateShelf:
         else:
             ret -= self.shelf.width - last_level.goods_width
             # 货架高度剩余很多就加一个货架宽度
-            if (self.shelf.height - last_level.start_height) > 2*self.shelf.average_level_height:
+            if (self.shelf.height - last_level.start_height) > last_level.goods_height + self.shelf.level_buff_height + self.shelf.level_board_height + self.shelf.average_level_height:
                 ret -= self.shelf.width
             # 空缺宽度
 
