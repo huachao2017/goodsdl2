@@ -251,11 +251,12 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
         need_create_category3_2dlist = []
         for i in range(math.ceil(top_category3_create_num/4)):
             one_list = []
-            need_create_category3_2dlist.append(one_list)
             for j in range(4):
                 if i*4+j >= top_category3_create_num:
                     break
                 one_list.append(sorted_category3_obj_list[i*4+j].category3)
+            if len(one_list) > 0:
+                need_create_category3_2dlist.append(one_list)
 
         category_tree_parent_list = []
         for one_level in need_create_category3_2dlist:
