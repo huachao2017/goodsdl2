@@ -201,9 +201,10 @@ class GoodsTree:
                     max_length = len(list_index_to_simple_result)
                     if max_length > self.all_goods_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
                         step_size = math.ceil(max_length / self.all_goods_combination_threshhold)
-
                     else:
                         step_size = 1
+                    print(max_length)
+                    print(step_size)
                 for index_to_simple_result in list_index_to_simple_result:
                     if self.parent is None:
                         j += 1
