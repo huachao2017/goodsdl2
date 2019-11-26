@@ -166,8 +166,6 @@ def _display_shelf(candidate_shelf):
                             break
                     if add_width > positive_addition_width:
                         break
-            print('{},{},{}'.format(i,addition_width,add_width))
-            input("按任意键继续：")
             if add_width < positive_addition_width:
                 # 做商品扩面处理
                 if positive_addition_width - add_width > int(candidate_shelf.shelf.width/5):
