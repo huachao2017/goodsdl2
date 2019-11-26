@@ -5,6 +5,7 @@
 3.1、高度差距小于10mm的分组可以交换位置输出解
 3.2、商品在同一分组中且高度差小于10mm并且宽度差大于10mm可交换解输出（此条暂不做）
 """
+import math
 from goods.shelfdisplay import single_algorithm
 
 def goods_arrange(goods_list):
@@ -77,6 +78,7 @@ class GoodsTree:
     name = None
     goods = None
     result_list = None # 这里面是对象解：[[Child1,Child2,Child3],[Child2,Child3,Child1]]
+    all_goods_combination_threshhold = 100 # 所有商品组合的阈值
 
     def __init__(self, type, parent=None, goods = None, name = None):
         self.type = type
@@ -176,6 +178,8 @@ class GoodsTree:
     def get_all_simple_result(self):
         if self.children is not None:
             all_simple_result = []
+            if self.parent is None:
+                j = -1
             for result in self.result_list:
                 index = 0
                 index_to_simple_result_list = {}
@@ -188,15 +192,25 @@ class GoodsTree:
                         index_to_simple_result_list[index] = [one_tree.goods]
                         index += 1
                 list_index_to_simple_result = single_algorithm.dict_arrange(index_to_simple_result_list)
+                if self.parent is None:
+                    max_length = len(list_index_to_simple_result)
+                    if max_length > self.all_goods_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
+                        step_size = math.ceil(max_length / self.all_goods_combination_threshhold)
+
+                    else:
+                        step_size = 1
                 for index_to_simple_result in list_index_to_simple_result:
-                    simple_result_list = []
-                    for i in range(index):
-                        if type(index_to_simple_result[i]) is list:
-                            for one_simple in index_to_simple_result[i]:
-                                simple_result_list.append(one_simple)
-                        else:
-                            simple_result_list.append(index_to_simple_result[i])
-                    all_simple_result.append(simple_result_list)
+                    if self.parent is None:
+                        j += 1
+                    if self.parent is not None or j % step_size == 0:  # 进行下采样
+                        simple_result_list = []
+                        for i in range(index):
+                            if type(index_to_simple_result[i]) is list:
+                                for one_simple in index_to_simple_result[i]:
+                                    simple_result_list.append(one_simple)
+                            else:
+                                simple_result_list.append(index_to_simple_result[i])
+                        all_simple_result.append(simple_result_list)
             return all_simple_result
 
     def __str__(self):
