@@ -41,6 +41,7 @@ def goods_badcase_score(candidate_shelf_list):
     同层板相邻品高度差	0.2*∑  ，在陈列摆放中直接计算
     空缺层板宽度	0.02*∑
     各层板的高度差	0.02*∑
+    顶部高度剩余 0.2*∑
     :param candidate_shelf_list:
     :return: 分数最低的shelf
     """
@@ -59,6 +60,8 @@ def goods_badcase_score(candidate_shelf_list):
             if last_level is not None:
                 candidate_shelf.badcase_value += abs(level.goods_height - last_level.goods_height) * 0.02
             last_level = level
+        # 顶部高度剩余
+        candidate_shelf.badcase_value += (candidate_shelf.shelf.height - last_level.start_height + last_level.goods_height) * 0.2
         if i % step == 0:
             print('计算第{}个候选解,共{}层,value={}：'.format(i,len(candidate_shelf.levels),candidate_shelf.badcase_value))
         if candidate_shelf.badcase_value < min_badcase_value:
