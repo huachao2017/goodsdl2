@@ -24,8 +24,8 @@ class KRegress:
         model.fit_generator(generator = loaddata_ins.load_all_data(0.7),steps_per_epoch=39,epochs=50,validation_data=loaddata_ins.load_all_data(0.3),validation_steps=39,verbose=1 ,callbacks=[checkpoint])
 
 
-    def load_model(self,path,exe_time):
-       return load_model(path+exe_time+".h5")
+    def load_model(self,filepath):
+       return load_model(filepath)
 
     def get_model(self):
         model = Sequential()
@@ -37,7 +37,8 @@ class KRegress:
         model.compile(loss='mse',optimizer='adam')
         return model
 
-
+    def predict(self):
+        load_model()
 
 if __name__=='__main__':
     kr_ins = KRegress()

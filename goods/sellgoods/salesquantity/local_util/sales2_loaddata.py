@@ -28,7 +28,7 @@ class Sales2LoadData:
                     if  X!= None and Y!= None:
                         X=np.array(X)
                         Y=np.array(Y)
-                        X,Y =  self.process_data(Y[:,1],X)
+                        X,Y,ss_X,ss_Y,mm_X,mm_Y =  self.process_data(Y[:,1],X)
                         X_train, X_test, y_train, y_test = train_test_split(
                             X, Y, test_size=data_split, random_state=20)
                         yield X_train,y_train
@@ -38,6 +38,25 @@ class Sales2LoadData:
                 else:
                     X=[]
                     Y=[]
+
+    def load_predict_data(self,week_one_day=None):
+        filenames = os.listdir(sales2_old_traindata)
+        y_dates = sales_predict_util.SalesPredict().get_date(1, week_one_day)
+        x_dates = sales_predict_util.SalesPredict().get_date(2, week_one_day)
+        flag = False
+        for filename in filenames:
+            if x_dates[0] in filename:
+                flag = True
+                break
+        if flag:
+            X, Y = self.load_data(x_dates[0], y_dates[0])
+            if X != None and Y != None:
+                X = np.array(X)
+                Y = np.array(Y)
+                X_p, Y_p,ss_X,ss_Y,mm_X,mm_Y = self.process_data(Y[:, 1], X)
+                return X,Y,X_p, Y_p,ss_X,ss_Y,mm_X,mm_Y
+        else:
+            return None,None,None,None,None,None,None,None
 
     def process_data(self,Y,X):
         train_samples = len(Y)
@@ -52,7 +71,7 @@ class Sales2LoadData:
         X = ss_X.fit_transform(X)
         ss_Y = StandardScaler()
         Y = ss_Y.fit_transform(Y)
-        return X,Y
+        return X,Y,ss_X,ss_Y,mm_X,mm_Y
 
 
     def load_data(self,train_x_date=None,train_y_date=None):
