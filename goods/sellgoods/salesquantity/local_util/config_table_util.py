@@ -14,6 +14,7 @@ class ConfigTableUtil:
         if results != None and len(list(results))> 0:
             for row in list(results):
                 disnums_ins = goods_config_disnums.ConfigDisnums()
+                disnums_ins.id = row[0]
                 disnums_ins.shop_id = row[1]
                 disnums_ins.shelf_id = row[2]
                 disnums_ins.shelf_type = row[3]
@@ -31,8 +32,16 @@ class ConfigTableUtil:
 
     def insert_many_disnums(self,data):
         cursor_ai = connections['default'].cursor()
-        sql = "insert into goods_config_disnums (shop_id,shelf_id,shelf_type,shelf_depth,upc,goods_name,goods_depth,single_face_min_disnums,single_face_max_disnums,create_time,update_time) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) "
+        sql = "insert into goods_config_disnums (shop_id,shelf_id,shelf_type,shelf_depth,upc,goods_name,goods_depth,create_time,update_time) values (%s,%s,%s,%s,%s,%s,%s,%s,%s) "
         cursor_ai.executemany(sql, data)
+        cursor_ai.connection.commit()
+        cursor_ai.close()
+
+    def update_disnums(self,disnums_ins):
+        cursor_ai = connections['default'].cursor()
+        sql = "update goods_config_disnums set shelf_type={},shelf_depth={},goods_name={},goods_depth={},create_time={},update_time={} where id = {} "
+        sql = sql.format(disnums_ins.shelf_type,disnums_ins.shelf_depth,disnums_ins.goods_name,disnums_ins.goods_depth,disnums_ins.create_time,disnums_ins.update_time)
+        cursor_ai.execute(sql)
         cursor_ai.connection.commit()
         cursor_ai.close()
 
@@ -56,10 +65,13 @@ class ConfigTableUtil:
 
     def insert_many_safedays(self,data):
         cursor_ai = connections['default'].cursor()
-        sql = "insert into goods_config_safedays (shop_id,upc,safe_day_nums,goods_name,create_time,update_time) values (%s,%s,%s,%s,%s,%s) "
+        sql = "insert into goods_config_safedays (shop_id,upc,goods_name,safe_day_nums,create_time,update_time) values (%s,%s,%s,%s,%s,%s) "
         cursor_ai.executemany(sql, data)
         cursor_ai.connection.commit()
         cursor_ai.close()
+
+    def update_safedays(self,safedays_ins):
+        print ("TDOOD")
 
 
     # goods_config_shops

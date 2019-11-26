@@ -3,6 +3,7 @@ from goods.sellgoods.salesquantity.service.order_version_3.data_util.goods_info 
 from goods.sellgoods.salesquantity.local_util.config_table_util import ConfigTableUtil
 from goods.sellgoods.salesquantity.bean import goods_config_disnums,goods_config_safedays
 import math
+import time
 def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins = SalesOrder()
     sales_order_ins.shopid = shop_id
@@ -70,8 +71,7 @@ def get_insert_safedays_data(shop_id,safedays_inss,result):
             config_safedays_inss.append(config_safedays_ins)
     data = []
     for config_safedays_ins in config_safedays_inss:
-        data.append((config_safedays_ins.shop_id,config_safedays_ins.upc,config_safedays_ins.safe_day_nums,config_safedays_ins.goods_name,config_safedays_ins.create_time,config_safedays_ins.update_time))
-
+        data.append((config_safedays_ins.shop_id,config_safedays_ins.upc,config_safedays_ins.goods_name,config_safedays_ins.safe_day_nums,config_safedays_ins.create_time,config_safedays_ins.update_time))
     return data
 def get_insert_disnums_data(shop_id ,disnums_inss,result):
     config_disnums_inss = []
@@ -86,8 +86,19 @@ def get_insert_disnums_data(shop_id ,disnums_inss,result):
         for shelf_ins in drg_ins.shelf_inss:
             key = str(shelf_ins.shelf_id) + "_" + str(drg_ins.upc)
             if key in list(disnums_inss_dict.keys()):
-                min_disnums += disnums_inss_dict[key].single_face_min_disnums
-                max_disnums += shelf_ins.face_num * disnums_inss_dict[key].single_face_max_disnums
+                if disnums_inss_dict[key].single_face_min_disnums is not None and disnums_inss_dict[key].single_face_min_disnums > 0 and int(disnums_inss_dict[key].shelf_depth) == int(shelf_ins.level_depth) and int(disnums_inss_dict[key].goods_depth == drg_ins.depth):
+                    min_disnums += disnums_inss_dict[key].single_face_min_disnums
+                else:
+                    min_disnums += get_single_face_min_disnums(drg_ins,shelf_ins)
+
+                if disnums_inss_dict[key].single_face_max_disnums is not None and  disnums_inss_dict[key].single_face_max_disnums > 0 and int(disnums_inss_dict[key].shelf_depth == shelf_ins.level_depth) and int(disnums_inss_dict[key].goods_depth == drg_ins.depth):
+                    max_disnums += shelf_ins.face_num * disnums_inss_dict[key].single_face_max_disnums
+                else:
+                    max_disnums += get_single_face_max_disnums(drg_ins,shelf_ins)
+                if int(disnums_inss_dict[key].shelf_depth) != int(shelf_ins.level_depth) or int(disnums_inss_dict[key].goods_depth) != int(drg_ins.depth):
+                    config_ins = ConfigTableUtil()
+                    disnums_ins = get_update_disnums(drg_ins,shelf_ins,disnums_inss_dict[key])
+                    config_ins.update_disnums(disnums_ins)
             else:
                 drg_ins.isnew_goods = True
                 config_disnums_ins = init_configdisnums(shop_id, shelf_ins, drg_ins)
@@ -99,8 +110,17 @@ def get_insert_disnums_data(shop_id ,disnums_inss,result):
     data = []
     if len(config_disnums_inss) > 0 :
         for config_disnums_ins in config_disnums_inss:
-            data.append((config_disnums_ins.shop_id,config_disnums_ins.shelf_id,config_disnums_ins.shelf_type,config_disnums_ins.shelf_depth,config_disnums_ins.upc,config_disnums_ins.goods_name,config_disnums_ins.goods_depth,config_disnums_ins.single_face_min_disnums,config_disnums_ins.single_face_max_disnums,config_disnums_ins.create_time,config_disnums_ins.update_time))
+            data.append((config_disnums_ins.shop_id,config_disnums_ins.shelf_id,config_disnums_ins.shelf_type,config_disnums_ins.shelf_depth,config_disnums_ins.upc,config_disnums_ins.goods_name,config_disnums_ins.goods_depth,config_disnums_ins.create_time,config_disnums_ins.update_time))
     return data
+
+def get_update_disnums(drg_ins,shelf_ins,disnums_ins):
+    disnums_ins.shelf_type = shelf_ins.shelf_type
+    disnums_ins.shelf_depth = shelf_ins.level_depth
+    disnums_ins.goods_name = drg_ins.goods_name
+    disnums_ins.goods_depth = drg_ins.depth
+    disnums_ins.create_time =str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
+    disnums_ins.update_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
+    return disnums_ins
 
 def init_configsafedays(shop_id,drg_ins):
     configsafeday_ins = goods_config_safedays.ConfigSafedayas()
@@ -108,10 +128,21 @@ def init_configsafedays(shop_id,drg_ins):
     configsafeday_ins.upc = drg_ins.upc
     configsafeday_ins.goods_name = drg_ins.goods_name
     configsafeday_ins.safe_day_nums = drg_ins.safe_day_nums
-
     return configsafeday_ins
 
+def get_single_face_min_disnums(drg_ins,shelf_ins):
+    if drg_ins.storage_day < 15 :
+        single_face_min_disnums = 1
+    else:
+        if shelf_ins.level_depth <= drg_ins.depth:
+            min_face_disnum = 1
+        else:
+            min_face_disnum = math.floor(shelf_ins.level_depth / drg_ins.depth)
+        single_face_min_disnums = min(3,min_face_disnum)
+    return single_face_min_disnums
 
+def get_single_face_max_disnums(drg_ins,shelf_ins):
+    return max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
 
 def init_configdisnums(shop_id,shelf_ins,drg_ins):
     config_disnums_ins = goods_config_disnums.ConfigDisnums()
@@ -122,13 +153,6 @@ def init_configdisnums(shop_id,shelf_ins,drg_ins):
     config_disnums_ins.goods_name = drg_ins.goods_name
     config_disnums_ins.goods_depth = drg_ins.depth
     config_disnums_ins.shelf_type = shelf_ins.shelf_type
-    if drg_ins.storage_day < 15 :
-        config_disnums_ins.single_face_min_disnums = 1
-    else:
-        if shelf_ins.level_depth <= drg_ins.depth:
-            min_face_disnum = 1
-        else:
-            min_face_disnum = math.floor(shelf_ins.level_depth / drg_ins.depth)
-        config_disnums_ins.single_face_min_disnums = min(3,min_face_disnum)
-    config_disnums_ins.single_face_max_disnums = math.floor(float(config_disnums_ins.shelf_depth)/config_disnums_ins.goods_depth)
+    config_disnums_ins.single_face_min_disnums = get_single_face_min_disnums(drg_ins,shelf_ins)
+    config_disnums_ins.single_face_max_disnums = get_single_face_max_disnums(drg_ins,shelf_ins)
     return config_disnums_ins

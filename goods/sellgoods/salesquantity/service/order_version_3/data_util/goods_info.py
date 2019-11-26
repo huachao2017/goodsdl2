@@ -279,8 +279,10 @@ class DataRawGoods():
             self.category_id = 0
         else:
             self.category_id = category_id
-        self.storage_day = storage_day
-
+        if storage_day is None:
+            self.storage_day = 0
+        else:
+            self.storage_day = storage_day
         new_shelf_inss = []
         max_disnums = 0
         min_disnums = 0

@@ -1,6 +1,7 @@
 import time
 import datetime
 class ConfigDisnums:
+    id = None
     shop_id = None
     shelf_id = None
     shelf_type = None
