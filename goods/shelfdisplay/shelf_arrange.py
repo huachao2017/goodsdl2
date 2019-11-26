@@ -385,7 +385,6 @@ class CategoryTree:
             max_length = reduce(lambda x, y: x * y, range(1, list_len + 1))  # 阶乘
             if max_length > self.one_category_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
                 step_size = math.ceil(max_length / self.one_category_combination_threshhold)
-
             else:
                 step_size = 1
 

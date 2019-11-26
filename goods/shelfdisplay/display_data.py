@@ -46,6 +46,7 @@ def init_data(uc_shopid, tz_id, base_data):
 
     # 计算五个值
     display_category3_list = third_cate_ids.split(',')
+    display_category3_list = list(set(display_category3_list))
     category3_to_category3_obj = {}
     shelf_category3_to_goods_cnt = {}
     shelf_goods_data_list = []
