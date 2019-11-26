@@ -31,7 +31,10 @@ class Sales2LoadData:
                         X,Y =  self.process_data(Y[:,1],X)
                         X_train, X_test, y_train, y_test = train_test_split(
                             X, Y, test_size=data_split, random_state=20)
-                    yield X_train,y_train
+                        yield X_train,y_train
+                    else:
+                        X = []
+                        Y = []
                 else:
                     X=[]
                     Y=[]
