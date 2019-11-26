@@ -16,7 +16,6 @@ from goods.shelfdisplay import single_algorithm
 import math
 
 def goods_arrange(shelf):
-    all_goods_combination_threshhold = 100 # 所有商品组合的阈值
     """
     第四步，商品布局主体函数
     :param shelf:货架
@@ -44,35 +43,14 @@ def goods_arrange(shelf):
     shelf.categoryid_to_sorted_goods_list = categoryid_to_sorted_goods_list
     shelf.extra_add_num = extra_add_num
     # 生成所有的候选解
+    categoryid_to_arrange_goods_list_list = {}
     candidate_result_shelf_list = []
-    candidate_categoryid_to_arrange_goods_list_list = {}
     max_goods_combination = 1
     for categoryid in shelf.shelf_category3_list:
         arrange_goods_list_list = goods.shelfdisplay.goods_arrange_category3.goods_arrange(
             shelf.categoryid_to_sorted_goods_list[categoryid])
-        candidate_categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
-        max_goods_combination *= len(arrange_goods_list_list)
-
-    print(max_goods_combination)
-    if max_goods_combination > all_goods_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
-        step_size = math.ceil(max_goods_combination / all_goods_combination_threshhold)
-    else:
-        step_size = 1
-
-    # 做商品组合总量控制
-    categoryid_to_arrange_goods_list_list = {}
-    i = -1
-    for categoryid in candidate_categoryid_to_arrange_goods_list_list:
-        candidate_arrange_goods_list_list = candidate_categoryid_to_arrange_goods_list_list[categoryid]
-        arrange_goods_list_list = []
-        for arrange_goods_list in candidate_arrange_goods_list_list:
-            i += 1
-            if i % step_size == 0:
-                arrange_goods_list_list.append(arrange_goods_list)
-
-        if len(arrange_goods_list_list) == 0:
-            arrange_goods_list_list.append(candidate_arrange_goods_list_list[0])
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
+        max_goods_combination *= len(arrange_goods_list_list)
 
     print("共{}个分类解：".format(len(shelf.candidate_category_list)))
     # input("按任何键继续：")
@@ -82,7 +60,9 @@ def goods_arrange(shelf):
         candidate_shelf_list = create_candidate_shelf_list(
             shelf,
             categoryid_list,
-            categoryid_to_arrange_goods_list_list)
+            categoryid_to_arrange_goods_list_list,
+            max_goods_combination
+        )
         if i % 10 == 1:
             print("开始第{}个分类解（共{}个商品解）：".format(i,len(candidate_shelf_list)))
         j = 0
@@ -103,7 +83,7 @@ def goods_arrange(shelf):
     return True
 
 
-def create_candidate_shelf_list(shelf, categoryid_list, categoryid_to_arrange_goods_list_list):
+def create_candidate_shelf_list(shelf, categoryid_list, categoryid_to_arrange_goods_list_list, max_goods_combination):
     """
     排列组合所有商品排序不同的候选货架列表
     :param shelf:
@@ -112,11 +92,19 @@ def create_candidate_shelf_list(shelf, categoryid_list, categoryid_to_arrange_go
     :return: candidate_shelf_list
     """
 
+    all_goods_combination_threshhold = 100 # 所有商品组合的阈值
+    if max_goods_combination > all_goods_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
+        step_size = math.ceil(max_goods_combination / all_goods_combination_threshhold)
+    else:
+        step_size = 1
+    j = -1
     candidate_shelf_list = []
     list_categoryid_to_arrange_goods_list = single_algorithm.dict_arrange(categoryid_to_arrange_goods_list_list)
     for categoryid_to_arrange_goods_list in list_categoryid_to_arrange_goods_list:
-        candidate_shelf = display_data.CandidateShelf(shelf, categoryid_list, categoryid_to_arrange_goods_list)
-        candidate_shelf_list.append(candidate_shelf)
+        j += 1
+        if j % step_size == 0:
+            candidate_shelf = display_data.CandidateShelf(shelf, categoryid_list, categoryid_to_arrange_goods_list)
+            candidate_shelf_list.append(candidate_shelf)
 
     return candidate_shelf_list
 
@@ -180,6 +168,10 @@ def _display_shelf(candidate_shelf):
                             break
                     if add_width > positive_addition_width:
                         break
+            if add_width < positive_addition_width:
+                # 做商品扩面处理
+                _solve_goods_face_in_display(positive_addition_width-add_width, candidate_shelf.categoryid_to_used_sorted_goods_list)
+
 
     # if abs(addition_width) < candidate_shelf.shelf.width/5:
     #     # 剩余1/5货架宽内就是正确解
@@ -269,6 +261,29 @@ def _solve_goods_face(shelf_depth, goods_data_list):
 
     # print("total_num,totol_width,total_face_num:{},{},{}".format(len(goods_data_list),total_width,total_face_num))
     # input("按任意键继续：")
+
+def _solve_goods_face_in_display(need_width, categoryid_to_sorted_goods_list):
+    """
+
+    :param need_width:
+    :param categoryid_to_sorted_goods_list:
+    :return:
+    """
+    add_width = 0
+    for i in range(5):
+        for categoryid in categoryid_to_sorted_goods_list:
+            sorted_goods_list = categoryid_to_sorted_goods_list[categoryid]
+            if len(sorted_goods_list) > i:
+                # 每个类扩面一个商品
+                goods = sorted_goods_list[i]
+                if goods.face_num > 1:
+                    # 已经扩面的商品不再扩面
+                    continue
+                # 扩面一个商品
+                goods.face_num += 1
+                add_width = goods.width
+                if add_width > need_width:
+                    return
 
 
 
