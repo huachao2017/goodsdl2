@@ -131,7 +131,58 @@ class GoodsImageViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.R
         logger.info('end detect goods: %.2f, %.2f, %.2f' % (time2-time0, time1-time0, time2-time1))
         return Response(ret, status=status.HTTP_201_CREATED, headers=headers)
 
-class AllWorkFlowBatchViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+class AllWorkFlowBatchViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin,
                    viewsets.GenericViewSet):
     queryset = AllWorkFlowBatch.objects.order_by('-id')
     serializer_class = AllWorkFlowBatchSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response('OK', status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        # TODO 开始陈列
+
+
+        # TODO 开始订货
+        return Response(serializer.data)
+
+class BeginSelectGoods(APIView):
+    def get(self, request):
+        try:
+            uc_shopid = int(request.query_params['ucshopid'])
+            batch_id = request.query_params['batchid']
+        except Exception as e:
+            logger.error('BeginSelectGoods error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+        # TODO 开始选品
+
+class BeginAutoDisplay(APIView):
+    def get(self, request):
+        try:
+            uc_shopid = int(request.query_params['ucshopid'])
+            batch_id = request.query_params['batchid']
+        except Exception as e:
+            logger.error('BeginAutoDisplay error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+        # TODO 开始选品
+
+class BeginOrderGoods(APIView):
+    def get(self, request):
+        try:
+            uc_shopid = int(request.query_params['ucshopid'])
+            batch_id = request.query_params['batchid']
+        except Exception as e:
+            logger.error('BeginOrderGoods error:{}'.format(e))
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+        # TODO 开始选品

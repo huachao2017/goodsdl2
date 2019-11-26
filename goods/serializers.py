@@ -165,6 +165,7 @@ class AllWorkFlowBatchSerializer(serializers.ModelSerializer):
         model = AllWorkFlowBatch
         fields = ('pk', 'batch_id', 'uc_shopid','select_goods_status','auto_display_status','order_goods_status',
                   'create_time')
+        read_only_fields = ('create_time','update_time')
 
 class ShelfDisplayDebugGoodsSerializer(serializers.ModelSerializer):
     goods_tree_source_url = serializers.SerializerMethodField()
