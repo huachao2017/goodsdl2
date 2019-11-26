@@ -75,12 +75,10 @@ def goods_arrange(shelf):
     # 计算候选解的badcase得分
     print('共找到{}个候选解'.format(len(candidate_result_shelf_list)))
     if len(candidate_result_shelf_list) == 0:
-        return False
+        raise ValueError('没有找到一个候选解')
     best_candidate_shelf = single_algorithm.goods_badcase_score(candidate_result_shelf_list)
 
     shelf.best_candidate_shelf = best_candidate_shelf
-
-    return True
 
 
 def create_candidate_shelf_list(shelf, categoryid_list, categoryid_to_arrange_goods_list_list, max_goods_combination):

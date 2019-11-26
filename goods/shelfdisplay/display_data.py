@@ -1,6 +1,5 @@
 from django.db import connections
 from goods.shelfdisplay.single_algorithm import calculate_shelf_category3_area_ratio
-from goods.models import ShelfDisplayDebug
 import urllib.request
 from django.conf import settings
 import os
@@ -9,15 +8,10 @@ import cv2
 from goods.shelfdisplay import goods_arrange
 from goods.shelfdisplay import shelf_arrange
 import datetime
-import json
-import traceback
 
 
 def init_data(uc_shopid, tz_id, base_data):
-    shelf_display_debug = ShelfDisplayDebug.objects.create(
-        tz_id = tz_id
-    )
-    taizhang = Taizhang(tz_id, shelf_display_debug)
+    taizhang = Taizhang(tz_id)
     cursor = connections['ucenter'].cursor()
 
     # 获取fx系统的shopid,台账系统的商家mch_id
@@ -120,12 +114,9 @@ class Category3:
         self.average_height = average_height
 
 class Taizhang:
-
-
-    def __init__(self, tz_id, shelf_display_debug):
+    def __init__(self, tz_id):
         self.tz_id = tz_id
         self.shelfs = []
-        self.shelf_display_debug = shelf_display_debug
         self.image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(self.tz_id))
         self.image_dir = os.path.join(settings.MEDIA_ROOT, self.image_relative_dir)
         from pathlib import Path
@@ -140,23 +131,7 @@ class Taizhang:
         self.shelfs[0].candidate_category_list = candidate_category_list
 
         # 第四步
-        is_ok = goods_arrange.goods_arrange(self.shelfs[0])
-
-        if is_ok:
-            # 打印陈列图
-            json_ret = self.to_json()
-            try:
-                image_name = self.to_image(self.image_dir)
-                self.shelf_display_debug.display_source = os.path.join(self.image_relative_dir, image_name)
-            except Exception as e:
-                print('陈列图生成错误：{}'.format(e))
-                traceback.print_exc()
-
-            self.shelf_display_debug.json_ret = json.dumps(json_ret)
-            self.shelf_display_debug.save()
-            return True
-        else:
-            return False
+        goods_arrange.goods_arrange(self.shelfs[0])
 
     def to_json(self):
         """
