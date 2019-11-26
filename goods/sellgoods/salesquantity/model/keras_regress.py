@@ -21,7 +21,7 @@ class KRegress:
         checkpoint = ModelCheckpoint(keras_model_path +end_date+ "_1.h5",
                                      monitor='val_loss',
                                      save_weights_only=True, save_best_only=True, period=1)
-        model.fit_generator(loaddata_ins.load_all_data(),steps_per_epoch=39,epochs=50,verbose=1 ,callbacks=[checkpoint])
+        model.fit_generator(generator = loaddata_ins.load_all_data(0.7),steps_per_epoch=39,epochs=50,validation_data=loaddata_ins.load_all_data(0.3),validation_steps=39,verbose=1 ,callbacks=[checkpoint])
 
 
     def load_model(self,path,exe_time):
