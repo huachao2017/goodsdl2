@@ -170,7 +170,9 @@ def _display_shelf(candidate_shelf):
                         break
             if add_width < positive_addition_width:
                 # 做商品扩面处理
-                _solve_goods_face_in_display(positive_addition_width-add_width, candidate_shelf.categoryid_to_used_sorted_goods_list)
+                if positive_addition_width - add_width > int(candidate_shelf.shelf.width/5):
+                    # 剩余超过1/5货架宽
+                    _solve_goods_face_in_display(positive_addition_width-add_width, candidate_shelf.categoryid_to_used_sorted_goods_list)
 
 
     # if abs(addition_width) < candidate_shelf.shelf.width/5:
@@ -179,7 +181,6 @@ def _display_shelf(candidate_shelf):
         # 舍弃最后一层，并退出试错
         candidate_shelf.levels = candidate_shelf.levels[:-1]
 
-    # FIXME 永远返回正确解，如货架剩余太多，应考虑扩大排面
     return True
 
 def _try_display_shelf(candidate_shelf):
@@ -269,6 +270,7 @@ def _solve_goods_face_in_display(need_width, categoryid_to_sorted_goods_list):
     :param categoryid_to_sorted_goods_list:
     :return:
     """
+    print("需要扩面宽度：{}".format(need_width))
     add_width = 0
     for i in range(5):
         for categoryid in categoryid_to_sorted_goods_list:
@@ -281,8 +283,9 @@ def _solve_goods_face_in_display(need_width, categoryid_to_sorted_goods_list):
                     continue
                 # 扩面一个商品
                 goods.face_num += 1
-                add_width = goods.width
+                add_width += goods.width
                 if add_width > need_width:
+                    print("最终扩面宽度：{}".format(add_width))
                     return
 
 
