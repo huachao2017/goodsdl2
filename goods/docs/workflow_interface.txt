@@ -3,6 +3,5 @@ ai接口：
 发起陈列：（get）http://ai.aicvs.cn/api/beginautodisplay?ucshopid=xx&batchid=xx
 发起订货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshopid=xx&batchid=xx
 
-发起日常非日配订货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshopid=xx&batchid=xx&type=1
-发起日常日配订货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshopid=xx&batchid=xx&type=2
-发起补货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshopid=xx&batchid=xx&type=3
+发起日常订货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshopid=xx&batchid=xx&type=1
+发起补货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshopid=xx&batchid=xx&type=2
