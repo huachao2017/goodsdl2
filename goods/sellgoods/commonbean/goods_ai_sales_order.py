@@ -17,5 +17,7 @@ class SalesOrder:
     supply_stock = None
     sales_nums = None
     delivery_type = None
+    storage_day = None
+    mch_goods_code = None
 
 
