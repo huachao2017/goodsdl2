@@ -13,7 +13,7 @@ from .serializers import *
 
 logger = logging.getLogger("django")
 
-class ShelfDisplayDebugViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,
+class ShelfDisplayDebugViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
                                viewsets.GenericViewSet):
     queryset = ShelfDisplayDebug.objects.order_by('-id')
     serializer_class = ShelfDisplayDebugSerializer
