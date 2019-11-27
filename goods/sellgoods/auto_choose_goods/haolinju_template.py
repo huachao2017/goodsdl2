@@ -93,7 +93,7 @@ def storage_day_choose(data):
     print("storage_result:", len(results))
     return results
 
-def choose_goods(data,ratio=0.99):
+def choose_goods(data,ratio=0.95):
     """
     进行选品的筛选
     需要目标店的选品量和要筛掉的类别
@@ -180,7 +180,12 @@ def check_order(data):
     print('third_order_checked:',len(result))
     return result
 
-def save_data(data):
+def save_data(data,batch_id):
+    """
+    选品结果存入数据库
+    :param data:
+    :return:
+    """
     upc_list = []
     for i in data:
         i[6] = i[4]/i[6]    # 计算psd
@@ -193,14 +198,14 @@ def save_data(data):
     # cursor = conn.cursor()
     cursor = connections['default'].cursor()
 
-    select_sql = "select batch_id from goods_firstgoodsselection where shopid={}"
-    cursor.execute(select_sql.format(upc_tuple[0][0]))
-    batch_id = cursor.fetchone()[0]
-    print('batch_id',batch_id)
+    # select_sql = "select batch_id from goods_firstgoodsselection where shopid={}"
+    # cursor.execute(select_sql.format(upc_tuple[0][0]))
+    # batch_id = cursor.fetchone()[0]
+    # print('batch_id',batch_id)
 
     insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id) values (%s,%s,%s,%s,%s,2,%s,%s,%s,{})"
     insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id) values (%s,%s,%s,%s,%s,2,%s,%s,%s,{})"
-    delete_sql = "delete from goods_firstgoodsselection where shopid={} and batch_id={}"
+    delete_sql = "delete from goods_firstgoodsselection where shopid={} and batch_id !={}"
 
     # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
 
@@ -211,9 +216,10 @@ def save_data(data):
         # time.sleep(0.5)
 
     try:
-        cursor.executemany(insert_sql_01.format(int(batch_id)+1), upc_tuple[:])
-        cursor.executemany(insert_sql_02.format(int(batch_id)+1), upc_tuple[:])
-        cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
+        print('batch_id',batch_id)
+        cursor.executemany(insert_sql_01.format(batch_id), upc_tuple[:])
+        cursor.executemany(insert_sql_02.format(batch_id), upc_tuple[:])
+        # cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
         connections['default'].commit()
         print('ok')
     except:
@@ -253,12 +259,24 @@ def second_choose(data):
     print(result_tuple)
     return result_tuple
 
+def start_choose_goods(batch_id,uc_shop_id):
+    a = get_data(uc_shop_id, '3598')
+    # print(a)
+    # a = storage_day_choose(a)
+    b = choose_goods(a)
+    # print(b)
 
-
+    # print(len(a))
+    # print(len(b))
+    c = check_order(b)
+    # print(c)
+    save_data(c,batch_id)
 
 
 
 if __name__ == '__main__':
+
+
 
     a = get_data(1284,'3598')
     # print(a)
