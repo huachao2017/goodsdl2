@@ -48,6 +48,8 @@ class KRegress:
         return X_pridect,X,Y,ss_Y,mm_Y
 
     def save_file(self,X_pridect, X, Y, ss_Y, mm_Y):
+        print (X_pridect)
+        print (len(X_pridect))
         with open("1.txt","a+") as f:
             for x_pre,x_t,y_t in zip(X_pridect,X,Y):
                 X_pri = ss_Y.inverse_transform(x_pre[0])
