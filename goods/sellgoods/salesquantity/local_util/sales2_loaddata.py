@@ -48,11 +48,9 @@ class Sales2LoadData:
             if x_dates[0] in filename:
                 flag = True
                 break
-        print (flag)
         if flag:
             X, Y = self.load_data(x_dates[0], y_dates[0])
             if X != None and Y != None:
-                print(len(X))
                 X = np.array(X)
                 Y = np.array(Y)
                 X_p, Y_p,ss_X,ss_Y,mm_X,mm_Y = self.process_data(Y[:, 1], X)
