@@ -20,9 +20,10 @@ if __name__ == '__main__':
         print("circulation")
         cursor.execute(select_sql)
         all_data = cursor.fetchall()
-        if not all_data:
+        if all_data:
             for data in all_data:
                 cursor.execute(update_sql_01)   # 更新到“正在计算”
+                print('正在计算')
                 connections['default'].commit()
                 start_time = time.time()
                 time.sleep(5)
