@@ -164,7 +164,8 @@ class BeginSelectGoods(APIView):
             batch_id = request.query_params['batchid']
             workflow = AllWorkFlowBatch.objects.create(
                 uc_shopid=uc_shopid,
-                batch_id=batch_id
+                batch_id=batch_id,
+                select_goods_status = 1
             )
         except Exception as e:
             logger.error('BeginSelectGoods error:{}'.format(e))
@@ -179,6 +180,8 @@ class BeginAutoDisplay(APIView):
             uc_shopid = int(request.query_params['ucshopid'])
             batch_id = request.query_params['batchid']
             workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
+            workflow.auto_display_status = 1
+            workflow.save()
         except Exception as e:
             logger.error('BeginAutoDisplay error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
@@ -193,6 +196,8 @@ class BeginOrderGoods(APIView):
             uc_shopid = int(request.query_params['ucshopid'])
             batch_id = request.query_params['batchid']
             workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
+            workflow.order_goods_status = 1
+            workflow.save()
         except Exception as e:
             logger.error('BeginOrderGoods error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
