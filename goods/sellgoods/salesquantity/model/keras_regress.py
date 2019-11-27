@@ -56,4 +56,6 @@ class KRegress:
 
 if __name__=='__main__':
     kr_ins = KRegress()
-    kr_ins.train()
+    # kr_ins.train()
+    X_pridect, X, Y =kr_ins.predict()
+    kr_ins.save_file(X_pridect, X, Y)
