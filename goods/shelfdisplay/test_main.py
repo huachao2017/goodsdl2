@@ -5,7 +5,7 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
 
-from goods.shelfdisplay.generate_shelf_dispaly import generate_displays
+from goods.shelfdisplay.generate_shelf_display import generate_displays
 from goods.shelfdisplay.db_data import init_data
 
 def parse_arguments(argv):
