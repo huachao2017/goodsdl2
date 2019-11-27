@@ -12,7 +12,7 @@ from goods.sellgoods.salesquantity.local_util import sales2_loaddata
 
 import time
 keras_model_path = config.shellgoods_params['regressor_model_path']['keras_regress']
-keras_day_sales_model_1 = config.shellgoods_params['regressor_model_path']['keras_day_sales_model_1']
+keras_day_sales_model_1 = config.shellgoods_params['keras_day_sales_model_1']
 class KRegress:
     # exe_time = str(time.strftime('%Y-%m-%d', time.localtime()))
     def train(self):
