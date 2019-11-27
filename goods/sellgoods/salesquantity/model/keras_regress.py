@@ -25,10 +25,11 @@ class KRegress:
                                          monitor='val_loss',
                                          save_weights_only=True, save_best_only=True, period=1)
             model.fit_generator(generator = loaddata_ins.load_all_data(data_split=0.7,n=i),steps_per_epoch=39,epochs=50,validation_data=loaddata_ins.load_all_data(data_split=0.3,n=i),validation_steps=39,verbose=1 ,callbacks=[checkpoint])
-            model.save()
 
     def load_model(self,filepath):
-        return self.get_model().load_weights(filepath)
+        model = self.get_model()
+        model.load_weights(filepath)
+        return model
 
     def get_model(self):
         model = Sequential()
@@ -44,14 +45,16 @@ class KRegress:
         loaddata_ins = sales2_loaddata.Sales2LoadData()
         X, Y, X_p, Y_p, ss_X, ss_Y, mm_X, mm_Y = loaddata_ins.load_predict_data(dateweek_one)
         X_pridect = model.predict(X_p)
-        X_pridect = ss_Y.inverse_transform(X_pridect)
-        X_pridect = mm_Y.inverse_transform(X_pridect)
-        return X_pridect,X,Y
+        return X_pridect,X,Y,ss_Y,mm_Y
 
-    def save_file(self,X_pridect,X,Y):
+    def save_file(self,X_pridect, X, Y, ss_Y, mm_Y):
+        X_pri = ss_Y.inverse_transform(X_pridect)
+        X_pri = mm_Y.inverse_transform(X_pri)
+        print(X_pri)
+        print(len(X_pri))
         with open("1.txt","a+") as f:
-            for x_pre,x_t,y_t in zip(X_pridect,X,Y):
-                line = str(str(x_t[0])+","+str(x_t[1])+","+str(x_pre[0])+","+str(y_t))
+            for x_pre,x_t,y_t in zip(X_pri,X,Y):
+                line = str(str(x_t[0])+","+str(x_t[1])+","+str(x_pre)+","+str(y_t))
                 f.write(line+"\n")
 
 

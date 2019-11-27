@@ -17,16 +17,20 @@ if __name__ == '__main__':
     while True:
         time.sleep(5)
         print("circulation")
-        cursor = connections['default'].cursor()
+        conn = connections['default']
+        cursor = conn.cursor()
         cursor.execute(select_sql)
         all_data = cursor.fetchall()
         if all_data:
             for data in all_data:
                 cursor.execute(update_sql_01.format(data[0]))   # 更新到“正在计算”
-                print('正在计算')
-                connections['default'].commit()
+                print('正在计算中')
+                conn.commit()
+                # conn.close()
                 start_time = time.time()
-                time.sleep(5)
-                # start_choose_goods(data[1],data[2])   #计算中
+                # time.sleep(5)
+                start_choose_goods(data[1],data[2],conn)   #计算中
+                cursor = conn.cursor()
                 cursor.execute(update_sql_02.format(int(time.time() - start_time),data[0]))  # 更新到“结束计算”和耗时多少
-                connections['default'].commit()
+                conn.commit()
+        conn.close()
