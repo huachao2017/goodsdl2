@@ -17,7 +17,8 @@ if __name__ == '__main__':
     while True:
         time.sleep(5)
         print("circulation")
-        cursor = connections['default'].cursor()
+        conn = connections['default']
+        cursor = conn.cursor()
         cursor.execute(select_sql)
         all_data = cursor.fetchall()
         if all_data:
@@ -30,3 +31,4 @@ if __name__ == '__main__':
                 start_choose_goods(data[1],data[2])   #计算中
                 cursor.execute(update_sql_02.format(int(time.time() - start_time),data[0]))  # 更新到“结束计算”和耗时多少
                 connections['default'].commit()
+        conn.close()
