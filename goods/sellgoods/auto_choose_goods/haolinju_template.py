@@ -195,7 +195,7 @@ def save_data(data,batch_id,conn):
     # print(upc_tuple)
 
     # conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
-    # conn = connections['default']
+    conn = connections['default']
 
     cursor = conn.cursor()
 
@@ -276,20 +276,7 @@ def start_choose_goods(batch_id,uc_shop_id,conn):
 
 
 if __name__ == '__main__':
-
-
-
-    a = get_data(1284,'3598')
-    # print(a)
-    # a = storage_day_choose(a)
-    b = choose_goods(a)
-    # print(b)
-
-    # print(len(a))
-    # print(len(b))
-    c = check_order(b)
-    # print(c)
-    save_data(c)
+    start_choose_goods('a_001', 1204,None)
 
 
 
