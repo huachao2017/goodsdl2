@@ -19,10 +19,11 @@ class KRegress:
         loaddata_ins = sales2_loaddata.Sales2LoadData()
         end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
         model = self.get_model()
-        checkpoint = ModelCheckpoint(keras_model_path +end_date+ "_1.h5",
-                                     monitor='val_loss',
-                                     save_weights_only=True, save_best_only=True, period=1)
-        model.fit_generator(generator = loaddata_ins.load_all_data(0.7),steps_per_epoch=39,epochs=50,validation_data=loaddata_ins.load_all_data(0.3),validation_steps=39,verbose=1 ,callbacks=[checkpoint])
+        for i in [0,2,3,4,5,6]:
+            checkpoint = ModelCheckpoint(keras_model_path +end_date+ "_"+str(i)+".h5",
+                                         monitor='val_loss',
+                                         save_weights_only=True, save_best_only=True, period=1)
+            model.fit_generator(generator = loaddata_ins.load_all_data(data_split=0.7,n=i),steps_per_epoch=39,epochs=50,validation_data=loaddata_ins.load_all_data(data_split=0.3,n=i),validation_steps=39,verbose=1 ,callbacks=[checkpoint])
 
 
     def load_model(self,filepath):
@@ -38,10 +39,10 @@ class KRegress:
         model.compile(loss='mse',optimizer='adam')
         return model
 
-    def predict(self):
+    def predict(self,dateweek_one=None):
         model = self.load_model(keras_day_sales_model_1)
         loaddata_ins = sales2_loaddata.Sales2LoadData()
-        X, Y, X_p, Y_p, ss_X, ss_Y, mm_X, mm_Y = loaddata_ins.load_predict_data('2019-11-11')
+        X, Y, X_p, Y_p, ss_X, ss_Y, mm_X, mm_Y = loaddata_ins.load_predict_data(dateweek_one)
         X_pridect = model.predict(X_p)
         X_pridect = ss_Y.inverse_transform(X_pridect)
         X_pridect = mm_Y.inverse_transform(X_pridect)
@@ -56,6 +57,5 @@ class KRegress:
 
 if __name__=='__main__':
     kr_ins = KRegress()
-    # kr_ins.train()
-    X_pridect, X, Y =kr_ins.predict()
-    kr_ins.save_file(X_pridect, X, Y)
+    kr_ins.train()
+
