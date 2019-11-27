@@ -165,6 +165,7 @@ class BeginSelectGoods(APIView):
             workflow = AllWorkFlowBatch.objects.create(
                 uc_shopid=uc_shopid,
                 batch_id=batch_id,
+                type=0,
                 select_goods_status = 1
             )
         except Exception as e:
@@ -179,7 +180,7 @@ class BeginAutoDisplay(APIView):
         try:
             uc_shopid = int(request.query_params['ucshopid'])
             batch_id = request.query_params['batchid']
-            workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
+            workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).filter(type=0).get()
             workflow.auto_display_status = 1
             workflow.save()
         except Exception as e:
@@ -195,9 +196,20 @@ class BeginOrderGoods(APIView):
         try:
             uc_shopid = int(request.query_params['ucshopid'])
             batch_id = request.query_params['batchid']
-            workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
-            workflow.order_goods_status = 1
-            workflow.save()
+            if 'type' not in request.query_params['type'] or request.query_params['type'] == '0':
+                workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
+                workflow.order_goods_status = 1
+                workflow.save()
+            else:
+                type = int(request.query_params['type'])
+                workflow = AllWorkFlowBatch.objects.create(
+                    uc_shopid=uc_shopid,
+                    batch_id=batch_id,
+                    type=type,
+                    select_goods_status = 0,
+                    order_goods_status=1
+                )
+
         except Exception as e:
             logger.error('BeginOrderGoods error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)

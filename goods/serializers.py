@@ -163,7 +163,7 @@ class GoodsImageSerializer(serializers.ModelSerializer):
 class AllWorkFlowBatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = AllWorkFlowBatch
-        fields = ('pk', 'batch_id', 'uc_shopid',
+        fields = ('pk', 'batch_id', 'uc_shopid', 'type',
                   'select_goods_status',
                   'select_goods_calculate_time',
                   'auto_display_status',
