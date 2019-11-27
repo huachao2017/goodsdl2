@@ -26,7 +26,7 @@ class KRegress:
 
 
     def load_model(self,filepath):
-       return load_model(filepath)
+        return self.get_model().load_weights(filepath)
 
     def get_model(self):
         model = Sequential()
@@ -39,7 +39,7 @@ class KRegress:
         return model
 
     def predict(self):
-        model = load_model(keras_day_sales_model_1)
+        model = self.load_model(keras_day_sales_model_1)
         loaddata_ins = sales2_loaddata.Sales2LoadData()
         X, Y, X_p, Y_p, ss_X, ss_Y, mm_X, mm_Y = loaddata_ins.load_predict_data('2019-11-11')
         X_pridect = model.predict(X_p)
