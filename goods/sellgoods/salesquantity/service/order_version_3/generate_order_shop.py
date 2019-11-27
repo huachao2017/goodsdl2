@@ -33,6 +33,8 @@ def generate(shop_id = None):
             str(sales_order_ins.max_stock), str(sales_order_ins.min_stock), str(sales_order_ins.stock),
             str(sales_order_ins.supply_stock),str(sales_order_ins.storage_day),str(sales_order_ins.delivery_type),str(sales_order_ins.mch_goods_code)))
     if len(sales_order_inss) > 0:
+        erp_interface.order_clear(shop_id, shop_type)
+        print("erp_interface.order_clear success!")
         erp_interface.order_commit(shop_id,shop_type,sales_order_inss)
         print("erp_interface.order_commit success!")
 

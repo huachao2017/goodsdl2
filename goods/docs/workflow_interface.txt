@@ -1,4 +1,4 @@
 ai接口：
-发起选品：（get）http://ai.aicvs.cn/api/beginselectgoods?ucshipid=xx&batchid=xx
-发起陈列：（get）http://ai.aicvs.cn/api/beginautodisplay?ucshipid=xx&batchid=xx
-发起订货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshipid=xx&batchid=xx
+发起选品：（get）http://ai.aicvs.cn/api/beginselectgoods?ucshopid=xx&batchid=xx
+发起陈列：（get）http://ai.aicvs.cn/api/beginautodisplay?ucshopid=xx&batchid=xx
+发起订货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshopid=xx&batchid=xx
