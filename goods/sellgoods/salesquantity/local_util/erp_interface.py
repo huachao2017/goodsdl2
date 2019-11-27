@@ -9,6 +9,40 @@ from django.db import connections
 
 from goods.models import ai_sales_order
 
+
+def order_clear(shop_id,erp_shop_type):
+    try:
+        cursor_dmstore = connections['dmstore'].cursor()
+        cursor_dmstore.execute('select erp_shop_id from erp_shop_related where shop_id={} and erp_shop_type = {}'.format(shop_id,erp_shop_type))
+        (erp_shopid,) = cursor_dmstore.fetchone()
+        print('店号{}类型{}开始清空订货单...'.format(erp_shopid,erp_shop_type))
+        cursor_dmstore.close()
+        # urltest = "http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}"
+        url = "http://erp.aicvs.cn/automaticOrdering/Eliminate?erpShopId={}"
+        headers = {
+            "Accept":"application/json",
+            "Content-Type":"application/json"
+        }
+        index = 0
+        while True:
+            try:
+                request = urllib.request.Request(url=url.format(erp_shopid), headers=headers)
+                response = urllib.request.urlopen(request)
+                print(response.read().decode())
+                break
+            except Exception as e:
+                index += 1
+                if index > 5:
+                    # raise e
+                    break
+                print('order_commit error:{}'.format(e))
+                time.sleep(1)
+                continue
+    except Exception as e:
+        print('order_clear error:{}'.format(e))
+
+
+
 def order_commit(shopid, erp_shop_type, shop_upc_ordersales):
 
     try:
