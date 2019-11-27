@@ -195,8 +195,9 @@ def save_data(data,batch_id):
     # print(upc_tuple)
 
     # conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
-    # cursor = conn.cursor()
-    cursor = connections['default'].cursor()
+    conn = connections['default']
+
+    cursor = conn.cursor()
 
     # select_sql = "select batch_id from goods_firstgoodsselection where shopid={}"
     # cursor.execute(select_sql.format(upc_tuple[0][0]))
