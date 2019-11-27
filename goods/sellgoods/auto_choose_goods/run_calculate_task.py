@@ -14,7 +14,7 @@ if __name__ == '__main__':
     cursor = connections['default'].cursor()
     select_sql = "select batch_id,uc_shopid from goods_allworkflowbatch where select_goods_status=1"
     update_sql_01 = "update goods_allworkflowbatch set select_goods_status=2"    #2是正在计算、3是计算结束
-    update_sql_02 = "update goods_allworkflowbatch set select_goods_status=3 and select_goods_calculate_time={}"    #2是正在计算、3是计算结束
+    update_sql_02 = "update goods_allworkflowbatch set select_goods_status=3 and select_goods_calculate_time=123"    #2是正在计算、3是计算结束
     while True:
         time.sleep(5)
         print("circulation")
@@ -28,5 +28,5 @@ if __name__ == '__main__':
                 start_time = time.time()
                 time.sleep(5)
                 # start_choose_goods(data[0],data[1])   #计算中
-                cursor.execute(update_sql_02.format(int(time.time() - start_time)))  # 更新到“结束计算”和耗时多少
+                cursor.execute(update_sql_02)  # 更新到“结束计算”和耗时多少
                 connections['default'].commit()
