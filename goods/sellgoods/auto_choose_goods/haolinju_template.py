@@ -228,7 +228,7 @@ def save_data(data,batch_id,conn):
         connections['default'].rollback()
         # 关闭数据库连接
         cursor.close()
-        connections['default'].close()
+        conn.close()
         print('error')
 
 def second_choose(data):
