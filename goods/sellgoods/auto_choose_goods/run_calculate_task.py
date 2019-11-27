@@ -26,10 +26,10 @@ if __name__ == '__main__':
                 cursor.execute(update_sql_01.format(data[0]))   # 更新到“正在计算”
                 print('正在计算中')
                 conn.commit()
-                conn.close()
+                # conn.close()
                 start_time = time.time()
                 # time.sleep(5)
-                start_choose_goods(data[1],data[2])   #计算中
+                start_choose_goods(data[1],data[2],conn)   #计算中
                 cursor.execute(update_sql_02.format(int(time.time() - start_time),data[0]))  # 更新到“结束计算”和耗时多少
                 conn.commit()
         conn.close()
