@@ -180,7 +180,7 @@ def check_order(data):
     print('third_order_checked:',len(result))
     return result
 
-def save_data(data,batch_id):
+def save_data(data,batch_id,conn):
     """
     选品结果存入数据库
     :param data:
@@ -195,7 +195,7 @@ def save_data(data,batch_id):
     # print(upc_tuple)
 
     # conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
-    conn = connections['default']
+    # conn = connections['default']
 
     cursor = conn.cursor()
 
@@ -260,7 +260,7 @@ def second_choose(data):
     print(result_tuple)
     return result_tuple
 
-def start_choose_goods(batch_id,uc_shop_id):
+def start_choose_goods(batch_id,uc_shop_id,conn):
     a = get_data(uc_shop_id, '3598')
     # print(a)
     # a = storage_day_choose(a)
@@ -271,7 +271,7 @@ def start_choose_goods(batch_id,uc_shop_id):
     # print(len(b))
     c = check_order(b)
     # print(c)
-    save_data(c,batch_id)
+    save_data(c,batch_id,conn)
 
 
 
