@@ -18,8 +18,9 @@ class KRegress:
     def train(self):
         loaddata_ins = sales2_loaddata.Sales2LoadData()
         end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-        model = self.get_model()
         for i in [0,2,3,4,5,6]:
+            model = self.get_model()
+            model.compile(loss='mse', optimizer='adam')
             checkpoint = ModelCheckpoint(keras_model_path +end_date+ "_"+str(i)+".h5",
                                          monitor='val_loss',
                                          save_weights_only=True, save_best_only=True, period=1)
@@ -36,12 +37,10 @@ class KRegress:
         model.add(Dense(50, activation='relu',kernel_regularizer=regularizers.l2(0.01),use_bias=True))
         model.add(Dense(50, activation='relu',kernel_regularizer=regularizers.l2(0.01),use_bias=True))
         model.add(Dense(1,activation='linear'))
-        model.compile(loss='mse',optimizer='adam')
         return model
 
     def predict(self,dateweek_one=None):
         model = self.load_model(keras_day_sales_model_1)
-        print (model)
         loaddata_ins = sales2_loaddata.Sales2LoadData()
         X, Y, X_p, Y_p, ss_X, ss_Y, mm_X, mm_Y = loaddata_ins.load_predict_data(dateweek_one)
         X_pridect = model.predict(X_p)
