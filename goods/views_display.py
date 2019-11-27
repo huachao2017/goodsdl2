@@ -5,7 +5,7 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import status
-from goods.shelfdisplay.generate_shelf_dispaly import generate_displays
+from goods.shelfdisplay.generate_shelf_display import generate_displays
 import requests
 from django.db import connections
 from .serializers import *
