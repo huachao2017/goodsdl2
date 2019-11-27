@@ -24,7 +24,7 @@ class Logger(object):
 if __name__ == "__main__":
     path = os.path.abspath(os.path.dirname(__file__))
     type = sys.getfilesystemencoding()
-    sys.stdout = Logger('/home/src/goodsdl2/goods/shelfdisplay/log')
+    sys.stdout = Logger('/home/src/goodsdl2/logs/display.log')
     while True:
         time.sleep(60)
         print('workflow deamon is alive')
