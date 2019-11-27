@@ -25,7 +25,7 @@ class KRegress:
                                          monitor='val_loss',
                                          save_weights_only=True, save_best_only=True, period=1)
             model.fit_generator(generator = loaddata_ins.load_all_data(data_split=0.7,n=i),steps_per_epoch=39,epochs=50,validation_data=loaddata_ins.load_all_data(data_split=0.3,n=i),validation_steps=39,verbose=1 ,callbacks=[checkpoint])
-
+            model.save()
 
     def load_model(self,filepath):
         return self.get_model().load_weights(filepath)
