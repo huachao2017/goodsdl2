@@ -29,4 +29,4 @@ if __name__ == '__main__':
                 time.sleep(5)
                 # start_choose_goods(data[0],data[1])   #计算中
                 cursor.execute(update_sql_02.format(int(time.time() - start_time)))  # 更新到“结束计算”和耗时多少
-
+                connections['default'].commit()
