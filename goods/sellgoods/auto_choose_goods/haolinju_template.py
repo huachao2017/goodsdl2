@@ -216,6 +216,7 @@ def save_data(data,batch_id):
         # time.sleep(0.5)
 
     try:
+        print('batch_id',batch_id)
         cursor.executemany(insert_sql_01.format(batch_id), upc_tuple[:])
         cursor.executemany(insert_sql_02.format(batch_id), upc_tuple[:])
         # cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
