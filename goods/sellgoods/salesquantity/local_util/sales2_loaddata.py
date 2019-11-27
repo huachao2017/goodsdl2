@@ -12,7 +12,7 @@ import os
 sales2_old_traindata = config.shellgoods_params['sales2_old_traindata']
 class Sales2LoadData:
     file_operator = 'tmp_sales_week.txt_'
-    def load_all_data(self,data_split=0.3):
+    def load_all_data(self,data_split=0.3,n=0):
         filenames = os.listdir(sales2_old_traindata)
         while 1:
             for i in range(1,40):
@@ -28,7 +28,7 @@ class Sales2LoadData:
                     if  X!= None and Y!= None:
                         X=np.array(X)
                         Y=np.array(Y)
-                        X,Y,ss_X,ss_Y,mm_X,mm_Y =  self.process_data(Y[:,1],X)
+                        X,Y,ss_X,ss_Y,mm_X,mm_Y =  self.process_data(Y[:,n],X)
                         X_train, X_test, y_train, y_test = train_test_split(
                             X, Y, test_size=data_split, random_state=20)
                         yield X_train,y_train
