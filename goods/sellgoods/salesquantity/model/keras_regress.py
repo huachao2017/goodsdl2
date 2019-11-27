@@ -41,9 +41,9 @@ class KRegress:
 
     def predict(self,dateweek_one=None):
         model = self.load_model(keras_day_sales_model_1)
+        print (model)
         loaddata_ins = sales2_loaddata.Sales2LoadData()
         X, Y, X_p, Y_p, ss_X, ss_Y, mm_X, mm_Y = loaddata_ins.load_predict_data(dateweek_one)
-        print (X_p)
         X_pridect = model.predict(X_p)
         X_pridect = ss_Y.inverse_transform(X_pridect)
         X_pridect = mm_Y.inverse_transform(X_pridect)
