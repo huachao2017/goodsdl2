@@ -221,7 +221,7 @@ def save_data(data,batch_id,conn):
         cursor.executemany(insert_sql_01.format(batch_id), upc_tuple[:10])
         cursor.executemany(insert_sql_02.format(batch_id), upc_tuple[:10])
         # cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
-        connections['default'].commit()
+        conn.commit()
         print('ok')
     except:
         # 如果发生错误则回滚
