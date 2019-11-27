@@ -48,13 +48,13 @@ class KRegress:
         return X_pridect,X,Y,ss_Y,mm_Y
 
     def save_file(self,X_pridect, X, Y, ss_Y, mm_Y):
-        print (X_pridect)
-        print (len(X_pridect))
+        X_pri = ss_Y.inverse_transform(X_pridect)
+        X_pri = mm_Y.inverse_transform(X_pri)
+        print(X_pri)
+        print(len(X_pri))
         with open("1.txt","a+") as f:
-            for x_pre,x_t,y_t in zip(X_pridect,X,Y):
-                X_pri = ss_Y.inverse_transform(x_pre[0])
-                X_pri = mm_Y.inverse_transform(X_pri)
-                line = str(str(x_t[0])+","+str(x_t[1])+","+str(X_pri)+","+str(y_t))
+            for x_pre,x_t,y_t in zip(X_pri,X,Y):
+                line = str(str(x_t[0])+","+str(x_t[1])+","+str(x_pre)+","+str(y_t))
                 f.write(line+"\n")
 
 
