@@ -31,11 +31,13 @@ def generate(shop_id = None):
             sales_order_inss.append(sales_order_ins)
         sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
         print("规则三：商品数：" + str(len(sales_order_inss)))
-        print ("订货量,商品upc,商品名,最大陈列数,最小陈列数,门店库存,小仓库库存")
+        print("订货量,商品upc,商品名,最大陈列数,最小陈列数,门店库存,小仓库库存,保质期,配送类型,商品编码")
         for sales_order_ins in sales_order_inss:
-            print("%s , %s, %s, %s, %s, %s, %s" % (
-            str(sales_order_ins.order_sale), str(sales_order_ins.upc), str(sales_order_ins.goods_name),
-            str(sales_order_ins.max_stock), str(sales_order_ins.min_stock),str(sales_order_ins.stock),str(sales_order_ins.supply_stock)))
+            print("%s , %s, %s, %s, %s, %s, %s,%s,%s,%s" % (
+                str(sales_order_ins.order_sale), str(sales_order_ins.upc), str(sales_order_ins.goods_name),
+                str(sales_order_ins.max_stock), str(sales_order_ins.min_stock), str(sales_order_ins.stock),
+                str(sales_order_ins.supply_stock), str(sales_order_ins.storage_day), str(sales_order_ins.delivery_type),
+                str(sales_order_ins.mch_goods_code)))
         # if len(sales_order_inss) > 0:
         #     erp_interface.order_commit(shop_id, shop_type, sales_order_inss)
         #     print("erp_interface.order_commit success!")

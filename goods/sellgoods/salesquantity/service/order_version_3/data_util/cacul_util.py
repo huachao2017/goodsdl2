@@ -22,6 +22,8 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.supply_stock = drg_ins.supply_stock
     sales_order_ins.sales_nums = drg_ins.old_sales
     sales_order_ins.delivery_type = drg_ins.delivery_type
+    sales_order_ins.storage_day = drg_ins.storage_day
+    sales_order_ins.mch_goods_code = drg_ins.mch_code
     return sales_order_ins
 
 

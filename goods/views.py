@@ -162,27 +162,45 @@ class BeginSelectGoods(APIView):
         try:
             uc_shopid = int(request.query_params['ucshopid'])
             batch_id = request.query_params['batchid']
+            workflow = AllWorkFlowBatch.objects.create(
+                uc_shopid=uc_shopid,
+                batch_id=batch_id,
+                select_goods_status = 1
+            )
         except Exception as e:
             logger.error('BeginSelectGoods error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
         # TODO 开始选品
+        return Response()
+
 
 class BeginAutoDisplay(APIView):
     def get(self, request):
         try:
             uc_shopid = int(request.query_params['ucshopid'])
             batch_id = request.query_params['batchid']
+            workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
+            workflow.auto_display_status = 1
+            workflow.save()
         except Exception as e:
             logger.error('BeginAutoDisplay error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
-        # TODO 开始选品
+
+        # TODO 开始陈列
+        return Response()
+
 
 class BeginOrderGoods(APIView):
     def get(self, request):
         try:
             uc_shopid = int(request.query_params['ucshopid'])
             batch_id = request.query_params['batchid']
+            workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
+            workflow.order_goods_status = 1
+            workflow.save()
         except Exception as e:
             logger.error('BeginOrderGoods error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
-        # TODO 开始选品
+        # TODO 开始订货
+
+        return Response()
