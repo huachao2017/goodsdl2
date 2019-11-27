@@ -164,11 +164,11 @@ class AllWorkFlowBatch(models.Model):
     batch_id = models.CharField(max_length=20, unique=True)
     uc_shopid = models.IntegerField()
     select_goods_status = models.IntegerField(default=1) # 0未发起，1需计算，2正在计算，3计算结束，4计算失败
-    select_goods_calculate_time = models.IntegerField(default=0)
+    select_goods_calculate_time = models.IntegerField(default=0) # 选品计算总时间（秒）
     auto_display_status = models.IntegerField(default=0) # 0未发起，1需计算，2正在计算，3计算结束，4计算失败
-    auto_display_calculate_time = models.IntegerField(default=0)
+    auto_display_calculate_time = models.IntegerField(default=0) # 陈列计算总时间（秒）
     order_goods_status = models.IntegerField(default=0) # 0未发起，1需计算，2正在计算，3计算结束，4计算失败
-    order_goods_calculate_time = models.IntegerField(default=0)
+    order_goods_calculate_time = models.IntegerField(default=0) # 订货计算总时间（秒）
     create_time = models.DateTimeField('date created', auto_now_add=True)
     update_time = models.DateTimeField('date updated', auto_now=True)
 
