@@ -44,7 +44,7 @@ def get_goods_batch_order_data(batch_id,sales_order_inss):
         data_dict['mch_goods_code'] = sales_order_ins.mch_goods_code
         data_dict['upc'] = sales_order_ins.upc
         data_dict['min_disnums'] = sales_order_ins.min_disnums
-        data_dict['max_disnums'] = sales_order_ins.min_disnums
+        data_dict['max_disnums'] = sales_order_ins.max_disnums
         data_dict['shop_stock'] = sales_order_ins.stock
         data_dict['supply_stock'] = sales_order_ins.supply_stock
         data_dict['shelf_order_info'] = sales_order_ins.shelf_order_info
