@@ -26,7 +26,6 @@ if __name__ == "__main__":
     type = sys.getfilesystemencoding()
     sys.stdout = Logger('/home/src/goodsdl2/logs/display.log')
     while True:
-        time.sleep(60)
         print('workflow deamon is alive')
 
         try:
@@ -38,7 +37,7 @@ if __name__ == "__main__":
                     end_time = time.time()
                     auto_display_calculate_time = int(end_time - begin_time)
                     # 更新workflow
-                    workflow.auto_display_status = 4
+                    workflow.auto_display_status = 3
                     workflow.auto_display_calculate_time = auto_display_calculate_time
                     workflow.save()
                 except Exception as e:
@@ -50,3 +49,5 @@ if __name__ == "__main__":
 
         except Exception as e:
             print('守护进程出现错误：{}'.format(e))
+
+        time.sleep(60)

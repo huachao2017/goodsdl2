@@ -3,6 +3,7 @@ from goods.sellgoods.salesquantity.service.order_version_3.data_util.goods_info 
 from goods.sellgoods.salesquantity.local_util.config_table_util import ConfigTableUtil
 from goods.sellgoods.salesquantity.bean import goods_config_disnums,goods_config_safedays
 import math
+import demjson
 import time
 def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins = SalesOrder()
@@ -15,6 +16,8 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.order_sale = 0
     sales_order_ins.max_stock = drg_ins.max_disnums
     sales_order_ins.min_stock = drg_ins.min_disnums
+    sales_order_ins.min_disnums = drg_ins.min_disnums
+    sales_order_ins.max_disnums =  drg_ins.max_disnums
     sales_order_ins.stock = drg_ins.stock
     sales_order_ins.start_sum = drg_ins.start_sum
     sales_order_ins.multiple = drg_ins.multiple
@@ -24,7 +27,35 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.delivery_type = drg_ins.delivery_type
     sales_order_ins.storage_day = drg_ins.storage_day
     sales_order_ins.mch_goods_code = drg_ins.mch_code
+    shelf_data = []
+    for shelf_ins in drg_ins.shelf_inss:
+        shelf_data.append({"tz_id":shelf_ins.taizhang_id,"shelf_id":shelf_ins.shelf_id,"shelf_order":0})
+    sales_order_ins.shelf_order_info = shelf_data
+
+
     return sales_order_ins
+
+
+def get_goods_batch_order_data(batch_id,sales_order_inss):
+    jsondata = []
+    for sales_order_ins in sales_order_inss:
+        data_dict = {}
+        data_dict['order_sale'] = sales_order_ins.order_sale
+        data_dict['mch_goods_code'] = sales_order_ins.mch_goods_code
+        data_dict['upc'] = sales_order_ins.upc
+        data_dict['min_disnums'] = sales_order_ins.mi
+        data_dict['max_disnums'] = sales_order_ins.order_sale
+        data_dict['shop_stock'] = sales_order_ins.order_sale
+        data_dict['supply_stock'] = sales_order_ins.order_sale
+        data_dict['shelf_order_info'] = sales_order_ins.shelf_order_info
+        jsondata.append(data_dict)
+    order_data = demjson.encode(jsondata)
+    create_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
+    update_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
+    return [(batch_id,order_data,create_time,update_time)]
+
+
+
 
 
 
