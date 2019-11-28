@@ -31,7 +31,7 @@ if __name__ == '__main__':
                 ucenter_conn = connections['ucenter']
                 ucenter_cursor = ucenter_conn.cursor()
                 ucenter_cursor.execute(select_sql_shopid.format(data[2]))
-                shopid = cursor.fetchone()[0]
+                shopid = ucenter_cursor.fetchone()[0]
                 ucenter_conn.close()
                 start_time = time.time()
                 # time.sleep(5)
