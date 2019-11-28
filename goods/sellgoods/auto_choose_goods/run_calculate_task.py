@@ -24,6 +24,7 @@ if __name__ == '__main__':
         all_data = cursor.fetchall()
         if all_data:
             for data in all_data:
+                start_time = time.time()
                 try:
                     cursor.execute(update_sql_01.format(2,data[0]))   # 更新到“正在计算”
                     print('正在计算中...')
@@ -34,7 +35,7 @@ if __name__ == '__main__':
                     ucenter_cursor.execute(select_sql_shopid.format(data[2]))
                     shopid = ucenter_cursor.fetchone()[0]
                     ucenter_conn.close()
-                    start_time = time.time()
+
                     # time.sleep(5)
                     # for i in range(3):
 
