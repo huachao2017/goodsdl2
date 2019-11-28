@@ -43,6 +43,7 @@ if __name__ == '__main__':
                     break
                 except:
                     cursor.execute(update_sql_01.format(4, data[0]))  # 4代表失败
+                    continue
 
                 cursor = conn.cursor()
                 cursor.execute(update_sql_02.format(math.ceil(time.time() - start_time),data[0]))  # 更新到“结束计算”和耗时多少
