@@ -28,7 +28,7 @@ if __name__ == '__main__':
                 print('正在计算中...')
                 conn.commit()
                 # conn.close()
-                ucenter_conn = connections['ucenter'].cursor()
+                ucenter_conn = connections['ucenter']
                 ucenter_cursor = ucenter_conn.cursor()
                 ucenter_cursor.execute(select_sql_shopid.format(data[2]))
                 shopid = cursor.fetchone()[0]
