@@ -26,7 +26,6 @@ if __name__ == "__main__":
     type = sys.getfilesystemencoding()
     sys.stdout = Logger('/home/src/goodsdl2/logs/display.log')
     while True:
-        time.sleep(60)
         print('workflow deamon is alive')
 
         try:
@@ -50,3 +49,5 @@ if __name__ == "__main__":
 
         except Exception as e:
             print('守护进程出现错误：{}'.format(e))
+
+        time.sleep(60)
