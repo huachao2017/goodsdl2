@@ -10,15 +10,19 @@ import os,django
 # django.setup()
 # from django.db import connections
 
-class AddGoods:
+class FirstChooseGoods:
+    """
+    目前只是非日配的首次选品逻辑
+    """
 
     def __init__(self,shop_id,template_shop_ids,topn_ratio=0.6,days=28):
         self.category_goods_list = []    # 结构品
         self.template_shop_ids = template_shop_ids.split(',')
         self.shop_id = shop_id
         self.topn_ratio = Decimal(topn_ratio)  # 取累计psd金额的百分之多少作为畅销品
-        self.days = days     #取数周期
+        self.days = days     # 取数周期
         self.third_category_list = []      # 三级分类的列表
+        self.first_category_goods_count_dict = {}     # 一级分类选品预估的数量
 
         conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
         self.cursor = conn.cursor()
@@ -76,6 +80,20 @@ class AddGoods:
         self.cursor.execute(sql.format(self.shop_id))
         results = self.cursor.fetchall()
         return results
+
+    def calculate_first_category_goods_count(self):
+        """
+        计算一级分类需要选品的预估数量
+        :return:
+        """
+        # 1、获取该店有哪些一级分类可售
+
+        # 2、获取每个一级分类分配的货架面积
+
+        # 3、计算每个一级分类下的平均商品面积
+
+        # 4、计算每个一级分类的预估选品数
+        pass
 
     def calculate_quick_seller(self):
         """
@@ -147,7 +165,7 @@ class AddGoods:
                 amount += goods[1]
 
             temp_amount = 0
-            for goods in goods_list:  # 将累计前占比60%psd金额的商品选出来，遇到边界多选策略
+            for goods in goods_list:  # 将累计前占比60%psd金额的商品选出来，遇到边界少选策略
 
                 temp_amount += goods[1]
                 if temp_amount > amount * self.topn_ratio:
@@ -164,11 +182,19 @@ class AddGoods:
         all_data = None
         # for data in all_data:
         #     pass
+        return []
 
 
     def recommend(self):
 
-        quick_seller = self.calculate_quick_seller()    #畅字典
+        # 1、遍历一级分类
+        # 2、计算畅销品，检查是否可订货
+        # 3、计算结构品，检查是否可订货和是否在畅销品列表里，进行删减去重
+        # 4、其他候补品，检查是否可订货，最终加起来是预估选品的120%
+        # 4.1、先根据‘预估选品减去畅销和结构’计算出剩余该选的数量
+        # 4.2、计算一级分类下psd金额排序列表，依次选出检查是否在畅销品、结构品、可订货列表中，然后加到候补品列表中，加满为止
+
+        quick_seller = self.calculate_quick_seller()
         print('quick_seller',quick_seller)
         print('quick_seller',len(quick_seller))
 
@@ -205,8 +231,8 @@ def start_choose_goods(batch_id,uc_shop_id):
 
 if __name__ == '__main__':
 
-    add_goods = AddGoods(1284,"3955,3779,1925,4076,1924")
-    data = add_goods.recommend()
+    first_choose_goods = FirstChooseGoods(1284, "3955,3779,1925,4076,1924")
+    data = first_choose_goods.recommend()
     # data = add_goods.get_third_category_list()
     print('最终增品',data)
     print('最终增品长度',len(data))
