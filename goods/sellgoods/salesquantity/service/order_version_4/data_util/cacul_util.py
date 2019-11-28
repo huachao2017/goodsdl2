@@ -17,7 +17,7 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.max_stock = drg_ins.max_disnums
     sales_order_ins.min_stock = drg_ins.min_disnums
     sales_order_ins.min_disnums = drg_ins.min_disnums
-    sales_order_ins.max_disnums =  drg_ins.max_disnums
+    sales_order_ins.max_disnums = drg_ins.max_disnums
     sales_order_ins.stock = drg_ins.stock
     sales_order_ins.start_sum = drg_ins.start_sum
     sales_order_ins.multiple = drg_ins.multiple
@@ -43,10 +43,10 @@ def get_goods_batch_order_data(batch_id,sales_order_inss):
         data_dict['order_sale'] = sales_order_ins.order_sale
         data_dict['mch_goods_code'] = sales_order_ins.mch_goods_code
         data_dict['upc'] = sales_order_ins.upc
-        data_dict['min_disnums'] = sales_order_ins.mi
-        data_dict['max_disnums'] = sales_order_ins.order_sale
-        data_dict['shop_stock'] = sales_order_ins.order_sale
-        data_dict['supply_stock'] = sales_order_ins.order_sale
+        data_dict['min_disnums'] = sales_order_ins.min_disnums
+        data_dict['max_disnums'] = sales_order_ins.min_disnums
+        data_dict['shop_stock'] = sales_order_ins.stock
+        data_dict['supply_stock'] = sales_order_ins.supply_stock
         data_dict['shelf_order_info'] = sales_order_ins.shelf_order_info
         jsondata.append(data_dict)
     order_data = demjson.encode(jsondata)
