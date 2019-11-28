@@ -41,7 +41,7 @@ if __name__ == '__main__':
                     print('shopid',shopid)
                     print('id',data[0])
 
-                    start_choose_goods(data[1],shopid,conn)   #计算中
+                    start_choose_goods(data[1],shopid)   #计算中
 
                 except Exception as e:
                     print('Exception',e)
