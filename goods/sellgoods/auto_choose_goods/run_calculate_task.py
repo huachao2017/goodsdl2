@@ -38,6 +38,8 @@ if __name__ == '__main__':
 
                     # time.sleep(5)
                     # for i in range(3):
+                    print('shopid',shopid)
+                    print('id',data[0])
 
                     start_choose_goods(data[1],shopid,conn)   #计算中
                     break
