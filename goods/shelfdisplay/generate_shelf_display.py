@@ -10,12 +10,6 @@ import requests
 
 
 def generate_workflow_displays(uc_shopid, batch_id):
-    try:
-        workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).filter(auto_display_status=1).get()
-    except:
-        print('没有需要计算的workflow：{},{}'.format(uc_shopid, batch_id))
-        raise ValueError('workflow error:{},{}'.format(uc_shopid, batch_id))
-
     cursor = connections['ucenter'].cursor()
     # 获取台账
     try:
@@ -30,14 +24,11 @@ def generate_workflow_displays(uc_shopid, batch_id):
     cursor.close()
 
     # 计算陈列
-    begin_time = time.time()
     taizhang_display_list = []
     for one_tz_id in taizhangs:
         taizhang_display = generate_displays(uc_shopid, one_tz_id[0], batch_id)
         if taizhang_display is not None:
             taizhang_display_list.append(taizhang_display)
-    end_time = time.time()
-    auto_display_calculate_time = int(end_time-begin_time)
 
     # 通知台账系统
     # url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
@@ -51,10 +42,6 @@ def generate_workflow_displays(uc_shopid, batch_id):
     #     resp = requests.post(url=url, data=data, headers=headers)
     #     print('通知台账系统：'.format(resp))
 
-    # 更新workflow
-    workflow.auto_display_status = 3
-    workflow.auto_display_calculate_time = auto_display_calculate_time
-    workflow.save()
 
 
 def generate_displays(uc_shopid, tz_id, batch_id = 0):

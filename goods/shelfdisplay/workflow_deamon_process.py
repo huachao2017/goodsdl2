@@ -32,6 +32,21 @@ if __name__ == "__main__":
         try:
             workflows = AllWorkFlowBatch.objects.filter(auto_display_status=1).all()
             for workflow in workflows:
-                generate_workflow_displays(workflow.uc_shopid, workflow.batch_id)
+                try:
+                    begin_time = time.time()
+                    generate_workflow_displays(workflow.uc_shopid, workflow.batch_id)
+                    end_time = time.time()
+                    auto_display_calculate_time = int(end_time - begin_time)
+                    # 更新workflow
+                    workflow.auto_display_status = 4
+                    workflow.auto_display_calculate_time = auto_display_calculate_time
+                    workflow.save()
+                except Exception as e:
+                    print('陈列出现错误：{}'.format(e))
+                    # 更新workflow
+                    workflow.auto_display_status = 4
+                    workflow.auto_display_calculate_time = 0
+                    workflow.save()
+
         except Exception as e:
             print('守护进程出现错误：{}'.format(e))
