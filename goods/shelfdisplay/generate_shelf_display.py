@@ -87,6 +87,7 @@ def generate_displays(uc_shopid, tz_id, batch_id = 0):
             print('陈列图生成错误：{}'.format(e))
             traceback.print_exc()
         shelf_display_debug_model.json_ret = json.dumps(taizhang.to_json())
+        shelf_display_debug_model.calculate_time = taizhang.display_calculate_time
         shelf_display_debug_model.save()
         print("Success:{},{}".format(uc_shopid, tz_id))
         return taizhang

@@ -178,6 +178,7 @@ class ShelfDisplayDebug(models.Model):
     uc_shopid = models.IntegerField(db_index=True,default=806)
     tz_id = models.IntegerField()
     json_ret = models.TextField(default='')
+    calculate_time = models.IntegerField(default=0)
     display_source = models.CharField(max_length=200, default='')
     category_intimacy_source = models.CharField(max_length=200, default='')
     create_time = models.DateTimeField('date created', auto_now_add=True)

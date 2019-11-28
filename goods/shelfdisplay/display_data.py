@@ -8,6 +8,8 @@ import cv2
 from goods.shelfdisplay import goods_arrange
 from goods.shelfdisplay import shelf_arrange
 import datetime
+import time
+
 
 
 def init_data(uc_shopid, tz_id, base_data):
@@ -119,11 +121,13 @@ class Taizhang:
         self.shelfs = []
         self.image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang',str(self.tz_id))
         self.image_dir = os.path.join(settings.MEDIA_ROOT, self.image_relative_dir)
+        self.display_calculate_time = 0
         from pathlib import Path
         if not Path(self.image_dir).exists():
             os.makedirs(self.image_dir)
 
     def display(self):
+        begin_time = time.time()
 
         # 第三步
         # FIXME 这版仅支持一个货架的台账
@@ -132,6 +136,9 @@ class Taizhang:
 
         # 第四步
         goods_arrange.goods_arrange(self.shelfs[0])
+
+        end_time = time.time()
+        self.display_calculate_time = int(end_time-begin_time)
 
     def to_json(self):
         """
