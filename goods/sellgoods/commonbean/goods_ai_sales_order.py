@@ -20,4 +20,6 @@ class SalesOrder:
     storage_day = None
     mch_goods_code = None
     shelf_order_info=[]
+    min_disnums = None
+    max_disnums = None
 
