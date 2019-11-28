@@ -50,7 +50,7 @@ def first_order_process():
                     cursor_ai.connection.commit()
                 else:
                     update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
-                    cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],id))
+                    cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],goods_batch_data[0]))
                     cursor_ai.connection.commit()
                 # 更新数据库状态
                 cursor_ai.execute(
@@ -100,7 +100,7 @@ def day_order_process():
                     cursor_ai.connection.commit()
                 else:
                     update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
-                    cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],id))
+                    cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],goods_batch_data[0]))
                     cursor_ai.connection.commit()
                 # 更新数据库状态
                 cursor_ai.execute(
@@ -144,7 +144,7 @@ def add_order_process():
                     cursor_ai.connection.commit()
                 else:
                     update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
-                    cursor_ai.execute(update_goods_batch_order.format(update_data[0][1],update_data[0][3],id))
+                    cursor_ai.execute(update_goods_batch_order.format(update_data[0][1],update_data[0][3],goods_batch_data[0]))
                     cursor_ai.connection.commit()
                 # 更新数据库状态
                 cursor_ai.execute(
