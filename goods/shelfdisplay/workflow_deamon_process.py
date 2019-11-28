@@ -38,7 +38,7 @@ if __name__ == "__main__":
                     end_time = time.time()
                     auto_display_calculate_time = int(end_time - begin_time)
                     # 更新workflow
-                    workflow.auto_display_status = 4
+                    workflow.auto_display_status = 3
                     workflow.auto_display_calculate_time = auto_display_calculate_time
                     workflow.save()
                 except Exception as e:
