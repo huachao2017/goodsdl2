@@ -13,7 +13,7 @@ if __name__ == '__main__':
     # cursor = conn.cursor()
     select_sql = "select id,batch_id,uc_shopid from goods_allworkflowbatch where select_goods_status=1"
     select_sql_shopid = "select mch_shop_code from uc_shop where id = {}"
-    update_sql_01 = "update goods_allworkflowbatch set select_goods_status=2 where id={}"    #2是正在计算、3是计算结束
+    update_sql_01 = "update goods_allworkflowbatch set select_goods_status={} where id={}"    #2是正在计算、3是计算结束
     update_sql_02 = "update goods_allworkflowbatch set select_goods_status=3,select_goods_calculate_time={} where id={}"    #2是正在计算、3是计算结束
     while True:
         time.sleep(5)
@@ -24,7 +24,7 @@ if __name__ == '__main__':
         all_data = cursor.fetchall()
         if all_data:
             for data in all_data:
-                cursor.execute(update_sql_01.format(data[0]))   # 更新到“正在计算”
+                cursor.execute(update_sql_01.format(2,data[0]))   # 更新到“正在计算”
                 print('正在计算中...')
                 conn.commit()
                 # conn.close()
@@ -35,7 +35,13 @@ if __name__ == '__main__':
                 ucenter_conn.close()
                 start_time = time.time()
                 # time.sleep(5)
-                start_choose_goods(data[1],shopid,conn)   #计算中
+                # for i in range(3):
+                try:
+                    start_choose_goods(data[1],shopid,conn)   #计算中
+                    break
+                except:
+                    cursor.execute(update_sql_01.format(4, data[0]))  # 4代表失败
+
                 cursor = conn.cursor()
                 cursor.execute(update_sql_02.format(math.ceil(time.time() - start_time),data[0]))  # 更新到“结束计算”和耗时多少
                 conn.commit()
