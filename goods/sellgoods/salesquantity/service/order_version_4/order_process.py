@@ -45,11 +45,11 @@ def first_order_process():
                 cursor_ai.execute(select_goods_batch_order.format(batch_id))
                 goods_batch_data = cursor_ai.fetchone()
                 if goods_batch_data is None:
-                    inert_data = cacul_util.get_goods_batch_order_data(batch_id)
+                    inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
                     cursor_ai.executemany(insert_goods_batch_order, inert_data)
                     cursor_ai.connection.commit()
                 else:
-                    update_data = cacul_util.get_goods_batch_order_data(batch_id)
+                    update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
                     cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3]))
                     cursor_ai.connection.commit()
                 # 更新数据库状态
@@ -95,11 +95,11 @@ def day_order_process():
                 cursor_ai.execute(select_goods_batch_order.format(batch_id))
                 goods_batch_data = cursor_ai.fetchone()
                 if goods_batch_data is None:
-                    inert_data = cacul_util.get_goods_batch_order_data(batch_id)
+                    inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
                     cursor_ai.executemany(insert_goods_batch_order, inert_data)
                     cursor_ai.connection.commit()
                 else:
-                    update_data = cacul_util.get_goods_batch_order_data(batch_id)
+                    update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
                     cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3]))
                     cursor_ai.connection.commit()
                 # 更新数据库状态
@@ -139,11 +139,11 @@ def add_order_process():
                 cursor_ai.execute(select_goods_batch_order.format(batch_id))
                 goods_batch_data = cursor_ai.fetchone()
                 if goods_batch_data is None:
-                    inert_data = cacul_util.get_goods_batch_order_data(batch_id)
+                    inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
                     cursor_ai.executemany(insert_goods_batch_order, inert_data)
                     cursor_ai.connection.commit()
                 else:
-                    update_data = cacul_util.get_goods_batch_order_data(batch_id)
+                    update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
                     cursor_ai.execute(update_goods_batch_order.format(update_data[0][1],update_data[0][3]))
                     cursor_ai.connection.commit()
                 # 更新数据库状态
