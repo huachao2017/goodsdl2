@@ -40,16 +40,16 @@ def generate_workflow_displays(uc_shopid, batch_id):
     auto_display_calculate_time = int(end_time-begin_time)
 
     # 通知台账系统
-    url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    }
-    for taizhang_display in taizhang_display_list:
-        json_info = json.dumps(taizhang_display.to_json())
-        data = bytes(json_info, 'utf8')
-        resp = requests.post(url=url, data=data, headers=headers)
-        print('通知台账系统：'.format(resp))
+    # url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
+    # headers = {
+    #     "Accept": "application/json",
+    #     "Content-Type": "application/json"
+    # }
+    # for taizhang_display in taizhang_display_list:
+    #     json_info = json.dumps(taizhang_display.to_json())
+    #     data = bytes(json_info, 'utf8')
+    #     resp = requests.post(url=url, data=data, headers=headers)
+    #     print('通知台账系统：'.format(resp))
 
     # 更新workflow
     workflow.auto_display_status = 3
