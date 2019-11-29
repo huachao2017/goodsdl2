@@ -286,16 +286,18 @@ class Taizhang:
                             h = goods_image.shape[0]
                             w = goods_image.shape[1]
                             if point1[1] < 0:
-                                print(point1)
-                                print(point2)
+                                if point2[1] < 0:
+                                    print('向上整体超出：{},{}'.format(point1,point2))
+                                    continue
                                 # 上部超出货架
-                                if point1[0] + w > shelf.width:
+                                if point2[0] > shelf.width:
                                     image[0:point1[1] + h, point1[0]:shelf.width, :] = goods_image[-point1[1]:h, 0:shelf.width-point1[0],:]
                                 else:
                                     image[0:point1[1] + h, point1[0]:point1[0] + w, :] = goods_image[-point1[1]:h, 0:w, :]
-                            elif point1[0] + w > shelf.width:
-                                print(point1)
-                                print(point2)
+                            elif point2[0] > shelf.width:
+                                if point1[0] < shelf.width:
+                                    print('向右整体超出{}：{},{}'.format(shelf.width, point1, point2))
+                                    continue
                                 # 右侧超出货架
                                 image[point1[1]:point1[1]+h, point1[0]:shelf.width,:] = goods_image[0:h, 0:shelf.width-point1[0], :]
                             else:
