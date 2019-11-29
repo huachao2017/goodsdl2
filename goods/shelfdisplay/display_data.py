@@ -424,7 +424,7 @@ class CandidateShelf:
         else:
             ret -= self.shelf.width - last_level.goods_width
             # 货架高度剩余很多就加一个货架宽度
-            if (self.shelf.height - last_level.start_height) > last_level.goods_height + self.shelf.level_buff_height + self.shelf.level_board_height + self.shelf.average_level_height:
+            if (self.shelf.height - last_level.start_height) > last_level.goods_height + self.shelf.level_buff_height + self.shelf.level_board_height + self.shelf.last_level_min_remain_height:
                 ret -= self.shelf.width
             # 空缺宽度
 
@@ -500,6 +500,8 @@ class DisplayGoods:
         # 考虑叠放
         if self.goods_data.is_superimpose == 1:
             self.goods_data.superimpose_num = math.floor(level.candidate_shelf.shelf.average_level_height/self.goods_data.height)
+            if self.goods_data.superimpose_num > 4:
+                self.goods_data.superimpose_num = 4
         # 计算商品的单face最大陈列量
         max_one_face = int(level.depth / self.goods_data.depth) * self.goods_data.superimpose_num
         if max_one_face == 0:
