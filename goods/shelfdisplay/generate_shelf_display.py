@@ -81,5 +81,6 @@ def generate_displays(uc_shopid, tz_id, batch_id):
     except Exception as e:
         shelf_display_debug_model.json_ret = str(e)
         shelf_display_debug_model.save()
+        traceback.print_exc()
         print("Failed:{},{},{}".format(uc_shopid, tz_id, batch_id))
         return None
