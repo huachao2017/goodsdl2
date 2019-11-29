@@ -222,12 +222,13 @@ def save_data(data,batch_id,uc_shopid):
 
 
     try:
-        print('batch_id',batch_id)
+        print('batch_id',batch_id,type(batch_id))
         # cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
         # cursor.executemany(insert_sql_01.format(batch_id,uc_shopid), upc_tuple[:])
 
         cursor.execute(select_sql.format(uc_shopid))
         history_batch_id = cursor.fetchone()[0]
+        print('history_batch_id', history_batch_id,type(history_batch_id))
         if history_batch_id == batch_id:
             cursor.execute(delete_sql_02.format(uc_shopid, history_batch_id))
             print("删掉该批次之前的数据")
