@@ -269,7 +269,7 @@ def second_choose(data):
 
 def start_choose_goods(batch_id,uc_shopid,pos_shopid):
     a = get_data(pos_shopid, '3598')
-    # print(a)
+    print("uc_shopid,pos_shopid",uc_shopid,pos_shopid)
     # a = storage_day_choose(a)
     b = choose_goods(a)
     # print(b)
