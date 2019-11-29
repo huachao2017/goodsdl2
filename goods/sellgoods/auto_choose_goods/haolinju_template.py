@@ -160,14 +160,17 @@ def check_order(data):
     upcs = tuple(upcs)
 
     # conn = pymysql.connect('10.19.68.63', 'diamond_rw', password='iMZBbBwxJZ7LUW7p', database='ls_diamond', charset="utf8",port=3306, use_unicode=True)
-    # cursor = conn.cursor()
-    cursor = connections['erp'].cursor()
+
+    conn = connections['erp']
+    cursor = conn.cursor()
 
     select_sql = "SELECT a.status,a.start_sum,a.actual_stock from ms_sku_relation as a LEFT JOIN ls_sku as b on a.sku_id=b.sku_id and a.prod_id=b.prod_id WHERE b.model_id='6923555212749' "
     slect_sql_02 = "SELECT a.authorized_shop_id from ms_relation as a WHERE a.is_authorized_shop_id='9851' and a.status=1"
     slect_sql_03 = "SELECT a.status,b.model_id FROM ms_sku_relation as a LEFT JOIN ls_sku as b on a.sku_id=b.sku_id and a.prod_id=b.prod_id WHERE a.status=1 AND a.sku_id IN (SELECT ls_sku.sku_id FROM ls_sku WHERE ls_sku.model_id in {} AND ls_sku.prod_id IN (SELECT ls_prod.prod_id FROM ls_prod WHERE ls_prod.shop_id = '9850'))"
     cursor.execute(slect_sql_03.format(upcs))
     order_yes = cursor.fetchall()
+    cursor.close()
+    conn.close()
 
     order_upc = []
     for m in order_yes:

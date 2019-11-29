@@ -1,5 +1,5 @@
 from goods.sellgoods.commonbean.goods_ai_sales_order import SalesOrder
-from goods.sellgoods.salesquantity.service.order_version_3.data_util.goods_info import get_shop_order_goods
+from goods.sellgoods.salesquantity.service.order_version_4.data_util.goods_info import get_shop_order_goods
 from goods.sellgoods.salesquantity.local_util.config_table_util import ConfigTableUtil
 from goods.sellgoods.salesquantity.bean import goods_config_disnums,goods_config_safedays
 import math

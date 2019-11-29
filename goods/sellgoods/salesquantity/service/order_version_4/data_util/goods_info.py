@@ -18,7 +18,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
     :param erp_shop_type: erp系统里面的类型
     :return:返回一个DataRawGoods对象的map,key为mch_code
     """
-
     ret = {}
     next_day = str(time.strftime('%Y-%m-%d', time.localtime()))
     cursor = connections['ucenter'].cursor()
