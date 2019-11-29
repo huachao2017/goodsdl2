@@ -134,7 +134,7 @@ def _display_shelf(candidate_shelf):
             for j in range(3):  # 每个品最多减三轮
                 for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
                     if len(candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid]) > 2:
-                        # 数量太少的不减
+                        # 每个分类至少保留2个品
                         goods = candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid][-1]
                         reduce_width += goods.width * goods.face_num
                         candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid] = \
@@ -145,6 +145,7 @@ def _display_shelf(candidate_shelf):
 
                 if reduce_width > addition_width:
                     break
+            # FIXME 如果减完还是太多，需要做再次处理：包括减少扩面和继续删分类的品到只有一个
         else:
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？

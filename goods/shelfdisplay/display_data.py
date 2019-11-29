@@ -396,8 +396,10 @@ class CandidateShelf:
         if self.shelf.height - last_level.start_height < self.shelf.last_level_min_remain_height:
             # 超出层
             ret += last_level.goods_width
-            if last_level.start_height > self.shelf.height:
-                ret += self.shelf.width
+            # 只要有层超出就减掉整层宽度
+            for i in range(len(self.levels)-2, -1, -1):
+                if self.levels[i].start_height > self.shelf.height:
+                    ret += self.shelf.width
         else:
             ret -= self.shelf.width - last_level.goods_width
             # 货架高度剩余很多就加一个货架宽度
