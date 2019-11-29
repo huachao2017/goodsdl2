@@ -35,6 +35,7 @@ def first_order_process():
             cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
             cursor_ai.connection.commit()
             start_time = time.time()
+            print("首次订单 batch_id =" + str(batch_id))
             sales_order_inss = generate_order_2saler_first.generate(dmstore_shopid)
             if sales_order_inss is None:
                 cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
@@ -42,6 +43,7 @@ def first_order_process():
                 cursor_ai.connection.commit()
             else:
                 # 把结果转成json , 存入数据库
+                print("首次 订单商品数 ：" + str(len(sales_order_inss)))
                 cursor_ai.execute(select_goods_batch_order.format(batch_id))
                 goods_batch_data = cursor_ai.fetchone()
                 if goods_batch_data is None:
@@ -78,6 +80,7 @@ def day_order_process():
             cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
             cursor_ai.connection.commit()
             start_time = time.time()
+            print ("日常订单 batch_id =" +str(batch_id))
             sales_order_inss1 = generate_order_2saler_add.generate(dmstore_shopid)
             sales_order_inss2 = generate_order_2saler_add_day.generate(dmstore_shopid)
             if sales_order_inss1 is None or sales_order_inss2 is None:
@@ -87,6 +90,8 @@ def day_order_process():
             else:
                 # 把结果转成json , 存入数据库
                 sales_order_inss=[]
+                print ("非日配 订单商品数 ："+str(len(sales_order_inss1)))
+                print("日配 订单商品数 ：" + str(len(sales_order_inss2)))
                 for sales_order_ins in sales_order_inss1:
                     sales_order_inss.append(sales_order_ins)
                 for sales_order_ins in sales_order_inss2:
@@ -129,6 +134,7 @@ def add_order_process():
             cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
             conn.commit()
             start_time = time.time()
+            print("补货单 batch_id =" + str(batch_id))
             sales_order_inss = generate_order_shop.generate(dmstore_shopid)
             if sales_order_inss is None:
                 cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
@@ -136,6 +142,7 @@ def add_order_process():
                 cursor_ai.connection.commit()
             else:
                 # 把结果转成json , 存入数据库
+                print("补货 订单商品数 ：" + str(len(sales_order_inss)))
                 cursor_ai.execute(select_goods_batch_order.format(batch_id))
                 goods_batch_data = cursor_ai.fetchone()
                 if goods_batch_data is None:
