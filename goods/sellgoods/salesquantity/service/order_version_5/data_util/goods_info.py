@@ -95,8 +95,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                 level_depth = round(float(level['depth']))
                 for goods in goods_level_array:
                     mch_code = goods['mch_goods_code']
-                    is_fitting = goods['is_fitting']
-                    rotate = goods['rotate']
                     if mch_code in ret:
                         for shelf_ins in ret[mch_code].shelf_inss:
                             if shelf_id == shelf_ins.shelf_id:
@@ -114,12 +112,12 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         # 获取商品属性
                         try:
                             cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                "select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                                     mch_id, mch_code))
                             # FIXME width,height暂时翻转
                             # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
                             (goods_id, goods_name, upc, tz_display_img, spec, volume, height, width, depth, is_superimpose,
-                             is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day) = cursor.fetchone()
+                             is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type) = cursor.fetchone()
                         except:
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue
@@ -230,7 +228,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                                                       start_sum,multiple,
                                                      stock = stock,
                                                      predict_sales = sales,
-                                                     supply_stock=supply_stock,old_sales = sales_nums,delivery_type=delivery_type,category1_id=category1_id,category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss,shop_name=shop_name,uc_shopid=uc_shopid)
+                                                     supply_stock=supply_stock,old_sales = sales_nums,delivery_type=delivery_type,category1_id=category1_id,category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss,shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type)
 
     cursor.close()
     cursor_dmstore.close()
@@ -241,7 +239,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
-                 stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,storage_day=None,shelf_inss=None,shop_name=None,ucshop_id =None):
+                 stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,storage_day=None,shelf_inss=None,shop_name=None,ucshop_id =None,package_type=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -254,6 +252,10 @@ class DataRawGoods():
         self.volume = volume
         self.width = width
         self.height = height
+        if package_type is None:
+            self.package_type = 0
+        else:
+            self.package_type = package_type
         if depth is None or depth == 0 :
             self.depth = 0.001
         else:
