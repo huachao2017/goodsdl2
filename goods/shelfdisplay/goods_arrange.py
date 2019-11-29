@@ -133,7 +133,7 @@ def _display_shelf(candidate_shelf):
                     if len(candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid]) > 2:
                         # 每个分类至少保留2个品
                         goods = candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid][-1]
-                        reduce_width += goods.width * goods.face_num
+                        reduce_width += goods.width * (goods.face_num + goods.add_face_num)
                         candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid] = \
                         candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid][:-1]
                         candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid].insert(0, goods)
@@ -155,7 +155,7 @@ def _display_shelf(candidate_shelf):
                 for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
                     if len(candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid]) > 0:  # 防止没有候选商品
                         goods = candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid][0]
-                        add_width += goods.width * goods.face_num
+                        add_width += goods.width * (goods.face_num + goods.add_face_num)
                         candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid].append(goods)
                         candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid] = candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid][1:]
                         if add_width > positive_addition_width:
@@ -248,11 +248,11 @@ def _solve_goods_face_in_display(need_width, categoryid_to_sorted_goods_list):
             if len(sorted_goods_list) > i:
                 # 每个类扩面一个商品
                 goods = sorted_goods_list[i]
-                if goods.face_num > 1:
-                    # 已经扩面的商品不再扩面
+                if goods.face_num >= 2 or goods.add_face_num >= 2:
+                    # 控制扩面量
                     continue
                 # 扩面一个商品
-                goods.face_num += 1
+                goods.add_face_num += 1
                 add_width += goods.width
                 if add_width > need_width:
                     # print("最终扩面宽度：{}".format(add_width))

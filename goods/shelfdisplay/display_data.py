@@ -377,7 +377,7 @@ class CandidateShelf:
 
             for goods in self.categoryid_to_used_sorted_goods_list[categoryid]:
                 goods_num += 1
-                goods_total_width += goods.width * goods.face_num
+                goods_total_width += goods.width * (goods.face_num + goods.add_face_num)
 
         self.goods_mean_width = goods_total_width / goods_num
 
@@ -502,12 +502,10 @@ class DisplayGoods:
         max_one_face = int(level.depth / self.goods_data.depth)
         if max_one_face == 0:
             max_one_face = 1
-        tmp_face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
-        if tmp_face_num > self.goods_data.face_num:
-            self.goods_data.face_num = tmp_face_num
+        self.goods_data.face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
 
     def get_width(self):
-        return self.goods_data.width * self.goods_data.face_num
+        return self.goods_data.width * (self.goods_data.face_num + self.goods_data.add_face_num)
 
     def get_height(self):
         return self.goods_data.height * self.goods_data.superimpose_num
@@ -530,7 +528,7 @@ class DisplayGoods:
             if self.goods_data.equal(display_goods.goods_data):
                 break
             init_left += display_goods.get_width()
-        for i in range(self.goods_data.face_num):
+        for i in range(self.goods_data.face_num+self.goods_data.add_face_num):
             for j in range(self.goods_data.superimpose_num):
                 col = i
                 row = j
