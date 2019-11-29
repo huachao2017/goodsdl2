@@ -81,6 +81,7 @@ class FreezerImage(models.Model):
 
 class FirstGoodsSelection(models.Model):
     shopid = models.IntegerField(db_index=True)
+    uc_shopid = models.IntegerField(default=806)
     batch_id = models.CharField(max_length=20)
     upc = models.CharField(max_length=20)
     name = models.CharField(max_length=50, default='')
@@ -94,6 +95,7 @@ class FirstGoodsSelection(models.Model):
 
 class GoodsSelectionHistory(models.Model):
     shopid = models.IntegerField(db_index=True)
+    uc_shopid = models.IntegerField(default=806)
     batch_id = models.CharField(max_length=20)
     upc = models.CharField(max_length=20)
     name = models.CharField(max_length=50, default='')
