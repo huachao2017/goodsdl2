@@ -2,6 +2,7 @@
 门店向二批补货  （1284 --> 1284）
 """
 from set_config import config
+import traceback
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from goods.sellgoods.salesquantity.proxy import order_rule
 from goods.sellgoods.salesquantity.service.order_version_4.data_util import cacul_util
@@ -35,6 +36,8 @@ def generate(shop_id = None):
                 str(sales_order_ins.supply_stock),str(sales_order_ins.storage_day),str(sales_order_ins.delivery_type),str(sales_order_ins.mch_goods_code)))
     except Exception as e:
         print("add order failed  e = {}".format(e))
+        traceback.print_exc()
+
         return None
     return sales_order_inss
 if __name__=='__main__':

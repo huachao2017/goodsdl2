@@ -4,6 +4,7 @@
 from set_config import config
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from goods.sellgoods.salesquantity.proxy import order_rule
+import traceback
 from goods.sellgoods.salesquantity.service.order_version_4.data_util import cacul_util
 shop_type = config.shellgoods_params['shop_types'][1]  # 二批
 def generate(shop_id = None):
@@ -43,6 +44,7 @@ def generate(shop_id = None):
         return sales_order_inss
     except Exception as e:
         print("day sales2 order faield ,e ={}".format(e))
+        traceback.print_exc()
         return None
 if __name__=='__main__':
     generate(1284)
