@@ -108,7 +108,7 @@ if __name__ == "__main__":
                             workflow.auto_display_status = 4
                             workflow.auto_display_calculate_time = 0
                             workflow.save()
-                            continue
+                            break
 
                         try:
                             start_choose_goods(workflow.batch_id, shopid)  # 计算中
