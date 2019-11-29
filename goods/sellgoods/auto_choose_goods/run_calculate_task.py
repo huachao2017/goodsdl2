@@ -2,7 +2,7 @@
 import pymysql
 import datetime
 import os,django,time,math,sys
-from goods.models import AllWorkFlowBatch
+# from goods.models import AllWorkFlowBatch
 from goods.util import SendEmail
 from goods.sellgoods.auto_choose_goods.haolinju_template import start_choose_goods
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
