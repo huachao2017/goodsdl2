@@ -11,7 +11,7 @@ from goods.sellgoods.salesquantity.local_util import erp_interface
 from set_config import config
 sql_workflow = "select id,batch_id,uc_shopid from goods_allworkflowbatch where type = {} and order_goods_status=1"
 update_sql_01 = "update goods_allworkflowbatch set order_goods_status=2 where id={}"  # 2是正在计算、3是计算结束
-update_sql_02 = "update goods_allworkflowbatch set order_goods_status={},select_goods_calculate_time={} where id={}"  # 2是正在计算、3是计算结束
+update_sql_02 = "update goods_allworkflowbatch set order_goods_status={},order_goods_calculate_time={} where id={}"  # 2是正在计算、3是计算结束
 insert_goods_batch_order = "insert into goods_batch_order (batch_order_id,order_data,create_time,update_time) values (%s,%s,%s,%s)"
 select_goods_batch_order = "select id,batch_order_id,order_data from goods_batch_order where batch_order_id='{}' "
 update_goods_batch_order = "update goods_batch_order set order_data = '{}',update_time='{}' where id = {}"
