@@ -300,8 +300,8 @@ class Taizhang:
                                 image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image[0:h, 0:w, :]
                         txt_point = (goods_display_info.left, shelf.height - (
                         goods_display_info.top + level_start_height - int(display_goods.goods_data.height / 2)))
-                        cv2.putText(image, '{}'.format(display_goods.goods_data.mch_code), txt_point,
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
+                        cv2.putText(image, '{}\n{}'.format(display_goods.get_one_face_max_display_num(),display_goods.goods_data.mch_code), txt_point,
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 2)
             cv2.imwrite(image_path, image)
         return image_name # FIXME 只能返回一个货架
 
@@ -501,6 +501,12 @@ class DisplayGoods:
 
     def get_height(self):
         return self.goods_data.height * self.goods_data.superimpose_num
+
+    def get_one_face_max_display_num(self, level):
+        max_one_face = int(level.depth / self.goods_data.depth)
+        if max_one_face == 0:
+            max_one_face = 1
+        return max_one_face
 
     def get_display_info(self, level):
         """
