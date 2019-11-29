@@ -44,7 +44,7 @@ def generate_workflow_displays(uc_shopid, batch_id):
 
 
 
-def generate_displays(uc_shopid, tz_id, batch_id = 0):
+def generate_displays(uc_shopid, tz_id, batch_id):
     """
     :param uc_shopid:
     :param tz_id:
@@ -54,7 +54,7 @@ def generate_displays(uc_shopid, tz_id, batch_id = 0):
     print("begin generate_displays:{},{},{}".format(uc_shopid, tz_id, batch_id))
 
     # 初始化基础数据
-    base_data = db_data.init_data(uc_shopid)
+    base_data = db_data.init_data(uc_shopid, batch_id)
 
     shelf_display_debug_model = ShelfDisplayDebug.objects.create(
         uc_shopid=uc_shopid,

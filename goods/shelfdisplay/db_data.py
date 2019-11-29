@@ -7,7 +7,7 @@ GoodsData
 """
 
 
-def init_data(uc_shopid):
+def init_data(uc_shopid, batch_id):
     base_data = BaseData()
     # 获取数据
     cursor = connections['ucenter'].cursor()
@@ -38,7 +38,7 @@ def init_data(uc_shopid):
         base_data.category3_level_value[one[0]] = one[1]
 
     # 获取选品数据
-    all_selection_goods = FirstGoodsSelection.objects.filter(shopid=shopid)
+    all_selection_goods = FirstGoodsSelection.objects.filter(shopid=shopid).filter(batch_id=batch_id)
 
     # 获取选品详细信息
     not_found_goods = 0
