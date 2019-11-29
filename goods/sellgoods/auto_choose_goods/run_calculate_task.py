@@ -6,8 +6,7 @@ from goods.models import AllWorkFlowBatch
 from goods.util import SendEmail
 from goods.sellgoods.auto_choose_goods.haolinju_template import start_choose_goods
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
+
 from django.db import connections
 
 
@@ -69,11 +68,10 @@ class Logger(object):
 
 
 
-
-
-
-
 if __name__ == "__main__":
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+    django.setup()
+
     path = os.path.abspath(os.path.dirname(__file__))
     type = sys.getfilesystemencoding()
     sys.stdout = Logger('/home/src/goodsdl2/logs/display.log')
