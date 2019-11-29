@@ -9,6 +9,7 @@ from goods.shelfdisplay import goods_arrange
 from goods.shelfdisplay import shelf_arrange
 import datetime
 import time
+import math
 
 
 
@@ -422,6 +423,8 @@ class Level:
         self.display_goods_list = []  # 陈列商品集合
 
     def display_goods(self, display_goods):
+        # 动态计算展示商品的排面
+        display_goods.calculate_face_num(self)
         if display_goods.get_width() + self.goods_width > self.candidate_shelf.shelf.width:
             # TODO 需要考虑拆分
             addition_width = display_goods.get_width() + self.goods_width - self.candidate_shelf.shelf.width
@@ -461,6 +464,19 @@ class DisplayGoods:
     def __init__(self, goods_data):
         self.goods_data = goods_data
 
+    def calculate_face_num(self, level):
+        """
+        扩面处理 n*psd/最大成列量（初始n默认为3）
+        :param level:
+        :return:
+        """
+        # FIXME 需要考虑叠放
+        # 计算商品的单face最大陈列量
+        max_one_face = int(level.depth / self.goods_data.depth)
+        if max_one_face == 0:
+            max_one_face = 1
+        self.goods_data.face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
+
     def get_width(self):
         return self.goods_data.width * self.goods_data.face_num
 
@@ -498,10 +514,10 @@ class DisplayOneGoodsInfo:
         self.left = left
 
 
-if __name__ == "__main__":
-    from goods.shelfdisplay import db_data
-
-    base_data = db_data.init_data(806)
-
-    taizhang = init_data(806, 1198, base_data)
-    print(taizhang.to_json())
+# if __name__ == "__main__":
+#     from goods.shelfdisplay import db_data
+#
+#     base_data = db_data.init_data(806)
+#
+#     taizhang = init_data(806, 1198, base_data)
+#     print(taizhang.to_json())

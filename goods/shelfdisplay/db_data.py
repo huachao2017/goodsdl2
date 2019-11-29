@@ -102,10 +102,12 @@ class GoodsData:
         self.width = width
         self.height = height
         self.depth = depth
+        if self.depth is None or self.depth == 0:
+            self.depth = self.width
         self.is_superimpose = is_superimpose  # 1可叠放，2不可叠放
         self.is_suspension = is_suspension  # 1可挂放，2不可挂放
         self.psd = psd  # 预测销量
-        self.face_num = 1 #在某个货架时填入 # FIXME 临时方案
+        self.face_num = 1 # 在某层陈列时填入
         self.superimpose_num = 1 #在商品初始化时填入
 
     def equal(self, another_goods):
