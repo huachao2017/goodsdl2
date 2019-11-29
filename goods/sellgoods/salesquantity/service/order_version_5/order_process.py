@@ -5,8 +5,8 @@ django.setup()
 from django.db import connections
 import time
 from goods.sellgoods.salesquantity.bean import taskflow
-from goods.sellgoods.salesquantity.service.order_version_4 import generate_order_2saler_first,generate_order_2saler_add,generate_order_2saler_add_day,generate_order_shop
-from goods.sellgoods.salesquantity.service.order_version_4.data_util import cacul_util
+from goods.sellgoods.salesquantity.service.order_version_5 import generate_order_2saler_first,generate_order_2saler_add,generate_order_2saler_add_day,generate_order_shop
+from goods.sellgoods.salesquantity.service.order_version_5.data_util import cacul_util
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from set_config import config
 sql_workflow = "select id,batch_id,uc_shopid from goods_allworkflowbatch where type = {} and order_goods_status=1"
@@ -159,6 +159,6 @@ def add_order_process():
                 cursor_ai.connection.commit()
                 # 把订单结果和批次结果 通知给摩售
                 shop_type = config.shellgoods_params['shop_types'][0]  # 门店
-                erp_interface.order_commit(dmstore_shopid,shop_type,sales_order_inss,batch_id=batch_id)
+                # erp_interface.order_commit(dmstore_shopid,shop_type,sales_order_inss,batch_id=batch_id)
     conn.close()
     conn_ucenter.close()
