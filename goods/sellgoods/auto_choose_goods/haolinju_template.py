@@ -211,7 +211,7 @@ def save_data(data,batch_id,uc_shopid):
 
     insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
-    delete_sql = "delete from goods_firstgoodsselection where shopid={} and batch_id !='1' and batch_id !='2'"
+    delete_sql = "delete from goods_firstgoodsselection where shopid={}"
 
     # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
 
@@ -226,7 +226,6 @@ def save_data(data,batch_id,uc_shopid):
         cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
         cursor.executemany(insert_sql_01.format(batch_id,uc_shopid), upc_tuple[:])
         cursor.executemany(insert_sql_02.format(batch_id,uc_shopid), upc_tuple[:])
-
         conn.commit()
         conn.close()
         print('ok')
@@ -283,7 +282,7 @@ def start_choose_goods(batch_id,uc_shopid,pos_shopid):
 
 
 if __name__ == '__main__':
-    start_choose_goods('a_001', 1204,None)
+    start_choose_goods('a_001', 1204, None)
 
 
 
