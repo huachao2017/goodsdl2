@@ -92,7 +92,7 @@ if __name__ == "__main__":
             for workflow in workflows:
                 for i in range(2):
                     try:
-                        workflow.auto_display_status = 2
+                        workflow.select_goods_status = 2
                         workflow.save()
                         begin_time = time.time()
                         shopid = None
@@ -105,8 +105,8 @@ if __name__ == "__main__":
                         except Exception as e:
                             print('选品时shopid转换时出现错误：{}'.format(e))
                             email.send_mail('选品出错', '选品时shopid转换时出现错误：{}'.format(e))
-                            workflow.auto_display_status = 4
-                            workflow.auto_display_calculate_time = 0
+                            workflow.select_goods_status = 4
+                            workflow.select_goods_calculate_time = 0
                             workflow.save()
                             break
 
@@ -115,14 +115,14 @@ if __name__ == "__main__":
                         except Exception as e:
                             print('选品过程中出现错误：{}'.format(e))
                             email.send_mail('选品出错', '选品过程中出现错误：{}'.format(e))
-                            workflow.auto_display_status = 4
-                            workflow.auto_display_calculate_time = 0
+                            workflow.select_goods_status = 4
+                            workflow.select_goods_calculate_time = 0
                             workflow.save()
                             continue
 
                         # 更新workflow
-                        workflow.auto_display_status = 3
-                        workflow.auto_display_calculate_time = math.ceil(time.time() - begin_time)
+                        workflow.select_goods_status = 3
+                        workflow.select_goods_calculate_time = math.ceil(time.time() - begin_time)
                         workflow.save()
                         break
                     except Exception as e:
@@ -130,7 +130,7 @@ if __name__ == "__main__":
                         email.send_mail('选品第{}次出错'.format(i+1),'选品第{}次出错：{}'.format(i+1,e))
                         # 更新workflow
                         workflow.auto_display_status = 4
-                        workflow.auto_display_calculate_time = 0
+                        workflow.select_goods_calculate_time = 0
                         workflow.save()
                         time.sleep(10)
                         continue
