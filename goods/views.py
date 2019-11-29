@@ -212,6 +212,7 @@ class BeginOrderGoods(APIView):
 
         except Exception as e:
             logger.error('BeginOrderGoods error:{}'.format(e))
+            raise e
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
         # TODO 开始订货
 
