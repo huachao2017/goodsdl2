@@ -111,7 +111,7 @@ def calculate_goods_up_datetime(uc_shopid):
     all_data = cursor.fetchall()
     data_list = []
     for data in all_data:
-        print(type(data[1]))
+        # print(type(data[1]))
         if data[1] == 1088:
             if not data[2].startswith('1142_20191106'):
                 continue
@@ -130,7 +130,7 @@ def calculate_goods_up_datetime(uc_shopid):
                     data_list.append((goods_upc,goods_name,goods_up_shelf_datetime))
 
     cursor_dmstore.executemany(insert_sql.format(uc_shopid), tuple(data_list))
-    # conn.commit()
+    conn_dmstore.commit()
 
 
 
