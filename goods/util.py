@@ -101,7 +101,7 @@ class SendEmail():
 def calculate_goods_up_datetime(uc_shopid):
     conn = connections['ucenter']
     cursor = conn.cursor()
-    conn_dmstore = connections['dmstore']
+    conn_dmstore = connections['default']
     cursor_dmstore = conn_dmstore.cursor()
     select_sql_01 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=3 and td.approval_status=1 and st.shop_id = {}".format(uc_shopid)
     select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(uc_shopid)
