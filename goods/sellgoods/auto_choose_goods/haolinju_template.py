@@ -209,22 +209,28 @@ def save_data(data,batch_id,uc_shopid):
     # batch_id = cursor.fetchone()[0]
     # print('batch_id',batch_id)
 
-    insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
+    # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     delete_sql = "delete from goods_firstgoodsselection where shopid={}"
+    delete_sql_02 = "delete from goods_goodsselectionhistory where shopid={} and batch_id='{}'"
 
-    # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
 
-    # for i in data:
-        # try:
-        # cursor.execute(update_sql.format(i[5],i[2]))
-        # conn.commit()
-        # time.sleep(0.5)
+    # 查询有该批次，没有的话，插入，有的话，先删再插入
+
+    select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={}"
+
+
 
     try:
         print('batch_id',batch_id)
-        cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
-        cursor.executemany(insert_sql_01.format(batch_id,uc_shopid), upc_tuple[:])
+        # cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
+        # cursor.executemany(insert_sql_01.format(batch_id,uc_shopid), upc_tuple[:])
+
+        cursor.execute(select_sql.format(uc_shopid))
+        history_batch_id = cursor.fetchone()[0]
+        if history_batch_id == batch_id:
+            cursor.execute(delete_sql_02.format(uc_shopid, history_batch_id))
+            print("删掉该批次之前的数据")
         cursor.executemany(insert_sql_02.format(batch_id,uc_shopid), upc_tuple[:])
         conn.commit()
         conn.close()
