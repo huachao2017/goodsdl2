@@ -497,11 +497,13 @@ class DisplayGoods:
         :param level:
         :return:
         """
-        # FIXME 需要考虑叠放
+        # 考虑叠放
+        if self.goods_data.is_superimpose == 1:
+            self.goods_data.superimpose_num = math.floor(level.candidate_shelf.shelf.average_level_height/self.goods_data.height)
         # 计算商品的单face最大陈列量
-        max_one_face = int(level.depth / self.goods_data.depth)
+        max_one_face = int(level.depth / self.goods_data.depth) * self.goods_data.superimpose_num
         if max_one_face == 0:
-            max_one_face = 1
+            max_one_face = self.goods_data.superimpose_num
         self.goods_data.face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
 
     def get_width(self):
