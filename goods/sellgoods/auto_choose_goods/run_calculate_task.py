@@ -100,7 +100,7 @@ if __name__ == "__main__":
                             ucenter_conn = connections['ucenter']
                             ucenter_cursor = ucenter_conn.cursor()
                             ucenter_cursor.execute(select_sql_shopid.format(workflow.uc_shopid))
-                            shopid = ucenter_cursor.fetchone()[0]
+                            pos_shopid = ucenter_cursor.fetchone()[0]
                             ucenter_conn.close()
                         except Exception as e:
                             print('选品时shopid转换时出现错误：{}'.format(e))
@@ -111,7 +111,7 @@ if __name__ == "__main__":
                             break
 
                         try:
-                            start_choose_goods(workflow.batch_id, shopid)  # 计算中
+                            start_choose_goods(workflow.batch_id, workflow.uc_shopid,pos_shopid)  # 计算中
                         except Exception as e:
                             print('选品过程中出现错误：{}'.format(e))
                             email.send_mail('选品出错', '选品过程中出现错误：{}'.format(e))

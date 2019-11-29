@@ -186,7 +186,7 @@ def check_order(data):
     print('third_order_checked:',len(result))
     return result
 
-def save_data(data,batch_id):
+def save_data(data,batch_id,uc_shopid):
     """
     选品结果存入数据库
     :param data:
@@ -202,7 +202,6 @@ def save_data(data,batch_id):
 
     # conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
     conn = connections['default']
-
     cursor = conn.cursor()
 
     # select_sql = "select batch_id from goods_firstgoodsselection where shopid={}"
@@ -210,8 +209,8 @@ def save_data(data,batch_id):
     # batch_id = cursor.fetchone()[0]
     # print('batch_id',batch_id)
 
-    insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}')"
-    insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}')"
+    insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
+    insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     delete_sql = "delete from goods_firstgoodsselection where shopid={} and batch_id !='1' and batch_id !='2'"
 
     # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
@@ -225,8 +224,8 @@ def save_data(data,batch_id):
     try:
         print('batch_id',batch_id)
         cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
-        cursor.executemany(insert_sql_01.format(batch_id), upc_tuple[:])
-        cursor.executemany(insert_sql_02.format(batch_id), upc_tuple[:])
+        cursor.executemany(insert_sql_01.format(batch_id,uc_shopid), upc_tuple[:])
+        cursor.executemany(insert_sql_02.format(batch_id,uc_shopid), upc_tuple[:])
 
         conn.commit()
         conn.close()
@@ -268,9 +267,9 @@ def second_choose(data):
     print(result_tuple)
     return result_tuple
 
-def start_choose_goods(batch_id,uc_shop_id):
-    a = get_data(uc_shop_id, '3598')
-    # print(a)
+def start_choose_goods(batch_id,uc_shopid,pos_shopid):
+    a = get_data(pos_shopid, '3598')
+    print("uc_shopid,pos_shopid",uc_shopid,pos_shopid)
     # a = storage_day_choose(a)
     b = choose_goods(a)
     # print(b)
@@ -279,7 +278,7 @@ def start_choose_goods(batch_id,uc_shop_id):
     # print(len(b))
     c = check_order(b)
     # print(c)
-    save_data(c,batch_id)
+    save_data(c,batch_id,uc_shopid)
 
 
 
