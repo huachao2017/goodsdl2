@@ -255,7 +255,7 @@ def _solve_goods_face_in_display(need_width, categoryid_to_sorted_goods_list):
                 goods.face_num += 1
                 add_width += goods.width
                 if add_width > need_width:
-                    print("最终扩面宽度：{}".format(add_width))
+                    # print("最终扩面宽度：{}".format(add_width))
                     return
 
 
