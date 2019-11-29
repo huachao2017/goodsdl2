@@ -45,9 +45,10 @@ def init_data(uc_shopid, tz_id, base_data):
         shelf_levels_option = json.loads(option)
         for one_level_option in shelf_levels_option:
             if 'floor_depth' in one_level_option:
-                level_depth_list.append(one_level_option['floor_depth'])
+                level_depth_list.append(int(one_level_option['floor_depth']))
     except:
         print('货架层信息不合法：{}！'.format(option))
+        level_depth_list = []
 
     # 计算五个值
     display_category3_list = third_cate_ids.split(',')
