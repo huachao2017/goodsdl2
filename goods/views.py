@@ -205,7 +205,6 @@ class BeginOrderGoods(APIView):
                 type = int(request.query_params['type'])
 
             if type == 0:
-                logger.info(request.query_params['type'])
                 workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
                 workflow.order_goods_status = 1
                 workflow.save()
