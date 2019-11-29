@@ -27,7 +27,6 @@ def first_order_process():
     cursor_ai.execute(sql_workflow.format(taskflow.first_order_type))
     first_flow_data = cursor_ai.fetchall()
     if first_flow_data is not None:
-
         for data in first_flow_data:
             try:
                 id = data[0]
@@ -64,6 +63,9 @@ def first_order_process():
             except Exception as e:
                 print ("process error , data="+str(data))
                 traceback.print_exc()
+                cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, 0,
+                                                       data[0]))  # 更新到“结束计算”和耗时多少
+                cursor_ai.connection.commit()
     conn.close()
     conn_ucenter.close()
 
@@ -121,6 +123,9 @@ def day_order_process():
             except Exception as e:
                 print ("data is error data="+str(data))
                 traceback.print_exc()
+                cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, 0,
+                                                       data[0]))  # 更新到“结束计算”和耗时多少
+                cursor_ai.connection.commit()
 
     conn.close()
     conn_ucenter.close()
@@ -173,6 +178,9 @@ def add_order_process():
                     shop_type = config.shellgoods_params['shop_types'][0]  # 门店
                     erp_interface.order_commit(dmstore_shopid,shop_type,sales_order_inss,batch_id=batch_id)
             except Exception as e:
+                cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, 0,
+                                                       data[0]))  # 更新到“结束计算”和耗时多少
+                cursor_ai.connection.commit()
                 print ("data is error!" +str(data))
                 traceback.print_exc()
     conn.close()
