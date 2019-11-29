@@ -180,7 +180,7 @@ def check_order(data):
     print('third_order_checked:',len(result))
     return result
 
-def save_data(data,batch_id,conn):
+def save_data(data,batch_id):
     """
     选品结果存入数据库
     :param data:
@@ -195,7 +195,7 @@ def save_data(data,batch_id,conn):
     # print(upc_tuple)
 
     # conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
-    # conn = connections['default']
+    conn = connections['default']
 
     cursor = conn.cursor()
 
@@ -206,7 +206,7 @@ def save_data(data,batch_id,conn):
 
     insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}')"
     insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}')"
-    delete_sql = "delete from goods_firstgoodsselection where shopid={} and batch_id !='{}'"
+    delete_sql = "delete from goods_firstgoodsselection where shopid={} and batch_id !='1' and batch_id !='2'"
 
     # update_sql = "update goods_firstgoodsselection set mch_goods_code={},mch_code=2 where upc={}"
 
@@ -218,9 +218,10 @@ def save_data(data,batch_id,conn):
 
     try:
         print('batch_id',batch_id)
-        cursor.executemany(insert_sql_01.format(batch_id), upc_tuple[:1])
-        cursor.executemany(insert_sql_02.format(batch_id), upc_tuple[:1])
-        # cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
+        cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
+        cursor.executemany(insert_sql_01.format(batch_id), upc_tuple[:])
+        cursor.executemany(insert_sql_02.format(batch_id), upc_tuple[:])
+
         conn.commit()
         print('ok')
     except:
@@ -260,7 +261,7 @@ def second_choose(data):
     print(result_tuple)
     return result_tuple
 
-def start_choose_goods(batch_id,uc_shop_id,conn):
+def start_choose_goods(batch_id,uc_shop_id):
     a = get_data(uc_shop_id, '3598')
     # print(a)
     # a = storage_day_choose(a)
@@ -271,7 +272,7 @@ def start_choose_goods(batch_id,uc_shop_id,conn):
     # print(len(b))
     c = check_order(b)
     # print(c)
-    save_data(c,batch_id,conn)
+    save_data(c,batch_id)
 
 
 

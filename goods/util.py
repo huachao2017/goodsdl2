@@ -1,5 +1,6 @@
 import os
-
+import smtplib
+from email.mime.text import MIMEText
 import numpy as np
 from PIL import Image as PILImage
 
@@ -42,6 +43,55 @@ def shelf_visualize(boxes, image_path):
     output_image.save(result_image_path)
     return result_image_name
 
+
+class SendEmail():
+    """
+    注意️：
+    只支持163和qq，需要登录邮箱开启smtp服务
+    passwd: 163的话是邮箱密码，qq的话是授权码
+    """
+
+    def __init__(self, mail_account, passwd, recv):
+        """
+        :param mail_account: 邮箱账号
+        :param passwd: 163的话是邮箱密码，qq的话是授权码
+        :param recv: 邮箱接收人地址，多个账号以逗号隔开
+
+        """
+        self.mail_account = mail_account
+        self.passwd = passwd
+        self.recv = recv
+        # self.title = title
+        # self.content = content
+        self.mail_host = mail_account.split('@')[1].split('.')[0]
+
+    def send_mail(self,title,content):
+        """
+        :param title: 邮件标题
+        :param content: 邮件内容
+        :return:
+        """
+
+        try:
+            msg = MIMEText(content)  # 邮件内容
+            msg['Subject'] = title  # 邮件主题
+            msg['From'] = self.mail_account  # 发送者账号
+            msg['To'] = self.recv  # 接收者账号列表
+            smtp = None
+            if self.mail_host == '163':
+                smtp = smtplib.SMTP('smtp.163.com', port=25)  # 连接邮箱，传入邮箱地址，和端口号，smtp的端口号是25
+            if self.mail_host == 'qq':
+                smtp = smtplib.SMTP_SSL('smtp.qq.com', port=465)
+            smtp.login(self.mail_account, self.passwd)  # 发送者的邮箱账号，密码
+            smtp.sendmail(self.mail_account, self.recv, msg.as_string())
+            # 参数分别是发送者，接收者，第三个是把上面的发送邮件的内容变成字符串
+            smtp.quit()  # 发送完毕后退出smtp
+            print('email send success.')
+        except:
+            print('email send error.')
+
+
+
 if __name__ == '__main__':
     """Test code: Uses the two specified"""
 
@@ -49,3 +99,14 @@ if __name__ == '__main__':
     image_path = 'c:/fastbox/1.jpg'
 
     shelf_visualize(boxes,image_path)
+
+    # email_user = 'wlgcxy2012@163.com'  # 发送者账号
+    # # email_user = '1027342194@qq.com'  # 发送者账号
+    # email_pwd = '2012wl'  # 发送者密码
+    # # email_pwd = 'rwpgeglecgribeei'  # 发送者密码
+    # maillist = '1027342194@qq.com'
+    # # maillist = 'wlgcxy2012@163.com'
+    # title = '测试邮件005'
+    # content = '这里是邮件内容'
+    # a = SendEmail(email_user, email_pwd, maillist)
+    # a.send_mail(title, content)

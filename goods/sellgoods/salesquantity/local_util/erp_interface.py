@@ -43,7 +43,7 @@ def order_clear(shop_id,erp_shop_type):
 
 
 
-def order_commit(shopid, erp_shop_type, shop_upc_ordersales):
+def order_commit(shopid, erp_shop_type, shop_upc_ordersales,batch_id=None):
 
     try:
         cursor_dmstore = connections['dmstore'].cursor()

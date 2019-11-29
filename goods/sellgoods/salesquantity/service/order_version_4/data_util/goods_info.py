@@ -26,7 +26,9 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
     # 获取台账系统的uc_shopid
     cursor.execute('select id, mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
     (uc_shopid, mch_id) = cursor.fetchone()
-
+    erp_shop_id = None
+    erp_supply_id = None
+    authorized_shop_id = None
     # 获取erp系统的erp_shopid
     try:
         cursor_dmstore.execute("select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
