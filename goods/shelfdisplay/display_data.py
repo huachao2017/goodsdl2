@@ -295,7 +295,7 @@ class Taizhang:
                                 else:
                                     image[0:point1[1] + h, point1[0]:point1[0] + w, :] = goods_image[-point1[1]:h, 0:w, :]
                             elif point2[0] > shelf.width:
-                                if point1[0] < shelf.width:
+                                if point1[0] > shelf.width:
                                     print('向右整体超出{}：{},{}'.format(shelf.width, point1, point2))
                                     continue
                                 # 右侧超出货架
