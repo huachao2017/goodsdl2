@@ -10,7 +10,7 @@ from goods.shelfdisplay import shelf_arrange
 import datetime
 import time
 import math
-
+import json
 
 
 def init_data(uc_shopid, tz_id, base_data):
@@ -37,9 +37,17 @@ def init_data(uc_shopid, tz_id, base_data):
         raise ValueError('taizhang error:{},{}'.format(uc_shopid, tz_id))
 
     cursor.execute(
-        "select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(
+        "select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance,option from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(
             shelf_id))
-    (shelf_no, length, height, depth, hole_height, hole_distance) = cursor.fetchone()
+    (shelf_no, length, height, depth, hole_height, hole_distance, option) = cursor.fetchone()
+    level_depth_list = []
+    try:
+        shelf_levels_option = json.loads(option)
+        for one_level_option in shelf_levels_option:
+            if 'floor_depth' in one_level_option:
+                level_depth_list.append(one_level_option['floor_depth'])
+    except:
+        print('货架层信息不合法：{}！'.format(option))
 
     # 计算五个值
     display_category3_list = third_cate_ids.split(',')
@@ -97,7 +105,7 @@ def init_data(uc_shopid, tz_id, base_data):
     shelf_category3_area_ratio = calculate_shelf_category3_area_ratio(shelf_category3_list, base_data.category_area_ratio)
 
     for i in range(count):
-        shelf = Shelf(shelf_id, shelf_no, length, height, depth,
+        shelf = Shelf(shelf_id, shelf_no, length, height, depth, level_depth_list,
                       shelf_category3_list,
                       shelf_category3_intimate_weight,
                       shelf_category3_level_value,
@@ -307,7 +315,7 @@ class Shelf:
 
     extra_add_num = 2  # 每类冗余数量
 
-    def __init__(self, shelf_id, type, width, height, depth,
+    def __init__(self, shelf_id, type, width, height, depth, level_depth_list,
                  shelf_category3_list,
                  shelf_category3_intimate_weight,
                  shelf_category3_level_value,
@@ -319,6 +327,9 @@ class Shelf:
         self.width = width
         self.height = height
         self.depth = depth
+
+        # 分析货架每层层板的深度
+        self.level_depth_list = level_depth_list
 
         self.shelf_category3_list = shelf_category3_list  # 货架指定分类列表
         self.shelf_category3_intimate_weight = shelf_category3_intimate_weight  # 货架分类涉及的亲密度分值
@@ -417,7 +428,13 @@ class Level:
         self.level_id = level_id  # 层id
         self.is_left_right_direction = is_left_right_direction  # True从左向右，False从右向左
         self.goods_width = 0   # 层宽度
-        self.depth = candidate_shelf.shelf.depth # FIXME 层深度需要计算
+        self.depth = candidate_shelf.shelf.depth
+        if len(candidate_shelf.shelf.level_depth_list) > 0:
+            # 用层板深度设值
+            if self.level_id < len(candidate_shelf.shelf.level_depth_list):
+                self.depth = candidate_shelf.shelf.level_depth_list[self.level_id]
+            else:
+                self.depth = candidate_shelf.shelf.level_depth_list[-1]
         self.start_height = start_height
         self.goods_height = 0 # 商品最高高度
         candidate_shelf.levels.append(self)
