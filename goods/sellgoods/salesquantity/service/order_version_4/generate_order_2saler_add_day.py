@@ -2,6 +2,7 @@
 二批向供货商日配订货  （1284 --> 好邻居）
 """
 from set_config import config
+import traceback
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from goods.sellgoods.salesquantity.proxy import order_rule
 from goods.sellgoods.salesquantity.service.order_version_4.data_util import cacul_util
@@ -46,6 +47,7 @@ def generate(shop_id = None):
         return sales_order_inss
     except Exception as e:
         print("day sales2 order faield ,e ={}".format(e))
+        traceback.print_exc()
         return None
 
 

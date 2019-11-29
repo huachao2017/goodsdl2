@@ -8,6 +8,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
 import math
 from django.db import connections
+import traceback
+
+
 def get_shop_order_goods(shopid, erp_shop_type=0):
     """
     获取商店的所有货架及货架上的商品信息，该方法在订货V3时用
@@ -46,6 +49,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
 
     except:
         print('找不到供应商:{}！'.format(shopid))
+        traceback.print_exc()
         authorized_shop_id = None
 
     # 获取台账 TODO 只能获取店相关的台账，不能获取商家相关的台账
@@ -62,6 +66,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
             (id,shelf_type_id) = cursor.fetchone()
         except:
             print ("台账找不到货架 ， shelf_id="+str(shelf_id))
+            traceback.print_exc()
 
         try:
             cursor.execute("select id,type_name from sf_shelf_type where id = {} ".format(shelf_type_id))
@@ -69,6 +74,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
             shelf_type = type_name
         except:
             print("台账找不到货架类型名称 ， shelf_type_id=" + str(shelf_type_id))
+            traceback.print_exc()
         display_shelf_info = taizhang[2]
         display_goods_info = taizhang[3]
         display_shelf_info = json.loads(display_shelf_info)

@@ -4,7 +4,7 @@
 from set_config import config
 from goods.sellgoods.salesquantity.proxy import order_rule
 from goods.sellgoods.salesquantity.service.order_version_4.data_util import cacul_util
-
+import traceback
 shop_type = config.shellgoods_params['shop_types'][1]  # 二批
 def generate(shop_id = None,order_type=None):
     try:
@@ -39,6 +39,7 @@ def generate(shop_id = None,order_type=None):
         return sales_order_inss
     except Exception as e:
         print ("not day sales2 order faield ,e ={}".format(e))
+        traceback.print_exc()
         return None
 
 if __name__=='__main__':
