@@ -7,7 +7,7 @@ GoodsData
 """
 
 
-def init_data(uc_shopid):
+def init_data(uc_shopid, batch_id):
     base_data = BaseData()
     # 获取数据
     cursor = connections['ucenter'].cursor()
@@ -38,7 +38,7 @@ def init_data(uc_shopid):
         base_data.category3_level_value[one[0]] = one[1]
 
     # 获取选品数据
-    all_selection_goods = FirstGoodsSelection.objects.filter(shopid=shopid)
+    all_selection_goods = FirstGoodsSelection.objects.filter(shopid=shopid).filter(batch_id=batch_id)
 
     # 获取选品详细信息
     not_found_goods = 0
@@ -102,10 +102,12 @@ class GoodsData:
         self.width = width
         self.height = height
         self.depth = depth
+        if self.depth is None or self.depth == 0:
+            self.depth = self.width
         self.is_superimpose = is_superimpose  # 1可叠放，2不可叠放
         self.is_suspension = is_suspension  # 1可挂放，2不可挂放
         self.psd = psd  # 预测销量
-        self.face_num = 1 #在某个货架时填入 # FIXME 临时方案
+        self.face_num = 1 # 在某层陈列时填入
         self.superimpose_num = 1 #在商品初始化时填入
 
     def equal(self, another_goods):

@@ -23,10 +23,7 @@ def goods_arrange(shelf):
     """
 
     # 一、准备工作
-    # 1、计算扩面
-    _solve_goods_face(shelf.depth, shelf.shelf_goods_data_list)
-    # 2、计算spu
-    # 3、每一个三级分类获得排序商品
+    # 每一个三级分类获得排序商品
     extra_add_num = 2  # FIXME 冗余数量怎么定，如果没有了呢？
     categoryid_to_sorted_goods_list = {}
 
@@ -134,7 +131,7 @@ def _display_shelf(candidate_shelf):
             for j in range(3):  # 每个品最多减三轮
                 for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
                     if len(candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid]) > 2:
-                        # 数量太少的不减
+                        # 每个分类至少保留2个品
                         goods = candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid][-1]
                         reduce_width += goods.width * goods.face_num
                         candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid] = \
@@ -145,6 +142,7 @@ def _display_shelf(candidate_shelf):
 
                 if reduce_width > addition_width:
                     break
+            # FIXME 如果减完还是太多，需要做再次处理：包括减少扩面和继续删分类的品到只有一个
         else:
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
@@ -234,30 +232,6 @@ def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
 
     return cur_level
 
-
-def _solve_goods_face(shelf_depth, goods_data_list):
-    """
-    扩面处理 n*psd/最大成列量（初始n默认为3）
-    :param shelf_depth:
-    :param goods_data_list:
-    :return:
-    """
-    # FIXME 层板深度问题处理怎么解决？
-    # TODO 需要考虑叠放
-    # FIXME 这个计算需要放到摆放时现算
-
-    total_width = 0
-    total_face_num = 0
-    for goods in goods_data_list:
-        max_one_face = int(shelf_depth / goods.depth)
-        if max_one_face == 0:
-            max_one_face = 1
-        goods.face_num = math.ceil(3 * goods.psd / max_one_face)
-        total_width += goods.width * goods.face_num
-        total_face_num += goods.face_num
-
-    # print("total_num,totol_width,total_face_num:{},{},{}".format(len(goods_data_list),total_width,total_face_num))
-    # input("按任意键继续：")
 
 def _solve_goods_face_in_display(need_width, categoryid_to_sorted_goods_list):
     """

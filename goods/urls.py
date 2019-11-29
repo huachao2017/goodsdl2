@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 
-from goods import views,views_shelf,views_shelf2,views_datav,views_sellgoods, views_display
+from goods import views,views_shelf,views_shelf2,views_sellgoods, views_display
 
 router = DefaultRouter()
 

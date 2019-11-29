@@ -14,13 +14,15 @@ def parse_arguments(argv):
     parser.add_argument('--shopid', type=int, help='ucenter shop id', default=806)
     parser.add_argument('--tzid', type=int,
                         help='taizhang id', default=1203)
+    parser.add_argument('--batchid', type=str,
+                        help='batch id', default='TEST_20191127064522')
     return parser.parse_args(argv)
 
 if __name__ == "__main__":
     args = parse_arguments(sys.argv[1:])
     # taizhang = generate_displays(806, 1187)
 
-    taizhang = generate_displays(args.shopid, args.tzid)
+    taizhang = generate_displays(args.shopid, args.tzid, args.batchid)
 
 
     # category_area_ratio: 分类陈列面积比例表

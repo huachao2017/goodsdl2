@@ -17,6 +17,7 @@ from goods.edge.contour_detect_3d import Contour_3d
 import urllib.request
 import urllib.parse
 import requests
+import traceback
 
 logger = logging.getLogger("django")
 from goods.freezer.keras_yolo3.yolo3 import yolo_freezer
@@ -170,6 +171,7 @@ class BeginSelectGoods(APIView):
             )
         except Exception as e:
             logger.error('BeginSelectGoods error:{}'.format(e))
+            traceback.print_exc()
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
         # TODO 开始选品
         return Response()
@@ -185,6 +187,7 @@ class BeginAutoDisplay(APIView):
             workflow.save()
         except Exception as e:
             logger.error('BeginAutoDisplay error:{}'.format(e))
+            traceback.print_exc()
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
 
         # TODO 开始陈列
@@ -202,7 +205,6 @@ class BeginOrderGoods(APIView):
                 type = int(request.query_params['type'])
 
             if type == 0:
-                logger.info(request.query_params['type'])
                 workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
                 workflow.order_goods_status = 1
                 workflow.save()
@@ -217,6 +219,7 @@ class BeginOrderGoods(APIView):
 
         except Exception as e:
             logger.error('BeginOrderGoods error:{}'.format(e))
+            traceback.print_exc()
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
         # TODO 开始订货
 

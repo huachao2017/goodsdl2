@@ -9,6 +9,7 @@ from goods.shelfdisplay import goods_arrange
 from goods.shelfdisplay import shelf_arrange
 import datetime
 import time
+import math
 
 
 
@@ -150,6 +151,7 @@ class Taizhang:
             levels:[{
                 level_id:xx   #0是底层,1,2,3,4...
                 height:xx
+                depth:xx
                 hole_num:xx
                 goods:[{
                     mch_goods_code:
@@ -202,6 +204,7 @@ class Taizhang:
                     json_level = {
                         "level_id": level.level_id,
                         "height": level_height,
+                        "depth": level.depth,
                         "goods": []
                     }
                     json_shelf["levels"].append(json_level)
@@ -299,7 +302,7 @@ class Shelf:
     bottom_height = 50  # 底层到地面的高度 # TODO 需考虑初始化
     level_board_height = 20  # 层板高度 # TODO 需考虑初始化
     level_buff_height = 30  # 层冗余高度 # TODO 需考虑初始化
-    last_level_min_remain_height = 50  # FIXME 最后一层最小剩余高度，有顶和没有顶需要区分
+    last_level_min_remain_height = 150  # FIXME 最后一层最小剩余高度，有顶和没有顶需要区分
     average_level_height = 250 # 平均高度，用于计算剩余货架宽度
 
     extra_add_num = 2  # 每类冗余数量
@@ -394,8 +397,10 @@ class CandidateShelf:
         if self.shelf.height - last_level.start_height < self.shelf.last_level_min_remain_height:
             # 超出层
             ret += last_level.goods_width
-            if last_level.start_height > self.shelf.height:
-                ret += self.shelf.width
+            # 只要有层超出就减掉整层宽度
+            for i in range(len(self.levels)-2, -1, -1):
+                if self.levels[i].start_height > self.shelf.height:
+                    ret += self.shelf.width
         else:
             ret -= self.shelf.width - last_level.goods_width
             # 货架高度剩余很多就加一个货架宽度
@@ -412,12 +417,15 @@ class Level:
         self.level_id = level_id  # 层id
         self.is_left_right_direction = is_left_right_direction  # True从左向右，False从右向左
         self.goods_width = 0   # 层宽度
+        self.depth = candidate_shelf.shelf.depth # FIXME 层深度需要计算
         self.start_height = start_height
         self.goods_height = 0 # 商品最高高度
         candidate_shelf.levels.append(self)
         self.display_goods_list = []  # 陈列商品集合
 
     def display_goods(self, display_goods):
+        # 动态计算展示商品的排面
+        display_goods.calculate_face_num(self)
         if display_goods.get_width() + self.goods_width > self.candidate_shelf.shelf.width:
             # TODO 需要考虑拆分
             addition_width = display_goods.get_width() + self.goods_width - self.candidate_shelf.shelf.width
@@ -457,6 +465,19 @@ class DisplayGoods:
     def __init__(self, goods_data):
         self.goods_data = goods_data
 
+    def calculate_face_num(self, level):
+        """
+        扩面处理 n*psd/最大成列量（初始n默认为3）
+        :param level:
+        :return:
+        """
+        # FIXME 需要考虑叠放
+        # 计算商品的单face最大陈列量
+        max_one_face = int(level.depth / self.goods_data.depth)
+        if max_one_face == 0:
+            max_one_face = 1
+        self.goods_data.face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
+
     def get_width(self):
         return self.goods_data.width * self.goods_data.face_num
 
@@ -494,10 +515,10 @@ class DisplayOneGoodsInfo:
         self.left = left
 
 
-if __name__ == "__main__":
-    from goods.shelfdisplay import db_data
-
-    base_data = db_data.init_data(806)
-
-    taizhang = init_data(806, 1198, base_data)
-    print(taizhang.to_json())
+# if __name__ == "__main__":
+#     from goods.shelfdisplay import db_data
+#
+#     base_data = db_data.init_data(806)
+#
+#     taizhang = init_data(806, 1198, base_data)
+#     print(taizhang.to_json())
