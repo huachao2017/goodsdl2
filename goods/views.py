@@ -197,6 +197,7 @@ class BeginOrderGoods(APIView):
             uc_shopid = int(request.query_params['ucshopid'])
             batch_id = request.query_params['batchid']
             if 'type' not in request.query_params['type'] or request.query_params['type'] == '0':
+                print(request.query_params['type'])
                 workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
                 workflow.order_goods_status = 1
                 workflow.save()
@@ -212,7 +213,6 @@ class BeginOrderGoods(APIView):
 
         except Exception as e:
             logger.error('BeginOrderGoods error:{}'.format(e))
-            raise e
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
         # TODO 开始订货
 
