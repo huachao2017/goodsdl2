@@ -8,11 +8,11 @@ from goods.sellgoods.salesquantity.service.order_version_4.data_util import cacu
 shop_type = config.shellgoods_params['shop_types'][0]  # 门店
 yinliao_cat_ids = config.shellgoods_params['yinliao_cat_ids'] # 饮料台账分类
 def generate(shop_id = None):
+    sales_order_inss = []
     try:
         print ("门店向二批补货,shop_id"+str(shop_id))
         if shop_id == None:
             return None
-        sales_order_inss = []
         result = cacul_util.data_process(shop_id,shop_type)
         print ("规则0 商品数："+str(len(result.keys())))
         for mch_code  in result:
@@ -36,5 +36,6 @@ def generate(shop_id = None):
     except Exception as e:
         print("add order failed  e = {}".format(e))
         return None
+    return sales_order_inss
 if __name__=='__main__':
     generate(1284)
