@@ -10,7 +10,7 @@ from goods.shelfdisplay import shelf_arrange
 import datetime
 import time
 import math
-
+import json
 
 
 def init_data(uc_shopid, tz_id, base_data):
@@ -37,9 +37,18 @@ def init_data(uc_shopid, tz_id, base_data):
         raise ValueError('taizhang error:{},{}'.format(uc_shopid, tz_id))
 
     cursor.execute(
-        "select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(
+        "select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance,s.option from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(
             shelf_id))
-    (shelf_no, length, height, depth, hole_height, hole_distance) = cursor.fetchone()
+    (shelf_no, length, height, depth, hole_height, hole_distance, option) = cursor.fetchone()
+    level_depth_list = []
+    try:
+        shelf_levels_option = json.loads(option)
+        for one_level_option in shelf_levels_option:
+            if 'floor_depth' in one_level_option:
+                level_depth_list.append(int(one_level_option['floor_depth']))
+    except:
+        print('货架层信息不合法：{}！'.format(option))
+        level_depth_list = []
 
     # 计算五个值
     display_category3_list = third_cate_ids.split(',')
@@ -97,7 +106,7 @@ def init_data(uc_shopid, tz_id, base_data):
     shelf_category3_area_ratio = calculate_shelf_category3_area_ratio(shelf_category3_list, base_data.category_area_ratio)
 
     for i in range(count):
-        shelf = Shelf(shelf_id, shelf_no, length, height, depth,
+        shelf = Shelf(shelf_id, shelf_no, length, height, depth, level_depth_list,
                       shelf_category3_list,
                       shelf_category3_intimate_weight,
                       shelf_category3_level_value,
@@ -277,21 +286,29 @@ class Taizhang:
                             h = goods_image.shape[0]
                             w = goods_image.shape[1]
                             if point1[1] < 0:
-                                print(point1)
-                                print(point2)
+                                if point2[1] < 0:
+                                    print('向上整体超出：{},{}'.format(point1,point2))
+                                    continue
                                 # 上部超出货架
-                                if point1[0] + w > shelf.width:
+                                if point2[0] > shelf.width:
                                     image[0:point1[1] + h, point1[0]:shelf.width, :] = goods_image[-point1[1]:h, 0:shelf.width-point1[0],:]
                                 else:
                                     image[0:point1[1] + h, point1[0]:point1[0] + w, :] = goods_image[-point1[1]:h, 0:w, :]
-                            elif point1[0] + w > shelf.width:
+                            elif point2[0] > shelf.width:
+                                if point1[0] < shelf.width:
+                                    print('向右整体超出{}：{},{}'.format(shelf.width, point1, point2))
+                                    continue
                                 # 右侧超出货架
                                 image[point1[1]:point1[1]+h, point1[0]:shelf.width,:] = goods_image[0:h, 0:shelf.width-point1[0], :]
                             else:
                                 image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image[0:h, 0:w, :]
-                        txt_point = (goods_display_info.left, shelf.height - (
+                        data_point = (goods_display_info.left, shelf.height - (
+                        goods_display_info.top + level_start_height - 10))
+                        cv2.putText(image, '{}'.format(display_goods.get_one_face_max_display_num(level)), data_point,
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
+                        code_txt_point = (goods_display_info.left, shelf.height - (
                         goods_display_info.top + level_start_height - int(display_goods.goods_data.height / 2)))
-                        cv2.putText(image, '{}'.format(display_goods.goods_data.mch_code), txt_point,
+                        cv2.putText(image, '{}'.format(display_goods.goods_data.mch_code), code_txt_point,
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
             cv2.imwrite(image_path, image)
         return image_name # FIXME 只能返回一个货架
@@ -307,7 +324,7 @@ class Shelf:
 
     extra_add_num = 2  # 每类冗余数量
 
-    def __init__(self, shelf_id, type, width, height, depth,
+    def __init__(self, shelf_id, type, width, height, depth, level_depth_list,
                  shelf_category3_list,
                  shelf_category3_intimate_weight,
                  shelf_category3_level_value,
@@ -319,6 +336,9 @@ class Shelf:
         self.width = width
         self.height = height
         self.depth = depth
+
+        # 分析货架每层层板的深度
+        self.level_depth_list = level_depth_list
 
         self.shelf_category3_list = shelf_category3_list  # 货架指定分类列表
         self.shelf_category3_intimate_weight = shelf_category3_intimate_weight  # 货架分类涉及的亲密度分值
@@ -417,7 +437,13 @@ class Level:
         self.level_id = level_id  # 层id
         self.is_left_right_direction = is_left_right_direction  # True从左向右，False从右向左
         self.goods_width = 0   # 层宽度
-        self.depth = candidate_shelf.shelf.depth # FIXME 层深度需要计算
+        self.depth = candidate_shelf.shelf.depth
+        if len(candidate_shelf.shelf.level_depth_list) > 0:
+            # 用层板深度设值
+            if self.level_id < len(candidate_shelf.shelf.level_depth_list):
+                self.depth = candidate_shelf.shelf.level_depth_list[self.level_id]
+            else:
+                self.depth = candidate_shelf.shelf.level_depth_list[-1]
         self.start_height = start_height
         self.goods_height = 0 # 商品最高高度
         candidate_shelf.levels.append(self)
@@ -476,13 +502,21 @@ class DisplayGoods:
         max_one_face = int(level.depth / self.goods_data.depth)
         if max_one_face == 0:
             max_one_face = 1
-        self.goods_data.face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
+        tmp_face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
+        if tmp_face_num > self.goods_data.face_num:
+            self.goods_data.face_num = tmp_face_num
 
     def get_width(self):
         return self.goods_data.width * self.goods_data.face_num
 
     def get_height(self):
         return self.goods_data.height * self.goods_data.superimpose_num
+
+    def get_one_face_max_display_num(self, level):
+        max_one_face = int(level.depth / self.goods_data.depth)
+        if max_one_face == 0:
+            max_one_face = 1
+        return max_one_face
 
     def get_display_info(self, level):
         """
