@@ -37,7 +37,7 @@ def init_data(uc_shopid, tz_id, base_data):
         raise ValueError('taizhang error:{},{}'.format(uc_shopid, tz_id))
 
     cursor.execute(
-        "select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance,option from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(
+        "select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance,s.option from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(
             shelf_id))
     (shelf_no, length, height, depth, hole_height, hole_distance, option) = cursor.fetchone()
     level_depth_list = []
