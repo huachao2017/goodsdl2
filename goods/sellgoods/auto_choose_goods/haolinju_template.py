@@ -217,7 +217,7 @@ def save_data(data,batch_id,uc_shopid):
 
     # 查询有该批次，没有的话，插入，有的话，先删再插入
 
-    select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={}"
+    select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
 
 
 
@@ -226,11 +226,10 @@ def save_data(data,batch_id,uc_shopid):
         # cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
         # cursor.executemany(insert_sql_01.format(batch_id,uc_shopid), upc_tuple[:])
 
-        cursor.execute(select_sql.format(uc_shopid))
-        history_batch_id = cursor.fetchone()[0]
-        print('history_batch_id', history_batch_id,type(history_batch_id))
-        if history_batch_id == batch_id:
-            cursor.execute(delete_sql_02.format(uc_shopid, history_batch_id))
+        cursor.execute(select_sql.format(uc_shopid,batch_id))
+        # print('history_batch_id', history_batch_id,type(history_batch_id))
+        if cursor.fetchone():
+            cursor.execute(delete_sql_02.format(uc_shopid, batch_id))
             print("删掉该批次之前的数据")
         cursor.executemany(insert_sql_02.format(batch_id,uc_shopid), upc_tuple[:])
         conn.commit()
