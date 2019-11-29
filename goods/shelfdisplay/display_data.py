@@ -298,10 +298,14 @@ class Taizhang:
                                 image[point1[1]:point1[1]+h, point1[0]:shelf.width,:] = goods_image[0:h, 0:shelf.width-point1[0], :]
                             else:
                                 image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image[0:h, 0:w, :]
-                        txt_point = (goods_display_info.left, shelf.height - (
+                        data_point = (goods_display_info.left, shelf.height - (
+                        goods_display_info.top + level_start_height - 10))
+                        cv2.putText(image, '{}'.format(display_goods.get_one_face_max_display_num(level)), data_point,
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
+                        code_txt_point = (goods_display_info.left, shelf.height - (
                         goods_display_info.top + level_start_height - int(display_goods.goods_data.height / 2)))
-                        cv2.putText(image, '{}\n{}'.format(display_goods.get_one_face_max_display_num(level),display_goods.goods_data.mch_code), txt_point,
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 2)
+                        cv2.putText(image, '{}'.format(display_goods.goods_data.mch_code), code_txt_point,
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
             cv2.imwrite(image_path, image)
         return image_name # FIXME 只能返回一个货架
 
