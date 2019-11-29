@@ -204,7 +204,7 @@ class Taizhang:
                     json_level = {
                         "level_id": level.level_id,
                         "height": level_height,
-                        "depth": shelf.depth,
+                        "depth": level.depth,
                         "goods": []
                     }
                     json_shelf["levels"].append(json_level)
@@ -417,6 +417,7 @@ class Level:
         self.level_id = level_id  # 层id
         self.is_left_right_direction = is_left_right_direction  # True从左向右，False从右向左
         self.goods_width = 0   # 层宽度
+        self.depth = candidate_shelf.shelf.depth # FIXME 层深度需要计算
         self.start_height = start_height
         self.goods_height = 0 # 商品最高高度
         candidate_shelf.levels.append(self)
