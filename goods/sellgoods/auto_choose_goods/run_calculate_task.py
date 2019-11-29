@@ -105,6 +105,9 @@ if __name__ == "__main__":
                         except Exception as e:
                             print('选品时shopid转换时出现错误：{}'.format(e))
                             email.send_mail('选品出错', '选品时shopid转换时出现错误：{}'.format(e))
+                            workflow.auto_display_status = 4
+                            workflow.auto_display_calculate_time = 0
+                            workflow.save()
                             continue
 
                         try:
@@ -112,6 +115,9 @@ if __name__ == "__main__":
                         except Exception as e:
                             print('选品过程中出现错误：{}'.format(e))
                             email.send_mail('选品出错', '选品过程中出现错误：{}'.format(e))
+                            workflow.auto_display_status = 4
+                            workflow.auto_display_calculate_time = 0
+                            workflow.save()
                             continue
 
                         # 更新workflow
