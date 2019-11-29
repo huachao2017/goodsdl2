@@ -502,7 +502,9 @@ class DisplayGoods:
         max_one_face = int(level.depth / self.goods_data.depth)
         if max_one_face == 0:
             max_one_face = 1
-        self.goods_data.face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
+        tmp_face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
+        if tmp_face_num > self.goods_data.face_num:
+            self.goods_data.face_num = tmp_face_num
 
     def get_width(self):
         return self.goods_data.width * self.goods_data.face_num
