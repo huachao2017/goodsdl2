@@ -196,10 +196,11 @@ class BeginOrderGoods(APIView):
         try:
             uc_shopid = int(request.query_params['ucshopid'])
             batch_id = request.query_params['batchid']
-            if 'type' not in request.query_params['type']:
+            if 'type' not in request.query_params:
                 type = 0
             else:
                 type = int(request.query_params['type'])
+
             if type == 0:
                 logger.info(request.query_params['type'])
                 workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
