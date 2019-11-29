@@ -62,11 +62,11 @@ if __name__ == '__main__':
                         conn.commit()
                         conn.close()
                         continue
-                conn = connections['default']
-                cursor = conn.cursor()
-                cursor.execute(update_sql_02.format(math.ceil(time.time() - start_time),data[0]))  # 更新到“结束计算”和耗时多少
-                conn.commit()
-                conn.close()
+                    conn = connections['default']
+                    cursor = conn.cursor()
+                    cursor.execute(update_sql_02.format(math.ceil(time.time() - start_time),data[0]))  # 更新到“结束计算”和耗时多少
+                    conn.commit()
+                    conn.close()
         except Exception as e:
             print('守护进程出现错误：{}'.format(e))
             email.send_mail('选品出错', '守护进程出现错误：{}'.format(e))
