@@ -56,8 +56,7 @@ class SendEmail():
         :param mail_account: 邮箱账号
         :param passwd: 163的话是邮箱密码，qq的话是授权码
         :param recv: 邮箱接收人地址，多个账号以逗号隔开
-        :param title: 邮件标题
-        :param content: 邮件内容
+
         """
         self.mail_account = mail_account
         self.passwd = passwd
@@ -67,6 +66,11 @@ class SendEmail():
         self.mail_host = mail_account.split('@')[1].split('.')[0]
 
     def send_mail(self,title,content):
+        """
+        :param title: 邮件标题
+        :param content: 邮件内容
+        :return:
+        """
 
         try:
             msg = MIMEText(content)  # 邮件内容
