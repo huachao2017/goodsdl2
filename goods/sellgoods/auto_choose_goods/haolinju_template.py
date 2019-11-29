@@ -37,13 +37,16 @@ def get_data(target,template_shop_id,days=28):
     # sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '2019-10-14 00:00:00' and p.create_time < '2019-10-17 00:00:00' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
     sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
     # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
-    # cursor = conn.cursor()
 
-    cursor = connections['dmstore'].cursor()
+    conn = connections['dmstore']
+    cursor = conn.cursor()
+
+
 
     cursor.execute(sql.format(week_ago,now_date,template_shop_id))
     results = cursor.fetchall()
     cursor.close()
+    conn.close()
     # print(results)
 
 
@@ -223,6 +226,7 @@ def save_data(data,batch_id):
         cursor.executemany(insert_sql_02.format(batch_id), upc_tuple[:])
 
         conn.commit()
+        conn.close()
         print('ok')
     except:
         # 如果发生错误则回滚
