@@ -377,7 +377,7 @@ class CandidateShelf:
 
             for goods in self.categoryid_to_used_sorted_goods_list[categoryid]:
                 goods_num += 1
-                goods_total_width += goods.width * goods.face_num
+                goods_total_width += goods.width * (goods.face_num + goods.add_face_num)
 
         self.goods_mean_width = goods_total_width / goods_num
 
@@ -424,7 +424,7 @@ class CandidateShelf:
         else:
             ret -= self.shelf.width - last_level.goods_width
             # 货架高度剩余很多就加一个货架宽度
-            if (self.shelf.height - last_level.start_height) > last_level.goods_height + self.shelf.level_buff_height + self.shelf.level_board_height + self.shelf.average_level_height:
+            if (self.shelf.height - last_level.start_height) > last_level.goods_height + self.shelf.level_buff_height + self.shelf.level_board_height + self.shelf.last_level_min_remain_height:
                 ret -= self.shelf.width
             # 空缺宽度
 
@@ -497,17 +497,19 @@ class DisplayGoods:
         :param level:
         :return:
         """
-        # FIXME 需要考虑叠放
+        # 考虑叠放
+        if self.goods_data.is_superimpose == 1:
+            self.goods_data.superimpose_num = math.floor(level.candidate_shelf.shelf.average_level_height/self.goods_data.height)
+            if self.goods_data.superimpose_num > 4:
+                self.goods_data.superimpose_num = 4
         # 计算商品的单face最大陈列量
-        max_one_face = int(level.depth / self.goods_data.depth)
+        max_one_face = int(level.depth / self.goods_data.depth) * self.goods_data.superimpose_num
         if max_one_face == 0:
-            max_one_face = 1
-        tmp_face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
-        if tmp_face_num > self.goods_data.face_num:
-            self.goods_data.face_num = tmp_face_num
+            max_one_face = self.goods_data.superimpose_num
+        self.goods_data.face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
 
     def get_width(self):
-        return self.goods_data.width * self.goods_data.face_num
+        return self.goods_data.width * (self.goods_data.face_num + self.goods_data.add_face_num)
 
     def get_height(self):
         return self.goods_data.height * self.goods_data.superimpose_num
@@ -530,7 +532,7 @@ class DisplayGoods:
             if self.goods_data.equal(display_goods.goods_data):
                 break
             init_left += display_goods.get_width()
-        for i in range(self.goods_data.face_num):
+        for i in range(self.goods_data.face_num+self.goods_data.add_face_num):
             for j in range(self.goods_data.superimpose_num):
                 col = i
                 row = j
