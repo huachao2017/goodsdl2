@@ -112,7 +112,7 @@ def calculate_goods_up_datetime(uc_shopid):
     cursor_ai = conn_ai.cursor()
     # 当前的台账
     select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(uc_shopid)
-    insert_sql = "insert into goods_up_shelf_datetime(upc,shopid,name,up_shelf_date,is_new_goods) values (%s,{},%s,%s,1)"
+    insert_sql = "insert into goods_up_shelf_datetime(upc,shopid,name,up_shelf_date,is_new_goods,taizhang_batch_no) values (%s,{},%s,%s,1,%s)"
     select_sql_03 = "select upc,taizhang_batch_no from goods_up_shelf_datetime where shopid={}"
     delete_sql = "delete from goods_up_shelf_datetime where shopid={} and upc in {}"
 
@@ -142,7 +142,7 @@ def calculate_goods_up_datetime(uc_shopid):
                     goods_name = goods['name']
                     goods_up_shelf_datetime = data[2].split('_')[1]
                     if not goods_upc in history_upc_dict:      # 如果不在历史里，则作为新的插入
-                        insert_data_list.append((goods_upc,goods_name,goods_up_shelf_datetime))
+                        insert_data_list.append((goods_upc,goods_name,goods_up_shelf_datetime,data[2]))
                     else:
                         if data[2] != history_upc_dict[goods_upc]:     # 如果批次不相等，则是新的台账，品也相同，所以is_new_goods置为0
                             cursor_ai.execute("update goods_up_shelf_datetime set is_new_goods=0 where shopid={} and upc='{}'".format(uc_shopid,goods_upc))
