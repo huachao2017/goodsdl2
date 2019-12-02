@@ -87,7 +87,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
             goods_array_dict[goods_info['shelfId']] = goods_info['layerArray']
 
         for shelfId in shelf_dict.keys():
-            cursor_dmstore1 = connections['dmstore'].cursor()
             level_array = shelf_dict[shelfId]
             goods_array = goods_array_dict[shelfId]
             for i in range(len(level_array)):
@@ -125,30 +124,20 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
 
                         # 获取分类码
                         try:
-                            cursor_dmstore1.execute(
+                            cursor_dmstore.execute(
                                 "select corp_classify_code from goods where upc = '{}' and corp_goods_id={}".format(upc,
                                                                                                                     mch_code))
-                            (corp_classify_code, ) = cursor_dmstore1.fetchone()
+                            (corp_classify_code, ) = cursor_dmstore.fetchone()
                         except:
                             print('dmstore找不到商品:{}-{}！'.format(upc, mch_code))
                             corp_classify_code = None
 
-                        # 获取库存
-                        try:
-                            cursor_dmstore1.execute(
-                                "select stock,purchase_price from shop_goods where shop_id={} and upc='{}' order by modify_time desc".format(shopid, upc))
-                            (stock,purchase_price) = cursor_dmstore1.fetchone()
-                        except:
-                            print('dmstore找不到商店商品 stock 和 进货价获取失败:{}-{}！'.format(shopid, upc))
-                            stock = 0
-                            purchase_price = 1
-
                         #  获取最近一周的平均销量
                         try:
-                                cursor_dmstore1.execute(
-                                    "select id,price FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                cursor_dmstore.execute(
+                                    "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
                                         upc, shopid))
-                                (id,upc_price) = cursor_dmstore1.fetchone()
+                                (id,upc_price,purchase_price,stock) = cursor_dmstore.fetchone()
                                 # 销量
                                 sales_sql = "SELECT sum(number) as nums FROM payment_detail " \
                                             "WHERE shop_id = {} and shop_goods_id = {} and number > 0 and create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
@@ -158,10 +147,10 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                     start_date = str(
                                         (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                                             days=-7)).strftime("%Y-%m-%d"))
-                                    cursor_dmstore1.execute(
+                                    cursor_dmstore.execute(
                                         sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
                                     # print ([str(shopid), str(id), str(start_date), str(end_date), str(start_date), str(end_date)])
-                                    (sales_nums,) = cursor_dmstore1.fetchone()
+                                    (sales_nums,) = cursor_dmstore.fetchone()
 
                                 elif  delivery_type == 1: # 日配
                                     end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
@@ -169,19 +158,22 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                         (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                                             days=-7)).strftime("%Y-%m-%d"))
 
-                                    cursor_dmstore1.execute(
+                                    cursor_dmstore.execute(
                                         sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
                                     # print ([str(shopid), str(id), str(start_date), str(end_date), str(start_date), str(end_date)])
-                                    (sales_nums,) = cursor_dmstore1.fetchone()
+                                    (sales_nums,) = cursor_dmstore.fetchone()
                                 else:
                                     print("%s delivery_type is error , goods_name=%s,upc=%s" % (
                                     str(delivery_type), str(goods_name),
                                     str(upc)))
                                     sales_nums = 0
-
                         except:
                             print('dmstore找不到计算销量商店商品:{}-{}-{}！'.format(shopid, upc,goods_name))
                             sales_nums = 0
+                            stock = 0
+                            purchase_price = 1
+                            purchase_price = 1
+
 
                         if authorized_shop_id is not None:
                             try:
@@ -270,7 +262,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      up_shelf_date = up_shelf_date,up_status = up_status,sub_count=sub_count,upc_price=upc_price,
                                                      upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1,
                                                      )
-            cursor_dmstore1.close()
+
     cursor.close()
     cursor_dmstore.close()
     cursor_erp.close()
