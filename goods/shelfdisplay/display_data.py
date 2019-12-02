@@ -81,10 +81,14 @@ def init_data(uc_shopid, tz_id, base_data):
                 category3_to_category3_obj[cat_id] = Category3(cat_id, name, pid, average_height)
 
     # 根据商品筛选三级分类 FIXME 三级分类目前一定是超量的
-    print('总共获取的候选陈列商品: ')
+    print('总共获取的候选陈列商品: {}'.format(len(shelf_goods_data_list)))
     print(shelf_category3_to_goods_cnt)
+
     if len(shelf_goods_data_list) == 0:
         raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
+    for goods_data in shelf_goods_data_list:
+        print(goods_data)
+
     shelf_category3_list = shelf_category3_to_goods_cnt.keys()
 
     shelf_category3_intimate_weight = {}

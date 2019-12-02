@@ -27,7 +27,7 @@ def goods_arrange(goods_list):
     # 只做从低到高的，生成解的时候都有一个从高到低的解
     root_goods_tree.sort_height()
     root_goods_tree.calculate_result()
-    print(root_goods_tree)
+    # print(root_goods_tree)
 
     # 3，生成解列表
     ret = root_goods_tree.get_all_simple_result()
@@ -138,6 +138,7 @@ class GoodsTree:
                     height += h
                     width += w
                 if child.type == 4:
+                    # FIXME 叠放没有做高度排序
                     height += child.height
                     width += child.width
 
