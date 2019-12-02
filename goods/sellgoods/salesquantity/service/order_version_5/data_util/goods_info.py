@@ -214,6 +214,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             cursor_erp.execute(
                                 "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
                                     erp_supply_id, upc))
+                            print (str(erp_supply_id)+","+str(upc))
                             (sku_id,prod_id) = cursor_erp.fetchone()
                             cursor_erp.execute(
                                 "select sum(item.sub_item_count) as sub_count from ls_sub_item item LEFT JOIN ls_sub sub ON  item.sub_number=sub.sub_number where sub.buyer_shop_id= {} AND sub.status=50 and item.prod_id = {}".format(
