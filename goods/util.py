@@ -146,6 +146,7 @@ def calculate_goods_up_datetime(uc_shopid):
                     goods_up_shelf_datetime = data[2].split('_')[1]
                     if not goods_upc in history_upc_list:
                         insert_data_list.append((goods_upc,goods_name,goods_up_shelf_datetime))
+    print('insert_data_list:',insert_data_list)
     cursor_ai.executemany(insert_sql.format(uc_shopid), tuple(insert_data_list))
     conn_ai.commit()
     print("上架时间插入成功")
@@ -154,6 +155,7 @@ def calculate_goods_up_datetime(uc_shopid):
     for upc in history_upc_list:
         if not upc in new_upc_list:
             delete_data_list.append(upc)
+    print('delete_data_list:',delete_data_list)
     cursor_ai.execute(delete_sql.format(uc_shopid,tuple(delete_data_list)))
     conn_ai.commit()
     print("下架商品删除成功")
