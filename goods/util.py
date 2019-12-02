@@ -171,10 +171,7 @@ def calculate_goods_up_datetime_first(uc_shopid):
     cursor_ai = conn_ai.cursor()
     # 已完成的台账
     select_sql_01 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=3 and td.approval_status=1 and st.shop_id = {}".format(uc_shopid)
-    # 当前的台账
-    select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(
-        uc_shopid)
-    insert_sql = "insert into goods_up_shelf_datetime(upc,shopid,name,up_shelf_date) values (%s,{},%s,%s)"
+    insert_sql = "insert into goods_up_shelf_datetime(upc,shopid,name,up_shelf_date,taizhang_batch_no) values (%s,{},%s,%s,%s)"
     select_sql_03 = "select upc from goods_up_shelf_datetime where shopid={}"
     delete_sql = "delete from goods_up_shelf_datetime where shopid={} and upc in {}"
 
@@ -182,11 +179,8 @@ def calculate_goods_up_datetime_first(uc_shopid):
     all_data = cursor.fetchall()
 
     cursor_ai.execute(select_sql_03.format(uc_shopid))
-    history_data = cursor_ai.fetchall()
 
-    history_upc_list = [i[0] for i in history_data]
 
-    # 0、把旧的台账里的商品的is_new_goods的状态置为0
 
     # 1、遍历新的台账，如果某个商品在所有历史的商品里，则不做操作；如果没在，则插入
     insert_data_list = []
@@ -210,7 +204,7 @@ def calculate_goods_up_datetime_first(uc_shopid):
                     new_upc_list.append(goods_upc)
                     goods_name = goods['name']
                     goods_up_shelf_datetime = data[2].split('_')[1]
-                    insert_data_list.append((goods_upc, goods_name, goods_up_shelf_datetime))
+                    insert_data_list.append((goods_upc, goods_name, goods_up_shelf_datetime,data[2]))
     print('insert_data_list:', insert_data_list)
     cursor_ai.executemany(insert_sql.format(uc_shopid), tuple(insert_data_list))
     conn_ai.commit()
@@ -271,8 +265,8 @@ if __name__ == '__main__':
     # a = SendEmail(email_user, email_pwd, maillist)
     # a.send_mail(title, content)
 
-    calculate_goods_up_datetime(806)
-
-    # calculate_goods_up_datetime_first(806)
+    # calculate_goods_up_datetime(806)
+    #
+    calculate_goods_up_datetime_first(806)
 
     # print(select_psd_data('6921581540102',1284,28))
