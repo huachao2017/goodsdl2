@@ -227,7 +227,9 @@ class Taizhang:
                             "displays": []
                         }
                         json_level["goods"].append(json_goods)
+                        num = 0
                         for goods_display_info in display_goods.get_display_info(level):
+                            num += 1
                             json_display = {
                                 "top": goods_display_info.top,
                                 "left": goods_display_info.left,
@@ -235,6 +237,8 @@ class Taizhang:
                                 "col": goods_display_info.col,
                             }
                             json_goods["displays"].append(json_display)
+
+                        json_goods["max_display_num"] = display_goods.get_one_face_max_display_num(level) * num
 
                     last_level = level
         return json_ret
@@ -506,7 +510,7 @@ class DisplayGoods:
                 self.goods_data.superimpose_num = 1
         # 计算商品的单face最大陈列量
         max_one_face = self.get_one_face_max_display_num(level)
-        self.goods_data.face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
+        self.goods_data.face_num = math.ceil(3 * self.goods_data.psd / max_one_face / self.goods_data.superimpose_num)
 
     def get_width(self):
         return self.goods_data.width * (self.goods_data.face_num + self.goods_data.add_face_num)
@@ -515,10 +519,10 @@ class DisplayGoods:
         return self.goods_data.height * self.goods_data.superimpose_num
 
     def get_one_face_max_display_num(self, level):
-        max_one_face = int(level.depth / self.goods_data.depth) * self.goods_data.superimpose_num
+        max_one_face = int(level.depth / self.goods_data.depth)
         if max_one_face <= 0:
             print('商品深度越界：{}，{}'.format(self.goods_data.depth, level.depth))
-            max_one_face = self.goods_data.superimpose_num
+            max_one_face = 1
         return max_one_face
 
     def get_display_info(self, level):
