@@ -267,7 +267,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss,
                                                      shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type,dmstore_shopid=shopid,
                                                      up_shelf_date = up_shelf_date,up_status = up_status,sub_count=sub_count,upc_price=upc_price,
-                                                     upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1)
+                                                     upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1,
+                                                     )
 
     cursor.close()
     cursor_dmstore.close()
@@ -279,13 +280,13 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
                  stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,
-                 storage_day=None,shelf_inss=None,shop_name=None,ucshop_id =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
+                 storage_day=None,shelf_inss=None,shop_name=None,uc_shopid =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
                  up_status=None,sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
         self.shop_name = shop_name
-        self.ucshop_id = ucshop_id
+        self.ucshop_id = uc_shopid
         self.dmstoreshop_id = dmstore_shopid
         self.tz_display_img = tz_display_img
         self.corp_classify_code = corp_classify_code
