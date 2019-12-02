@@ -160,6 +160,8 @@ class GoodsData:
         ret += str(self.width)
         ret += ','
         ret += str(self.depth)
+        ret += ','
+        ret += str(self.psd)
         ret += ')'
         return ret
 
