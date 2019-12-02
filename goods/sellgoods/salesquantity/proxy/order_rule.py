@@ -1,5 +1,5 @@
 import  math
-
+from goods.sellgoods.salesquantity.bean import taskflow
 
 """
     起订量及上限下限规则
@@ -82,4 +82,13 @@ def rule_start_num2(order_sale,start_sum):
             float((order_sale/ start_sum))) * start_sum
     return order_sale
 
+def rule_start_price(sales_order_inss,dmshop_id):
+    sum_price = 0
+    for sales_order_ins in sales_order_inss:
+        sum_price +=  sales_order_ins.purchase_price
+
+    if dmshop_id in taskflow.start_price.keys() and sum_price < taskflow.start_price[dmshop_id]:
+        return []
+    else:
+        return sales_order_inss
 

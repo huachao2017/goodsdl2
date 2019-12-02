@@ -19,7 +19,20 @@ class SalesOrder:
     delivery_type = None
     storage_day = None
     mch_goods_code = None
-    shelf_order_info=[]
+    shelf_order_info=None
     min_disnums = None
     max_disnums = None
+    shop_name = None
+    category_id = None
+    category1_id = None
+    category2_id = None
+    face_num = None
+    psd_nums_4 = None
+    psd_amount_4 = None
+    sub_count = None
+    up_status = None
+    upc_price = None
+    upc_psd_amount_avg_4 = None
+    upc_psd_amount_avg_1 = None
+    purchase_price = None
 

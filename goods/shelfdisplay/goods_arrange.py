@@ -87,7 +87,7 @@ def create_candidate_shelf_list(shelf, categoryid_list, categoryid_to_arrange_go
     :return: candidate_shelf_list
     """
 
-    all_goods_combination_threshhold = 100 # 所有商品组合的阈值
+    all_goods_combination_threshhold = 1000 # 所有商品组合的阈值
     if max_goods_combination > all_goods_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
         step_size = math.ceil(max_goods_combination / all_goods_combination_threshhold)
     else:

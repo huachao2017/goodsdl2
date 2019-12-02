@@ -9,9 +9,9 @@ django.setup()
 import math
 from django.db import connections
 import traceback
+from goods import util
 
-
-def get_shop_order_goods(shopid, erp_shop_type=0):
+def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     """
     获取商店的所有货架及货架上的商品信息，该方法在订货V3时用
     :param shopid: fx系统的商店id
@@ -135,18 +135,19 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         # 获取库存
                         try:
                             cursor_dmstore.execute(
-                                "select stock from shop_goods where shop_id={} and upc='{}' order by modify_time desc".format(shopid, upc))
-                            (stock,) = cursor_dmstore.fetchone()
+                                "select stock,purchase_price from shop_goods where shop_id={} and upc='{}' order by modify_time desc".format(shopid, upc))
+                            (stock,purchase_price) = cursor_dmstore.fetchone()
                         except:
-                            print('dmstore找不到商店商品:{}-{}！'.format(shopid, upc))
+                            print('dmstore找不到商店商品 stock 和 进货价获取失败:{}-{}！'.format(shopid, upc))
                             stock = 0
+                            purchase_price = 1
 
                         #  获取最近一周的平均销量
                         try:
                                 cursor_dmstore.execute(
-                                    "select id FROM shop_goods where upc = '{}' and shop_id = {}".format(
+                                    "select id,price FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
                                         upc, shopid))
-                                (id,) = cursor_dmstore.fetchone()
+                                (id,upc_price) = cursor_dmstore.fetchone()
                                 # 销量
                                 sales_sql = "SELECT sum(number) as nums FROM payment_detail " \
                                             "WHERE shop_id = {} and shop_goods_id = {} and number > 0 and create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
@@ -214,7 +215,20 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         except:
                             print('ErpSupply找不到商品:{}-{}！'.format(upc, erp_supply_id))
                             supply_stock = 0
-
+                        # 获取在途订单数
+                        try:
+                            # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
+                            cursor_erp.execute(
+                                "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
+                                    erp_supply_id, upc))
+                            (sku_id,prod_id) = cursor_erp.fetchone()
+                            cursor_erp.execute(
+                                "select sum(item.sub_item_count) as sub_count from ls_sub_item item LEFT JOIN ls_sub sub ON  item.sub_number=sub.sub_number where sub.buyer_shop_id= {} AND sub.status=50 and item.prod_id = {}".format(
+                                    erp_supply_id,prod_id))
+                            (sub_count,) = cursor_erp.fetchone()
+                        except:
+                            print('ErpSupply 获取在途订单数 找不到商品:{}-{}！'.format(upc, erp_supply_id))
+                            sub_count = 0
                         # 获取昨日预测销量
                         try:
                             cursor_ai.execute(
@@ -224,11 +238,36 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
                         except:
                             #print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
                             sales = 0
+                        # 获取商品的上架时间
+                        try:
+                            cursor_ai.execute(
+                                "select up_shelf_date,is_new_goods from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
+                                    uc_shopid, upc))
+                            (up_shelf_date,up_status) = cursor_ai.fetchone()
+                            print('ai找到商品上架时间 :{}-{}！'.format(uc_shopid, upc))
+                        except:
+                            # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
+                            up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+
+                        # TODO 获取bi 数据库 ， 品的psd金额   mch_id  dmstore_shopid  goods_code
+                        try:
+                            upc_psd_amount_avg_4 = 0
+                            upc_psd_amount_avg_1 = 0
+                        except:
+                            # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
+                            upc_psd_amount_avg_4 = 0
+                            upc_psd_amount_avg_1 = 0
+
+
                         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
                                                       start_sum,multiple,
                                                      stock = stock,
                                                      predict_sales = sales,
-                                                     supply_stock=supply_stock,old_sales = sales_nums,delivery_type=delivery_type,category1_id=category1_id,category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss,shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type)
+                                                     supply_stock=supply_stock,old_sales = sales_nums,delivery_type=delivery_type,category1_id=category1_id,
+                                                     category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss,
+                                                     shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type,dmstore_shopid=shopid,
+                                                     up_shelf_date = up_shelf_date,up_status = up_status,sub_count=sub_count,upc_price=upc_price,
+                                                     upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1)
 
     cursor.close()
     cursor_dmstore.close()
@@ -239,12 +278,15 @@ def get_shop_order_goods(shopid, erp_shop_type=0):
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
-                 stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,storage_day=None,shelf_inss=None,shop_name=None,ucshop_id =None,package_type=None):
+                 stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,
+                 storage_day=None,shelf_inss=None,shop_name=None,ucshop_id =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
+                 up_status=None,sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
         self.shop_name = shop_name
         self.ucshop_id = ucshop_id
+        self.dmstoreshop_id = dmstore_shopid
         self.tz_display_img = tz_display_img
         self.corp_classify_code = corp_classify_code
         self.display_code = corp_classify_code # FIXME 需要修订为真实陈列分类
@@ -252,6 +294,40 @@ class DataRawGoods():
         self.volume = volume
         self.width = width
         self.height = height
+        if up_shelf_date is None:
+            self.up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+        self.up_shelf_date = up_shelf_date
+        if up_status is None :
+            self.up_status = 1
+        self.up_status = up_status
+        if sub_count is None :
+            self.sub_count = 0
+        self.sub_count = sub_count
+        if upc_psd_amount_avg_4 is None:
+            self.upc_psd_amount_avg_4 = 0
+        self.upc_psd_amount_avg_4 = upc_psd_amount_avg_4
+        self.upc_psd_amount_avg_1= upc_psd_amount_avg_1
+        if purchase_price is None:
+            self.purchase_price = 1
+        else:
+            self.purchase_price = purchase_price
+        if upc_price is None or int(self.upc_price) == 0:
+            self.upc_price = 1
+        self.upc_price = upc_price
+        psd_nums_4 = 0
+        psd_amount_4 = 0
+        # TODO 调用选品提供的方法
+        try:
+            psd_nums_4,psd_amount_4 = util.select_psd_data(upc,self.dmstoreshop_id,28)
+        except:
+            print ("select_psd_data is error ,upc="+str(upc))
+        if psd_nums_4 is None:
+            self.psd_nums_4 = 0
+        if psd_amount_4 is None:
+            self.psd_amount_4 = 0
+        self.psd_nums_4 = psd_nums_4
+        self.psd_amount_4 = psd_amount_4
+
         if package_type is None:
             self.package_type = 0
         else:

@@ -8,6 +8,7 @@ from goods.sellgoods.salesquantity.bean import taskflow
 from goods.sellgoods.salesquantity.service.order_version_5 import generate_order_2saler_first,generate_order_2saler_add,generate_order_2saler_add_day,generate_order_shop
 from goods.sellgoods.salesquantity.service.order_version_5.data_util import cacul_util
 from goods.sellgoods.salesquantity.local_util import erp_interface
+from goods.util import calculate_goods_up_datetime
 from set_config import config
 sql_workflow = "select id,batch_id,uc_shopid from goods_allworkflowbatch where type = {} and order_goods_status=1"
 update_sql_01 = "update goods_allworkflowbatch set order_goods_status=2 where id={}"  # 2是正在计算、3是计算结束
@@ -30,6 +31,9 @@ def first_order_process():
             id = data[0]
             batch_id = data[1]
             uc_shop_id = data[2]
+            #  更新上架时间
+            calculate_goods_up_datetime(uc_shop_id)
+
             ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
             (dmstore_shopid,) = ucenter_cursor.fetchone()
             cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
@@ -75,6 +79,9 @@ def day_order_process():
             id = data[0]
             batch_id = data[1]
             uc_shop_id = data[2]
+            #  更新上架时间
+            calculate_goods_up_datetime(uc_shop_id)
+
             ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
             (dmstore_shopid,) = ucenter_cursor.fetchone()
             cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
@@ -129,6 +136,9 @@ def add_order_process():
             id = data[0]
             batch_id = data[1]
             uc_shop_id = data[2]
+            #  更新上架时间
+            calculate_goods_up_datetime(uc_shop_id)
+
             ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
             (dmstore_shopid,) = ucenter_cursor.fetchone()
             cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
