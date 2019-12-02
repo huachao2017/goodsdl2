@@ -227,7 +227,9 @@ class Taizhang:
                             "displays": []
                         }
                         json_level["goods"].append(json_goods)
+                        num = 0
                         for goods_display_info in display_goods.get_display_info(level):
+                            num += 1
                             json_display = {
                                 "top": goods_display_info.top,
                                 "left": goods_display_info.left,
@@ -235,6 +237,8 @@ class Taizhang:
                                 "col": goods_display_info.col,
                             }
                             json_goods["displays"].append(json_display)
+
+                        json_goods["max_display_num"] = int(display_goods.get_one_face_max_display_num(level)/display_goods.goods_data.superimpose_num) * num
 
                     last_level = level
         return json_ret
@@ -304,7 +308,7 @@ class Taizhang:
                                 image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image[0:h, 0:w, :]
                         data_point = (goods_display_info.left, shelf.height - (
                         goods_display_info.top + level_start_height - 10))
-                        cv2.putText(image, '{}'.format(display_goods.get_one_face_max_display_num(level)), data_point,
+                        cv2.putText(image, '{}'.format(int(display_goods.get_one_face_max_display_num(level)/display_goods.goods_data.superimpose_num)), data_point,
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
                         code_txt_point = (goods_display_info.left, shelf.height - (
                         goods_display_info.top + level_start_height - int(display_goods.goods_data.height / 2)))
