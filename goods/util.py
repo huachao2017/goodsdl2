@@ -156,8 +156,9 @@ def calculate_goods_up_datetime(uc_shopid):
         if not upc in new_upc_list:
             delete_data_list.append(upc)
     print('delete_data_list:',delete_data_list)
-    cursor_ai.execute(delete_sql.format(uc_shopid,tuple(delete_data_list)))
-    conn_ai.commit()
+    if delete_data_list:
+        cursor_ai.execute(delete_sql.format(uc_shopid,tuple(delete_data_list)))
+        conn_ai.commit()
     print("下架商品删除成功")
 
 def select_psd_data(upc,template_shop_id,time_range):
