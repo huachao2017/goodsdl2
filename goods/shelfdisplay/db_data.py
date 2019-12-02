@@ -130,8 +130,7 @@ class GoodsData:
 
     def height_diff(self,another_goods):
         if another_goods is not None:
-            # FIXME 需考虑叠放
-            return self.height - another_goods.height
+            return (self.height*self.superimpose_num) - (another_goods.height-another_goods.superimpose_num)
         return 0
 
     def __str__(self):
