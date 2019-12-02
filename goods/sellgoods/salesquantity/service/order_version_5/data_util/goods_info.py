@@ -217,8 +217,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             print (str(erp_supply_id)+","+str(upc))
                             (sku_id,prod_id) = cursor_erp.fetchone()
                             cursor_erp.execute(
-                                "select sum(item.sub_item_count) as sub_count from ls_sub_item item LEFT JOIN ls_sub sub ON  item.sub_number=sub.sub_number where sub.buyer_shop_id= {} AND sub.status=50 and item.prod_id = {}".format(
-                                    erp_supply_id,prod_id))
+                                "select sum(item.sub_item_count) as sub_count from ls_sub_item item LEFT JOIN ls_sub sub ON  item.sub_number=sub.sub_number where sub.buyer_shop_id= {} AND sub.status=50 and item.sku_id = {}".format(
+                                    erp_supply_id,sku_id))
                             (sub_count,) = cursor_erp.fetchone()
                         except:
                             print('ErpSupply 获取在途订单数 找不到商品:{}-{}！'.format(upc, erp_supply_id))
