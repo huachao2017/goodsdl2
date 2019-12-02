@@ -100,7 +100,7 @@ class SendEmail():
 
 def calculate_goods_up_datetime(uc_shopid):
     """
-    计算商品的上架时间
+    基于台账的计算商品的上架时间
     :param uc_shopid:
     :return:
     """
@@ -109,7 +109,7 @@ def calculate_goods_up_datetime(uc_shopid):
     conn_ai = connections['default']
     cursor_ai = conn_ai.cursor()
     # 已完成的台账
-    select_sql_01 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=3 and td.approval_status=1 and st.shop_id = {}".format(uc_shopid)
+    # select_sql_01 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=3 and td.approval_status=1 and st.shop_id = {}".format(uc_shopid)
     # 当前的台账
     select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(uc_shopid)
     insert_sql = "insert into goods_up_shelf_datetime(upc,shopid,name,up_shelf_date) values (%s,{},%s,%s)"
@@ -119,8 +119,9 @@ def calculate_goods_up_datetime(uc_shopid):
     cursor.execute(select_sql_02)
     all_data = cursor.fetchall()
 
-    cursor_ai.execute(select_sql_03)
+    cursor_ai.execute(select_sql_03.format(uc_shopid))
     history_data = cursor_ai.fetchall()
+    
     history_upc_list = [i[0] for i in history_data]
 
     # 1、遍历新的台账，如果某个商品在所有历史的商品里，则不做操作；如果没在，则插入
