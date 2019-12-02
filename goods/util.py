@@ -169,7 +169,7 @@ def select_psd_data(upc,shop_id,time_range):
     :param time_range: 取数周期
     :return: psd,psd金额
     """
-    template_dict = {1284:3598}
+    template_dict = {1284:3598}  # 临时解决方案，先写死
     template_shop_id = template_dict[shop_id]
 
     now = datetime.datetime.now()
