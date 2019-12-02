@@ -312,14 +312,14 @@ class DataRawGoods():
             self.purchase_price = 1
         else:
             self.purchase_price = purchase_price
-        if upc_price is None or int(self.upc_price) == 0:
+        if upc_price is None or int(upc_price) == 0:
             self.upc_price = 1
         self.upc_price = upc_price
         psd_nums_4 = 0
         psd_amount_4 = 0
         # TODO 调用选品提供的方法
         try:
-            psd_nums_4,psd_amount_4 = util.select_psd_data(upc,self.dmstoreshop_id,28)
+            psd_nums_4,psd_amount_4 = utils.select_psd_data(upc,self.dmstoreshop_id,28)
         except:
             print ("select_psd_data is error ,upc="+str(upc))
         if psd_nums_4 is None:
