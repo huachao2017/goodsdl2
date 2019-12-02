@@ -143,6 +143,8 @@ def _display_shelf(candidate_shelf):
                 if reduce_width > addition_width:
                     break
             # FIXME 如果减完还是太多，需要做再次处理：包括减少扩面和继续删分类的品到只有一个
+            if addition_width - reduce_width > candidate_shelf.shelf.width:
+                raise(ValueError('商品数太多了，需要检查商品！'))
         else:
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
