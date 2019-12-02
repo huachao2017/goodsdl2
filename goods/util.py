@@ -221,7 +221,7 @@ def calculate_goods_up_datetime_first(uc_shopid):
     cursor_ai.executemany(insert_sql.format(uc_shopid), tuple(insert_data_list))
     conn_ai.commit()
     print("上架时间插入成功")
-    cursor_ai.execute("update goods_up_shelf_datetime set is_new_goods ")
+    cursor_ai.execute("update goods_up_shelf_datetime set is_new_goods=0 where shopid={}".format(uc_shopid))
 
 
 
@@ -279,7 +279,7 @@ if __name__ == '__main__':
     # a.send_mail(title, content)
 
     # calculate_goods_up_datetime(806)
-    
+
     calculate_goods_up_datetime_first(806)
 
     # print(select_psd_data('6921581540102',1284,28))
