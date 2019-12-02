@@ -169,8 +169,8 @@ def select_psd_data(upc,shop_id,time_range):
     :param time_range: 取数周期
     :return: psd,psd金额
     """
-
-    template_shop_id = None
+    template_dict = {1284:3598}
+    template_shop_id = template_dict[shop_id]
 
     now = datetime.datetime.now()
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -214,6 +214,6 @@ if __name__ == '__main__':
     # a = SendEmail(email_user, email_pwd, maillist)
     # a.send_mail(title, content)
 
-    calculate_goods_up_datetime(806)
+    # calculate_goods_up_datetime(806)
 
-    # print(select_psd_data('6921581540102',3598,28))
+    print(select_psd_data('6921581540102',1284,28))
