@@ -41,14 +41,14 @@ def main_calculate(category3_to_category3_obj, category3_intimate_weight, catego
     root_category_tree = init_category_tree(category3_to_category3_obj, category3_intimate_weight,
                                             category3_level_value)
 
-    print(root_category_tree)
+    # print(root_category_tree)
     # 2，计算level_value
     root_category_tree.calculate_level_value()
-    print(root_category_tree)
+    # print(root_category_tree)
 
     # 3, 输出组合
     root_category_tree.calculate_result()
-    print(root_category_tree)
+    # print(root_category_tree)
 
     return root_category_tree.get_all_simple_result()
 
@@ -142,7 +142,7 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
     # TODO 处理掉category3_list没有，但category3_intimate_weight有的三级分类
 
     sorted_intimate_list = sorted(category3_intimate_weight.items(), key=lambda item: item[1], reverse=True)
-    print(sorted_intimate_list)
+    # print(sorted_intimate_list)
 
     all_category_tree_without_parent = []
     all_intimate_category_tree_only_parent = []
