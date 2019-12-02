@@ -502,6 +502,8 @@ class DisplayGoods:
             self.goods_data.superimpose_num = math.floor(level.candidate_shelf.shelf.average_level_height/self.goods_data.height)
             if self.goods_data.superimpose_num > 4:
                 self.goods_data.superimpose_num = 4
+            elif self.goods_data.superimpose_num <= 0:
+                self.goods_data.superimpose_num = 1
         # 计算商品的单face最大陈列量
         max_one_face = int(level.depth / self.goods_data.depth) * self.goods_data.superimpose_num
         if max_one_face <= 0:
