@@ -161,7 +161,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                     cursor_dmstore1.execute(
                                         sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
                                     # print ([str(shopid), str(id), str(start_date), str(end_date), str(start_date), str(end_date)])
-                                    (sales_nums,) = cursor_dmstore.fetchone()
+                                    (sales_nums,) = cursor_dmstore1.fetchone()
 
                                 elif  delivery_type == 1: # 日配
                                     end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
