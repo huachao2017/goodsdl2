@@ -119,7 +119,7 @@ def calculate_goods_up_datetime(uc_shopid):
     cursor.execute(select_sql_02)
     all_data = cursor.fetchall()
 
-    cursor_ai.execute(select_sql_03)
+    cursor_ai.execute(select_sql_03.format(uc_shopid))
     history_data = cursor_ai.fetchall()
     history_upc_list = [i[0] for i in history_data]
 
