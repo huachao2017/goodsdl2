@@ -210,6 +210,6 @@ if __name__ == '__main__':
     # a = SendEmail(email_user, email_pwd, maillist)
     # a.send_mail(title, content)
 
-    # calculate_goods_up_datetime(806)
+    calculate_goods_up_datetime(806)
 
-    print(select_psd_data('6921581540102',3598,28))
+    # print(select_psd_data('6921581540102',3598,28))
