@@ -91,6 +91,9 @@ def init_data(uc_shopid, tz_id, base_data):
         print(goods_data)
 
     shelf_category3_list = shelf_category3_to_goods_cnt.keys()
+    shelf_category3_list.sort()
+    print('总共需要陈列的分类: {}'.format(len(shelf_category3_list)))
+    print(shelf_category3_list)
 
     shelf_category3_intimate_weight = {}
     shelf_category3_level_value = {}
