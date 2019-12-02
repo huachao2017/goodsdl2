@@ -90,7 +90,7 @@ def init_data(uc_shopid, tz_id, base_data):
     for goods_data in shelf_goods_data_list:
         print(goods_data)
 
-    shelf_category3_list = shelf_category3_to_goods_cnt.keys()
+    shelf_category3_list = list(shelf_category3_to_goods_cnt.keys())
     shelf_category3_list.sort()
     print('总共需要陈列的分类: {}'.format(len(shelf_category3_list)))
     print(shelf_category3_list)
