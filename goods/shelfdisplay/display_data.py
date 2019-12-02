@@ -316,7 +316,7 @@ class Taizhang:
                                 image[point1[1]:point1[1]+h, point1[0]:point1[0]+w,:] = goods_image[0:h, 0:w, :]
                         data_point = (goods_display_info.left, shelf.height - (
                         goods_display_info.top + level_start_height - 10))
-                        cv2.putText(image, '{}'.format(display_goods.get_one_face_max_display_num(level)), data_point,
+                        cv2.putText(image, '{}:{}-{}'.format(goods_display_info.row, goods_display_info.col, display_goods.get_one_face_max_display_num(level)), data_point,
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
                         code_txt_point = (goods_display_info.left, shelf.height - (
                         goods_display_info.top + level_start_height - int(display_goods.goods_data.height / 2)))
