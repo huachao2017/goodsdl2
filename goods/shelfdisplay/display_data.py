@@ -86,6 +86,7 @@ def init_data(uc_shopid, tz_id, base_data):
 
     if len(shelf_goods_data_list) == 0:
         raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
+    shelf_goods_data_list.sort(key=lambda x:x.mch_goods_code)
     for goods_data in shelf_goods_data_list:
         print(goods_data)
 
