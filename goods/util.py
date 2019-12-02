@@ -127,8 +127,7 @@ def calculate_goods_up_datetime(uc_shopid):
         history_upc_dict[data[0]] = data[1]
 
 
-    # 0、把旧的台账里的商品的is_new_goods的状态置为0
-    # cursor_ai.execute("update goods_up_shelf_datetime set is_new_goods=0 where shopid={}".format(uc_shopid))
+
     # 1、遍历新的台账，如果某个商品在所有历史的商品里，则不做操作；如果没在，则插入
     insert_data_list = []
     update_data_list = []
