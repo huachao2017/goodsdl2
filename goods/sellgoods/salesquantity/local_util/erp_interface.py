@@ -6,7 +6,7 @@ import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
 from django.db import connections
-
+import time
 from goods.models import ai_sales_order
 
 
@@ -73,7 +73,7 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales,batch_id=None):
                 json_info = json.dumps(order_data)
                 data = bytes(json_info, 'utf8')
                 if batch_id is None:
-                    batch_id = "111111"
+                    batch_id = int(time.time())
                 request = urllib.request.Request(url=url.format(erp_shopid,erp_shop_type,batch_id), data=data, headers=headers)
 
                 response = urllib.request.urlopen(request)
