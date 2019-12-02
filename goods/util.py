@@ -118,7 +118,7 @@ def calculate_goods_up_datetime(uc_shopid):
     select_sql_03 = "select upc from goods_up_shelf_datetime where shopid={}"
     delete_sql = "delete from goods_up_shelf_datetime where shopid={} and upc in {}"
 
-    cursor.execute(select_sql_01)
+    cursor.execute(select_sql_02)
     all_data = cursor.fetchall()
 
     cursor_ai.execute(select_sql_03.format(uc_shopid))
@@ -127,10 +127,9 @@ def calculate_goods_up_datetime(uc_shopid):
     history_upc_list = [i[0] for i in history_data]
 
     # 0、把旧的台账里的商品的is_new_goods的状态置为0
-    cursor_ai.execute("update goods_up_shelf_datetime set is_new_goods ")
+    cursor_ai.execute("update goods_up_shelf_datetime set is_new_goods=0 where shopid={}".format(uc_shopid))
     # 1、遍历新的台账，如果某个商品在所有历史的商品里，则不做操作；如果没在，则插入
     insert_data_list = []
-    update_data_list = []
     new_upc_list = []
     for data in all_data:
         # print(type(data[1]))
@@ -224,7 +223,6 @@ def calculate_goods_up_datetime_first(uc_shopid):
     cursor_ai.execute("update goods_up_shelf_datetime set is_new_goods=0 where shopid={}".format(uc_shopid))
 
 
-
 def select_psd_data(upc,shop_id,time_range):
     """
     计算某商品在模板店一定取数周期内的psd和psd金额
@@ -278,8 +276,8 @@ if __name__ == '__main__':
     # a = SendEmail(email_user, email_pwd, maillist)
     # a.send_mail(title, content)
 
-    # calculate_goods_up_datetime(806)
+    calculate_goods_up_datetime(806)
 
-    calculate_goods_up_datetime_first(806)
+    # calculate_goods_up_datetime_first(806)
 
     # print(select_psd_data('6921581540102',1284,28))
