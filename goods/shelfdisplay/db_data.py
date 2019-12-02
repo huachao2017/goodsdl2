@@ -161,7 +161,7 @@ class GoodsData:
         ret += ','
         ret += str(self.depth)
         ret += ','
-        ret += str(self.psd)
+        ret += '%.2f' % (self.psd)
         ret += ')'
         return ret
 
