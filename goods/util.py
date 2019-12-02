@@ -10,9 +10,9 @@ import time
 import datetime
 from  decimal import Decimal
 
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-# django.setup()
-# from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+django.setup()
+from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
 
 
 
