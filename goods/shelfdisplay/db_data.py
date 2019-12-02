@@ -42,9 +42,14 @@ def init_data(uc_shopid, batch_id):
 
     # 获取选品详细信息
     not_found_goods = 0
+    mch_goods_code_list = []
     for selection_goods in all_selection_goods:
         # 获取商品属性
         mch_goods_code = selection_goods.mch_goods_code
+        # 做商品去重
+        if mch_goods_code in mch_goods_code_list:
+            continue
+        mch_goods_code_list.append(mch_goods_code)
         try:
             cursor.execute("select id, goods_name,upc, tz_display_img, category1_id, category2_id, category_id, package_type, brand, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_goods_code))
             (goods_id, goods_name, upc, tz_display_img, category1_id, category2_id, category3_id, package_type, brand, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
@@ -82,10 +87,11 @@ class BaseData:
     category3_level_value: 三级分类层数分值
     goods_data_list: GoodsData列表
     """
-    category_area_ratio = {'a': 0.1, 'b': 0.2, 'c': 0.3, 'd': 0.4, 'e': 0.5}
-    category3_intimate_weight = {'a,b': 10, 'a,b,c': 5, 'd,e': 10, 'd,e,f': 5, 'd,e,f,g': 3}
-    category3_level_value = {'b': 0, 'c': 10}
-    goods_data_list = []
+    def __init__(self):
+        self.category_area_ratio = None
+        self.category3_intimate_weight = None
+        self.category3_level_value = None
+        self.goods_data_list = []
 
 class GoodsData:
     def __init__(self, mch_code, goods_name, upc, tz_display_img, category1, category2, category3, category4, package_type, brand, width, height, depth, is_superimpose, is_suspension, psd):

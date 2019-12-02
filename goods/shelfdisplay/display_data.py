@@ -502,9 +502,12 @@ class DisplayGoods:
             self.goods_data.superimpose_num = math.floor(level.candidate_shelf.shelf.average_level_height/self.goods_data.height)
             if self.goods_data.superimpose_num > 4:
                 self.goods_data.superimpose_num = 4
+            elif self.goods_data.superimpose_num <= 0:
+                self.goods_data.superimpose_num = 1
         # 计算商品的单face最大陈列量
         max_one_face = int(level.depth / self.goods_data.depth) * self.goods_data.superimpose_num
-        if max_one_face == 0:
+        if max_one_face <= 0:
+            print('商品深度越界：{}，{}'.format(self.goods_data.depth, level.depth))
             max_one_face = self.goods_data.superimpose_num
         self.goods_data.face_num = math.ceil(3 * self.goods_data.psd / max_one_face)
 
