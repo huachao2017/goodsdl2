@@ -1,5 +1,5 @@
 import os
-import smtplib
+import smtplib,pymysql
 from email.mime.text import MIMEText
 import numpy as np
 from PIL import Image as PILImage
@@ -8,6 +8,8 @@ import django
 import os
 import time
 import datetime
+from  decimal import Decimal
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
 import math
@@ -156,12 +158,34 @@ def calculate_goods_up_datetime(uc_shopid):
     conn_ai.commit()
     print("下架商品删除成功")
 
-
-
-
-
-
-
+def select_psd_data(upc,template_shop_id,time_range):
+    """
+    计算某商品在模板店一定取数周期内的psd和psd金额
+    :param upc:
+    :param template_shop_id: 模板店
+    :param time_range: 取数周期
+    :return: psd,psd金额
+    """
+    now = datetime.datetime.now()
+    now_date = now.strftime('%Y-%m-%d %H:%M:%S')
+    week_ago = (now - datetime.timedelta(days=time_range)).strftime('%Y-%m-%d %H:%M:%S')
+    sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id={} and g.upc='{}';"
+    # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
+    conn = connections['dmstore']
+    cursor = conn.cursor()
+    cursor.execute(sql.format(week_ago,now_date,template_shop_id,upc))
+    result = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    if result:
+        try:
+            # print(result)
+            return result[0]/(result[4]*time_range),result[0]/time_range
+        except:
+            # print("psd计算异常")
+            return None
+    else:
+        return None
 
 
 
@@ -184,4 +208,6 @@ if __name__ == '__main__':
     # a = SendEmail(email_user, email_pwd, maillist)
     # a.send_mail(title, content)
 
-    calculate_goods_up_datetime(806)
+    # calculate_goods_up_datetime(806)
+
+    print(select_psd_data('6921581540102',3598,28))
