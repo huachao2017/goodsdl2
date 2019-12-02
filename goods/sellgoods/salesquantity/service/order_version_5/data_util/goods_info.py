@@ -9,7 +9,7 @@ django.setup()
 import math
 from django.db import connections
 import traceback
-from goods import util
+from goods import utils
 
 def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     """
