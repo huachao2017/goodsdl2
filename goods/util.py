@@ -141,7 +141,6 @@ def calculate_goods_up_datetime(uc_shopid):
                     if not goods_upc in history_upc_list:
                         insert_data_list.append((goods_upc,goods_name,goods_up_shelf_datetime))
                     else:
-                        time.sleep(0.1)
                         cursor_ai.execute("update goods_up_shelf_datetime set is_new_goods=0 where shopid={} and upc='{}'".format(uc_shopid,goods_upc))
 
     print('insert_data_list:',insert_data_list)
