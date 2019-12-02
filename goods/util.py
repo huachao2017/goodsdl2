@@ -10,12 +10,15 @@ import time
 import datetime
 from  decimal import Decimal
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+# django.setup()
+# from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
+
+
+
 import math
 from django.db import connections
 
-from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
 
 def wrap_ret(ret):
     standard_ret = {
@@ -161,7 +164,6 @@ def calculate_goods_up_datetime(uc_shopid):
         conn_ai.commit()
     print("下架商品删除成功")
 
-
 def calculate_goods_up_datetime_first(uc_shopid):
     """
     基于台账的计算商品的上架时间
@@ -214,7 +216,6 @@ def calculate_goods_up_datetime_first(uc_shopid):
     print("上架时间插入成功")
     cursor_ai.execute("update goods_up_shelf_datetime set is_new_goods=0 where shopid={}".format(uc_shopid))
 
-
 def select_psd_data(upc,shop_id,time_range):
     """
     计算某商品在模板店一定取数周期内的psd和psd金额
@@ -247,6 +248,17 @@ def select_psd_data(upc,shop_id,time_range):
     else:
         return None,None
 
+def check_order():
+    """
+    检查订货是否有异常的地方
+    :return:
+    """
+    order_list = [{"max_disnums":5,"mch_goods_code":"2036441","min_disnums":1,"order_sale":1,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6944697600744"},{"max_disnums":3,"mch_goods_code":"2044981","min_disnums":1,"order_sale":1,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"20449810"},{"max_disnums":3,"mch_goods_code":"2045322","min_disnums":1,"order_sale":1,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":3,"supply_stock":0,"upc":"6970182591884"},{"max_disnums":3,"mch_goods_code":"2043916","min_disnums":1,"order_sale":1,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6944697601154"},{"max_disnums":11,"mch_goods_code":"2044730","min_disnums":1,"order_sale":1,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6970182591679"},{"max_disnums":11,"mch_goods_code":"2026471","min_disnums":3,"order_sale":2,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":2,"supply_stock":0,"upc":"6943290501632"},{"max_disnums":6,"mch_goods_code":"2033796","min_disnums":3,"order_sale":3,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6943290500949"},{"max_disnums":5,"mch_goods_code":"2037991","min_disnums":1,"order_sale":1,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6932005203916"},{"max_disnums":5,"mch_goods_code":"2013136","min_disnums":4,"order_sale":15,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":3,"supply_stock":0,"upc":"6902083886455"},{"max_disnums":5,"mch_goods_code":"2026253","min_disnums":4,"order_sale":24,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":1,"supply_stock":0,"upc":"6922255451427"},{"max_disnums":5,"mch_goods_code":"2004998","min_disnums":4,"order_sale":15,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6921581596048"},{"max_disnums":5,"mch_goods_code":"2019634","min_disnums":4,"order_sale":24,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6954767423579"},{"max_disnums":2,"mch_goods_code":"2035517","min_disnums":2,"order_sale":3,"shelf_order_info":[{"shelf_id":1099,"shelf_order":0,"tz_id":1172}],"shop_stock":1,"supply_stock":4,"upc":"6901236341308"},{"max_disnums":11,"mch_goods_code":"2032284","min_disnums":2,"order_sale":50,"shelf_order_info":[{"shelf_id":1099,"shelf_order":0,"tz_id":1172}],"shop_stock":0,"supply_stock":0,"upc":"6922279401750"},{"max_disnums":9,"mch_goods_code":"2044434","min_disnums":3,"order_sale":2,"shelf_order_info":[{"shelf_id":1101,"shelf_order":0,"tz_id":1174}],"shop_stock":9,"supply_stock":0,"upc":"6927462216074"},{"max_disnums":33,"mch_goods_code":"2020300","min_disnums":3,"order_sale":10,"shelf_order_info":[{"shelf_id":1101,"shelf_order":0,"tz_id":1174}],"shop_stock":0,"supply_stock":0,"upc":"6930720130524"},{"max_disnums":6,"mch_goods_code":"2036994","min_disnums":3,"order_sale":4,"shelf_order_info":[{"shelf_id":1102,"shelf_order":0,"tz_id":1175}],"shop_stock":4,"supply_stock":0,"upc":"6946050100106"},{"max_disnums":4,"mch_goods_code":"2011017","min_disnums":3,"order_sale":6,"shelf_order_info":[{"shelf_id":1102,"shelf_order":0,"tz_id":1175}],"shop_stock":1,"supply_stock":0,"upc":"6923450656181"},{"max_disnums":13,"mch_goods_code":"2041270","min_disnums":4,"order_sale":24,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"4710131176210"},{"max_disnums":13,"mch_goods_code":"2038320","min_disnums":4,"order_sale":40,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6958985200004"},{"max_disnums":6,"mch_goods_code":"2043987","min_disnums":4,"order_sale":24,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"769828111014"},{"max_disnums":9,"mch_goods_code":"2021215","min_disnums":4,"order_sale":24,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6909493632443"},{"max_disnums":9,"mch_goods_code":"2028900","min_disnums":4,"order_sale":24,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6918551811423"},{"max_disnums":17,"mch_goods_code":"2028744","min_disnums":3,"order_sale":21,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6909493200208"},{"max_disnums":17,"mch_goods_code":"2025491","min_disnums":1,"order_sale":21,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6909493200239"},{"max_disnums":17,"mch_goods_code":"2039842","min_disnums":1,"order_sale":21,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6909493200505"},{"max_disnums":17,"mch_goods_code":"2028742","min_disnums":1,"order_sale":21,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6909493200277"},{"max_disnums":17,"mch_goods_code":"2043842","min_disnums":4,"order_sale":24,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6918551812161"},{"max_disnums":6,"mch_goods_code":"2016125","min_disnums":1,"order_sale":24,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6907868581280"},{"max_disnums":6,"mch_goods_code":"2016123","min_disnums":4,"order_sale":24,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6907868581181"},{"max_disnums":9,"mch_goods_code":"2022292","min_disnums":4,"order_sale":40,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6918551804593"},{"max_disnums":6,"mch_goods_code":"2016126","min_disnums":4,"order_sale":24,"shelf_order_info":[{"shelf_id":1108,"shelf_order":0,"tz_id":1213}],"shop_stock":0,"supply_stock":0,"upc":"6907868581587"},{"max_disnums":3,"mch_goods_code":"2043054","min_disnums":1,"order_sale":2,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":1,"supply_stock":0,"upc":"6940453400146"},{"max_disnums":5,"mch_goods_code":"2043050","min_disnums":1,"order_sale":2,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6932571032002"},{"max_disnums":4,"mch_goods_code":"2044128","min_disnums":1,"order_sale":2,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6970399920880"},{"max_disnums":17,"mch_goods_code":"2022117","min_disnums":1,"order_sale":5,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6902890234487"},{"max_disnums":6,"mch_goods_code":"2035725","min_disnums":3,"order_sale":3,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6922330913307"},{"max_disnums":5,"mch_goods_code":"2044985","min_disnums":1,"order_sale":1,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6932005206696"},{"max_disnums":5,"mch_goods_code":"2042874","min_disnums":1,"order_sale":1,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6932005205149"},{"max_disnums":8,"mch_goods_code":"2044563","min_disnums":1,"order_sale":1,"shelf_order_info":[{"shelf_id":1096,"shelf_order":0,"tz_id":1169}],"shop_stock":0,"supply_stock":0,"upc":"6932005206559"}]
+
+
+
+    for d in order_list:
+        print(d)
 
 
 if __name__ == '__main__':
@@ -268,8 +280,10 @@ if __name__ == '__main__':
     # a = SendEmail(email_user, email_pwd, maillist)
     # a.send_mail(title, content)
 
-    calculate_goods_up_datetime(806)
+    # calculate_goods_up_datetime(806)
 
     # calculate_goods_up_datetime_first(806)
 
     # print(select_psd_data('6921581540102',1284,28))
+
+    check_order()
