@@ -103,7 +103,7 @@ class SendEmail():
 def calculate_goods_up_datetime(uc_shopid):
     """
     基于台账的计算商品的上架时间
-    :param uc_shopid:
+    :param uc_shopid:  台账系统的shopid
     :return:
     """
     conn = connections['ucenter']
@@ -161,14 +161,17 @@ def calculate_goods_up_datetime(uc_shopid):
         conn_ai.commit()
     print("下架商品删除成功")
 
-def select_psd_data(upc,template_shop_id,time_range):
+def select_psd_data(upc,shop_id,time_range):
     """
     计算某商品在模板店一定取数周期内的psd和psd金额
     :param upc:
-    :param template_shop_id: 模板店
+    :param shop_id: 目标门店，根据此id去查询模板id
     :param time_range: 取数周期
     :return: psd,psd金额
     """
+
+    template_shop_id = None
+
     now = datetime.datetime.now()
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
     week_ago = (now - datetime.timedelta(days=time_range)).strftime('%Y-%m-%d %H:%M:%S')
@@ -186,9 +189,9 @@ def select_psd_data(upc,template_shop_id,time_range):
             return result[0]/(result[4]*time_range),result[0]/time_range
         except:
             # print("psd计算异常")
-            return None
+            return None,None
     else:
-        return None
+        return None,None
 
 
 
