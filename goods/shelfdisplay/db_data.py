@@ -203,9 +203,8 @@ def init_display_data(uc_shopid, tz_id, base_data):
             raise ValueError('third_cate_ids is None:{},{},{}'.format(taizhang_id,shelf_id,count))
     except:
         print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
-        raise ValueError('taizhang_display error:{},{}'.format(uc_shopid, tz_id))
-    finally:
         cursor.close()
+        raise ValueError('taizhang_display error:{},{}'.format(uc_shopid, tz_id))
 
     # 获取货架信息
     cursor.execute(
