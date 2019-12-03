@@ -176,37 +176,37 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
 
                         #  获取最近一周的平均销量
                         try:
+                            cursor_dmstore.execute(
+                                "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                    upc, shopid))
+                            (id,upc_price,purchase_price,stock) = cursor_dmstore.fetchone()
+                            # 销量
+                            sales_sql = "SELECT sum(number) as nums FROM payment_detail " \
+                                        "WHERE shop_id = {} and shop_goods_id = {} and number > 0 and create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
+                                        "SELECT DISTINCT(payment.id) FROM payment WHERE payment.type != 50 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' )"
+                            if delivery_type == 2:  # 非日配
+                                end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                                start_date = str(
+                                    (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
+                                        days=-7)).strftime("%Y-%m-%d"))
                                 cursor_dmstore.execute(
-                                    "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
-                                        upc, shopid))
-                                (id,upc_price,purchase_price,stock) = cursor_dmstore.fetchone()
-                                # 销量
-                                sales_sql = "SELECT sum(number) as nums FROM payment_detail " \
-                                            "WHERE shop_id = {} and shop_goods_id = {} and number > 0 and create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
-                                            "SELECT DISTINCT(payment.id) FROM payment WHERE payment.type != 50 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' )"
-                                if delivery_type == 2:  # 非日配
-                                    end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-                                    start_date = str(
-                                        (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
-                                            days=-7)).strftime("%Y-%m-%d"))
-                                    cursor_dmstore.execute(
-                                        sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
-                                    # print ([str(shopid), str(id), str(start_date), str(end_date), str(start_date), str(end_date)])
-                                    (sales_nums,) = cursor_dmstore.fetchone()
+                                    sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
+                                # print ([str(shopid), str(id), str(start_date), str(end_date), str(start_date), str(end_date)])
+                                (sales_nums,) = cursor_dmstore.fetchone()
 
-                                elif  delivery_type == 1: # 日配
-                                    end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-                                    start_date = str(
-                                        (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
-                                            days=-7)).strftime("%Y-%m-%d"))
-                                    cursor_dmstore.execute(
-                                        sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
-                                    (sales_nums,) = cursor_dmstore.fetchone()
-                                else:
-                                    print("%s delivery_type is error , goods_name=%s,upc=%s" % (
-                                    str(delivery_type), str(goods_name),
-                                    str(upc)))
-                                    sales_nums = 0
+                            elif  delivery_type == 1: # 日配
+                                end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                                start_date = str(
+                                    (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
+                                        days=-7)).strftime("%Y-%m-%d"))
+                                cursor_dmstore.execute(
+                                    sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
+                                (sales_nums,) = cursor_dmstore.fetchone()
+                            else:
+                                print("%s delivery_type is error , goods_name=%s,upc=%s" % (
+                                str(delivery_type), str(goods_name),
+                                str(upc)))
+                                sales_nums = 0
                         except:
                             print('dmstore找不到计算销量商店商品:{}-{}-{}！'.format(shopid, upc,goods_name))
                             sales_nums = 0
@@ -382,7 +382,7 @@ class DataRawGoods():
         self.predict_sales = predict_sales
         if old_sales is None :
             self.old_sales = 0
-        self.old_sales = old_sales
+        self.old_sales = float(old_sales)
         if supply_stock is None:
             self.supply_stock = 0
         self.supply_stock = supply_stock  #小仓库库存
