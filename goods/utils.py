@@ -10,8 +10,8 @@ import time
 import datetime
 from  decimal import Decimal
 
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-# django.setup()
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
+django.setup()
 
 
 import math
