@@ -12,49 +12,11 @@ from  decimal import Decimal
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
-from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
-
 
 
 import math
 from django.db import connections
 
-
-def wrap_ret(ret):
-    standard_ret = {
-        'status': 200,
-        'message': '成功',
-        'attachment': ret,
-    }
-    return standard_ret
-
-def shelf_visualize(boxes, image_path):
-    image = PILImage.open(image_path)
-    text_infos = []
-    color_infos = []
-    for one in boxes:
-        text_infos.append('{}-{}'.format(one['level'], one['upc']))
-        color = 'black'
-        if one['result'] == 0:
-            color = 'blue'
-        elif one['result'] == 1 or one['result'] == 2:
-            color = 'red'
-        color_infos.append(color)
-    image_np = np.array(image)
-    visualize_boxes_and_labels_on_image_array_for_shelf(
-        image_np,
-        boxes,
-        text_infos,
-        color_infos
-    )
-    output_image = PILImage.fromarray(image_np)
-    image_dir = os.path.dirname(image_path)
-    result_image_name = 'visual_' + os.path.split(image_path)[-1]
-    result_image_path = os.path.join(image_dir, result_image_name)
-    # (im_width, im_height) = image.size
-    # output_image.thumbnail((int(im_width), int(im_height)), PILImage.ANTIALIAS)
-    output_image.save(result_image_path)
-    return result_image_name
 
 
 class SendEmail():
@@ -237,7 +199,7 @@ def select_psd_data(upc,shop_id,time_range):
     cursor.execute(sql.format(week_ago,now_date,template_shop_id,upc))
     result = cursor.fetchone()
     cursor.close()
-    conn.close()
+    # conn.close()
     if result:
         try:
             # print(result)
@@ -260,30 +222,9 @@ def check_order():
     for d in order_list:
         print(d)
 
-
 if __name__ == '__main__':
-    """Test code: Uses the two specified"""
-
-    # boxes = [{'level': 1, 'xmin': 200, 'ymin': 200, 'xmax': 400, 'ymax': 400, 'result': 1, 'upc':''}]
-    # image_path = 'c:/fastbox/1.jpg'
-    #
-    # shelf_visualize(boxes,image_path)
-
-    # email_user = 'wlgcxy2012@163.com'  # 发送者账号
-    # # email_user = '1027342194@qq.com'  # 发送者账号
-    # email_pwd = '2012wl'  # 发送者密码
-    # # email_pwd = 'rwpgeglecgribeei'  # 发送者密码
-    # maillist = '1027342194@qq.com'
-    # # maillist = 'wlgcxy2012@163.com'
-    # title = '测试邮件005'
-    # content = '这里是邮件内容'
-    # a = SendEmail(email_user, email_pwd, maillist)
-    # a.send_mail(title, content)
-
     # calculate_goods_up_datetime(806)
 
     # calculate_goods_up_datetime_first(806)
 
-    # print(select_psd_data('6921581540102',1284,28))
-
-    check_order()
+    print(select_psd_data('6921581540102',1284,28))

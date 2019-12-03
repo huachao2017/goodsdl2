@@ -2,12 +2,18 @@ from goods.sellgoods.commonbean.goods_ai_sales_order import SalesOrder
 from goods.sellgoods.salesquantity.service.order_version_5.data_util.goods_info import get_shop_order_goods
 from goods.sellgoods.salesquantity.local_util.config_table_util import ConfigTableUtil
 from goods.sellgoods.salesquantity.bean import goods_config_disnums,goods_config_safedays
+from goods.sellgoods.salesquantity.bean import taskflow
 import math
 import demjson
 import time
 def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins = SalesOrder()
     sales_order_ins.shopid = shop_id
+    if drg_ins.package_type in taskflow.package_type_name_dict.keys():
+        sales_order_ins.package_type = taskflow.package_type_name_dict[drg_ins.package_type]
+    else:
+        sales_order_ins.package_type = taskflow.package_type_name_dict[0]
+    sales_order_ins.shop_name = drg_ins.shop_name
     sales_order_ins.start_max = drg_ins.max_disnums
     sales_order_ins.start_min = drg_ins.min_disnums
     sales_order_ins.upc = drg_ins.upc
@@ -27,9 +33,22 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.delivery_type = drg_ins.delivery_type
     sales_order_ins.storage_day = drg_ins.storage_day
     sales_order_ins.mch_goods_code = drg_ins.mch_code
+    sales_order_ins.category_id = drg_ins.category_id
+    sales_order_ins.category1_id = drg_ins.category1_id
+    sales_order_ins.category2_id = drg_ins.category2_id
+    sales_order_ins.psd_nums_4 = drg_ins.psd_nums_4
+    sales_order_ins.psd_amount_4 = drg_ins.psd_amount_4
+    sales_order_ins.face_num = 0
+    sales_order_ins.sub_count = drg_ins.sub_count
+    sales_order_ins.up_status = drg_ins.up_status
+    sales_order_ins.upc_price = drg_ins.upc_price
+    sales_order_ins.upc_psd_amount_avg_4 = drg_ins.upc_psd_amount_avg_4
+    sales_order_ins.upc_psd_amount_avg_1 = drg_ins.upc_psd_amount_avg_1
+    sales_order_ins.purchase_price = drg_ins.purchase_price
     shelf_data = []
     for shelf_ins in drg_ins.shelf_inss:
-        shelf_data.append({"tz_id":shelf_ins.taizhang_id,"shelf_id":shelf_ins.shelf_id,"shelf_order":0})
+        sales_order_ins.face_num += shelf_ins.face_num
+        shelf_data.append({"tz_id":shelf_ins.taizhang_id,"shelf_id":shelf_ins.shelf_id,"shelf_order":0,"face_num":shelf_ins.face_num})
     sales_order_ins.shelf_order_info = shelf_data
 
 
