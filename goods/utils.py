@@ -221,3 +221,10 @@ def check_order():
 
     for d in order_list:
         print(d)
+
+if __name__ == '__main__':
+    # calculate_goods_up_datetime(806)
+
+    # calculate_goods_up_datetime_first(806)
+
+    print(select_psd_data('6921581540102',1284,28))
