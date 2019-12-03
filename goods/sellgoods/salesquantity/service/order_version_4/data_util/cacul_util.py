@@ -36,7 +36,7 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     return sales_order_ins
 
 
-def get_goods_batch_order_data(batch_id,sales_order_inss):
+def get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id):
     jsondata = []
     for sales_order_ins in sales_order_inss:
         data_dict = {}
@@ -52,7 +52,7 @@ def get_goods_batch_order_data(batch_id,sales_order_inss):
     order_data = demjson.encode(jsondata)
     create_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     update_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
-    return [(batch_id,order_data,create_time,update_time)]
+    return [(batch_id,order_data,create_time,update_time,uc_shop_id)]
 
 
 
