@@ -241,12 +241,11 @@ def check_order():
         # result = cursor.fetchone()
         # print(result)
         cursor.execute(sql_02.format(d['upc']))
-        result = cursor.fetchone()
-        print(result)
+        result_01 = cursor.fetchone()
 
         cursor_ucenter.execute(sql_03.format(d['upc']))
-        result = cursor_ucenter.fetchone()
-        print('配送类型:{}'.format(merchant_dict[result[0]]),'保质期（天）:{}'.format(result[1]))
+        result_02 = cursor_ucenter.fetchone()
+        print('商品:{}'.format(result_01[0]),'配送类型:{}'.format(merchant_dict[result_02[0]]),', 保质期（天）:{}'.format(result_02[1]))
         print()
 
 if __name__ == '__main__':
