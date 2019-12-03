@@ -304,7 +304,7 @@ def _find_category(category, category_tree_list):
 
 class CategoryTree:
     one_category_combination_threshhold = 10 # 一个分类组合阈值需要根据实际情况计算
-    all_category_combination_threshhold = 100 # 所有分类组合的阈值
+    all_category_combination_threshhold = 500 # 所有分类组合的阈值
 
     def __init__(self, id, intimate_value):
         self.id = id
