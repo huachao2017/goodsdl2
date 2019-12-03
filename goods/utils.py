@@ -199,7 +199,7 @@ def select_psd_data(upc,shop_id,time_range):
     cursor.execute(sql.format(week_ago,now_date,template_shop_id,upc))
     result = cursor.fetchone()
     cursor.close()
-    conn.close()
+    # conn.close()
     if result:
         try:
             # print(result)
