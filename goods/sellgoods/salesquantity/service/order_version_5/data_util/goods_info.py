@@ -340,52 +340,72 @@ class DataRawGoods():
         self.height = height
         if up_shelf_date is None:
             self.up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-        self.up_shelf_date = up_shelf_date
+        else:
+            self.up_shelf_date = up_shelf_date
         if up_status is None :
             self.up_status = 1
-        self.up_status = up_status
+        else:
+            self.up_status = up_status
         if sub_count is None :
             self.sub_count = 0
-        self.sub_count = sub_count
+        else:
+            self.sub_count = sub_count
         if upc_psd_amount_avg_4 is None:
             self.upc_psd_amount_avg_4 = 0
-        self.upc_psd_amount_avg_4 = upc_psd_amount_avg_4
-        self.upc_psd_amount_avg_1= upc_psd_amount_avg_1
+        else:
+            self.upc_psd_amount_avg_4 = upc_psd_amount_avg_4
+        if upc_psd_amount_avg_1 is None:
+            self.upc_psd_amount_avg_1 = 0
+        else:
+            self.upc_psd_amount_avg_1= upc_psd_amount_avg_1
         if purchase_price is None:
             self.purchase_price = 1
-        self.purchase_price = purchase_price
+        else:
+            self.purchase_price = purchase_price
         if upc_price is None or int(upc_price) == 0:
             self.upc_price = 1
-        self.upc_price = upc_price
+        else:
+            self.upc_price = upc_price
         if psd_nums_4 is None:
             self.psd_nums_4 = 0
+        else:
+            self.psd_nums_4 = psd_nums_4
         if psd_amount_4 is None:
             self.psd_amount_4 = 0
-        self.psd_nums_4 = psd_nums_4
-        self.psd_amount_4 = psd_amount_4
+        else:
+            self.psd_amount_4 = psd_amount_4
+
 
         if package_type is None:
             self.package_type = 0
-        self.package_type = package_type
+        else:
+            self.package_type = package_type
         if depth is None or depth == 0 :
             self.depth = 0.001
-        self.depth = depth
+        else:
+            self.depth = depth
         if start_sum is None :
             self.start_sum = 0
-        self.start_sum = start_sum
+        else:
+            self.start_sum = start_sum
         self.multiple = multiple
         if stock is None:
             self.stock = 0
-        self.stock = stock   # 门店库存
+        else:
+            self.stock = stock   # 门店库存
         if predict_sales is None:
             self.predict_sales = 0
-        self.predict_sales = predict_sales
+        else:
+            self.predict_sales = predict_sales
+        print(old_sales)
         if old_sales is None :
             self.old_sales = 0
-        self.old_sales = float(old_sales)
+        else:
+            self.old_sales = float(old_sales)
         if supply_stock is None:
             self.supply_stock = 0
-        self.supply_stock = supply_stock  #小仓库库存
+        else:
+            self.supply_stock = supply_stock  #小仓库库存
         self.delivery_type = delivery_type
         self.category1_id = category1_id  # 台账分类
         self.category2_id = category2_id
@@ -397,10 +417,12 @@ class DataRawGoods():
             self.category_id = category_id
         if storage_day is None:
             self.storage_day = 0
-        self.storage_day = storage_day
+        else:
+            self.storage_day = storage_day
         if max_scale is None:
             max_scale = 1
-        self.max_scale = max_scale
+        else:
+            self.max_scale = max_scale
         new_shelf_inss = []
         max_disnums = 0
         min_disnums = 0
