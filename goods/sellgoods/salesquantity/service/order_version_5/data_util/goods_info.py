@@ -122,6 +122,20 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue
 
+                        # 获取最大陈列系数
+                        try:
+                            cursor.execute(
+                                "select cat2_id,cat3_id,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and (cat2_id = '{}' or cat3_id = '{}') ".format(
+                                    mch_id, category2_id,category_id))
+                            (cat2_id,cat3_id,scale) = cursor.fetchone()
+                            if cat2_id is None and cat3_id is None:
+                                max_scale = 1
+                            else:
+                                max_scale = float(scale)
+                        except:
+                            print('台账找不到商品的最大陈列系数，把最大系数置 1:{}！'.format(mch_code))
+                            max_scale = 1
+
                         # 获取分类码
                         try:
                             cursor_dmstore.execute(
@@ -245,6 +259,18 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
 
                         # TODO 获取bi 数据库 ， 品的psd金额   mch_id  dmstore_shopid  goods_code
                         try:
+                            end_date = str(time.strftime('%Y%m%d', time.localtime()))
+                            start_date_1 = str(
+                                (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
+                                    days=-7)).strftime("%Y%m%d"))
+                            start_date_4 = str(
+                                (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
+                                    days=-28)).strftime("%Y%m%d"))
+
+                            sql1 = ""
+
+
+
                             upc_psd_amount_avg_4 = 0
                             upc_psd_amount_avg_1 = 0
                         except:
@@ -268,7 +294,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type,dmstore_shopid=shopid,
                                                      up_shelf_date = up_shelf_date,up_status = up_status,sub_count=sub_count,upc_price=upc_price,
                                                      upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1,
-                                                     psd_nums_4=psd_nums_4,psd_amount_4=psd_amount_4)
+                                                     psd_nums_4=psd_nums_4,psd_amount_4=psd_amount_4,max_scale=max_scale)
     cursor.close()
     cursor_dmstore.close()
     cursor_erp.close()
@@ -280,7 +306,7 @@ class DataRawGoods():
                  stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,
                  storage_day=None,shelf_inss=None,shop_name=None,uc_shopid =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
                  up_status=None,sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None,
-                 psd_nums_4=None, psd_amount_4=None):
+                 psd_nums_4=None, psd_amount_4=None,max_scale=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -365,6 +391,10 @@ class DataRawGoods():
             self.storage_day = 0
         else:
             self.storage_day = storage_day
+
+        if max_scale is None:
+            max_scale = 1
+        self.max_scale = max_scale
         new_shelf_inss = []
         max_disnums = 0
         min_disnums = 0
@@ -374,10 +404,12 @@ class DataRawGoods():
                 max_disnums = int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / self.depth))
                 new_shelf_inss.append(shelf_ins)
         self.shelf_inss = new_shelf_inss
-        self.max_disnums = max_disnums
+        self.max_disnums = max_disnums * max_scale
         self.min_disnums = min_disnums
         self.safe_day_nums = 7
         self.isnew_goods = False
+
+
         try:
             if self.storage_day != None and int(storage_day) > 0:
                 if  int(storage_day) >=30:

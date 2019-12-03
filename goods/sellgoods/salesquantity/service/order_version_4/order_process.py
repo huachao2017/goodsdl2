@@ -13,8 +13,8 @@ import traceback
 sql_workflow = "select id,batch_id,uc_shopid from goods_allworkflowbatch where type = {} and order_goods_status=1"
 update_sql_01 = "update goods_allworkflowbatch set order_goods_status=2 where id={}"  # 2是正在计算、3是计算结束
 update_sql_02 = "update goods_allworkflowbatch set order_goods_status={},order_goods_calculate_time={} where id={}"  # 2是正在计算、3是计算结束
-insert_goods_batch_order = "insert into goods_batch_order (batch_order_id,order_data,create_time,update_time) values (%s,%s,%s,%s)"
-select_goods_batch_order = "select id,batch_order_id,order_data from goods_batch_order where batch_order_id='{}' "
+insert_goods_batch_order = "insert into goods_batch_order (batch_order_id,order_data,create_time,update_time,uc_shop_id) values (%s,%s,%s,%s,%s)"
+select_goods_batch_order = "select id,batch_order_id order_data from goods_batch_order where batch_order_id='{}' and uc_shop_id = {} "
 update_goods_batch_order = "update goods_batch_order set order_data = '{}',update_time='{}' where id = {}"
 sql_uc_shop = "select mch_shop_code from uc_shop where id = {}"
 # 首次订货单
@@ -46,10 +46,10 @@ def first_order_process():
                 else:
                     # 把结果转成json , 存入数据库
                     print("首次 订单商品数 ：" + str(len(sales_order_inss)))
-                    cursor_ai.execute(select_goods_batch_order.format(batch_id))
+                    cursor_ai.execute(select_goods_batch_order.format(batch_id,uc_shop_id))
                     goods_batch_data = cursor_ai.fetchone()
                     if goods_batch_data is None:
-                        inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
+                        inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id)
                         cursor_ai.executemany(insert_goods_batch_order, inert_data)
                         cursor_ai.connection.commit()
                     else:
@@ -106,14 +106,14 @@ def day_order_process():
                     for sales_order_ins in sales_order_inss2:
                         sales_order_inss.append(sales_order_ins)
 
-                    cursor_ai.execute(select_goods_batch_order.format(batch_id))
+                    cursor_ai.execute(select_goods_batch_order.format(batch_id,uc_shop_id))
                     goods_batch_data = cursor_ai.fetchone()
                     if goods_batch_data is None:
-                        inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
+                        inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id)
                         cursor_ai.executemany(insert_goods_batch_order, inert_data)
                         cursor_ai.connection.commit()
                     else:
-                        update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
+                        update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id)
                         cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],goods_batch_data[0]))
                         cursor_ai.connection.commit()
                     # 更新数据库状态
@@ -160,14 +160,14 @@ def add_order_process():
                 else:
                     # 把结果转成json , 存入数据库
                     print("补货 订单商品数 ：" + str(len(sales_order_inss)))
-                    cursor_ai.execute(select_goods_batch_order.format(batch_id))
+                    cursor_ai.execute(select_goods_batch_order.format(batch_id,uc_shop_id))
                     goods_batch_data = cursor_ai.fetchone()
                     if goods_batch_data is None:
-                        inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
+                        inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id)
                         cursor_ai.executemany(insert_goods_batch_order, inert_data)
                         cursor_ai.connection.commit()
                     else:
-                        update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss)
+                        update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id)
                         cursor_ai.execute(update_goods_batch_order.format(update_data[0][1],update_data[0][3],goods_batch_data[0]))
                         cursor_ai.connection.commit()
                     # 更新数据库状态
