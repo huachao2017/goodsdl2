@@ -1,139 +1,23 @@
-from django.db import connections
-from goods.shelfdisplay.single_algorithm import calculate_shelf_category3_area_ratio
-import urllib.request
-from django.conf import settings
+"""
+台账陈列的主体对象结构：
+TaizhangDisplay ->* Shelf -> BestCandidateShelf
+CandidateShelf ->* Level ->* DisplayGoods ->* DisplayOneGoodsInfo（只在BestCandidateShelf这个对象生成）
+"""
+import datetime
+import math
 import os
-import numpy as np
+import time
+import urllib.request
+
 import cv2
+import numpy as np
+from django.conf import settings
+
 from goods.shelfdisplay import goods_arrange
 from goods.shelfdisplay import shelf_arrange
-import datetime
-import time
-import math
-import json
 
 
-def init_data(uc_shopid, tz_id, base_data):
-    taizhang = Taizhang(tz_id)
-    cursor = connections['ucenter'].cursor()
-
-    # 获取fx系统的shopid,台账系统的商家mch_id
-    cursor.execute("select mch_shop_code,mch_id from uc_shop where id = {}".format(uc_shopid))
-    (shopid, mch_id) = cursor.fetchone()
-
-    # 获取台账
-    try:
-        # cursor.execute(
-        #     "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.id = {}".format(
-        #         uc_shopid, tz_id))
-        # FIXME 没有指定商店
-        cursor.execute(
-            "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_taizhang t where t.id = {}".format(tz_id))
-        (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
-        if third_cate_ids is None or third_cate_ids == '':
-            raise ValueError('third_cate_ids is None:{},{},{}'.format(taizhang_id,shelf_id,count))
-    except:
-        print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
-        raise ValueError('taizhang error:{},{}'.format(uc_shopid, tz_id))
-
-    cursor.execute(
-        "select t.shelf_no,s.length,s.height,s.depth,s.hole_height,s.hole_distance,s.option from sf_shelf s, sf_shelf_type t where s.shelf_type_id=t.id and s.id={}".format(
-            shelf_id))
-    (shelf_no, length, height, depth, hole_height, hole_distance, option) = cursor.fetchone()
-    level_depth_list = []
-    try:
-        shelf_levels_option = json.loads(option)
-        for one_level_option in shelf_levels_option:
-            if 'floor_depth' in one_level_option:
-                level_depth_list.append(int(one_level_option['floor_depth']))
-    except:
-        print('货架层信息不合法：{}！'.format(option))
-        level_depth_list = []
-
-    # 计算五个值
-    display_category3_list = third_cate_ids.split(',')
-    display_category3_list = list(set(display_category3_list))
-    category3_to_category3_obj = {}
-    shelf_category3_to_goods_cnt = {}
-    shelf_goods_data_list = []
-    # 检查所有三级分类
-    for category3 in display_category3_list:
-        cat_id = None
-        try:
-            cursor.execute(
-                "select cat_id, name, pid from uc_category where mch_id={} and cat_id='{}' and level=3".format(
-                    mch_id, category3))
-            (cat_id, name, pid) = cursor.fetchone()
-        except:
-            print('台账陈列类别无法找到：{}！'.format(category3))
-        if cat_id is not None:
-            total_height = 0
-            for goods in base_data.goods_data_list:
-                if goods.category3 == cat_id:
-                    total_height += goods.height
-                    shelf_goods_data_list.append(goods)
-                    if goods.category3 in shelf_category3_to_goods_cnt:
-                        shelf_category3_to_goods_cnt[cat_id] += 1
-                    else:
-                        shelf_category3_to_goods_cnt[cat_id] = 1
-            if cat_id in shelf_category3_to_goods_cnt:
-                average_height = total_height / shelf_category3_to_goods_cnt[cat_id]
-                category3_to_category3_obj[cat_id] = Category3(cat_id, name, pid, average_height)
-
-    # 根据商品筛选三级分类 FIXME 三级分类目前一定是超量的
-    print('总共获取的候选陈列商品: {}'.format(len(shelf_goods_data_list)))
-    print(shelf_category3_to_goods_cnt)
-
-    if len(shelf_goods_data_list) == 0:
-        raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
-    shelf_goods_data_list.sort(key=lambda x:x.mch_code)
-    for goods_data in shelf_goods_data_list:
-        print(goods_data)
-
-    shelf_category3_list = list(shelf_category3_to_goods_cnt.keys())
-    shelf_category3_list.sort()
-    print('总共需要陈列的分类: {}'.format(len(shelf_category3_list)))
-    print(shelf_category3_list)
-
-    shelf_category3_intimate_weight = {}
-    shelf_category3_level_value = {}
-    shelf_category3_to_category3_obj = {}
-    for category3 in shelf_category3_list:
-        for category3_list_str in base_data.category3_intimate_weight.keys():
-            # 做部分删减
-            category3_list = category3_list_str.split(',')
-            if category3 in category3_list:
-                shelf_category3_intimate_weight[category3_list_str] = base_data.category3_intimate_weight[
-                    category3_list_str]
-        if category3 in base_data.category3_level_value:
-            shelf_category3_level_value[category3] = base_data.category3_level_value[category3]
-        if category3 in category3_to_category3_obj:
-            shelf_category3_to_category3_obj[category3] = category3_to_category3_obj[category3]
-
-    # 重新计算货架的三级分类比例
-    shelf_category3_area_ratio = calculate_shelf_category3_area_ratio(shelf_category3_list, base_data.category_area_ratio)
-
-    for i in range(count):
-        shelf = Shelf(shelf_id, shelf_no, length, height, depth, level_depth_list,
-                      shelf_category3_list,
-                      shelf_category3_intimate_weight,
-                      shelf_category3_level_value,
-                      shelf_category3_to_category3_obj,
-                      shelf_category3_area_ratio,
-                      shelf_goods_data_list)
-        taizhang.shelfs.append(shelf)
-
-    cursor.close()
-    return taizhang
-
-class Category3:
-    def __init__(self, category3, name, pid, average_height):
-        self.category3 = category3
-        self.name = name
-        self.pid = pid
-        self.average_height = average_height
-
-class Taizhang:
+class TaizhangDisplay:
     def __init__(self, tz_id):
         self.tz_id = tz_id
         self.shelfs = []
@@ -145,6 +29,10 @@ class Taizhang:
             os.makedirs(self.image_dir)
 
     def display(self):
+        """
+        陈列主算法
+        :return:
+        """
         begin_time = time.time()
 
         # 第三步
