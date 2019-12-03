@@ -121,21 +121,36 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         except:
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue
-
+                        scale = None
                         # 获取最大陈列系数
                         try:
                             cursor.execute(
-                                "select cat2_id,cat3_id,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and (cat2_id = '{}' or cat3_id = '{}') ".format(
-                                    mch_id, category2_id,category_id))
-                            (cat2_id,cat3_id,scale) = cursor.fetchone()
-                            if cat2_id is None and cat3_id is None:
+                                "select cat2_id,cat3_id,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and cat3_id = '{}' ".format(
+                                    mch_id,category_id))
+                            (cat3_id, scale) = cursor.fetchone()
+                            if cat3_id is None:
                                 max_scale = 1
                             else:
                                 max_scale = float(scale)
                         except:
-                            print('台账找不到商品的最大陈列系数，把最大系数置 1:{}！'.format(mch_code))
-                            max_scale = 1
+                            print('台账找不到商品的最大陈列系数:{}！'.format(mch_code))
+                            scale = None
 
+                        try:
+                            if scale is None:
+                                cursor.execute(
+                                    "select cat2_id,cat3_id,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and cat2_id = '{}' ".format(
+                                        mch_id, category2_id))
+                                (cat2_id, scale) = cursor.fetchone()
+                                if cat2_id is None:
+                                    max_scale = 1
+                                else:
+                                    max_scale = float(scale)
+                        except:
+                            print('台账找不到商品的最大陈列系数:{}！'.format(mch_code))
+                            scale = None
+                        if scale is None :
+                            max_scale = 1
                         # 获取分类码
                         try:
                             cursor_dmstore.execute(
@@ -145,6 +160,19 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         except:
                             print('dmstore找不到商品:{}-{}！'.format(upc, mch_code))
                             corp_classify_code = None
+
+                        try:
+                            cursor_dmstore.execute(
+                                "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                    upc, shopid))
+                            (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+                        except:
+                            stock = 0
+                            purchase_price = 1
+                            upc_price = 1
+                            print("%s delivery_type is error , goods_name=%s,upc=%s" % (
+                                str(delivery_type), str(goods_name),
+                                str(upc)))
 
                         #  获取最近一周的平均销量
                         try:
@@ -171,10 +199,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                     start_date = str(
                                         (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                                             days=-7)).strftime("%Y-%m-%d"))
-
                                     cursor_dmstore.execute(
                                         sales_sql.format(shopid, id, start_date, end_date, start_date, end_date))
-                                    # print ([str(shopid), str(id), str(start_date), str(end_date), str(start_date), str(end_date)])
                                     (sales_nums,) = cursor_dmstore.fetchone()
                                 else:
                                     print("%s delivery_type is error , goods_name=%s,upc=%s" % (
@@ -184,9 +210,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         except:
                             print('dmstore找不到计算销量商店商品:{}-{}-{}！'.format(shopid, upc,goods_name))
                             sales_nums = 0
-                            stock = 0
-                            purchase_price = 1
-                            purchase_price = 1
 
 
                         if authorized_shop_id is not None:
@@ -209,7 +232,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             start_sum = 0
                             multiple = 0
                         try:
-                            # 获取起订量
+                            # 获取小仓库库存
                             # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
                             cursor_erp.execute(
                                 "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
@@ -227,13 +250,14 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
                             cursor_erp.execute(
                                 "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
-                                    erp_supply_id, upc))
-                            (sku_id,prod_id) = cursor_erp.fetchone()
-                            print(str(erp_supply_id) + "," + str(upc)+","+str(sku_id)+","+str(prod_id))
+                                    authorized_shop_id, upc))
+                            (sku_id,) = cursor_erp.fetchone()
+
                             cursor_erp.execute(
                                 "select sum(item.sub_item_count) as sub_count from ls_sub_item item LEFT JOIN ls_sub sub ON  item.sub_number=sub.sub_number where sub.buyer_shop_id= {} AND sub.status=50 and sku_id = {}".format(
                                     erp_supply_id,sku_id))
                             (sub_count,) = cursor_erp.fetchone()
+                            print("找到在途库存 ："+str(erp_supply_id) + "," + str(upc) + "," + str(sku_id))
                         except:
                             print('ErpSupply 获取在途订单数 找不到商品:{}-{}！'.format(upc, erp_supply_id))
                             sub_count = 0
