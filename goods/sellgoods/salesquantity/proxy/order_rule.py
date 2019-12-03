@@ -85,7 +85,7 @@ def rule_start_num2(order_sale,start_sum):
 def rule_start_price(sales_order_inss,dmshop_id):
     sum_price = 0
     for sales_order_ins in sales_order_inss:
-        sum_price +=  sales_order_ins.purchase_price
+        sum_price += sales_order_ins.order_sale * sales_order_ins.purchase_price
 
     if dmshop_id in taskflow.start_price.keys() and sum_price < taskflow.start_price[dmshop_id]:
         return []

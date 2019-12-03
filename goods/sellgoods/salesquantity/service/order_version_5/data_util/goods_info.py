@@ -9,7 +9,7 @@ django.setup()
 import math
 from django.db import connections
 import traceback
-from goods import util
+from goods import utils
 
 def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     """
@@ -132,22 +132,12 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             print('dmstore找不到商品:{}-{}！'.format(upc, mch_code))
                             corp_classify_code = None
 
-                        # 获取库存
-                        try:
-                            cursor_dmstore.execute(
-                                "select stock,purchase_price from shop_goods where shop_id={} and upc='{}' order by modify_time desc".format(shopid, upc))
-                            (stock,purchase_price) = cursor_dmstore.fetchone()
-                        except:
-                            print('dmstore找不到商店商品 stock 和 进货价获取失败:{}-{}！'.format(shopid, upc))
-                            stock = 0
-                            purchase_price = 1
-
                         #  获取最近一周的平均销量
                         try:
                                 cursor_dmstore.execute(
-                                    "select id,price FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                    "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
                                         upc, shopid))
-                                (id,upc_price) = cursor_dmstore.fetchone()
+                                (id,upc_price,purchase_price,stock) = cursor_dmstore.fetchone()
                                 # 销量
                                 sales_sql = "SELECT sum(number) as nums FROM payment_detail " \
                                             "WHERE shop_id = {} and shop_goods_id = {} and number > 0 and create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
@@ -177,10 +167,13 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                     str(delivery_type), str(goods_name),
                                     str(upc)))
                                     sales_nums = 0
-
                         except:
                             print('dmstore找不到计算销量商店商品:{}-{}-{}！'.format(shopid, upc,goods_name))
                             sales_nums = 0
+                            stock = 0
+                            purchase_price = 1
+                            purchase_price = 1
+
 
                         if authorized_shop_id is not None:
                             try:
@@ -222,9 +215,10 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                 "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
                                     erp_supply_id, upc))
                             (sku_id,prod_id) = cursor_erp.fetchone()
+                            print(str(erp_supply_id) + "," + str(upc)+","+str(sku_id)+","+str(prod_id))
                             cursor_erp.execute(
-                                "select sum(item.sub_item_count) as sub_count from ls_sub_item item LEFT JOIN ls_sub sub ON  item.sub_number=sub.sub_number where sub.buyer_shop_id= {} AND sub.status=50 and item.prod_id = {}".format(
-                                    erp_supply_id,prod_id))
+                                "select sum(item.sub_item_count) as sub_count from ls_sub_item item LEFT JOIN ls_sub sub ON  item.sub_number=sub.sub_number where sub.buyer_shop_id= {} AND sub.status=50 and sku_id = {}".format(
+                                    erp_supply_id,sku_id))
                             (sub_count,) = cursor_erp.fetchone()
                         except:
                             print('ErpSupply 获取在途订单数 找不到商品:{}-{}！'.format(upc, erp_supply_id))
@@ -267,7 +261,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss,
                                                      shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type,dmstore_shopid=shopid,
                                                      up_shelf_date = up_shelf_date,up_status = up_status,sub_count=sub_count,upc_price=upc_price,
-                                                     upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1)
+                                                     upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1,
+                                                     )
 
     cursor.close()
     cursor_dmstore.close()
@@ -279,13 +274,13 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
                  stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,
-                 storage_day=None,shelf_inss=None,shop_name=None,ucshop_id =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
+                 storage_day=None,shelf_inss=None,shop_name=None,uc_shopid =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
                  up_status=None,sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
         self.shop_name = shop_name
-        self.ucshop_id = ucshop_id
+        self.ucshop_id = uc_shopid
         self.dmstoreshop_id = dmstore_shopid
         self.tz_display_img = tz_display_img
         self.corp_classify_code = corp_classify_code
@@ -311,20 +306,20 @@ class DataRawGoods():
             self.purchase_price = 1
         else:
             self.purchase_price = purchase_price
-        if upc_price is None or int(self.upc_price) == 0:
+        if upc_price is None or int(upc_price) == 0:
             self.upc_price = 1
         self.upc_price = upc_price
         psd_nums_4 = 0
         psd_amount_4 = 0
-        # TODO 调用选品提供的方法
-        try:
-            psd_nums_4,psd_amount_4 = util.select_psd_data(upc,self.dmstoreshop_id,28)
-        except:
-            print ("select_psd_data is error ,upc="+str(upc))
-        if psd_nums_4 is None:
-            self.psd_nums_4 = 0
-        if psd_amount_4 is None:
-            self.psd_amount_4 = 0
+        # # TODO 调用选品提供的方法
+        # try:
+        #     psd_nums_4,psd_amount_4 = utils.select_psd_data(upc,self.dmstoreshop_id,28)
+        # except:
+        #     print ("select_psd_data is error ,upc="+str(upc))
+        # if psd_nums_4 is None:
+        #     self.psd_nums_4 = 0
+        # if psd_amount_4 is None:
+        #     self.psd_amount_4 = 0
         self.psd_nums_4 = psd_nums_4
         self.psd_amount_4 = psd_amount_4
 

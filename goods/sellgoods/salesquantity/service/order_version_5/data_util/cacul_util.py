@@ -9,7 +9,10 @@ import time
 def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins = SalesOrder()
     sales_order_ins.shopid = shop_id
-    sales_order_ins.package_type = taskflow.package_type_name_dict[drg_ins.package_type]
+    if drg_ins.package_type in taskflow.package_type_name_dict.keys():
+        sales_order_ins.package_type = taskflow.package_type_name_dict[drg_ins.package_type]
+    else:
+        sales_order_ins.package_type = taskflow.package_type_name_dict[0]
     sales_order_ins.shop_name = drg_ins.shop_name
     sales_order_ins.start_max = drg_ins.max_disnums
     sales_order_ins.start_min = drg_ins.min_disnums
