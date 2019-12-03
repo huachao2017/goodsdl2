@@ -24,6 +24,7 @@ origin_choose = ((1284, '3598', '6921168558049', '050203', 9900, 2026210), (1284
 # +                   "where T3.upc != '' and  T3.upc != '0' "
 # +                   "group by T2.t1_create_date,T2.t1_shop_id,T3.upc "
 # upc_data_sql.format()
+
 def get_data(target,template_shop_id,days=28):
     """
     :param target: 选品店的id
@@ -34,22 +35,15 @@ def get_data(target,template_shop_id,days=28):
     now = datetime.datetime.now()
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
     week_ago = (now - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
-    # sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '2019-10-14 00:00:00' and p.create_time < '2019-10-17 00:00:00' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
     sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
     # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
-
     conn = connections['dmstore']
     cursor = conn.cursor()
-
-
-
     cursor.execute(sql.format(week_ago,now_date,template_shop_id))
     results = cursor.fetchall()
     cursor.close()
     conn.close()
     # print(results)
-
-
 
     data = []
     for result in results:
@@ -62,7 +56,6 @@ def get_data(target,template_shop_id,days=28):
         list.append(result[5])
         if not result[1].startswith('6901028'):       # 以此为开头的是香烟
             data.append(list)
-
         # if result[2][:2] in ['02','16','17']:       # 日配的商品
         #     data.append(list)
         # if result[2][:2] in ['01']:       # 冷冻的商品
@@ -160,7 +153,6 @@ def check_order(data):
     upcs = tuple(upcs)
 
     # conn = pymysql.connect('10.19.68.63', 'diamond_rw', password='iMZBbBwxJZ7LUW7p', database='ls_diamond', charset="utf8",port=3306, use_unicode=True)
-
     conn = connections['erp']
     cursor = conn.cursor()
 
@@ -204,29 +196,16 @@ def save_data(data,batch_id,uc_shopid):
     conn = connections['default']
     cursor = conn.cursor()
 
-    # select_sql = "select batch_id from goods_firstgoodsselection where shopid={}"
-    # cursor.execute(select_sql.format(upc_tuple[0][0]))
-    # batch_id = cursor.fetchone()[0]
-    # print('batch_id',batch_id)
-
     # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     delete_sql = "delete from goods_firstgoodsselection where shopid={}"
     delete_sql_02 = "delete from goods_goodsselectionhistory where shopid={} and batch_id='{}'"
-
-
-    # 查询有该批次，没有的话，插入，有的话，先删再插入
-
     select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
-
-
-
     try:
         print('batch_id',batch_id,type(batch_id))
         # cursor.execute(delete_sql.format(upc_tuple[0][0],batch_id))
         # cursor.executemany(insert_sql_01.format(batch_id,uc_shopid), upc_tuple[:])
-
-        cursor.execute(select_sql.format(uc_shopid,batch_id))
+        cursor.execute(select_sql.format(uc_shopid,batch_id))   # 查询有该批次，没有的话，插入，有的话，先删再插入
         # print('history_batch_id', history_batch_id,type(history_batch_id))
         if cursor.fetchone():
             cursor.execute(delete_sql_02.format(uc_shopid, batch_id))
@@ -273,16 +252,18 @@ def second_choose(data):
     return result_tuple
 
 def start_choose_goods(batch_id,uc_shopid,pos_shopid):
+    """
+    开始进行选品
+    :param batch_id: 批次号
+    :param uc_shopid: 台账id
+    :param pos_shopid: pos系统的id
+    :return:
+    """
     a = get_data(pos_shopid, '3598')
     print("uc_shopid,pos_shopid",uc_shopid,pos_shopid)
     # a = storage_day_choose(a)
     b = choose_goods(a)
-    # print(b)
-
-    # print(len(a))
-    # print(len(b))
     c = check_order(b)
-    # print(c)
     save_data(c,batch_id,uc_shopid)
 
 
