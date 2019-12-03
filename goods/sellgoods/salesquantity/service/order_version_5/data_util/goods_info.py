@@ -173,7 +173,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             print("%s delivery_type is error , goods_name=%s,upc=%s" % (
                                 str(delivery_type), str(goods_name),
                                 str(upc)))
-
+                        sales_nums = 0
                         #  获取最近一周的平均销量
                         try:
                             cursor_dmstore.execute(
