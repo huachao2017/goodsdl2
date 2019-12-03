@@ -251,13 +251,13 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
                             upc_psd_amount_avg_4 = 0
                             upc_psd_amount_avg_1 = 0
-
-                        try:
-                            psd_nums_4, psd_amount_4 = utils.select_psd_data(upc, shopid, 28)
-                        except:
-                            print("select_psd_data is error ,upc=" + str(upc))
-                            psd_nums_4 = 0
-                            psd_amount_4 = 0
+                        psd_nums_4, psd_amount_4 = 0,0
+                        # try:
+                        #     psd_nums_4, psd_amount_4 = utils.select_psd_data(upc, shopid, 28)
+                        # except:
+                        #     print("select_psd_data is error ,upc=" + str(upc))
+                        #     psd_nums_4 = 0
+                        #     psd_amount_4 = 0
 
                         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
                                                       start_sum,multiple,
