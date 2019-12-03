@@ -252,7 +252,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                 "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
                                     authorized_shop_id, upc))
                             (sku_id,) = cursor_erp.fetchone()
-
                             cursor_erp.execute(
                                 "select sum(item.sub_item_count) as sub_count from ls_sub_item item LEFT JOIN ls_sub sub ON  item.sub_number=sub.sub_number where sub.buyer_shop_id= {} AND sub.status=50 and sku_id = {}".format(
                                     erp_supply_id,sku_id))
@@ -266,9 +265,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             cursor_ai.execute(
                                 "select nextday_predict_sales from goods_ai_sales_goods where shopid={} and upc='{}' and next_day='{}'".format(shopid, upc, next_day))
                             (sales,) = cursor_ai.fetchone()
-                            print('ai找到销量预测:{}-{}！'.format(upc, sales))
                         except:
-                            #print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
+                            print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
                             sales = 0
                         # 获取商品的上架时间
                         try:
@@ -290,11 +288,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             start_date_4 = str(
                                 (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                                     days=-28)).strftime("%Y%m%d"))
-
                             sql1 = ""
-
-
-
                             upc_psd_amount_avg_4 = 0
                             upc_psd_amount_avg_1 = 0
                         except:
@@ -316,7 +310,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      supply_stock=supply_stock,old_sales = sales_nums,delivery_type=delivery_type,category1_id=category1_id,
                                                      category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss,
                                                      shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type,dmstore_shopid=shopid,
-                                                     up_shelf_date = up_shelf_date,up_status = up_status,sub_count=sub_count,upc_price=upc_price,
+                                                     up_shelf_date = up_shelf_date,up_status = up_status,sub_count = sub_count,upc_price=upc_price,
                                                      upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1,
                                                      psd_nums_4=psd_nums_4,psd_amount_4=psd_amount_4,max_scale=max_scale)
     cursor.close()
@@ -359,8 +353,7 @@ class DataRawGoods():
         self.upc_psd_amount_avg_1= upc_psd_amount_avg_1
         if purchase_price is None:
             self.purchase_price = 1
-        else:
-            self.purchase_price = purchase_price
+        self.purchase_price = purchase_price
         if upc_price is None or int(upc_price) == 0:
             self.upc_price = 1
         self.upc_price = upc_price
@@ -373,35 +366,26 @@ class DataRawGoods():
 
         if package_type is None:
             self.package_type = 0
-        else:
-            self.package_type = package_type
+        self.package_type = package_type
         if depth is None or depth == 0 :
             self.depth = 0.001
-        else:
-            self.depth = depth
-
+        self.depth = depth
         if start_sum is None :
             self.start_sum = 0
-        else:
-            self.start_sum = start_sum
+        self.start_sum = start_sum
         self.multiple = multiple
         if stock is None:
             self.stock = 0
-        else:
-            self.stock = stock   # 门店库存
+        self.stock = stock   # 门店库存
         if predict_sales is None:
             self.predict_sales = 0
-        else:
-            self.predict_sales = predict_sales
+        self.predict_sales = predict_sales
         if old_sales is None :
             self.old_sales = 0
-        else:
-            self.old_sales = old_sales
-
+        self.old_sales = old_sales
         if supply_stock is None:
             self.supply_stock = 0
-        else:
-            self.supply_stock = supply_stock  #小仓库库存
+        self.supply_stock = supply_stock  #小仓库库存
         self.delivery_type = delivery_type
         self.category1_id = category1_id  # 台账分类
         self.category2_id = category2_id
@@ -413,9 +397,7 @@ class DataRawGoods():
             self.category_id = category_id
         if storage_day is None:
             self.storage_day = 0
-        else:
-            self.storage_day = storage_day
-
+        self.storage_day = storage_day
         if max_scale is None:
             max_scale = 1
         self.max_scale = max_scale
@@ -432,8 +414,6 @@ class DataRawGoods():
         self.min_disnums = min_disnums
         self.safe_day_nums = 7
         self.isnew_goods = False
-
-
         try:
             if self.storage_day != None and int(storage_day) > 0:
                 if  int(storage_day) >=30:
