@@ -252,6 +252,12 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             upc_psd_amount_avg_4 = 0
                             upc_psd_amount_avg_1 = 0
 
+                        try:
+                            psd_nums_4, psd_amount_4 = utils.select_psd_data(upc, shopid, 28)
+                        except:
+                            print("select_psd_data is error ,upc=" + str(upc))
+                            psd_nums_4 = 0
+                            psd_amount_4 = 0
 
                         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
                                                       start_sum,multiple,
@@ -262,20 +268,19 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type,dmstore_shopid=shopid,
                                                      up_shelf_date = up_shelf_date,up_status = up_status,sub_count=sub_count,upc_price=upc_price,
                                                      upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1,
-                                                     )
-
+                                                     psd_nums_4=psd_nums_4,psd_amount_4=psd_amount_4)
     cursor.close()
     cursor_dmstore.close()
     cursor_erp.close()
     cursor_ai.close()
-
     return ret
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
                  stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,
                  storage_day=None,shelf_inss=None,shop_name=None,uc_shopid =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
-                 up_status=None,sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None):
+                 up_status=None,sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None,
+                 psd_nums_4=None, psd_amount_4=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -309,17 +314,10 @@ class DataRawGoods():
         if upc_price is None or int(upc_price) == 0:
             self.upc_price = 1
         self.upc_price = upc_price
-        psd_nums_4 = 0
-        psd_amount_4 = 0
-        # # TODO 调用选品提供的方法
-        # try:
-        #     psd_nums_4,psd_amount_4 = utils.select_psd_data(upc,self.dmstoreshop_id,28)
-        # except:
-        #     print ("select_psd_data is error ,upc="+str(upc))
-        # if psd_nums_4 is None:
-        #     self.psd_nums_4 = 0
-        # if psd_amount_4 is None:
-        #     self.psd_amount_4 = 0
+        if psd_nums_4 is None:
+            self.psd_nums_4 = 0
+        if psd_amount_4 is None:
+            self.psd_amount_4 = 0
         self.psd_nums_4 = psd_nums_4
         self.psd_amount_4 = psd_amount_4
 
