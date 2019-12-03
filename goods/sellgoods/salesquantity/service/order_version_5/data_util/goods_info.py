@@ -349,7 +349,7 @@ class DataRawGoods():
         if sub_count is None :
             self.sub_count = 0
         else:
-            self.sub_count = sub_count
+            self.sub_count = float(sub_count)
         if upc_psd_amount_avg_4 is None:
             self.upc_psd_amount_avg_4 = 0
         else:
@@ -392,12 +392,11 @@ class DataRawGoods():
         if stock is None:
             self.stock = 0
         else:
-            self.stock = stock   # 门店库存
+            self.stock = float(stock)   # 门店库存
         if predict_sales is None:
             self.predict_sales = 0
         else:
             self.predict_sales = predict_sales
-        print(old_sales)
         if old_sales is None :
             self.old_sales = 0
         else:
@@ -405,7 +404,7 @@ class DataRawGoods():
         if supply_stock is None:
             self.supply_stock = 0
         else:
-            self.supply_stock = supply_stock  #小仓库库存
+            self.supply_stock = float(supply_stock)  #小仓库库存
         self.delivery_type = delivery_type
         self.category1_id = category1_id  # 台账分类
         self.category2_id = category2_id
