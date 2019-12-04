@@ -46,6 +46,7 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.upc_psd_amount_avg_1 = drg_ins.upc_psd_amount_avg_1
     sales_order_ins.purchase_price = drg_ins.purchase_price
     sales_order_ins.max_scale = drg_ins.max_scale
+    sales_order_ins.oneday_max_psd = drg_ins.oneday_max_psd
     shelf_data = []
     for shelf_ins in drg_ins.shelf_inss:
         sales_order_ins.face_num += shelf_ins.face_num

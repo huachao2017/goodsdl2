@@ -4,10 +4,11 @@ import main.import_django_settings
 from django.db import connections
 import time
 from goods.sellgoods.salesquantity.bean import taskflow
-from goods.sellgoods.salesquantity.service.order_version_4 import generate_order_2saler_first,generate_order_2saler_add,generate_order_2saler_add_day,generate_order_shop
-from goods.sellgoods.salesquantity.service.order_version_4.data_util import cacul_util
+from goods.sellgoods.salesquantity.service.order_version_5 import generate_order_2saler_first,generate_order_2saler_add,generate_order_2saler_add_day,generate_order_shop,generate_order_2saler_newshop_notday
+from goods.sellgoods.salesquantity.service.order_version_5.data_util import cacul_util
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from set_config import config
+import datetime
 import traceback
 sql_workflow = "select id,batch_id,uc_shopid from goods_allworkflowbatch where type = {} and order_goods_status=1"
 update_sql_01 = "update goods_allworkflowbatch set order_goods_status=2 where id={}"  # 2是正在计算、3是计算结束
@@ -88,8 +89,16 @@ def day_order_process():
                 cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                 cursor_ai.connection.commit()
                 start_time = time.time()
-                print ("日常订单 batch_id =" +str(batch_id))
-                sales_order_inss1 = generate_order_2saler_add.generate(dmstore_shopid)
+                end_date = int(time.strftime('%Y%m%d', time.localtime()))
+                start_date = int(
+                    (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
+                        days=-30)).strftime("%Y%m%d"))
+                print("日常订单 batch_id =" + str(batch_id))
+                if dmstore_shopid in config.shellgoods_params["start_shop"].keys() and config.shellgoods_params["start_shop"][dmstore_shopid] > start_date:
+                    print ("该店处于新店期，dmstore_shopid = "+str(dmstore_shopid))
+                    sales_order_inss1 = generate_order_2saler_newshop_notday.generate(dmstore_shopid)
+                else:
+                    sales_order_inss1 = generate_order_2saler_add.generate(dmstore_shopid)
                 sales_order_inss2 = generate_order_2saler_add_day.generate(dmstore_shopid)
                 if sales_order_inss1 is None or sales_order_inss2 is None:
                     cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),

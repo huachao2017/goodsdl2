@@ -15,12 +15,3 @@ package_type_name_dict = {
     6:"散装",
 }
 
-# 开店期
-start_shop ={
-    1284:'2019-11-05'
-}
-
-# 起订价规则
-start_price = {
-    1284:50000
-}
