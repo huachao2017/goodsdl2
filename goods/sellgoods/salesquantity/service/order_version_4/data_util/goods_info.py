@@ -1,7 +1,5 @@
 
 import json
-import django
-import os
 import time
 import datetime
 import main.import_django_settings

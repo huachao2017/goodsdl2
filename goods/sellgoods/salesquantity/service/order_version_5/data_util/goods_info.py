@@ -1,7 +1,5 @@
 
 import json
-import django
-import os
 import time
 import datetime
 import main.import_django_settings
@@ -134,7 +132,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         except:
                             print('台账找不到商品的最大陈列系数:{}！'.format(mch_code))
                             scale = None
-
+                        max_scale =1
                         try:
                             if scale is None:
                                 cursor.execute(
@@ -277,6 +275,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         except:
                             # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
                             up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                            up_status = 1
 
                         # TODO 获取bi 数据库 ， 品的psd金额   mch_id  dmstore_shopid  goods_code
                         try:

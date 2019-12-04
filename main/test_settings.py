@@ -123,6 +123,17 @@ DATABASES = {
         'CHARSET': 'utf8',
         'COLLATION': 'utf8_general_ci',
     },
+    'bi': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'bi',
+        'USER': 'fastxbox',
+        'PASSWORD': 'C2lz6wxgnqhYBlZf',
+        # 'HOST': '10.19.79.120',   # 从ucloud连ucloud
+        'HOST': '106.75.74.223', # 从内网连ucloud
+        'PORT': '3307',
+        'CHARSET': 'utf8',
+        'COLLATION': 'utf8_general_ci',
+    },
     'dmstore': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'dmstore',

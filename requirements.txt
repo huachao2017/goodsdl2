@@ -13,4 +13,5 @@ aliyun-python-sdk-imagesearch
 keras==2.2.4
 pyarrow
 py4j
+pymysql
 
