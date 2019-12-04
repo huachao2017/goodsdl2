@@ -4,12 +4,9 @@
 'weather_url2' => 'https://api.jisuapi.com/weather2/query?appkey=e22d1fbac88700a0',
 
 """
-import django
-import os
 import time
 import datetime
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
+import main.import_django_settings
 from django.db import connections
 import requests
 import demjson

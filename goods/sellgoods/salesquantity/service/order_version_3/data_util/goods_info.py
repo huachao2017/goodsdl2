@@ -1,11 +1,8 @@
 
 import json
-import django
-import os
 import time
 import datetime
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
+import main.import_django_settings
 import math
 from django.db import connections
 def get_shop_order_goods(shopid, erp_shop_type=0):

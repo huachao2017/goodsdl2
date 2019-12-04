@@ -4,14 +4,12 @@ from email.mime.text import MIMEText
 import numpy as np
 from PIL import Image as PILImage
 import json
-import django
 import os
 import time
 import datetime
 from  decimal import Decimal
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
+import main.import_django_settings
 from dl.util import visualize_boxes_and_labels_on_image_array_for_shelf
 
 
