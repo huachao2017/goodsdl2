@@ -380,7 +380,7 @@ class DataRawGoods():
         if oneday_max_psd is None :
             self.oneday_max_psd = 0
         else:
-            self.oneday_max_psd = oneday_max_psd
+            self.oneday_max_psd = float(oneday_max_psd)
         if up_shelf_date is None:
             self.up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
         else:
@@ -396,27 +396,27 @@ class DataRawGoods():
         if upc_psd_amount_avg_4 is None:
             self.upc_psd_amount_avg_4 = 0
         else:
-            self.upc_psd_amount_avg_4 = upc_psd_amount_avg_4
+            self.upc_psd_amount_avg_4 = float(upc_psd_amount_avg_4)
         if upc_psd_amount_avg_1 is None:
             self.upc_psd_amount_avg_1 = 0
         else:
-            self.upc_psd_amount_avg_1= upc_psd_amount_avg_1
+            self.upc_psd_amount_avg_1= float(upc_psd_amount_avg_1)
         if purchase_price is None:
             self.purchase_price = 1
         else:
-            self.purchase_price = purchase_price
+            self.purchase_price = float(purchase_price)
         if upc_price is None or int(upc_price) == 0:
             self.upc_price = 1
         else:
-            self.upc_price = upc_price
+            self.upc_price = float(upc_price)
         if psd_nums_4 is None:
             self.psd_nums_4 = 0
         else:
-            self.psd_nums_4 = psd_nums_4
+            self.psd_nums_4 = float(psd_nums_4)
         if psd_amount_4 is None:
             self.psd_amount_4 = 0
         else:
-            self.psd_amount_4 = psd_amount_4
+            self.psd_amount_4 = float(psd_amount_4)
 
 
         if package_type is None:
@@ -463,9 +463,9 @@ class DataRawGoods():
         else:
             self.storage_day = storage_day
         if max_scale is None:
-            max_scale = 1
+            self.max_scale = 1
         else:
-            self.max_scale = max_scale
+            self.max_scale = float(max_scale)
         new_shelf_inss = []
         max_disnums = 0
         min_disnums = 0
