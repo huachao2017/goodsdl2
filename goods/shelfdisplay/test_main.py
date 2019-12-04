@@ -1,9 +1,7 @@
 import os
 import sys
 import argparse
-import django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
+import main.import_django_settings
 
 from goods.shelfdisplay.generate_shelf_display import generate_displays
 
