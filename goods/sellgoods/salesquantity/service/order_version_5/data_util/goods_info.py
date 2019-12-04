@@ -469,11 +469,14 @@ class DataRawGoods():
         new_shelf_inss = []
         max_disnums = 0
         min_disnums = 0
+        face_num = 0
         for shelf_ins in shelf_inss:
             if shelf_ins.mch_code == mch_code:
+                face_num += shelf_ins.face_num
                 min_disnums += shelf_ins.face_num
                 max_disnums = int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / self.depth))
                 new_shelf_inss.append(shelf_ins)
+        self.face_num = face_num
         self.shelf_inss = new_shelf_inss
         self.max_disnums = max_disnums * max_scale
         self.min_disnums = min_disnums
