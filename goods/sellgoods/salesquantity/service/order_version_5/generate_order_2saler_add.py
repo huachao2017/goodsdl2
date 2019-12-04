@@ -44,7 +44,7 @@ def generate(shop_id = None,order_type=None):
             sales_order_inss.append(sales_order_ins)
         sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
         # 起订价规则
-        sales_order_inss = order_rule.rule_start_price(sales_order_inss,shop_id)
+        # sales_order_inss = order_rule.rule_start_price(sales_order_inss,shop_id)
         print("规则三：商品数：" + str(len(sales_order_inss)))
         print("门店id,门店名称,商品id,upc,一级分类,二级分类,三级分类,face数,陈列规格,psd,psd金额,配送单位,订货数,其他")
         for sales_order_ins in sales_order_inss:
