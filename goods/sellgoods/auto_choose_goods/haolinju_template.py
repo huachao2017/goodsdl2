@@ -24,7 +24,7 @@ origin_choose = ((1284, '3598', '6921168558049', '050203', 9900, 2026210), (1284
 # +                   "group by T2.t1_create_date,T2.t1_shop_id,T3.upc "
 # upc_data_sql.format()
 
-def get_data(target,template_shop_id,days=28):
+def get_data(target,template_shop_id,days=128):
     """
     :param target: 选品店的id
     :param template_shop_id: 模板店的id
@@ -35,8 +35,8 @@ def get_data(target,template_shop_id,days=28):
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
     week_ago = (now - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
     sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id={} group by g.upc order by sum(p.amount) desc;"
-    # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
-    conn = connections['dmstore']
+    conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
+    # conn = connections['dmstore']
     cursor = conn.cursor()
     cursor.execute(sql.format(week_ago,now_date,template_shop_id))
     results = cursor.fetchall()
@@ -258,7 +258,7 @@ def start_choose_goods(batch_id,uc_shopid,pos_shopid):
     :param pos_shopid: pos系统的id
     :return:
     """
-    a = get_data(pos_shopid, '3598')
+    a = get_data(pos_shopid, '88')
     print("uc_shopid,pos_shopid",uc_shopid,pos_shopid)
     # a = storage_day_choose(a)
     b = choose_goods(a)
