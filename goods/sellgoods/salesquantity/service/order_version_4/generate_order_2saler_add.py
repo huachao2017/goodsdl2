@@ -21,8 +21,8 @@ def generate(shop_id = None):
                 continue
             if drg_ins.safe_day_nums * drg_ins.old_sales / 7 - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count>= 0:
                 # print("规则1 ：max(安全天数内的销量，最小陈列量，起订量)")
-                order_sale = max(drg_ins.safe_day_nums * drg_ins.old_sales / 7, drg_ins.min_disnums,
-                                 drg_ins.start_sum) - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
+                order_sale = max(max(drg_ins.safe_day_nums * drg_ins.old_sales / 7, drg_ins.min_disnums) - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count,
+                                 drg_ins.start_sum)
             else:
                 order_sale = 0
             if order_sale <= 0 :

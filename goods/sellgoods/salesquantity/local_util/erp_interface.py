@@ -1,6 +1,8 @@
 import time
 import urllib.request
 import json
+import django
+import os
 import main.import_django_settings
 from django.db import connections
 import time

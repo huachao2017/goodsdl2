@@ -1,3 +1,5 @@
+import django
+import os
 import main.import_django_settings
 from django.db import connections
 from goods.sellgoods.salesquantity.bean import goods_config_disnums,goods_config_safedays,goods_config_shops

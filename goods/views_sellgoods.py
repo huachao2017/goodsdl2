@@ -2,7 +2,7 @@ import logging
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from goods.sellgoods.salesquantity.service.order_version_3 import generate_order_shop
+from goods.sellgoods.salesquantity.service.order_version_4 import generate_order_shop
 from concurrent.futures import ThreadPoolExecutor,wait
 logger = logging.getLogger("django")
 class Test(APIView):

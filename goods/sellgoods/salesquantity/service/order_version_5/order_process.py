@@ -1,3 +1,5 @@
+import os
+import django
 import main.import_django_settings
 from django.db import connections
 import time
