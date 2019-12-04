@@ -22,7 +22,10 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     cursor_dmstore = connections['dmstore'].cursor()
     cursor_erp = connections['erp'].cursor()
     cursor_ai = connections['default'].cursor()
-    cursor_bi = connections['bi'].cursor()
+    try:
+        cursor_bi = connections['bi'].cursor()
+    except:
+        cursor_bi = None
     # 获取台账系统的uc_shopid
     cursor.execute('select id, shop_name , mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
     (uc_shopid, shop_name,mch_id) = cursor.fetchone()
@@ -356,7 +359,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     cursor_dmstore.close()
     cursor_erp.close()
     cursor_ai.close()
-    cursor_bi.close()
+    if cursor_bi is not None:
+        cursor_bi.close()
     return ret
 
 class DataRawGoods():
