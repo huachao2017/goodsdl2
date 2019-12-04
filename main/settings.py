@@ -121,6 +121,16 @@ DATABASES = {
         'CHARSET': 'utf8',
         'COLLATION': 'utf8_general_ci',
     },
+    'bi': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'bi',
+        'USER': 'fx_ro',
+        'PASSWORD': 'G8wN4RuZ2tJAuDa9',
+        'HOST': 'udb-bi-m-1.xianlife.top',
+        'PORT': '3306',
+        'CHARSET': 'utf8',
+        'COLLATION': 'utf8_general_ci',
+    },
     'dmstore': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'dmstore',
