@@ -1,8 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import os,django,time
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
+import main.import_django_settings
 
 from django.db import connections
 from goods.sellgoods.auto_choose_goods.haolinju_template import get_data

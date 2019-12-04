@@ -3,8 +3,7 @@
 import pymysql
 import datetime
 import os,django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-django.setup()
+import main.import_django_settings
 
 from django.db import connections
 
