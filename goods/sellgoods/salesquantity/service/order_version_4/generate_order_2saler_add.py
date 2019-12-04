@@ -41,8 +41,8 @@ def generate(shop_id = None):
                 str(sales_order_ins.supply_stock), str(sales_order_ins.storage_day), str(sales_order_ins.delivery_type),
                 str(sales_order_ins.mch_goods_code), str(sales_order_ins.sub_count),
                 str(sales_order_ins.purchase_price)))
-        print ("起订价规则  ： len = "+str(len(sales_order_inss)))
-        sales_order_inss = order_rule.rule_start_price(sales_order_inss,shop_id)
+        # print ("起订价规则  ： len = "+str(len(sales_order_inss)))
+        # sales_order_inss = order_rule.rule_start_price(sales_order_inss,shop_id)
         print("规则三：商品数：" + str(len(sales_order_inss)))
         print("订货量,商品upc,商品名,最大陈列数,最小陈列数,门店库存,小仓库库存,保质期,配送类型,商品编码")
         for sales_order_ins in sales_order_inss:

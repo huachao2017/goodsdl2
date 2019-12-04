@@ -11,7 +11,7 @@ spu：四级分类、品牌、规格（包装）、尺寸（只选宽和高）�
 根据算法4.3打分规则在给每个解打分后，获得最优解。
 """
 import goods.shelfdisplay.goods_arrange_category3
-from goods.shelfdisplay import display_data
+from goods.shelfdisplay import display_taizhang
 from goods.shelfdisplay import single_algorithm
 import math
 
@@ -98,7 +98,7 @@ def create_candidate_shelf_list(shelf, categoryid_list, categoryid_to_arrange_go
     for categoryid_to_arrange_goods_list in list_categoryid_to_arrange_goods_list:
         j += 1
         if j % step_size == 0:
-            candidate_shelf = display_data.CandidateShelf(shelf, categoryid_list, categoryid_to_arrange_goods_list)
+            candidate_shelf = display_taizhang.CandidateShelf(shelf, categoryid_list, categoryid_to_arrange_goods_list)
             candidate_shelf_list.append(candidate_shelf)
 
     return candidate_shelf_list
@@ -204,10 +204,10 @@ def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
     """
 
     cur_level = input_level
-    display_goods = display_data.DisplayGoods(goods)
+    display_goods = display_taizhang.DisplayGoods(goods)
     if cur_level is None:
         # 初始陈列
-        cur_level = display_data.Level(candidate_shelf, 0, candidate_shelf.shelf.bottom_height, True)
+        cur_level = display_taizhang.Level(candidate_shelf, 0, candidate_shelf.shelf.bottom_height, True)
 
     # 陈列商品 FIXME 需要处理陈列同商品跨层拆分
     success = cur_level.display_goods(display_goods)
@@ -218,7 +218,7 @@ def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
             print('无法成列商品，商品在一层无法摆下！')
             raise ValueError('无法成列商品，商品在一层无法摆下！')
         # 无法陈列商品
-        cur_level = display_data.Level(
+        cur_level = display_taizhang.Level(
             candidate_shelf,
             cur_level.level_id + 1,
             cur_level.start_height + cur_level.goods_height + candidate_shelf.shelf.level_buff_height + candidate_shelf.shelf.level_board_height,
