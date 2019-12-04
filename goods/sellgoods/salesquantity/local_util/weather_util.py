@@ -4,8 +4,6 @@
 'weather_url2' => 'https://api.jisuapi.com/weather2/query?appkey=e22d1fbac88700a0',
 
 """
-import django
-import os
 import time
 import datetime
 import main.import_django_settings
