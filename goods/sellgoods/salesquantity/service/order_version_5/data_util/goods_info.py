@@ -356,6 +356,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     cursor_dmstore.close()
     cursor_erp.close()
     cursor_ai.close()
+    cursor_bi.close()
     return ret
 
 class DataRawGoods():
