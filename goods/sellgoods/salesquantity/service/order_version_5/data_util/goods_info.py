@@ -33,24 +33,15 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     erp_supply_id = None
     authorized_shop_id = None
     # 获取erp系统的erp_shopid
-    try:
-        cursor_dmstore.execute("select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
-        (erp_shop_id,) = cursor_dmstore.fetchone()
-        cursor_dmstore.execute(
-            "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 1".format(shopid))
-        (erp_supply_id,) = cursor_dmstore.fetchone()
-        if erp_shop_type == 0:
-            cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_shop_id))
-            (authorized_shop_id,) = cursor_erp.fetchone()
-        else:
-            cursor_erp.execute("select authorized_shop_id from ms_relation WHERE is_authorized_shop_id={} and status=1".format(erp_supply_id))
-            (authorized_shop_id,) = cursor_erp.fetchone()
+    cursor_dmstore.execute("select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
+    (erp_shop_id,) = cursor_dmstore.fetchone() # 门店id
+    cursor_dmstore.execute(
+        "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 1".format(shopid))
+    (erp_supply_id,) = cursor_dmstore.fetchone() # 仓库id
 
-
-    except:
-        print('找不到供应商:{}！'.format(shopid))
-        traceback.print_exc()
-        authorized_shop_id = None
+    cursor_dmstore.execute(
+        "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 2".format(shopid))
+    (erp_resupply_id,) = cursor_dmstore.fetchone()  # 供货商id
 
     # 获取台账 TODO 只能获取店相关的台账，不能获取商家相关的台账
     cursor.execute("select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status in (1,2) and td.approval_status=1 and st.shop_id = {}".format(uc_shopid))
@@ -213,13 +204,13 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             sales_nums = 0
 
 
-                        if authorized_shop_id is not None:
+                        if erp_resupply_id is not None:
                             try:
                                 # 获取起订量
                                 # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
                                 cursor_erp.execute(
                                     "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
-                                        authorized_shop_id, upc))
+                                        erp_resupply_id, upc))
                                 (sku_id,) = cursor_erp.fetchone()
                                 cursor_erp.execute(
                                     "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
@@ -248,16 +239,10 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             supply_stock = 0
                         # 获取在途订单数
                         try:
-                            # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
                             cursor_erp.execute(
-                                "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
-                                    authorized_shop_id, upc))
-                            (sku_id,) = cursor_erp.fetchone()
-                            cursor_erp.execute(
-                                "select sum(item.sub_item_count) as sub_count from ls_sub_item item LEFT JOIN ls_sub sub ON  item.sub_number=sub.sub_number where sub.buyer_shop_id= {} AND sub.status=50 and sku_id = {}".format(
-                                    erp_supply_id,sku_id))
+                                "SELECT sum(sub_item_count) as sub_count from ls_sub_item where  sub_number in  (SELECT sub_number from ls_sub where  seller_shop_id={} AND status=50) AND sku_id =(SELECT sku_id FROM ls_sku sku, ls_prod  prod where prod.prod_id= sku.prod_id AND prod.shop_id={}  and sku.model_id='{}' )".format(
+                                    erp_resupply_id,erp_resupply_id,upc))
                             (sub_count,) = cursor_erp.fetchone()
-                            print("找到在途库存 ："+str(erp_supply_id) + "," + str(upc) + "," + str(sku_id))
                         except:
                             print('ErpSupply 获取在途订单数 找不到商品:{}-{}！'.format(upc, erp_supply_id))
                             sub_count = 0
@@ -285,14 +270,14 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         upc_psd_amount_avg_1 = 0
                         try:
                             cursor_dmstore.execute(
-                                "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
                                     upc, shopid))
-                            (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+                            (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
                             end_date = int(time.strftime('%Y%m%d', time.localtime()))
                             start_date_1 = int(
                                 (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                                     days=-7)).strftime("%Y%m%d"))
-                            sql_1 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date <= {}".format(mch_id,shopid,id,start_date_1,end_date)
+                            sql_1 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date <= {}".format(mch_id,shopid,goods_id,start_date_1,end_date)
                             cursor_bi.execute(sql_1)
                             res1 = cursor_bi.fetchall()
                             res_len1 = 0
@@ -309,15 +294,15 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         upc_psd_amount_avg_4 = 0
                         try:
                             cursor_dmstore.execute(
-                                "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
                                     upc, shopid))
-                            (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+                            (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
                             end_date = int(time.strftime('%Y%m%d', time.localtime()))
                             start_date_4 = int(
                                 (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                                     days=-28)).strftime("%Y%m%d"))
                             sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date <= {}".format(
-                                mch_id, shopid, id,start_date_4,end_date)
+                                mch_id, shopid, goods_id,start_date_4,end_date)
                             res_len2 = 0
                             cursor_bi.execute(sql_2)
                             res2 = cursor_bi.fetchall()
@@ -335,10 +320,14 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         oneday_max_psd = 0
                         try:
                             if shopid in list(config.shellgoods_params['start_shop'].keys()):
+                                cursor_dmstore.execute(
+                                    "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                        upc, shopid))
+                                (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
                                 start_shop_date = int(config.shellgoods_params['start_shop'][shopid])
                                 end_date = int (time.strftime('%Y%m%d', time.localtime()))
                                 sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date <= {} order by psd desc limit 1 ".format(
-                                    mch_id, shopid, mch_code, start_shop_date, end_date)
+                                    mch_id, shopid, goods_id, start_shop_date, end_date)
                                 cursor_bi.execute(sql_2)
                                 (oneday_max_psd,) = cursor_bi.fetchone()
                         except:
