@@ -211,6 +211,7 @@ def save_data(data,batch_id,uc_shopid):
         # print('history_batch_id', history_batch_id,type(history_batch_id))
         if cursor.fetchone():
             cursor.execute(delete_sql_02.format(uc_shopid, batch_id))
+            conn.commit()
             print("删掉该批次之前的数据")
         cursor.executemany(insert_sql_02.format(batch_id,uc_shopid), upc_tuple[:])
         conn.commit()
