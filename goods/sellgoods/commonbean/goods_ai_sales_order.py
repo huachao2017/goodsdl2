@@ -36,4 +36,5 @@ class SalesOrder:
     upc_psd_amount_avg_1 = None
     purchase_price = None
     max_scale = None
+    oneday_max_psd = None
 

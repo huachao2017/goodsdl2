@@ -1,6 +1,6 @@
 import  math
 from goods.sellgoods.salesquantity.bean import taskflow
-
+from set_config import config
 """
     起订量及上限下限规则
     param:sales_order_ins 订货对象
@@ -87,7 +87,7 @@ def rule_start_price(sales_order_inss,dmshop_id):
     for sales_order_ins in sales_order_inss:
         sum_price += sales_order_ins.order_sale * sales_order_ins.purchase_price
 
-    if dmshop_id in taskflow.start_price.keys() and sum_price < taskflow.start_price[dmshop_id]:
+    if dmshop_id in config.shellgoods_params["start_price"].keys() and sum_price < config.shellgoods_params["start_price"][dmshop_id]:
         return []
     else:
         return sales_order_inss

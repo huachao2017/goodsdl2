@@ -81,7 +81,8 @@ shellgoods_params={
     "start_price" : {
         1284:50000
     },
-    "ms_add_url":"http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}&erpShopType={}&batchId={}",
+    # 摩售补货通知
+    "ms_add_url":"http://192.168.1.45:8080/automaticOrdering/addShopBuy?erpShopId={}&erpShopType={}&batchId={}",
     # 自动陈列
     'shelf_display':[(1284,True)],
     "shelf_display_maxitems":20, # 排列单个货架最大循环次数

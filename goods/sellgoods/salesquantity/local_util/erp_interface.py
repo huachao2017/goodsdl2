@@ -7,7 +7,7 @@ import main.import_django_settings
 from django.db import connections
 import time
 from goods.models import ai_sales_order
-
+from set_config import config
 
 def order_clear(shop_id,erp_shop_type):
     try:
@@ -53,7 +53,8 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales,batch_id=None):
 
         create_date = str(time.strftime('%Y-%m-%d', time.localtime()))
         # urltest = "http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}"
-        url = "http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}&erpShopType={}&batchId={}"
+        url =  config.shellgoods_params["ms_add_url"]
+        # url = "http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}&erpShopType={}&batchId={}"
         headers = {
             "Accept":"application/json",
             "Content-Type":"application/json"

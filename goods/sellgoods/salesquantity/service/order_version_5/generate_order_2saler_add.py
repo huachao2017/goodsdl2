@@ -1,50 +1,71 @@
 """
-二批向供货商非日配订货  （1284 --> 好邻居）
+二批向供货商非日配的首次订货  （1284 --> 好邻居）  非新店期
 """
 from set_config import config
-from goods.sellgoods.salesquantity.local_util import erp_interface
 from goods.sellgoods.salesquantity.proxy import order_rule
-import traceback
 from goods.sellgoods.salesquantity.service.order_version_5.data_util import cacul_util
+import traceback
+import demjson
+import math
 shop_type = config.shellgoods_params['shop_types'][1]  # 二批
-def generate(shop_id = None):
+def generate(shop_id = None,order_type=None):
     try:
-        print("二批向供货商非日配订货  ,shop_id" + str(shop_id))
-        sales_order_inss = []
+        print("二批向供货商非日配的首次订货,shop_id" + str(shop_id))
         if shop_id == None:
             return None
-        result = cacul_util.data_process(shop_id, shop_type)
-        print("规则0 商品数：" + str(len(result.keys())))
-        for mch_code in result:
+        sales_order_inss = []
+        result = cacul_util.data_process(shop_id,shop_type)
+        print ("规则0 商品数："+str(len(result.keys())))
+        print("商品upc,商品名,最大陈列数,最小陈列数,门店库存,小仓库库存")
+        for mch_code  in result:
             drg_ins = result[mch_code]
+            print("%s,%s,%s,%s,%s,%s" % (str(drg_ins.upc),
+                                         str(drg_ins.goods_name),
+                                         str(drg_ins.max_disnums),
+                                         str(drg_ins.min_disnums),
+                                         str(drg_ins.stock),
+                                         str(drg_ins.supply_stock)
+                                         ))
             if drg_ins.delivery_type != 2:
                 continue
-            if drg_ins.safe_day_nums * drg_ins.old_sales / 7 - drg_ins.stock - drg_ins.supply_stock >= 0:
-                # print("规则1 ：max(安全天数内的销量，最小陈列量，起订量)")
-                order_sale = max(drg_ins.safe_day_nums * drg_ins.old_sales / 7, drg_ins.min_disnums,
-                                 drg_ins.start_sum) - drg_ins.stock - drg_ins.supply_stock
+            order_sale = 0
+            if drg_ins.up_status == 1: # 新品
+                # print ("规则1 ：psd 数量 与 最小最大陈列量 起订量")
+                if drg_ins.psd_nums_4 > 0:
+                    x = drg_ins.psd_nums_4 * 2.5  + drg_ins.min_disnums
+                else:
+                    x = 0
+                y = min(drg_ins.max_disnums,drg_ins.min_disnums * 2 )
+                order_sale = max(x,y,drg_ins.start_sum)
+                if drg_ins.delivery_type == 2: #非日配
+                    order_sale = order_sale - drg_ins.stock - drg_ins.sub_count
             else:
-                order_sale = 0
-            if order_sale <= 0 :
+                safe_stock = max(drg_ins.min_disnums,math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price), math.ceil(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
+                track_stock =int(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price * 2.5) + safe_stock
+                order_sale = track_stock - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
+            if order_sale <= 0:
                 continue
-            # print("规则2： 起订量规则")
-            order_sale = order_rule.rule_start_num2(order_sale, drg_ins.start_sum)
-            sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id, shop_type)
+            # print ("规则2： 起订量规则")
+            order_sale = order_rule.rule_start_num2(order_sale,drg_ins.start_sum)
+            sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id,shop_type)
             sales_order_ins.order_sale = order_sale
             sales_order_inss.append(sales_order_ins)
         sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
+        # 起订价规则
+        # sales_order_inss = order_rule.rule_start_price(sales_order_inss,shop_id)
         print("规则三：商品数：" + str(len(sales_order_inss)))
-        print("订货量,商品upc,商品名,最大陈列数,最小陈列数,门店库存,小仓库库存,保质期,配送类型,商品编码")
+        print("门店id,门店名称,商品id,upc,一级分类,二级分类,三级分类,face数,陈列规格,psd,psd金额,配送单位,订货数,其他")
         for sales_order_ins in sales_order_inss:
-            print("%s , %s, %s, %s, %s, %s, %s,%s,%s,%s" % (
-                str(sales_order_ins.order_sale), str(sales_order_ins.upc), str(sales_order_ins.goods_name),
-                str(sales_order_ins.max_stock), str(sales_order_ins.min_stock), str(sales_order_ins.stock),
-                str(sales_order_ins.supply_stock), str(sales_order_ins.storage_day), str(sales_order_ins.delivery_type),
-                str(sales_order_ins.mch_goods_code)))
+            print("%s , %s, %s, %s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s" % (
+                str(sales_order_ins.shopid), str(sales_order_ins.shop_name), str(sales_order_ins.mch_goods_code),
+                str(sales_order_ins.upc), str(sales_order_ins.category1_id), str(sales_order_ins.category2_id),
+                str(sales_order_ins.category_id),str(sales_order_ins.face_num),str(sales_order_ins.package_type),str(sales_order_ins.psd_nums_4),
+                str(sales_order_ins.psd_amount_4),str(sales_order_ins.start_sum),str(sales_order_ins.order_sale),str(demjson.encode(sales_order_ins.shelf_order_info))))
         return sales_order_inss
     except Exception as e:
-        print("day sales2 order faield ,e ={}".format(e))
+        print ("not day sales2 order faield ,e ={}".format(e))
         traceback.print_exc()
         return None
+
 if __name__=='__main__':
     generate(1284)

@@ -24,7 +24,7 @@ origin_choose = ((1284, '3598', '6921168558049', '050203', 9900, 2026210), (1284
 # +                   "group by T2.t1_create_date,T2.t1_shop_id,T3.upc "
 # upc_data_sql.format()
 
-def get_data(target,template_shop_id,days=28):
+def get_data(target,template_shop_id,days=128):
     """
     :param target: 选品店的id
     :param template_shop_id: 模板店的id
@@ -42,7 +42,7 @@ def get_data(target,template_shop_id,days=28):
     results = cursor.fetchall()
     cursor.close()
     conn.close()
-    # print(results)
+    print(results)
 
     data = []
     for result in results:
@@ -53,8 +53,11 @@ def get_data(target,template_shop_id,days=28):
         list.append(result[3])
         list.append(result[4])
         list.append(result[5])
-        if not result[1].startswith('6901028'):       # 以此为开头的是香烟
-            data.append(list)
+        try:
+            if not result[1].startswith('6901028'):       # 以此为开头的是香烟
+                data.append(list)
+        except:
+            continue
         # if result[2][:2] in ['02','16','17']:       # 日配的商品
         #     data.append(list)
         # if result[2][:2] in ['01']:       # 冷冻的商品
@@ -198,7 +201,7 @@ def save_data(data,batch_id,uc_shopid):
     # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     delete_sql = "delete from goods_firstgoodsselection where shopid={}"
-    delete_sql_02 = "delete from goods_goodsselectionhistory where shopid={} and batch_id='{}'"
+    delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
     select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
     try:
         print('batch_id',batch_id,type(batch_id))
@@ -208,14 +211,14 @@ def save_data(data,batch_id,uc_shopid):
         # print('history_batch_id', history_batch_id,type(history_batch_id))
         if cursor.fetchone():
             cursor.execute(delete_sql_02.format(uc_shopid, batch_id))
-            print("删掉该批次之前的数据")
+            print("删掉{}该批次之前的数据".format(batch_id))
         cursor.executemany(insert_sql_02.format(batch_id,uc_shopid), upc_tuple[:])
         conn.commit()
         conn.close()
         print('ok')
     except:
         # 如果发生错误则回滚
-        connections['default'].rollback()
+        conn.rollback()
         # 关闭数据库连接
         cursor.close()
         conn.close()
@@ -258,11 +261,11 @@ def start_choose_goods(batch_id,uc_shopid,pos_shopid):
     :param pos_shopid: pos系统的id
     :return:
     """
-    a = get_data(pos_shopid, '3598')
+    a = get_data(pos_shopid, '88')
     print("uc_shopid,pos_shopid",uc_shopid,pos_shopid)
     # a = storage_day_choose(a)
-    b = choose_goods(a)
-    c = check_order(b)
+    c = choose_goods(a)
+    # c = check_order(c)
     save_data(c,batch_id,uc_shopid)
 
 

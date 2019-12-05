@@ -1,5 +1,5 @@
 """
-二批向供货商非日配的首次订货  （1284 --> 好邻居）
+二批向供货商非日配的首次订货  （1284 --> 好邻居） 新店期
 """
 from set_config import config
 from goods.sellgoods.salesquantity.proxy import order_rule
@@ -16,10 +16,19 @@ def generate(shop_id = None,order_type=None):
         sales_order_inss = []
         result = cacul_util.data_process(shop_id,shop_type)
         print ("规则0 商品数："+str(len(result.keys())))
+        print("商品upc,商品名,最大陈列数,最小陈列数,门店库存,小仓库库存")
         for mch_code  in result:
             drg_ins = result[mch_code]
+            print("%s,%s,%s,%s,%s,%s" % (str(drg_ins.upc),
+                                         str(drg_ins.goods_name),
+                                         str(drg_ins.max_disnums),
+                                         str(drg_ins.min_disnums),
+                                         str(drg_ins.stock),
+                                         str(drg_ins.supply_stock)
+                                         ))
             if drg_ins.delivery_type != 2:
                 continue
+            order_sale = 0
             if drg_ins.up_status == 1: # 新品
                 # print ("规则1 ：psd 数量 与 最小最大陈列量 起订量")
                 if drg_ins.psd_nums_4 > 0:
@@ -30,13 +39,21 @@ def generate(shop_id = None,order_type=None):
                 order_sale = max(x,y,drg_ins.start_sum)
                 if drg_ins.delivery_type == 2: #非日配
                     order_sale = order_sale - drg_ins.stock - drg_ins.sub_count
-                if order_sale <= 0:
-                    continue
             else:
-                avg_4_psd = drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price * 2.5
-                avg_1_psd = drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price * 2.5
-                track_stock = math.ceil(avg_4_psd+ max(drg_ins.min_disnums,avg_4_psd,avg_1_psd))
+                if drg_ins.psd_nums_4 > 0:
+                    x = drg_ins.psd_nums_4 * 2.5 + drg_ins.min_disnums
+                else:
+                    x = 0
+                y = min(drg_ins.max_disnums, drg_ins.min_disnums * 2)
+                a1 = max(x, y, drg_ins.start_sum)
+                track_stock = 0
+                if drg_ins.oneday_max_psd < a1:
+                    track_stock = a1
+                else:
+                    track_stock =math.ceil(drg_ins.oneday_max_psd /drg_ins.upc_price)  + drg_ins.min_disnums * 2
                 order_sale = track_stock - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
+            if order_sale <= 0:
+                continue
             # print ("规则2： 起订量规则")
             order_sale = order_rule.rule_start_num2(order_sale,drg_ins.start_sum)
             sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id,shop_type)
@@ -49,7 +66,7 @@ def generate(shop_id = None,order_type=None):
         print("门店id,门店名称,商品id,upc,一级分类,二级分类,三级分类,face数,陈列规格,psd,psd金额,配送单位,订货数,其他")
         for sales_order_ins in sales_order_inss:
             print("%s , %s, %s, %s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s" % (
-                str(sales_order_ins.shop_id), str(sales_order_ins.shop_name), str(sales_order_ins.mch_goods_code),
+                str(sales_order_ins.shopid), str(sales_order_ins.shop_name), str(sales_order_ins.mch_goods_code),
                 str(sales_order_ins.upc), str(sales_order_ins.category1_id), str(sales_order_ins.category2_id),
                 str(sales_order_ins.category_id),str(sales_order_ins.face_num),str(sales_order_ins.package_type),str(sales_order_ins.psd_nums_4),
                 str(sales_order_ins.psd_amount_4),str(sales_order_ins.start_sum),str(sales_order_ins.order_sale),str(demjson.encode(sales_order_ins.shelf_order_info))))

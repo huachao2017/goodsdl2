@@ -15,8 +15,16 @@ def generate(shop_id = None):
         sales_order_inss = []
         result = cacul_util.data_process(shop_id, shop_type)
         print("规则0 商品数：" + str(len(result.keys())))
+        print("商品upc,商品名,最大陈列数,最小陈列数,门店库存,小仓库库存")
         for mch_code in result:
             drg_ins = result[mch_code]
+            print("%s,%s,%s,%s,%s,%s" % (str(drg_ins.upc),
+                                         str(drg_ins.goods_name),
+                                         str(drg_ins.max_disnums),
+                                         str(drg_ins.min_disnums),
+                                         str(drg_ins.stock),
+                                         str(drg_ins.supply_stock)
+                                         ))
             if drg_ins.delivery_type != 1:
                 continue
             if drg_ins.safe_day_nums * drg_ins.old_sales / 7 - drg_ins.stock >= 0 :
