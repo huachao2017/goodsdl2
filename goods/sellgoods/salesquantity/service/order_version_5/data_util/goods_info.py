@@ -273,6 +273,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             start_date_1 = int(
                                 (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                                     days=-7)).strftime("%Y%m%d"))
+                            print ("获取bi 真实psd {} ,{},{},{},{}".format(shopid,goods_id,mch_id,upc,goods_name))
                             sql_1 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date <= {}".format(mch_id,shopid,goods_id,start_date_1,end_date)
                             cursor_bi.execute(sql_1)
                             res1 = cursor_bi.fetchall()
