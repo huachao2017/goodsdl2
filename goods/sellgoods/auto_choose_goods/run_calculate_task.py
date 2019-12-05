@@ -140,5 +140,5 @@ if __name__ == "__main__":
             print('守护进程出现错误：{}'.format(e))
             email.send_mail('选品出错', '守护进程出现错误：{}'.format(e))
 
-        time.sleep(60)
+        time.sleep(10)
 
