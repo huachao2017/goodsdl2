@@ -212,7 +212,7 @@ def save_data(data,batch_id,uc_shopid):
         if cursor.fetchone():
             cursor.execute(delete_sql_02.format(uc_shopid, batch_id))
             conn.commit()
-            print("删掉该批次之前的数据")
+            print("删掉{}该批次之前的数据".format(batch_id))
         cursor.executemany(insert_sql_02.format(batch_id,uc_shopid), upc_tuple[:])
         conn.commit()
         conn.close()
