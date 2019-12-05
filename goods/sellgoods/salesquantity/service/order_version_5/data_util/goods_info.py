@@ -284,11 +284,15 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         # TODO 获取bi 数据库 ， 品的psd金额   mch_id  dmstore_shopid  goods_code
                         upc_psd_amount_avg_1 = 0
                         try:
+                            cursor_dmstore.execute(
+                                "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                    upc, shopid))
+                            (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
                             end_date = int(time.strftime('%Y%m%d', time.localtime()))
                             start_date_1 = int(
                                 (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                                     days=-7)).strftime("%Y%m%d"))
-                            sql_1 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date <= {}".format(mch_id,shopid,mch_code,start_date_1,end_date)
+                            sql_1 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date <= {}".format(mch_id,shopid,id,start_date_1,end_date)
                             cursor_bi.execute(sql_1)
                             res1 = cursor_bi.fetchall()
                             res_len1 = 0
@@ -304,12 +308,16 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             upc_psd_amount_avg_1 = 0
                         upc_psd_amount_avg_4 = 0
                         try:
+                            cursor_dmstore.execute(
+                                "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                    upc, shopid))
+                            (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
                             end_date = int(time.strftime('%Y%m%d', time.localtime()))
                             start_date_4 = int(
                                 (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                                     days=-28)).strftime("%Y%m%d"))
                             sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date <= {}".format(
-                                mch_id, shopid, mch_code,start_date_4,end_date)
+                                mch_id, shopid, id,start_date_4,end_date)
                             res_len2 = 0
                             cursor_bi.execute(sql_2)
                             res2 = cursor_bi.fetchall()
