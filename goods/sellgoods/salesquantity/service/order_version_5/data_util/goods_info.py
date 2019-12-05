@@ -290,14 +290,16 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             sql_1 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date <= {}".format(mch_id,shopid,goods_id,start_date_1,end_date)
                             cursor_bi.execute(sql_1)
                             res1 = cursor_bi.fetchall()
-                            res_len1 = 0
+
                             if res1 is None or len(res1) < 1:
                                 upc_psd_amount_avg_1 = 0
-                            psd_amount = 0
-                            for re in res1:
-                                psd_amount = re[0]
-                                res_len1+=1
-                            upc_psd_amount_avg_1 = psd_amount / res_len1
+                            else:
+                                res_len1 = 0
+                                psd_amount = 0
+                                for re in res1:
+                                    psd_amount = re[0]
+                                    res_len1+=1
+                                upc_psd_amount_avg_1 = float(psd_amount / res_len1)
                         except:
                             print('bi 找不到psd  4！{},{}'.format(shopid, upc))
                             upc_psd_amount_avg_1 = 0
@@ -313,16 +315,17 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                     days=-28)).strftime("%Y%m%d"))
                             sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date <= {}".format(
                                 mch_id, shopid, goods_id,start_date_4,end_date)
-                            res_len2 = 0
                             cursor_bi.execute(sql_2)
                             res2 = cursor_bi.fetchall()
                             if res2 is None or len(res2) < 1:
                                 upc_psd_amount_avg_4 = 0
-                            psd_amount2 = 0
-                            for re in res2:
-                                psd_amount2 = re[0]
-                                res_len2 += 1
-                            upc_psd_amount_avg_4 = psd_amount2 / res_len2
+                            else:
+                                res_len2 = 0
+                                psd_amount2 = 0
+                                for re in res2:
+                                    psd_amount2 = re[0]
+                                    res_len2 += 1
+                                upc_psd_amount_avg_4 = float(psd_amount2 / res_len2)
                         except:
                             print('bi 找不到psd  4！{},{}'.format(shopid,upc))
                             upc_psd_amount_avg_4 = 0
