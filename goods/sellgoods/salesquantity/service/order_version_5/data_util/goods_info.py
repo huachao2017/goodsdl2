@@ -29,9 +29,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     # 获取台账系统的uc_shopid
     cursor.execute('select id, shop_name , mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
     (uc_shopid, shop_name,mch_id) = cursor.fetchone()
-    erp_shop_id = None
-    erp_supply_id = None
-    authorized_shop_id = None
     # 获取erp系统的erp_shopid
     cursor_dmstore.execute("select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
     (erp_shop_id,) = cursor_dmstore.fetchone() # 门店id
@@ -217,7 +214,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                         sku_id))
                                 (start_sum, multiple) = cursor_erp.fetchone()
                             except:
-                                print('Erp找不到商品:{}-{}！'.format(upc, authorized_shop_id))
+                                print('Erp找不到商品:{}-{}！'.format(upc, erp_resupply_id))
                                 start_sum = 0
                                 multiple = 0
                         else:
@@ -225,7 +222,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             multiple = 0
                         try:
                             # 获取小仓库库存
-                            # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
                             cursor_erp.execute(
                                 "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
                                     erp_supply_id, upc))
