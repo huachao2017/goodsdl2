@@ -16,8 +16,16 @@ def generate(shop_id = None):
             return None
         result = cacul_util.data_process(shop_id,shop_type)
         print ("规则0 商品数："+str(len(result.keys())))
+        print("商品upc,商品名,最大陈列数,最小陈列数,门店库存,小仓库库存")
         for mch_code  in result:
             drg_ins = result[mch_code]
+            print("%s,%s,%s,%s,%s,%s" % (str(drg_ins.upc),
+                                         str(drg_ins.goods_name),
+                                         str(drg_ins.max_disnums),
+                                         str(drg_ins.min_disnums),
+                                         str(drg_ins.stock),
+                                         str(drg_ins.supply_stock)
+                                         ))
             # print ("规则1： 补货触发条件 商品的库存 < 最大陈列量   （饮料 ） ，  其他的<=最小陈列量")
             if (drg_ins.stock < drg_ins.max_disnums and drg_ins.category_id in yinliao_cat_ids)  or (drg_ins.stock <= drg_ins.min_disnums and drg_ins.category_id not in yinliao_cat_ids):
                 order_sale = min(drg_ins.max_disnums-drg_ins.stock,drg_ins.supply_stock)

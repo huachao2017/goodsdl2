@@ -7,6 +7,7 @@ import math
 from django.db import connections
 import traceback
 from goods import utils
+from set_config import config
 
 def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     """
@@ -21,7 +22,10 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     cursor_dmstore = connections['dmstore'].cursor()
     cursor_erp = connections['erp'].cursor()
     cursor_ai = connections['default'].cursor()
-
+    try:
+        cursor_bi = connections['bi'].cursor()
+    except:
+        cursor_bi = None
     # 获取台账系统的uc_shopid
     cursor.execute('select id, shop_name , mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
     (uc_shopid, shop_name,mch_id) = cursor.fetchone()
@@ -278,21 +282,69 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             up_status = 1
 
                         # TODO 获取bi 数据库 ， 品的psd金额   mch_id  dmstore_shopid  goods_code
+                        upc_psd_amount_avg_1 = 0
                         try:
-                            end_date = str(time.strftime('%Y%m%d', time.localtime()))
-                            start_date_1 = str(
+                            cursor_dmstore.execute(
+                                "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                    upc, shopid))
+                            (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+                            end_date = int(time.strftime('%Y%m%d', time.localtime()))
+                            start_date_1 = int(
                                 (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                                     days=-7)).strftime("%Y%m%d"))
-                            start_date_4 = str(
+                            sql_1 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date <= {}".format(mch_id,shopid,id,start_date_1,end_date)
+                            cursor_bi.execute(sql_1)
+                            res1 = cursor_bi.fetchall()
+                            res_len1 = 0
+                            if res1 is None or len(res1) < 1:
+                                upc_psd_amount_avg_1 = 0
+                            psd_amount = 0
+                            for re in res1:
+                                psd_amount = re[0]
+                                res_len1+=1
+                            upc_psd_amount_avg_1 = psd_amount / res_len1
+                        except:
+                            print('bi 找不到psd  4！{},{}'.format(shopid, upc))
+                            upc_psd_amount_avg_1 = 0
+                        upc_psd_amount_avg_4 = 0
+                        try:
+                            cursor_dmstore.execute(
+                                "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                    upc, shopid))
+                            (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+                            end_date = int(time.strftime('%Y%m%d', time.localtime()))
+                            start_date_4 = int(
                                 (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                                     days=-28)).strftime("%Y%m%d"))
-                            sql1 = ""
-                            upc_psd_amount_avg_4 = 0
-                            upc_psd_amount_avg_1 = 0
+                            sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date <= {}".format(
+                                mch_id, shopid, id,start_date_4,end_date)
+                            res_len2 = 0
+                            cursor_bi.execute(sql_2)
+                            res2 = cursor_bi.fetchall()
+                            if res2 is None or len(res2) < 1:
+                                upc_psd_amount_avg_4 = 0
+                            psd_amount2 = 0
+                            for re in res2:
+                                psd_amount2 = re[0]
+                                res_len2 += 1
+                            upc_psd_amount_avg_4 = psd_amount2 / res_len2
                         except:
-                            # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
+                            print('bi 找不到psd  4！{},{}'.format(shopid,upc))
                             upc_psd_amount_avg_4 = 0
-                            upc_psd_amount_avg_1 = 0
+                        # 单天最大psd
+                        oneday_max_psd = 0
+                        try:
+                            if shopid in list(config.shellgoods_params['start_shop'].keys()):
+                                start_shop_date = int(config.shellgoods_params['start_shop'][shopid])
+                                end_date = int (time.strftime('%Y%m%d', time.localtime()))
+                                sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date <= {} order by psd desc limit 1 ".format(
+                                    mch_id, shopid, mch_code, start_shop_date, end_date)
+                                cursor_bi.execute(sql_2)
+                                (oneday_max_psd,) = cursor_bi.fetchone()
+                        except:
+                            print('bi 找不到psd  one_day max ！{},{}'.format(shopid, upc))
+                            oneday_max_psd = 0
+
                         psd_nums_4, psd_amount_4 = 0,0
                         try:
                             psd_nums_4, psd_amount_4 = utils.select_psd_data(upc, shopid, 28)
@@ -310,11 +362,13 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type,dmstore_shopid=shopid,
                                                      up_shelf_date = up_shelf_date,up_status = up_status,sub_count = sub_count,upc_price=upc_price,
                                                      upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1,
-                                                     psd_nums_4=psd_nums_4,psd_amount_4=psd_amount_4,max_scale=max_scale)
+                                                     psd_nums_4=psd_nums_4,psd_amount_4=psd_amount_4,max_scale=max_scale,oneday_max_psd = oneday_max_psd)
     cursor.close()
     cursor_dmstore.close()
     cursor_erp.close()
     cursor_ai.close()
+    if cursor_bi is not None:
+        cursor_bi.close()
     return ret
 
 class DataRawGoods():
@@ -322,7 +376,7 @@ class DataRawGoods():
                  stock=0, predict_sales=0,supply_stock=0,old_sales=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,
                  storage_day=None,shelf_inss=None,shop_name=None,uc_shopid =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
                  up_status=None,sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None,
-                 psd_nums_4=None, psd_amount_4=None,max_scale=None):
+                 psd_nums_4=None, psd_amount_4=None,max_scale=None,oneday_max_psd = None ):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -336,6 +390,10 @@ class DataRawGoods():
         self.volume = volume
         self.width = width
         self.height = height
+        if oneday_max_psd is None :
+            self.oneday_max_psd = 0
+        else:
+            self.oneday_max_psd = float(oneday_max_psd)
         if up_shelf_date is None:
             self.up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
         else:
@@ -351,27 +409,27 @@ class DataRawGoods():
         if upc_psd_amount_avg_4 is None:
             self.upc_psd_amount_avg_4 = 0
         else:
-            self.upc_psd_amount_avg_4 = upc_psd_amount_avg_4
+            self.upc_psd_amount_avg_4 = float(upc_psd_amount_avg_4)
         if upc_psd_amount_avg_1 is None:
             self.upc_psd_amount_avg_1 = 0
         else:
-            self.upc_psd_amount_avg_1= upc_psd_amount_avg_1
+            self.upc_psd_amount_avg_1= float(upc_psd_amount_avg_1)
         if purchase_price is None:
             self.purchase_price = 1
         else:
-            self.purchase_price = purchase_price
+            self.purchase_price = float(purchase_price)
         if upc_price is None or int(upc_price) == 0:
             self.upc_price = 1
         else:
-            self.upc_price = upc_price
+            self.upc_price = float(upc_price)
         if psd_nums_4 is None:
             self.psd_nums_4 = 0
         else:
-            self.psd_nums_4 = psd_nums_4
+            self.psd_nums_4 = float(psd_nums_4)
         if psd_amount_4 is None:
             self.psd_amount_4 = 0
         else:
-            self.psd_amount_4 = psd_amount_4
+            self.psd_amount_4 = float(psd_amount_4)
 
 
         if package_type is None:
@@ -408,6 +466,7 @@ class DataRawGoods():
         self.category2_id = category2_id
         if delivery_type is None:
             self.delivery_type = 2
+            self.delivery_type_true = 0
         if category_id is None:
             self.category_id = 0
         else:
@@ -417,17 +476,20 @@ class DataRawGoods():
         else:
             self.storage_day = storage_day
         if max_scale is None:
-            max_scale = 1
+            self.max_scale = 1
         else:
-            self.max_scale = max_scale
+            self.max_scale = float(max_scale)
         new_shelf_inss = []
         max_disnums = 0
         min_disnums = 0
+        face_num = 0
         for shelf_ins in shelf_inss:
             if shelf_ins.mch_code == mch_code:
+                face_num += shelf_ins.face_num
                 min_disnums += shelf_ins.face_num
                 max_disnums = int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / self.depth))
                 new_shelf_inss.append(shelf_ins)
+        self.face_num = face_num
         self.shelf_inss = new_shelf_inss
         self.max_disnums = max_disnums * max_scale
         self.min_disnums = min_disnums

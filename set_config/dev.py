@@ -73,6 +73,14 @@ shellgoods_params={
     'shop_types':[0,1], #门店类型 0：门店 1：批发商
     'day_order_time_weekday':[1,2,3,6,7],
     'yinliao_cat_ids':[110,402,501,502],
+    # 开店期
+    "start_shop": {
+        1284:20191105
+    },
+    # 起订价规则
+    "start_price" : {
+        1284:50000
+    },
     # 自动陈列
     'shelf_display':[(1284,True)],
     "shelf_display_maxitems":20, # 排列单个货架最大循环次数
