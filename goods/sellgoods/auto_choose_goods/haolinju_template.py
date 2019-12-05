@@ -53,8 +53,11 @@ def get_data(target,template_shop_id,days=128):
         list.append(result[3])
         list.append(result[4])
         list.append(result[5])
-        if not result[1].startswith('6901028'):       # 以此为开头的是香烟
-            data.append(list)
+        try:
+            if not result[1].startswith('6901028'):       # 以此为开头的是香烟
+                data.append(list)
+        except:
+            continue
         # if result[2][:2] in ['02','16','17']:       # 日配的商品
         #     data.append(list)
         # if result[2][:2] in ['01']:       # 冷冻的商品
