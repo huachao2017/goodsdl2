@@ -201,7 +201,7 @@ def save_data(data,batch_id,uc_shopid):
     # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     delete_sql = "delete from goods_firstgoodsselection where shopid={}"
-    delete_sql_02 = "delete from goods_goodsselectionhistory where shopid={} and batch_id='{}'"
+    delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
     select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
     try:
         print('batch_id',batch_id,type(batch_id))
@@ -211,7 +211,6 @@ def save_data(data,batch_id,uc_shopid):
         # print('history_batch_id', history_batch_id,type(history_batch_id))
         if cursor.fetchone():
             cursor.execute(delete_sql_02.format(uc_shopid, batch_id))
-            conn.commit()
             print("删掉{}该批次之前的数据".format(batch_id))
         cursor.executemany(insert_sql_02.format(batch_id,uc_shopid), upc_tuple[:])
         conn.commit()
@@ -219,7 +218,7 @@ def save_data(data,batch_id,uc_shopid):
         print('ok')
     except:
         # 如果发生错误则回滚
-        connections['default'].rollback()
+        conn.rollback()
         # 关闭数据库连接
         cursor.close()
         conn.close()
