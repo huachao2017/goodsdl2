@@ -264,8 +264,8 @@ def start_choose_goods(batch_id,uc_shopid,pos_shopid):
     a = get_data(pos_shopid, '88')
     print("uc_shopid,pos_shopid",uc_shopid,pos_shopid)
     # a = storage_day_choose(a)
-    b = choose_goods(a)
-    c = check_order(b)
+    c = choose_goods(a)
+    # c = check_order(c)
     save_data(c,batch_id,uc_shopid)
 
 
