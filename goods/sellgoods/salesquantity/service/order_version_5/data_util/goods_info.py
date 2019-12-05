@@ -94,7 +94,22 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                     shelf_ins.face_num = 1
                     shelf_inss.append(shelf_ins)
                     if mch_code in ret:
-                        print ("该商品已加入")
+                        print ("该商品已加入,更新和face相关的参数")
+                        drg_ins = ret[mch_code]
+                        new_shelf_inss = []
+                        max_disnums = 0
+                        min_disnums = 0
+                        face_num = 0
+                        for shelf_ins in shelf_inss:
+                            if shelf_ins.mch_code == mch_code:
+                                face_num += shelf_ins.face_num
+                                min_disnums += shelf_ins.face_num
+                                max_disnums = int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / drg_ins.depth))
+                                new_shelf_inss.append(shelf_ins)
+                        drg_ins.face_num = face_num
+                        drg_ins.shelf_inss = new_shelf_inss
+                        drg_ins.max_disnums = max_disnums * max_scale
+                        drg_ins.min_disnums = min_disnums
                     else:
                         # 获取商品属性
                         try:
