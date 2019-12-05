@@ -84,20 +84,18 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                 level_depth = round(float(level['depth']))
                 for goods in goods_level_array:
                     mch_code = goods['mch_goods_code']
+                    shelf_ins = Shelf()
+                    shelf_ins.taizhang_id = taizhang_id
+                    shelf_ins.shelf_id = shelf_id
+                    shelf_ins.shelf_type = shelf_type
+                    shelf_ins.mch_code = mch_code
+                    shelf_ins.goods_level_id = i
+                    shelf_ins.level_depth = level_depth
+                    shelf_ins.face_num = 1
+                    shelf_inss.append(shelf_ins)
                     if mch_code in ret:
-                        for shelf_ins in ret[mch_code].shelf_inss:
-                            if shelf_id == shelf_ins.shelf_id:
-                                shelf_ins.face_num += 1
+                        print ("该商品已加入")
                     else:
-                        shelf_ins = Shelf()
-                        shelf_ins.taizhang_id = taizhang_id
-                        shelf_ins.shelf_id = shelf_id
-                        shelf_ins.shelf_type = shelf_type
-                        shelf_ins.mch_code = mch_code
-                        shelf_ins.goods_level_id = i
-                        shelf_ins.level_depth = level_depth
-                        shelf_ins.face_num = 1
-                        shelf_inss.append(shelf_ins)
                         # 获取商品属性
                         try:
                             cursor.execute(
