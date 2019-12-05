@@ -146,7 +146,7 @@ DATABASES = {
     },
     'erp': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ls_diamond',
+        'NAME': 'test',
         'USER': 'work',
         'PASSWORD': 'UQrwsfpVZ12pvv24',
         'HOST': '192.168.1.52',
