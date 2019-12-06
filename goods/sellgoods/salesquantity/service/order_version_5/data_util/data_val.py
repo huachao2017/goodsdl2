@@ -33,7 +33,7 @@ def generate(shop_id = None):
                 str(drg_ins.psd_nums_4),str(drg_ins.psd_amount_4), str(drg_ins.start_sum),str(drg_ins.min_disnums),
                 str(drg_ins.max_disnums),str(drg_ins.stock),str(drg_ins.supply_stock),str(drg_ins.delivery_type),str(drg_ins.storage_day),
                 str(drg_ins.start_sum),str(drg_ins.sub_count),str(drg_ins.purchase_price),str(drg_ins.upc_price),str(math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)),
-                str(drg_ins.max_scale),str(math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),str(math.ceil(drg_ins.upc_psd_amount_avg_1/drg_ins.upc_price)),str(drg_ins.up_status),str(drg_ins.safe_day_nums),
+                str(drg_ins.max_scale),str(float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),str(float(drg_ins.upc_psd_amount_avg_1/drg_ins.upc_price)),str(drg_ins.up_status),str(drg_ins.safe_day_nums),
                        ))
 
 if __name__=="__main__":
