@@ -479,4 +479,4 @@ if __name__ == '__main__':
 
     # check_order()
 
-    data_exception_alarm(1284)
+    data_exception_alarm(88)
