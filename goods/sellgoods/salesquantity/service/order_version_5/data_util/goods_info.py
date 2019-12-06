@@ -94,7 +94,22 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                     shelf_ins.face_num = 1
                     shelf_inss.append(shelf_ins)
                     if mch_code in ret:
-                        print ("该商品已加入")
+                        print ("该商品已加入,更新和face相关的参数")
+                        drg_ins = ret[mch_code]
+                        new_shelf_inss = []
+                        max_disnums = 0
+                        min_disnums = 0
+                        face_num = 0
+                        for shelf_ins in shelf_inss:
+                            if shelf_ins.mch_code == mch_code:
+                                face_num += shelf_ins.face_num
+                                min_disnums += shelf_ins.face_num
+                                max_disnums = int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / drg_ins.depth))
+                                new_shelf_inss.append(shelf_ins)
+                        drg_ins.face_num = face_num
+                        drg_ins.shelf_inss = new_shelf_inss
+                        drg_ins.max_disnums = max_disnums * max_scale
+                        drg_ins.min_disnums = min_disnums
                     else:
                         # 获取商品属性
                         try:
@@ -109,27 +124,27 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue
                         scale = None
+                        max_scale = 1
                         # 获取最大陈列系数
                         try:
                             cursor.execute(
-                                "select cat2_id,cat3_id,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and cat3_id = '{}' ".format(
+                                "select cat3_id,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and cat3_id = '{}' ".format(
                                     mch_id,category_id))
                             (cat3_id, scale) = cursor.fetchone()
-                            if cat3_id is None:
+                            if scale is None:
                                 max_scale = 1
                             else:
                                 max_scale = float(scale)
                         except:
                             print('台账找不到商品的最大陈列系数:{}！'.format(mch_code))
                             scale = None
-                        max_scale =1
                         try:
                             if scale is None:
                                 cursor.execute(
-                                    "select cat2_id,cat3_id,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and cat2_id = '{}' ".format(
+                                    "select cat2_id,,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and cat2_id = '{}' ".format(
                                         mch_id, category2_id))
                                 (cat2_id, scale) = cursor.fetchone()
-                                if cat2_id is None:
+                                if scale is None:
                                     max_scale = 1
                                 else:
                                     max_scale = float(scale)
@@ -267,22 +282,22 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                 "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
                                     upc, shopid))
                             (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
-                            end_date = int(time.strftime('%Y%m%d', time.localtime()))
-                            start_date_1 = int(
-                                (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
-                                    days=-7)).strftime("%Y%m%d"))
+                            end_date = str(time.strftime('%Y%m%d', time.localtime()))
+                            start_date_1 = str((datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(days=-7)).strftime("%Y%m%d"))
                             print ("获取bi 真实psd {} ,{},{},{},{}".format(shopid,goods_id,mch_id,upc,goods_name))
-                            sql_1 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date <= {}".format(mch_id,shopid,goods_id,start_date_1,end_date)
+                            sql_1 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date <= {}".format(mch_id,shopid,goods_id,int(start_date_1),int(end_date))
                             cursor_bi.execute(sql_1)
                             res1 = cursor_bi.fetchall()
-                            res_len1 = 0
+
                             if res1 is None or len(res1) < 1:
                                 upc_psd_amount_avg_1 = 0
-                            psd_amount = 0
-                            for re in res1:
-                                psd_amount = re[0]
-                                res_len1+=1
-                            upc_psd_amount_avg_1 = psd_amount / res_len1
+                            else:
+                                res_len1 = 0
+                                psd_amount = 0
+                                for re in res1:
+                                    psd_amount = re[0]
+                                    res_len1+=1
+                                upc_psd_amount_avg_1 = float(psd_amount / res_len1)
                         except:
                             print('bi 找不到psd  4！{},{}'.format(shopid, upc))
                             upc_psd_amount_avg_1 = 0
@@ -292,22 +307,23 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                 "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
                                     upc, shopid))
                             (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
-                            end_date = int(time.strftime('%Y%m%d', time.localtime()))
-                            start_date_4 = int(
+                            end_date = str(time.strftime('%Y%m%d', time.localtime()))
+                            start_date_4 = str(
                                 (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                                     days=-28)).strftime("%Y%m%d"))
                             sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date <= {}".format(
-                                mch_id, shopid, goods_id,start_date_4,end_date)
-                            res_len2 = 0
+                                mch_id, shopid, goods_id,int(start_date_4),int(end_date))
                             cursor_bi.execute(sql_2)
                             res2 = cursor_bi.fetchall()
                             if res2 is None or len(res2) < 1:
                                 upc_psd_amount_avg_4 = 0
-                            psd_amount2 = 0
-                            for re in res2:
-                                psd_amount2 = re[0]
-                                res_len2 += 1
-                            upc_psd_amount_avg_4 = psd_amount2 / res_len2
+                            else:
+                                res_len2 = 0
+                                psd_amount2 = 0
+                                for re in res2:
+                                    psd_amount2 = re[0]
+                                    res_len2 += 1
+                                upc_psd_amount_avg_4 = float(psd_amount2 / res_len2)
                         except:
                             print('bi 找不到psd  4！{},{}'.format(shopid,upc))
                             upc_psd_amount_avg_4 = 0
