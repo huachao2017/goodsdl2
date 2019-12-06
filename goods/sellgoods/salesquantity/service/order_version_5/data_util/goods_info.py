@@ -74,7 +74,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
             shelf_dict[shelf['shelfId']] = shelf['layer']
         for goods_info in display_goods_info:
             goods_array_dict[goods_info['shelfId']] = goods_info['layerArray']
-
+        print(shelf_id)
         for shelfId in shelf_dict.keys():
             level_array = shelf_dict[shelfId]
             goods_array = goods_array_dict[shelfId]
