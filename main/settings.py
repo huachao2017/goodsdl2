@@ -24,11 +24,10 @@ SECRET_KEY = '*nqbimelq553&@0q7&ydkwe*2fbmb6#1%*xibu@-@%u0u@+dw@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+IS_TEST_SERVER = False
 
-if DEBUG:
-    ALLOWED_HOSTS = ['*']
-else:
-    ALLOWED_HOSTS = ['ai.aicvs.top', 'ai.aicvs.cn']
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['ai.aicvs.top', 'ai.aicvs.cn']
 
 # Application definition
 
