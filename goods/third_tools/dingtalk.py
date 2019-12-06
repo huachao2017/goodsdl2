@@ -6,11 +6,11 @@ from django.conf import settings
 def send_message(msg):
     is_test_server = settings.IS_TEST_SERVER
     if is_test_server:
-        type = '(测试)'
+        access_token = '5200bc97f99cf1b46fdefa32e5334e45dcc92080b9276a39c3a8832b0675a840'
     else:
-        type = ''
+        access_token = '6ebf5a764bd2e89c47e60a388208c67698bcb7f851aa4d7fd1745e8be427ec82'
 
-    url = "https://oapi.dingtalk.com/robot/send?access_token=6ebf5a764bd2e89c47e60a388208c67698bcb7f851aa4d7fd1745e8be427ec82"
+    url = "https://oapi.dingtalk.com/robot/send?access_token={}".format(access_token)
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json"
@@ -18,7 +18,7 @@ def send_message(msg):
 
     msg_json = {"msgtype": "text",
                 "text": {
-                    "content": "业务报警{}：{}".format(type, msg)
+                    "content": "业务报警：{}".format(msg)
                 }
                 }
     json_info = json.dumps(msg_json)
