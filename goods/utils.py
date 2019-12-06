@@ -453,17 +453,17 @@ def data_exception_alarm(shopid):
                         try:
                             cursor_ai.execute(
                                 "select single_face_min_disnums from goods_config_disnums where shopid={} and shelf_id={} and upc='{}'".format(
-                                    shopid,shelfId,upc))
+                                    shopid,shelf_id,upc))
                             (single_face_min_disnums,) = cursor_ai.fetchone()
                             if single_face_min_disnums is None or single_face_min_disnums <= 0:
                                 send_message(
                                     '{}(uc店号:{},货架id:{},mch_code:{},upc:{})—>>商品的最小陈列量字段异常:{}'.format(
-                                        goods_name,shelfId,uc_shopid,mch_code, upc,
+                                        goods_name,shelf_id,uc_shopid,mch_code, upc,
                                         single_face_min_disnums))
                         except:
                             send_message(
                                 '{}(uc店号:{},货架id:{},mch_code:{},upc:{})—>>商品的最小陈列量字段异常:{}'.format(
-                                    goods_name, shelfId, uc_shopid, mch_code, upc,
+                                    goods_name,uc_shopid, shelf_id, mch_code, upc,
                                     None))
     cursor.close()
     cursor_dmstore.close()
