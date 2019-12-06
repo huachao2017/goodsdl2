@@ -452,7 +452,7 @@ def data_exception_alarm(shopid):
                         # 获取商品的最小陈列量
                         try:
                             cursor_ai.execute(
-                                "select single_face_min_disnums from goods_config_disnums where shopid={} and shelf_id={} and upc='{}'".format(
+                                "select single_face_min_disnums from goods_config_disnums where shop_id={} and shelf_id={} and upc='{}'".format(
                                     shopid,shelf_id,upc))
                             (single_face_min_disnums,) = cursor_ai.fetchone()
                             if single_face_min_disnums is None or single_face_min_disnums <= 0:
