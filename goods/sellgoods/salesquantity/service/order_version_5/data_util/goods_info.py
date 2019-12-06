@@ -84,6 +84,9 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                 level_depth = round(float(level['depth']))
                 for goods in goods_level_array:
                     mch_code = goods['mch_goods_code']
+                    height = goods['p_height']
+                    width = goods['p_width']
+                    depth = goods['p_depth']
                     shelf_ins = Shelf()
                     shelf_ins.taizhang_id = taizhang_id
                     shelf_ins.shelf_id = shelf_id
@@ -114,11 +117,11 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         # 获取商品属性
                         try:
                             cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                                     mch_id, mch_code))
                             # FIXME width,height暂时翻转
                             # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
-                            (goods_id, goods_name, upc, tz_display_img, spec, volume, height, width, depth, is_superimpose,
+                            (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
                              is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type) = cursor.fetchone()
                         except:
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
@@ -297,7 +300,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                 for re in res1:
                                     psd_amount = re[0]
                                     res_len1+=1
-                                upc_psd_amount_avg_1 = float(psd_amount / res_len1)
+                                upc_psd_amount_avg_1 = float(psd_amount / 7)
                         except:
                             print('bi 找不到psd  4！{},{}'.format(shopid, upc))
                             upc_psd_amount_avg_1 = 0
@@ -323,7 +326,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                 for re in res2:
                                     psd_amount2 = re[0]
                                     res_len2 += 1
-                                upc_psd_amount_avg_4 = float(psd_amount2 / res_len2)
+                                upc_psd_amount_avg_4 = float(psd_amount2 / 28)
                         except:
                             print('bi 找不到psd  4！{},{}'.format(shopid,upc))
                             upc_psd_amount_avg_4 = 0
@@ -437,16 +440,17 @@ class DataRawGoods():
             self.psd_amount_4 = 0
         else:
             self.psd_amount_4 = float(psd_amount_4)
-
-
         if package_type is None:
             self.package_type = 0
         else:
             self.package_type = package_type
-        if depth is None or depth == 0 :
+        try:
+            if depth is None or depth == '' or  float(depth) == 0 :
+                self.depth = 0.001
+            else:
+                self.depth = float(depth)
+        except:
             self.depth = 0.001
-        else:
-            self.depth = depth
         if start_sum is None :
             self.start_sum = 0
         else:
