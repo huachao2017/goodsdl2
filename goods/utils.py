@@ -266,7 +266,6 @@ def data_exception_alarm(shopid):
         :param shopid: fx系统的商店id
         """
     ret = {}
-    next_day = str(time.strftime('%Y-%m-%d', time.localtime()))
     cursor = connections['ucenter'].cursor()
     cursor_dmstore = connections['dmstore'].cursor()
     cursor_erp = connections['erp'].cursor()
@@ -281,6 +280,8 @@ def data_exception_alarm(shopid):
     if not uc_shopid:
         send_message('{}在台账系统找不到对应的shopid！'.format(shopid))
     # 获取erp系统的erp_shopid
+    erp_resupply_id = None
+    erp_supply_id = None
     try:
         cursor_dmstore.execute(
             "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
@@ -303,7 +304,6 @@ def data_exception_alarm(shopid):
         "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status in (1,2) and td.approval_status=1 and st.shop_id = {}".format(
             uc_shopid))
     taizhangs = cursor.fetchall()
-    shelf_inss = []
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
         shelf_id = taizhang[1]
@@ -415,21 +415,22 @@ def data_exception_alarm(shopid):
                                 print('Erp找不到商品:{}-{}！'.format(upc, erp_resupply_id))
 
                         # 获取小仓库库存
-                        try:
-                            cursor_erp.execute(
-                                "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
-                                    erp_supply_id, upc))
-                            (sku_id,) = cursor_erp.fetchone()
-                            cursor_erp.execute(
-                                "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
-                                    sku_id))
-                            (supply_stock,) = cursor_erp.fetchone()
+                        if erp_supply_id is not None:
+                            try:
+                                cursor_erp.execute(
+                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
+                                        erp_supply_id, upc))
+                                (sku_id,) = cursor_erp.fetchone()
+                                cursor_erp.execute(
+                                    "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                                        sku_id))
+                                (supply_stock,) = cursor_erp.fetchone()
 
-                            if supply_stock is None or supply_stock < 0:
-                                send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品小仓库库存异常:{}'.format(goods_name,uc_shopid,mch_code,upc,supply_stock),3)
-                        except:
-                            send_message(
-                                '{}(uc店号:{},mch_code:{},upc:{})—>>商品小仓库库存异常:{}'.format(goods_name, uc_shopid, mch_code,
+                                if supply_stock is None or supply_stock < 0:
+                                    send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品小仓库库存异常:{}'.format(goods_name,uc_shopid,mch_code,upc,supply_stock),3)
+                            except:
+                                send_message(
+                                    '{}(uc店号:{},mch_code:{},upc:{})—>>商品小仓库库存异常:{}'.format(goods_name, uc_shopid, mch_code,
                                                                                        upc, None),3)
 
                         # 获取商品的上架时间、是否新品
