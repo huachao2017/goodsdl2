@@ -444,7 +444,7 @@ def data_exception_alarm(shopid):
                                                                                                             up_status),3)
                         except:
                             send_message(
-                                '{}(uc店号:{},mch_code:{},upc:{})—>>商品的"是否新品"和上架时间字段异常:{}'.format(goods_name,uc_shopid,mch_code, upc,None,None),3)
+                                '{}(uc店号:{},mch_code:{},upc:{})—>>商品的"是否新品"和"上架时间"字段异常:{},{}'.format(goods_name,uc_shopid,mch_code, upc,None,None),3)
 
                         # 获取商品的最小陈列量
                         try:
