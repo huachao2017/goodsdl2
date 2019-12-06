@@ -104,7 +104,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             if shelf_ins.mch_code == mch_code:
                                 face_num += shelf_ins.face_num
                                 min_disnums += shelf_ins.face_num
-                                max_disnums = int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / drg_ins.depth))
+                                max_disnums += int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / drg_ins.depth))
                                 new_shelf_inss.append(shelf_ins)
                         drg_ins.face_num = face_num
                         drg_ins.shelf_inss = new_shelf_inss
@@ -487,7 +487,7 @@ class DataRawGoods():
             if shelf_ins.mch_code == mch_code:
                 face_num += shelf_ins.face_num
                 min_disnums += shelf_ins.face_num
-                max_disnums = int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / self.depth))
+                max_disnums += int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / self.depth))
                 new_shelf_inss.append(shelf_ins)
         self.face_num = face_num
         self.shelf_inss = new_shelf_inss
