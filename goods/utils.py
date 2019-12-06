@@ -281,16 +281,22 @@ def data_exception_alarm(shopid):
     if not uc_shopid:
         send_message('{}在台账系统找不到对应的shopid！'.format(shopid))
     # 获取erp系统的erp_shopid
-    cursor_dmstore.execute(
-        "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
-    (erp_shop_id,) = cursor_dmstore.fetchone()  # 门店id
-    cursor_dmstore.execute(
-        "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 1".format(shopid))
-    (erp_supply_id,) = cursor_dmstore.fetchone()  # 仓库id
+    try:
+        cursor_dmstore.execute(
+            "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
+        (erp_shop_id,) = cursor_dmstore.fetchone()  # 门店id
+        cursor_dmstore.execute(
+            "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 1".format(shopid))
+        (erp_supply_id,) = cursor_dmstore.fetchone()  # 仓库id
 
-    cursor_dmstore.execute(
-        "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 2".format(shopid))
-    (erp_resupply_id,) = cursor_dmstore.fetchone()  # 供货商id
+        cursor_dmstore.execute(
+            "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 2".format(shopid))
+        (erp_resupply_id,) = cursor_dmstore.fetchone()  # 供货商id
+
+        if erp_shop_id is None or erp_supply_id is None or erp_resupply_id is None:
+            send_message('pos店号为{}的店，获取的erp_shop_id异常：{}'.format(shopid, None), 3)
+    except:
+        send_message('pos店号为{}的店，获取的erp_shop_id异常：{}'.format(shopid,None), 3)
 
     # 获取台账 TODO 只能获取店相关的台账，不能获取商家相关的台账
     cursor.execute(
