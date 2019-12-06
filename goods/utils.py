@@ -356,117 +356,117 @@ def data_exception_alarm(shopid):
                             print(shelf_id)
                             p_depth = goods["p_depth"]
                         except:
-                            send_message("货架id为{}，mch_goods_code为{}的商品没有p_depth属性".format(shelf_id,mch_code))
+                            send_message("台账id为{}，mch_goods_code为{}的商品没有p_depth属性".format(shelf_id,mch_code))
 
-                        continue
-                        # # 从库里获取商品属性
-                        # try:
-                        #     cursor.execute(
-                        #         "select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
-                        #             mch_id, mch_code))
-                        #     # FIXME width,height暂时翻转
-                        #     # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
-                        #     (goods_id, goods_name, upc, tz_display_img, spec, volume, height, width, depth,
-                        #      is_superimpose,
-                        #      is_suspension, delivery_type, category1_id, category2_id, category_id, storage_day,
-                        #      package_type) = cursor.fetchone()
-                        #
-                        #     if upc is None or category_id is None or storage_day is None or p_depth is None or delivery_type is None or p_depth <=0 or storage_day <=0:
-                        #         send_message('mch_code为{}的商品存在空字段或异常值，upc:{}，三级分类(category_id):{}，保质期(storage_day):{}，陈列时所占深度(p_depth):{}，配送方式(delivery_type):{}'.format(mch_code,upc,category_id,storage_day,p_depth,delivery_type),3)
-                        #         print('mch_code为{}的商品存在空字段，upc:{}，三级分类(category_id):{}，保质期(storage_day):{}，陈列时所占深度(p_depth):{}，配送方式(delivery_type):{}'.format(mch_code,upc,category_id,storage_day,p_depth,delivery_type))
-                        # except:
-                        #     send_message('mch_code为{}的商品在库里找不到'.format(mch_code),3)
-                        #     continue
-                        # # 获取最大陈列系数
-                        #
-                        #
-                        # # 单价和库存
-                        # try:
-                        #     cursor_dmstore.execute(
-                        #         "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
-                        #             upc, shopid))
-                        #     (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
-                        #     if upc_price is None or upc_price <= 0:
-                        #         send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品单价异常:{}'.format(goods_name,uc_shopid,mch_code,upc,upc_price),3)
-                        #     if stock is None or stock < 0:
-                        #         send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品库存异常:{}'.format(goods_name,uc_shopid,mch_code,upc,stock),3)
-                        #
-                        # except:
-                        #     send_message('{}(uc店号:{},mch_code:{},upc:{})—>>库存和单价异常为：{}、{}'.format(goods_name, uc_shopid, mch_code,upc,None,None),3)
-                        #
-                        #
-                        # # 获取起订量
-                        # if erp_resupply_id is not None:
-                        #     try:
-                        #         # 获取起订量
-                        #         # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
-                        #         cursor_erp.execute(
-                        #             "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
-                        #                 erp_resupply_id, upc))
-                        #         (sku_id,) = cursor_erp.fetchone()
-                        #         cursor_erp.execute(
-                        #             "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
-                        #                 sku_id))
-                        #         (start_sum, multiple) = cursor_erp.fetchone()
-                        #
-                        #         if start_sum is None or start_sum <= 0:
-                        #             send_message(
-                        #                 '{}(uc店号:{},mch_code:{},upc:{})—>>商品起订量异常:{}'.format(goods_name, uc_shopid,
-                        #                                                                     mch_code, upc, start_sum),3)
-                        #     except:
-                        #         send_message(
-                        #             '{}(uc店号:{},mch_code:{},upc:{})—>>商品起订量异常:{}'.format(goods_name, uc_shopid,
-                        #                                                                 mch_code, upc, None),3)
-                        #         print('Erp找不到商品:{}-{}！'.format(upc, erp_resupply_id))
-                        #
-                        # # 获取小仓库库存
-                        # if erp_supply_id is not None:
-                        #     try:
-                        #         cursor_erp.execute(
-                        #             "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
-                        #                 erp_supply_id, upc))
-                        #         (sku_id,) = cursor_erp.fetchone()
-                        #         cursor_erp.execute(
-                        #             "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
-                        #                 sku_id))
-                        #         (supply_stock,) = cursor_erp.fetchone()
-                        #
-                        #         if supply_stock is None or supply_stock < 0:
-                        #             send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品小仓库库存异常:{}'.format(goods_name,uc_shopid,mch_code,upc,supply_stock),3)
-                        #     except:
-                        #         send_message(
-                        #             '{}(uc店号:{},mch_code:{},upc:{})—>>商品小仓库库存异常:{}'.format(goods_name, uc_shopid, mch_code,
-                        #                                                                upc, None),3)
-                        #
-                        # # 获取商品的上架时间、是否新品
-                        # try:
-                        #     cursor_ai.execute(
-                        #         "select up_shelf_date,is_new_goods from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
-                        #             uc_shopid, upc))
-                        #     (up_shelf_date, up_status) = cursor_ai.fetchone()
-                        #     if not up_status in (0,1):
-                        #         send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品的"是否新品"字段异常,is_new_goods:{}'.format(goods_name, uc_shopid, mch_code, upc,
-                        #                                                                                     up_status),3)
-                        # except:
-                        #     send_message(
-                        #         '{}(uc店号:{},mch_code:{},upc:{})—>>商品的"是否新品"和"上架时间"字段异常:{},{}'.format(goods_name,uc_shopid,mch_code, upc,None,None),3)
-                        #
-                        # # 获取商品的最小陈列量
-                        # try:
-                        #     cursor_ai.execute(
-                        #         "select single_face_min_disnums from goods_config_disnums where shop_id={} and shelf_id={} and upc='{}'".format(
-                        #             shopid,shelf_id,upc))
-                        #     (single_face_min_disnums,) = cursor_ai.fetchone()
-                        #     if single_face_min_disnums is None or single_face_min_disnums <= 0:
-                        #         send_message(
-                        #             '{}(uc店号:{},货架id:{},mch_code:{},upc:{})—>>商品的最小陈列量字段异常:{}'.format(
-                        #                 goods_name,shelf_id,uc_shopid,mch_code, upc,
-                        #                 single_face_min_disnums),3)
-                        # except:
-                        #     send_message(
-                        #         '{}(uc店号:{},货架id:{},mch_code:{},upc:{})—>>商品的最小陈列量字段异常:{}'.format(
-                        #             goods_name,uc_shopid, shelf_id, mch_code, upc,
-                        #             None),3)
+                        # continue
+                        # 从库里获取商品属性
+                        try:
+                            cursor.execute(
+                                "select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                    mch_id, mch_code))
+                            # FIXME width,height暂时翻转
+                            # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
+                            (goods_id, goods_name, upc, tz_display_img, spec, volume, height, width, depth,
+                             is_superimpose,
+                             is_suspension, delivery_type, category1_id, category2_id, category_id, storage_day,
+                             package_type) = cursor.fetchone()
+
+                            if upc is None or category_id is None or storage_day is None or p_depth is None or delivery_type is None or p_depth <=0 or storage_day <=0:
+                                send_message('mch_code为{}的商品存在空字段或异常值，upc:{}，三级分类(category_id):{}，保质期(storage_day):{}，陈列时所占深度(p_depth):{}，配送方式(delivery_type):{}'.format(mch_code,upc,category_id,storage_day,p_depth,delivery_type),3)
+                                print('mch_code为{}的商品存在空字段，upc:{}，三级分类(category_id):{}，保质期(storage_day):{}，陈列时所占深度(p_depth):{}，配送方式(delivery_type):{}'.format(mch_code,upc,category_id,storage_day,p_depth,delivery_type))
+                        except:
+                            send_message('mch_code为{}的商品在库里找不到'.format(mch_code),3)
+                            continue
+                        # 获取最大陈列系数
+
+
+                        # 单价和库存
+                        try:
+                            cursor_dmstore.execute(
+                                "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                    upc, shopid))
+                            (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+                            if upc_price is None or upc_price <= 0:
+                                send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品单价异常:{}'.format(goods_name,uc_shopid,mch_code,upc,upc_price),3)
+                            if stock is None or stock < 0:
+                                send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品库存异常:{}'.format(goods_name,uc_shopid,mch_code,upc,stock),3)
+
+                        except:
+                            send_message('{}(uc店号:{},mch_code:{},upc:{})—>>库存和单价异常为：{}、{}'.format(goods_name, uc_shopid, mch_code,upc,None,None),3)
+
+
+                        # 获取起订量
+                        if erp_resupply_id is not None:
+                            try:
+                                # 获取起订量
+                                # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
+                                cursor_erp.execute(
+                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
+                                        erp_resupply_id, upc))
+                                (sku_id,) = cursor_erp.fetchone()
+                                cursor_erp.execute(
+                                    "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                                        sku_id))
+                                (start_sum, multiple) = cursor_erp.fetchone()
+
+                                if start_sum is None or start_sum <= 0:
+                                    send_message(
+                                        '{}(uc店号:{},mch_code:{},upc:{})—>>商品起订量异常:{}'.format(goods_name, uc_shopid,
+                                                                                            mch_code, upc, start_sum),3)
+                            except:
+                                send_message(
+                                    '{}(uc店号:{},mch_code:{},upc:{})—>>商品起订量异常:{}'.format(goods_name, uc_shopid,
+                                                                                        mch_code, upc, None),3)
+                                print('Erp找不到商品:{}-{}！'.format(upc, erp_resupply_id))
+
+                        # 获取小仓库库存
+                        if erp_supply_id is not None:
+                            try:
+                                cursor_erp.execute(
+                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
+                                        erp_supply_id, upc))
+                                (sku_id,) = cursor_erp.fetchone()
+                                cursor_erp.execute(
+                                    "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                                        sku_id))
+                                (supply_stock,) = cursor_erp.fetchone()
+
+                                if supply_stock is None or supply_stock < 0:
+                                    send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品小仓库库存异常:{}'.format(goods_name,uc_shopid,mch_code,upc,supply_stock),3)
+                            except:
+                                send_message(
+                                    '{}(uc店号:{},mch_code:{},upc:{})—>>商品小仓库库存异常:{}'.format(goods_name, uc_shopid, mch_code,
+                                                                                       upc, None),3)
+
+                        # 获取商品的上架时间、是否新品
+                        try:
+                            cursor_ai.execute(
+                                "select up_shelf_date,is_new_goods from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
+                                    uc_shopid, upc))
+                            (up_shelf_date, up_status) = cursor_ai.fetchone()
+                            if not up_status in (0,1):
+                                send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品的"是否新品"字段异常,is_new_goods:{}'.format(goods_name, uc_shopid, mch_code, upc,
+                                                                                                            up_status),3)
+                        except:
+                            send_message(
+                                '{}(uc店号:{},mch_code:{},upc:{})—>>商品的"是否新品"和"上架时间"字段异常:{},{}'.format(goods_name,uc_shopid,mch_code, upc,None,None),3)
+
+                        # 获取商品的最小陈列量
+                        try:
+                            cursor_ai.execute(
+                                "select single_face_min_disnums from goods_config_disnums where shop_id={} and shelf_id={} and upc='{}'".format(
+                                    shopid,shelf_id,upc))
+                            (single_face_min_disnums,) = cursor_ai.fetchone()
+                            if single_face_min_disnums is None or single_face_min_disnums <= 0:
+                                send_message(
+                                    '{}(uc店号:{},货架id:{},mch_code:{},upc:{})—>>商品的最小陈列量字段异常:{}'.format(
+                                        goods_name,shelf_id,uc_shopid,mch_code, upc,
+                                        single_face_min_disnums),3)
+                        except:
+                            send_message(
+                                '{}(uc店号:{},货架id:{},mch_code:{},upc:{})—>>商品的最小陈列量字段异常:{}'.format(
+                                    goods_name,uc_shopid, shelf_id, mch_code, upc,
+                                    None),3)
     cursor.close()
     cursor_dmstore.close()
     cursor_erp.close()
@@ -485,3 +485,4 @@ if __name__ == '__main__':
     # check_order()
 
     data_exception_alarm(1284)
+
