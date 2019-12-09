@@ -51,7 +51,7 @@ def first_order_process():
                 ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
                 (dmstore_shopid,) = ucenter_cursor.fetchone()
                 # 调用告警
-                data_alarm(dmstore_shopid)
+                # data_alarm(dmstore_shopid)
                 cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                 cursor_ai.connection.commit()
                 start_time = time.time()
@@ -105,7 +105,7 @@ def day_order_process():
                 ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
                 (dmstore_shopid,) = ucenter_cursor.fetchone()
                 # 调用告警
-                data_alarm(dmstore_shopid)
+                # data_alarm(dmstore_shopid)
                 cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                 cursor_ai.connection.commit()
                 start_time = time.time()
@@ -169,7 +169,7 @@ def add_order_process():
                 ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
                 (dmstore_shopid,) = ucenter_cursor.fetchone()
                 # 调用告警
-                data_alarm(dmstore_shopid)
+                # data_alarm(dmstore_shopid)
                 cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                 conn.commit()
                 start_time = time.time()
