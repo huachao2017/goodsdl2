@@ -416,9 +416,8 @@ def data_exception_alarm(shopid):
                                                                                             mch_code, upc, start_sum),3)
                             except:
                                 send_message(
-                                    '{}(uc店号:{},mch_code:{},upc:{})—>>商品起订量异常:{}'.format(goods_name, uc_shopid,
-                                                                                        mch_code, upc, None),3)
-                                print('Erp找不到商品:{}-{}！'.format(upc, erp_resupply_id))
+                                    '{}(uc店号:{},mch_code:{},upc:{})—>>商品在好邻居不可订货'.format(goods_name, uc_shopid,
+                                                                                        mch_code, upc),3)
 
                         # 获取小仓库库存
                         if erp_supply_id is not None:
