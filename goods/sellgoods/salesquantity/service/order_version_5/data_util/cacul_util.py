@@ -52,12 +52,10 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
         sales_order_ins.face_num += shelf_ins.face_num
         shelf_data.append({"tz_id":shelf_ins.taizhang_id,"shelf_id":shelf_ins.shelf_id,"shelf_order":0,"face_num":shelf_ins.face_num})
     sales_order_ins.shelf_order_info = shelf_data
-
-
     return sales_order_ins
 
 
-def get_goods_batch_order_data(batch_id,sales_order_inss):
+def get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id,result):
     jsondata = []
     for sales_order_ins in sales_order_inss:
         data_dict = {}
@@ -71,13 +69,75 @@ def get_goods_batch_order_data(batch_id,sales_order_inss):
         data_dict['shelf_order_info'] = sales_order_ins.shelf_order_info
         jsondata.append(data_dict)
     order_data = demjson.encode(jsondata)
+    order_all_data = get_order_all_data(result,sales_order_inss)
     create_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     update_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
-    return [(batch_id,order_data,create_time,update_time)]
+    return [(batch_id,order_data,create_time,update_time,uc_shop_id,order_all_data)]
 
 
-
-
+def get_order_all_data(result,sales_order_inss):
+    jsondata=[]
+    print("订货数,门店id,门店名称,商品id,upc,商品名称,"
+          "一级分类,二级分类,三级分类,face数,陈列规格,"
+          "模板店4周预估psd,模板店4周预估psd金额,配送单位,最小陈列数,"
+          "最大陈列数,门店库存,仓库库存,配送类型,保质期,"
+          "起订量,在途订货数,进货价,商品单价,开店以来单天最大psd数量,"
+          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,是否是新品,安全天数")
+    for mch_code in result:
+        mch_goods_dict = {}
+        drg_ins = result[mch_code]
+        order_sale = 0
+        for sales_order_ins in sales_order_inss:
+            if drg_ins.upc == sales_order_ins.upc:
+                order_sale = sales_order_ins.order_sale
+        mch_goods_dict['order_sale'] = order_sale
+        mch_goods_dict['ucshop_id'] = drg_ins.ucshop_id
+        mch_goods_dict['shop_name'] = drg_ins.shop_name
+        mch_goods_dict['mch_code'] = drg_ins.mch_code
+        mch_goods_dict['upc'] = drg_ins.upc
+        mch_goods_dict['goods_name'] = drg_ins.goods_name
+        mch_goods_dict['category1_id'] = drg_ins.category1_id
+        mch_goods_dict['category2_id'] = drg_ins.category2_id
+        mch_goods_dict['category_id'] = drg_ins.category_id
+        mch_goods_dict['face_num'] = drg_ins.face_num
+        mch_goods_dict['package_type'] = drg_ins.package_type
+        mch_goods_dict['psd_nums_4'] = drg_ins.psd_nums_4
+        mch_goods_dict['psd_amount_4'] = drg_ins.psd_amount_4
+        mch_goods_dict['start_sum'] = drg_ins.start_sum
+        mch_goods_dict['min_disnums'] = drg_ins.min_disnums
+        mch_goods_dict['max_disnums'] = drg_ins.max_disnums
+        mch_goods_dict['stock'] = drg_ins.stock
+        mch_goods_dict['supply_stock'] = drg_ins.supply_stock
+        mch_goods_dict['delivery_type'] = drg_ins.delivery_type
+        mch_goods_dict['storage_day'] = drg_ins.storage_day
+        mch_goods_dict['sub_count'] = drg_ins.sub_count
+        mch_goods_dict['purchase_price'] = drg_ins.purchase_price
+        mch_goods_dict['upc_price'] = drg_ins.upc_price
+        mch_goods_dict['oneday_max_psd'] = math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)
+        mch_goods_dict['upc_psd_amount_avg_4'] = float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)
+        mch_goods_dict['upc_psd_amount_avg_1'] = float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)
+        mch_goods_dict['up_status'] = drg_ins.up_status
+        mch_goods_dict['safe_day_nums'] = drg_ins.safe_day_nums
+        print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
+              "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
+              "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
+              % (str(order_sale),
+                 str(drg_ins.ucshop_id), str(drg_ins.shop_name), str(drg_ins.mch_code),
+                 str(drg_ins.upc), str(drg_ins.goods_name),
+                 str(drg_ins.category1_id), str(drg_ins.category2_id), str(drg_ins.category_id), str(drg_ins.face_num),
+                 str(drg_ins.package_type),
+                 str(drg_ins.psd_nums_4), str(drg_ins.psd_amount_4), str(drg_ins.start_sum), str(drg_ins.min_disnums),
+                 str(drg_ins.max_disnums), str(drg_ins.stock), str(drg_ins.supply_stock), str(drg_ins.delivery_type),
+                 str(drg_ins.storage_day),
+                 str(drg_ins.start_sum), str(drg_ins.sub_count), str(drg_ins.purchase_price), str(drg_ins.upc_price),
+                 str(math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)),
+                 str(drg_ins.max_scale), str(float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),
+                 str(float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)), str(drg_ins.up_status),
+                 str(drg_ins.safe_day_nums),
+                 ))
+        jsondata.append(mch_goods_dict)
+    order_all_data = demjson.encode(jsondata)
+    return order_all_data
 
 
 
