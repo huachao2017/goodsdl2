@@ -265,7 +265,7 @@ def data_exception_alarm(shopid):
         获取商店的所有货架及货架上的商品信息，进行数据异常报警
         :param shopid: fx系统的商店id
         """
-    ret = {}
+    ret = []
     cursor = connections['ucenter'].cursor()
     cursor_dmstore = connections['dmstore'].cursor()
     cursor_erp = connections['erp'].cursor()
@@ -348,9 +348,9 @@ def data_exception_alarm(shopid):
                     mch_code = goods['mch_goods_code']
 
                     if mch_code in ret:
-                        print("该商品已加入")
+                        print("该商品已查询过")
                     else:
-
+                        ret.append(mch_code)
                         # 从台账获取商品属性
                         try:
                             print(shelf_id)
@@ -484,8 +484,7 @@ def data_exception_alarm(shopid):
                                     goods_name,uc_shopid, shelf_id, mch_code, upc,
                                     None),3)
 
-                break
-            break
+
     cursor.close()
     cursor_dmstore.close()
     cursor_erp.close()
