@@ -89,12 +89,12 @@ def day_order_process():
                 cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                 cursor_ai.connection.commit()
                 start_time = time.time()
-                end_date = int(time.strftime('%Y%m%d', time.localtime()))
-                start_date = int(
+                end_date = str(time.strftime('%Y%m%d', time.localtime()))
+                start_date = str(
                     (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                         days=-30)).strftime("%Y%m%d"))
                 print("日常订单 batch_id =" + str(batch_id))
-                if dmstore_shopid in config.shellgoods_params["start_shop"].keys() and config.shellgoods_params["start_shop"][dmstore_shopid] > start_date:
+                if dmstore_shopid in config.shellgoods_params["start_shop"].keys() and config.shellgoods_params["start_shop"][dmstore_shopid] > int(start_date):
                     print ("该店处于新店期，dmstore_shopid = "+str(dmstore_shopid))
                     sales_order_inss1,result = generate_order_2saler_newshop_notday.generate(dmstore_shopid)
                 else:

@@ -113,7 +113,7 @@ def get_order_all_data(result,sales_order_inss):
         mch_goods_dict['sub_count'] = drg_ins.sub_count
         mch_goods_dict['purchase_price'] = drg_ins.purchase_price
         mch_goods_dict['upc_price'] = drg_ins.upc_price
-        mch_goods_dict['oneday_max_psd'] = float(drg_ins.oneday_max_psd / drg_ins.upc_price)
+        mch_goods_dict['oneday_max_psd'] = math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)
         mch_goods_dict['upc_psd_amount_avg_4'] = float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)
         mch_goods_dict['upc_psd_amount_avg_1'] = float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)
         mch_goods_dict['up_status'] = drg_ins.up_status
@@ -130,7 +130,7 @@ def get_order_all_data(result,sales_order_inss):
                  str(drg_ins.max_disnums), str(drg_ins.stock), str(drg_ins.supply_stock), str(drg_ins.delivery_type),
                  str(drg_ins.storage_day),
                  str(drg_ins.start_sum), str(drg_ins.sub_count), str(drg_ins.purchase_price), str(drg_ins.upc_price),
-                 str(float(drg_ins.oneday_max_psd / drg_ins.upc_price)),
+                 str(math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)),
                  str(drg_ins.max_scale), str(float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),
                  str(float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)), str(drg_ins.up_status),
                  str(drg_ins.safe_day_nums),
