@@ -483,6 +483,9 @@ def data_exception_alarm(shopid):
                                 '{}(uc店号:{},货架id:{},mch_code:{},upc:{})—>>商品的最小陈列量字段异常:{}'.format(
                                     goods_name,uc_shopid, shelf_id, mch_code, upc,
                                     None),3)
+
+                break
+            break
     cursor.close()
     cursor_dmstore.close()
     cursor_erp.close()
