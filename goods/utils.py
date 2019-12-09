@@ -402,8 +402,8 @@ def data_exception_alarm(shopid):
                                 # 获取起订量
                                 # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
                                 cursor_erp.execute(
-                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
-                                        erp_resupply_id, upc))
+                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}' AND s.party_code='{}'".format(
+                                        erp_resupply_id, upc,mch_code))
                                 (sku_id,) = cursor_erp.fetchone()
                                 cursor_erp.execute(
                                     "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
@@ -415,8 +415,24 @@ def data_exception_alarm(shopid):
                                         '{}(uc店号:{},mch_code:{},upc:{})—>>商品起订量异常:{}'.format(goods_name, uc_shopid,
                                                                                             mch_code, upc, start_sum),3)
                             except:
-                                send_message(
-                                    '{}(uc店号:{},mch_code:{},upc:{})—>>商品在好邻居不可订货'.format(goods_name, uc_shopid,
+                                try:
+                                    # 看是什么原因导致查询不到，一可能是好邻居码和upc不对应，二可能是不可订货
+                                    cursor_erp.execute(
+                                        "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} AND s.party_code='{}'".format(
+                                            erp_resupply_id, mch_code))
+                                    (sku_id,) = cursor_erp.fetchone()
+                                    if sku_id:
+                                        cursor_erp.execute(
+                                            "select model_id ,party_code  from ls_prod where shop_id='{}' and  party_code='{}';".format(
+                                                erp_resupply_id, mch_code))
+                                        (upc_2,) = cursor_erp.fetchone()
+
+                                        send_message(
+                                            '{}(uc店号:{},mch_code:{},upc:{})—>>商品mch_code和upc不对应，该mch_code查出的upc为{}'.format(goods_name, uc_shopid,
+                                                                                                 mch_code, upc,upc_2), 3)
+                                except:
+                                    send_message(
+                                        '{}(uc店号:{},mch_code:{},upc:{})—>>商品在好邻居不可订货'.format(goods_name, uc_shopid,
                                                                                         mch_code, upc),3)
 
                         # 获取小仓库库存
