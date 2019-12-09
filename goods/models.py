@@ -189,3 +189,18 @@ class ShelfDisplayDebugGoods(models.Model):
     shelf_display_debug = models.ForeignKey(ShelfImage2, related_name="shelf_display_debug_goods", on_delete=models.CASCADE)
     category = models.CharField(max_length=20)
     goods_tree_source = models.CharField(max_length=200, default='')
+
+
+def arm_image_upload_source(instance, filename):
+    now = datetime.datetime.now()
+    return '{}/{}/{}/{}/{}_{}_{}'.format(settings.DETECT_DIR_NAME, 'arm', now.strftime('%Y%m'),
+                                         now.strftime('%d%H'), now.strftime('%M%S'), str(now.time()), filename)
+
+
+
+class ArmImage(models.Model):
+    rgb_source = models.ImageField(max_length=200, upload_to=arm_image_upload_source)
+    depth_source = models.ImageField(max_length=200, upload_to=arm_image_upload_source)
+    table_z = models.IntegerField(default=0)
+    result = models.TextField()
+    create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)

@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 
-from goods import views,views_shelf,views_shelf2,views_sellgoods, views_display
+from goods import views,views_shelf,views_shelf2,views_sellgoods, views_display, views_arm
 
 router = DefaultRouter()
 
@@ -28,6 +28,9 @@ router.register(r'freezerimage', views.FreezerImageViewSet)
 router.register(r'goodswh', views.GoodsImageViewSet)
 router.register(r'workflowbatch', views.AllWorkFlowBatchViewSet)
 router.register(r'shelfdisplay', views_display.ShelfDisplayDebugViewSet)
+
+arm_router = DefaultRouter()
+arm_router.register(r'detect', views_arm.ArmImageViewSet)
 urlpatterns = [
     url(r'^test', views.Test.as_view()),
     url(r'^api/shelf_score', views_shelf.ShelfScore.as_view()),
@@ -42,5 +45,6 @@ urlpatterns = [
     url(r'^api/beginselectgoods', views.BeginSelectGoods.as_view()),
     url(r'^api/beginautodisplay', views.BeginAutoDisplay.as_view()),
     url(r'^api/beginordergoods', views.BeginOrderGoods.as_view()),
-    url(r'^api/', include(router.urls))
+    url(r'^api/', include(router.urls)),
+    url(r'^arm/', include(arm_router.urls))
 ]
