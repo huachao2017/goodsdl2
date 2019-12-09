@@ -18,28 +18,16 @@ select_goods_batch_order = "select id,batch_order_id order_data from goods_batch
 update_goods_batch_order = "update goods_batch_order set order_data = '{}',update_time='{}' where id = {}"
 sql_uc_shop = "select mch_shop_code from uc_shop where id = {}"
 
-def data_alarm():
+def data_alarm(dmstore_shopid):
     """
     调用钉钉告警，检测数据
     :return:
     """
-    conn = connections['default']
-    cursor_ai = conn.cursor()
-    conn_ucenter = connections['ucenter']
-    ucenter_cursor = conn_ucenter.cursor()
-    cursor_ai.execute(sql_workflow.format(taskflow.first_order_type))
-    first_flow_data = cursor_ai.fetchall()
-    if first_flow_data is not None:
-        for data in first_flow_data:
-            try:
-                id = data[0]
-                batch_id = data[1]
-                uc_shop_id = data[2]
-                ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
-                (dmstore_shopid,) = ucenter_cursor.fetchone()
-                data_exception_alarm(dmstore_shopid)
-            except:
-                print ("data_exception_alarm 异常....")
+    try:
+        data_exception_alarm(dmstore_shopid)
+    except Exception as e:
+        print ("data_exception_alarm 异常....")
+        traceback.print_exc()
 
 
 
@@ -62,6 +50,8 @@ def first_order_process():
                 uc_shop_id = data[2]
                 ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
                 (dmstore_shopid,) = ucenter_cursor.fetchone()
+                # 调用告警
+                data_alarm(dmstore_shopid)
                 cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                 cursor_ai.connection.commit()
                 start_time = time.time()
@@ -114,6 +104,8 @@ def day_order_process():
                 uc_shop_id = data[2]
                 ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
                 (dmstore_shopid,) = ucenter_cursor.fetchone()
+                # 调用告警
+                data_alarm(dmstore_shopid)
                 cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                 cursor_ai.connection.commit()
                 start_time = time.time()
@@ -176,6 +168,8 @@ def add_order_process():
                 uc_shop_id = data[2]
                 ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
                 (dmstore_shopid,) = ucenter_cursor.fetchone()
+                # 调用告警
+                data_alarm(dmstore_shopid)
                 cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                 conn.commit()
                 start_time = time.time()

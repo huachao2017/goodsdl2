@@ -9,26 +9,17 @@ def generate_data():
         time.sleep(10)
         close_old_connections()
         try:
-            order_process.data_alarm()
-        except Exception as e:
-            print("order_process.data_alarm  error e={}".format(e))
-            time.sleep(10)
-            traceback.print_exc()
-
-        try:
             order_process.first_order_process()
         except Exception as e:
             print ("order_process.first_order_process  error e={}".format(e))
             time.sleep(10)
             traceback.print_exc()
-
         try:
             order_process.day_order_process()
         except Exception as e:
             print("order_process.day_order_process  error e={}".format(e))
             time.sleep(10)
             traceback.print_exc()
-
         try:
             order_process.add_order_process()
         except Exception as e:
