@@ -298,7 +298,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                 res_len1 = 0
                                 psd_amount = 0
                                 for re in res1:
-                                    psd_amount = re[0]
+                                    psd_amount += re[0]
                                     res_len1+=1
                                 upc_psd_amount_avg_1 = float(psd_amount / 7)
                         except:
@@ -324,7 +324,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                 res_len2 = 0
                                 psd_amount2 = 0
                                 for re in res2:
-                                    psd_amount2 = re[0]
+                                    psd_amount2 += re[0]
                                     res_len2 += 1
                                 upc_psd_amount_avg_4 = float(psd_amount2 / 28)
                         except:

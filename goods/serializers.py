@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,GoodsImage,ShelfDisplayDebug,ShelfDisplayDebugGoods,AllWorkFlowBatch
+from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,GoodsImage,ShelfDisplayDebug,ShelfDisplayDebugGoods,AllWorkFlowBatch, ArmImage
 import os
 from django.conf import settings
 
@@ -224,3 +224,10 @@ class ShelfDisplayDebugSerializer(serializers.ModelSerializer):
 
         else:
             return None
+
+class ArmImageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ArmImage
+        fields = ('pk', 'rgb_source', 'depth_source', 'table_z')
+        read_only_fields = ('result','create_time',)
