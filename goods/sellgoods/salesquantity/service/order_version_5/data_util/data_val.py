@@ -8,8 +8,8 @@ def generate(shop_id = None):
     print ("数据验证程序,shop_id"+str(shop_id))
     if shop_id == None:
         return None
-    result = cacul_util.data_process(shop_id,shop_type)
-    sales_order_inss = generate_order_2saler_add.generate(shop_id)
+    # result = cacul_util.data_process(shop_id,shop_type)
+    sales_order_inss,result = generate_order_2saler_add.generate(shop_id)
     print ("规则0 商品数："+str(len(result.keys())))
     print("订货数,门店id,门店名称,商品id,upc,商品名称,"
           "一级分类,二级分类,三级分类,face数,陈列规格,"

@@ -339,9 +339,9 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                         upc, shopid))
                                 (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
                                 start_shop_date = int(config.shellgoods_params['start_shop'][shopid])
-                                end_date = int (time.strftime('%Y%m%d', time.localtime()))
+                                end_date = str (time.strftime('%Y%m%d', time.localtime()))
                                 sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date <= {} order by psd desc limit 1 ".format(
-                                    mch_id, shopid, goods_id, start_shop_date, end_date)
+                                    mch_id, shopid, goods_id, start_shop_date, int(end_date))
                                 cursor_bi.execute(sql_2)
                                 (oneday_max_psd,) = cursor_bi.fetchone()
                         except:
