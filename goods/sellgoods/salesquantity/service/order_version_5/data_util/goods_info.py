@@ -222,8 +222,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                 # 获取起订量
                                 # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
                                 cursor_erp.execute(
-                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
-                                        erp_resupply_id, upc))
+                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}' and s.party_code = '{}'".format(
+                                        erp_resupply_id, upc,mch_code))
                                 (sku_id,) = cursor_erp.fetchone()
                                 cursor_erp.execute(
                                     "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
@@ -239,8 +239,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         try:
                             # 获取小仓库库存
                             cursor_erp.execute(
-                                "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}'".format(
-                                    erp_supply_id, upc))
+                                "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}' and s.party_code = '{}' ".format(
+                                    erp_supply_id, upc,mch_code))
                             (sku_id,) = cursor_erp.fetchone()
                             cursor_erp.execute(
                                 "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
