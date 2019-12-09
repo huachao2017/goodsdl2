@@ -7,6 +7,7 @@ from goods.sellgoods.salesquantity.bean import taskflow
 from goods.sellgoods.salesquantity.service.order_version_4 import generate_order_2saler_first,generate_order_2saler_add,generate_order_2saler_add_day,generate_order_shop
 from goods.sellgoods.salesquantity.service.order_version_4.data_util import cacul_util
 from goods.sellgoods.salesquantity.local_util import erp_interface
+from goods.utils import data_exception_alarm
 from set_config import config
 import traceback
 sql_workflow = "select id,batch_id,uc_shopid from goods_allworkflowbatch where type = {} and order_goods_status=1"
@@ -16,6 +17,34 @@ insert_goods_batch_order = "insert into goods_batch_order (batch_order_id,order_
 select_goods_batch_order = "select id,batch_order_id order_data from goods_batch_order where batch_order_id='{}' and uc_shop_id = {} "
 update_goods_batch_order = "update goods_batch_order set order_data = '{}',update_time='{}' where id = {}"
 sql_uc_shop = "select mch_shop_code from uc_shop where id = {}"
+
+def data_alarm():
+    """
+    调用钉钉告警，检测数据
+    :return:
+    """
+    conn = connections['default']
+    cursor_ai = conn.cursor()
+    conn_ucenter = connections['ucenter']
+    ucenter_cursor = conn_ucenter.cursor()
+    cursor_ai.execute(sql_workflow.format(taskflow.first_order_type))
+    first_flow_data = cursor_ai.fetchall()
+    if first_flow_data is not None:
+        for data in first_flow_data:
+            try:
+                id = data[0]
+                batch_id = data[1]
+                uc_shop_id = data[2]
+                ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
+                (dmstore_shopid,) = ucenter_cursor.fetchone()
+                data_exception_alarm(dmstore_shopid)
+            except:
+                print ("data_exception_alarm 异常....")
+
+
+
+
+
 # 首次订货单
 def first_order_process():
     conn = connections['default']
