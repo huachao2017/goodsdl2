@@ -355,8 +355,12 @@ def data_exception_alarm(shopid):
                         try:
                             print(shelf_id)
                             p_depth = goods["p_depth"]
+                            if p_depth is None or p_depth <=0:
+                                send_message(
+                                    "台账id为{}，货架id为{}，mch_goods_code为{}的商品p_depth属性异常：{}".format(taizhang_id, shelf_id,
+                                                                                             mch_code,p_depth),3)
                         except:
-                            send_message("台账id为{}，mch_goods_code为{}的商品没有p_depth属性".format(shelf_id,mch_code))
+                            send_message("台账id为{}，货架id为{}，mch_goods_code为{}的商品没有p_depth属性".format(taizhang_id,shelf_id,mch_code),3)
 
                         # continue
                         # 从库里获取商品属性
@@ -364,14 +368,11 @@ def data_exception_alarm(shopid):
                             cursor.execute(
                                 "select id, goods_name,upc, tz_display_img, spec, volume, width,height,depth,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                                     mch_id, mch_code))
-                            # FIXME width,height暂时翻转
-                            # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
                             (goods_id, goods_name, upc, tz_display_img, spec, volume, height, width, depth,
-                             is_superimpose,
-                             is_suspension, delivery_type, category1_id, category2_id, category_id, storage_day,
+                             is_superimpose,is_suspension, delivery_type, category1_id, category2_id, category_id, storage_day,
                              package_type) = cursor.fetchone()
 
-                            if upc is None or category_id is None or storage_day is None or p_depth is None or delivery_type is None or p_depth <=0 or storage_day <=0:
+                            if upc is None or category_id is None or storage_day is None or delivery_type is None or storage_day <=0:
                                 send_message('mch_code为{}的商品存在空字段或异常值，upc:{}，三级分类(category_id):{}，保质期(storage_day):{}，陈列时所占深度(p_depth):{}，配送方式(delivery_type):{}'.format(mch_code,upc,category_id,storage_day,p_depth,delivery_type),3)
                                 print('mch_code为{}的商品存在空字段，upc:{}，三级分类(category_id):{}，保质期(storage_day):{}，陈列时所占深度(p_depth):{}，配送方式(delivery_type):{}'.format(mch_code,upc,category_id,storage_day,p_depth,delivery_type))
                         except:
