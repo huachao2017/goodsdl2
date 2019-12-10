@@ -42,7 +42,7 @@ def generate(shop_id = None,order_type=None):
                 if math.ceil(drg_ins.oneday_max_psd /drg_ins.upc_price) < a1:
                     track_stock = a1
                 else:
-                    track_stock =math.ceil(drg_ins.oneday_max_psd /drg_ins.upc_price)  + drg_ins.min_disnums * 2
+                    track_stock =math.ceil(drg_ins.oneday_max_psd /drg_ins.upc_price)  + drg_ins.min_disnums
                 order_sale = track_stock - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
             if order_sale <= 0:
                 continue
