@@ -456,7 +456,7 @@ class DataRawGoods():
         else:
             self.start_sum = start_sum
         self.multiple = multiple
-        if stock is None:
+        if stock is None or stock < 0 :
             self.stock = 0
         else:
             self.stock = float(stock)   # 门店库存
@@ -468,7 +468,7 @@ class DataRawGoods():
             self.old_sales = 0
         else:
             self.old_sales = float(old_sales)
-        if supply_stock is None:
+        if supply_stock is None or supply_stock < 0 :
             self.supply_stock = 0
         else:
             self.supply_stock = float(supply_stock)  #小仓库库存
