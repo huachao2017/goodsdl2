@@ -63,7 +63,7 @@ class YOLO(object):
         # 控制gpu比例
         config = tf.ConfigProto()
         config.gpu_options.allocator_type = 'BFC'  # A "Best-fit with coalescing" algorithm, simplified from a version of dlmalloc.
-        config.gpu_options.per_process_gpu_memory_fraction = 0.1
+        config.gpu_options.per_process_gpu_memory_fraction = 0.05
         config.gpu_options.allow_growth = True
         set_session(tf.Session(config=config))
 
