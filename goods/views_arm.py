@@ -15,6 +15,7 @@ from dl import freezer2detection
 from django.conf import settings
 from goods.edge.contour_detect_3d import Contour_3d
 import traceback
+import math
 
 logger = logging.getLogger("django")
 
