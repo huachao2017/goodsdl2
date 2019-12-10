@@ -352,7 +352,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         try:
                             psd_nums_4, psd_amount_4 = utils.select_psd_data(upc, shopid, 28)
                         except:
-                            print("select_psd_data is error ,upc=" + str(upc))
+                            print("select_psd_data is error ,upc=" + str(upc)+",shop_id="+str(shopid))
                             psd_nums_4 = 0
                             psd_amount_4 = 0
 
