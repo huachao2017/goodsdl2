@@ -344,8 +344,11 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                     mch_id, shopid, goods_id, start_shop_date, int(end_date))
                                 cursor_bi.execute(sql_2)
                                 (oneday_max_psd,) = cursor_bi.fetchone()
+                                print ("找到  oneday_max_psd "+str(oneday_max_psd)+",upc="+str(upc))
+                                print ("%s,%s,%s,%s,%s" % (str(mch_id), str(shopid), str(goods_id), str(start_shop_date), str(int(end_date))))
                         except:
                             print('bi 找不到psd  one_day max ！{},{}'.format(shopid, upc))
+                            traceback.print_exc()
                             oneday_max_psd = 0
 
                         psd_nums_4, psd_amount_4 = 0,0
@@ -353,6 +356,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             psd_nums_4, psd_amount_4 = utils.select_psd_data(upc, shopid, 28)
                         except:
                             print("select_psd_data is error ,upc=" + str(upc)+",shop_id="+str(shopid))
+                            traceback.print_exc()
                             psd_nums_4 = 0
                             psd_amount_4 = 0
 
