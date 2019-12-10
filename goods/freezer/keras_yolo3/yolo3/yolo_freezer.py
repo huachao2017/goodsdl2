@@ -15,8 +15,9 @@ from goods.freezer.keras_yolo3.yolo3.model import yolo_eval, yolo_body, tiny_yol
 from goods.freezer.keras_yolo3.yolo3.utils import letterbox_image
 import os
 from keras.utils import multi_gpu_model
+from keras.backend.tensorflow_backend import set_session
 from set_config import config
-from goods.freezer.keras_yolo3.yolo3 import yolo_freezer
+# from goods.freezer.keras_yolo3.yolo3 import yolo_freezer
 from object_detection.utils import visualization_utils as vis_util
 from object_detection.utils import label_map_util
 from goods.freezer.keras_yolo3.good_proxy import proxy
@@ -59,6 +60,13 @@ class YOLO(object):
         self.__dict__.update(kwargs) # and update with user overrides
         self.class_names = self._get_class()
         self.anchors = self._get_anchors()
+        # 控制gpu比例
+        config = tf.ConfigProto()
+        config.gpu_options.allocator_type = 'BFC'  # A "Best-fit with coalescing" algorithm, simplified from a version of dlmalloc.
+        config.gpu_options.per_process_gpu_memory_fraction = 0.1
+        config.gpu_options.allow_growth = True
+        set_session(tf.Session(config=config))
+
         self.sess = K.get_session()
         self.boxes, self.scores, self.classes = None,None,None
         self.boxes, self.scores, self.classes = self.generate()

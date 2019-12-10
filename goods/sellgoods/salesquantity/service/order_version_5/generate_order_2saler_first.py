@@ -36,18 +36,11 @@ def generate(shop_id = None,order_type=None):
             sales_order_inss.append(sales_order_ins)
         sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
         print("规则三：商品数：" + str(len(sales_order_inss)))
-        print("门店id,门店名称,商品id,upc,一级分类,二级分类,三级分类,face数,陈列规格,psd,psd金额,配送单位,订货数,其他")
-        for sales_order_ins in sales_order_inss:
-            print("%s , %s, %s, %s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s" % (
-                str(sales_order_ins.shopid), str(sales_order_ins.shop_name), str(sales_order_ins.mch_goods_code),
-                str(sales_order_ins.upc), str(sales_order_ins.category1_id), str(sales_order_ins.category2_id),
-                str(sales_order_ins.category_id),str(sales_order_ins.face_num),str(sales_order_ins.package_type),str(sales_order_ins.psd_nums_4),
-                str(sales_order_ins.psd_amount_4),str(sales_order_ins.start_sum),str(sales_order_ins.order_sale),str(demjson.encode(sales_order_ins.shelf_order_info))))
-        return sales_order_inss
+        return sales_order_inss,result
     except Exception as e:
         print ("not day sales2 order faield ,e ={}".format(e))
         traceback.print_exc()
-        return None
+        return None,None
 
 if __name__=='__main__':
     generate(1284)

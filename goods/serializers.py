@@ -229,5 +229,5 @@ class ArmImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ArmImage
-        fields = ('pk', 'rgb_source', 'depth_source', 'table_z')
+        fields = ('pk', 'rgb_source', 'depth_source', 'table_z', 'result','create_time')
         read_only_fields = ('result','create_time',)

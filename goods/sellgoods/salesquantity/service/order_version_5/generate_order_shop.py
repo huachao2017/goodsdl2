@@ -9,24 +9,16 @@ from goods.sellgoods.salesquantity.service.order_version_5.data_util import cacu
 shop_type = config.shellgoods_params['shop_types'][0]  # 门店
 yinliao_cat_ids = config.shellgoods_params['yinliao_cat_ids'] # 饮料台账分类
 def generate(shop_id = None):
-    sales_order_inss = []
+
     try:
+        sales_order_inss = []
         print ("门店向二批补货,shop_id"+str(shop_id))
         if shop_id == None:
             return None
         result = cacul_util.data_process(shop_id,shop_type)
         print ("规则0 商品数："+str(len(result.keys())))
-        print ("商品upc,商品名,最大陈列数,最小陈列数,门店库存,小仓库库存")
         for mch_code  in result:
             drg_ins = result[mch_code]
-            # print ("规则1： 补货触发条件 商品的库存 < 最大陈列量   （饮料 ） ，  其他的<=最小陈列量")
-            print ("%s,%s,%s,%s,%s,%s" % (str(drg_ins.upc),
-                                          str(drg_ins.goods_name),
-                                          str(drg_ins.max_disnums),
-                                          str(drg_ins.min_disnums),
-                                          str(drg_ins.stock),
-                                          str(drg_ins.supply_stock)
-                                          ) )
             if (drg_ins.stock < drg_ins.max_disnums and drg_ins.category_id in yinliao_cat_ids)  or (drg_ins.stock <= drg_ins.min_disnums and drg_ins.category_id not in yinliao_cat_ids):
                 order_sale = min(drg_ins.max_disnums-drg_ins.stock,drg_ins.supply_stock)
                 if order_sale <= 0:
@@ -36,17 +28,10 @@ def generate(shop_id = None):
                 sales_order_inss.append(sales_order_ins)
         sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
         print("规则三：商品数：" + str(len(sales_order_inss)))
-        print("订货量,商品upc,商品名,最大陈列数,最小陈列数,门店库存,小仓库库存,保质期,配送类型,商品编码")
-        for sales_order_ins in sales_order_inss:
-            print("%s , %s, %s, %s, %s, %s, %s,%s,%s,%s" % (
-                str(sales_order_ins.order_sale), str(sales_order_ins.upc), str(sales_order_ins.goods_name),
-                str(sales_order_ins.max_stock), str(sales_order_ins.min_stock), str(sales_order_ins.stock),
-                str(sales_order_ins.supply_stock),str(sales_order_ins.storage_day),str(sales_order_ins.delivery_type),str(sales_order_ins.mch_goods_code)))
+        return sales_order_inss,result
     except Exception as e:
         print("add order failed  e = {}".format(e))
         traceback.print_exc()
-
-        return None
-    return sales_order_inss
+        return None,None
 if __name__=='__main__':
     generate(1284)
