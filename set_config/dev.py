@@ -72,7 +72,7 @@ shellgoods_params={
     'order_shop_hours':[0,7,14,19],# 补货时间
     'shop_types':[0,1], #门店类型 0：门店 1：批发商
     'day_order_time_weekday':[1,2,3,6,7],
-    'yinliao_cat_ids':[110,402,501,502],
+    'yinliao_cat_ids':[110,402,501,502,201,202,203,204,205],
     # 开店期
     "start_shop": {
         1284:20191105
