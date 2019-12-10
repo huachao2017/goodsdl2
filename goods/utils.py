@@ -11,7 +11,6 @@ import datetime
 from  decimal import Decimal
 
 import datetime
-import main.import_django_settings
 import math
 from django.db import connections
 import traceback
@@ -20,13 +19,8 @@ from goods.third_tools.dingtalk import send_message
 from goods.sellgoods.salesquantity.service.order_version_5.data_util.goods_info import *
 
 
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-# django.setup()
 
 import main.import_django_settings
-
-
-import math
 from django.db import connections
 
 
@@ -200,18 +194,21 @@ def select_psd_data(upc,shop_id,time_range):
     """
     template_dict = {1284:3598}  # 临时解决方案，先写死
     template_shop_id = template_dict[shop_id]
-
+    print(111)
     now = datetime.datetime.now()
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
     week_ago = (now - datetime.timedelta(days=time_range)).strftime('%Y-%m-%d %H:%M:%S')
     sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id={} and g.upc='{}';"
     # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
     conn = connections['dmstore']
+    print(222)
     cursor = conn.cursor()
     cursor.execute(sql.format(week_ago,now_date,template_shop_id,upc))
+    print(333)
     result = cursor.fetchone()
     cursor.close()
     # conn.close()
+    print(444)
     if result:
         try:
             # print(result)
@@ -498,9 +495,9 @@ if __name__ == '__main__':
 
     # calculate_goods_up_datetime_first(806)
 
-    # print(select_psd_data('6921581540102',1284,28))
+    print(select_psd_data('6922577726258',1284,28))
 
     # check_order()
 
-    data_exception_alarm(1284)
+    # data_exception_alarm(1284)
 
