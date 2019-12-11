@@ -3,7 +3,6 @@ import shutil
 import sys
 import argparse
 import main.import_django_settings
-from django.conf import settings
 
 from goods.models import FreezerImage
 
@@ -26,13 +25,13 @@ if __name__ == "__main__":
         os.removedirs(freezerimages_dir)
         os.mkdir(freezerimages_dir)
 
-    print(settings.MEDIA_ROOT)
     freezer_images = FreezerImage.objects.exclude(visual='')
     for freezer_image in freezer_images:
         visual = freezer_image.visual
         if visual[0] == '/':
             visual = visual[1:]
-        visual_path = os.path.join(settings.MEDIA_ROOT, visual)
+        # FIXME path is dead
+        visual_path = os.path.join('/home/ai/goodsdl2/media', visual)
         if os.path.isfile(visual_path):
             print(visual_path)
             shutil.copy(visual_path,freezerimages_dir)
