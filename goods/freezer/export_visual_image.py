@@ -30,6 +30,7 @@ if __name__ == "__main__":
     freezer_images = FreezerImage.objects.exclude(visual='')
     for freezer_image in freezer_images:
         print(settings.MEDIA_ROOT)
+        print(freezer_image.visual)
         visual_path = os.path.join(settings.MEDIA_ROOT, freezer_image.visual)
         print(visual_path)
         shutil.copy(visual_path,freezerimages_dir)
