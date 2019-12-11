@@ -33,8 +33,9 @@ if __name__ == "__main__":
         if visual[0] == '/':
             visual = visual[1:]
         visual_path = os.path.join(settings.MEDIA_ROOT, visual)
-        print(visual_path)
-        shutil.copy(visual_path,freezerimages_dir)
+        if os.path.isfile(visual_path):
+            print(visual_path)
+            shutil.copy(visual_path,freezerimages_dir)
 
     make_targz('{}/freezerimages.tar.gz'.format(cur_dir),freezerimages_dir)
 
