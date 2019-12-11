@@ -11,7 +11,6 @@ import datetime
 from  decimal import Decimal
 
 import datetime
-import main.import_django_settings
 import math
 from django.db import connections
 import traceback
@@ -20,13 +19,8 @@ from goods.third_tools.dingtalk import send_message
 from goods.sellgoods.salesquantity.service.order_version_5.data_util.goods_info import *
 
 
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-# django.setup()
 
 import main.import_django_settings
-
-
-import math
 from django.db import connections
 
 
@@ -198,9 +192,8 @@ def select_psd_data(upc,shop_id,time_range):
     :param time_range: 取数周期
     :return: psd,psd金额
     """
-    template_dict = {1284:3598}  # 临时解决方案，先写死
+    template_dict = {1284:3598,'1284':3598}  # 临时解决方案，先写死
     template_shop_id = template_dict[shop_id]
-
     now = datetime.datetime.now()
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
     week_ago = (now - datetime.timedelta(days=time_range)).strftime('%Y-%m-%d %H:%M:%S')
@@ -498,7 +491,7 @@ if __name__ == '__main__':
 
     # calculate_goods_up_datetime_first(806)
 
-    # print(select_psd_data('6921581540102',1284,28))
+    # print(select_psd_data('6922577726258',1284,28))
 
     # check_order()
 

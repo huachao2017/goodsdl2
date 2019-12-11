@@ -344,15 +344,19 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                     mch_id, shopid, goods_id, start_shop_date, int(end_date))
                                 cursor_bi.execute(sql_2)
                                 (oneday_max_psd,) = cursor_bi.fetchone()
+                                print ("找到  oneday_max_psd "+str(oneday_max_psd)+",upc="+str(upc))
+                                print ("%s,%s,%s,%s,%s" % (str(mch_id), str(shopid), str(goods_id), str(start_shop_date), str(int(end_date))))
                         except:
                             print('bi 找不到psd  one_day max ！{},{}'.format(shopid, upc))
+                            traceback.print_exc()
                             oneday_max_psd = 0
 
                         psd_nums_4, psd_amount_4 = 0,0
                         try:
                             psd_nums_4, psd_amount_4 = utils.select_psd_data(upc, shopid, 28)
                         except:
-                            print("select_psd_data is error ,upc=" + str(upc))
+                            print("select_psd_data is error ,upc=" + str(upc)+",shop_id="+str(shopid))
+                            traceback.print_exc()
                             psd_nums_4 = 0
                             psd_amount_4 = 0
 
@@ -456,7 +460,7 @@ class DataRawGoods():
         else:
             self.start_sum = start_sum
         self.multiple = multiple
-        if stock is None:
+        if stock is None or stock < 0 :
             self.stock = 0
         else:
             self.stock = float(stock)   # 门店库存
@@ -468,7 +472,7 @@ class DataRawGoods():
             self.old_sales = 0
         else:
             self.old_sales = float(old_sales)
-        if supply_stock is None:
+        if supply_stock is None or supply_stock < 0 :
             self.supply_stock = 0
         else:
             self.supply_stock = float(supply_stock)  #小仓库库存

@@ -30,7 +30,7 @@ def generate(shop_id = None,order_type=None):
                 y = min(drg_ins.max_disnums,drg_ins.min_disnums * 2 )
                 order_sale = max(x,y,drg_ins.start_sum)
                 if drg_ins.delivery_type == 2: #非日配
-                    order_sale = order_sale - drg_ins.stock - drg_ins.sub_count
+                    order_sale = order_sale - drg_ins.stock - drg_ins.sub_count - drg_ins.supply_stock
             else:
                 if drg_ins.psd_nums_4 > 0:
                     x = drg_ins.psd_nums_4 * 2.5 + drg_ins.min_disnums
@@ -39,10 +39,10 @@ def generate(shop_id = None,order_type=None):
                 y = min(drg_ins.max_disnums, drg_ins.min_disnums * 2)
                 a1 = max(x, y, drg_ins.start_sum)
                 track_stock = 0
-                if drg_ins.oneday_max_psd < a1:
+                if math.ceil(drg_ins.oneday_max_psd /drg_ins.upc_price) < a1:
                     track_stock = a1
                 else:
-                    track_stock =math.ceil(drg_ins.oneday_max_psd /drg_ins.upc_price)  + drg_ins.min_disnums * 2
+                    track_stock =math.ceil(drg_ins.oneday_max_psd /drg_ins.upc_price)  + drg_ins.min_disnums
                 order_sale = track_stock - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
             if order_sale <= 0:
                 continue

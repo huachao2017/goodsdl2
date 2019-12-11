@@ -38,6 +38,7 @@ def first_order_process():
                 cursor_ai.connection.commit()
                 start_time = time.time()
                 print("首次订单 batch_id =" + str(batch_id))
+                dmstore_shopid = int(dmstore_shopid)
                 sales_order_inss,result = generate_order_2saler_first.generate(dmstore_shopid)
                 if sales_order_inss is None:
                     cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
@@ -94,6 +95,7 @@ def day_order_process():
                     (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
                         days=-30)).strftime("%Y%m%d"))
                 print("日常订单 batch_id =" + str(batch_id))
+                dmstore_shopid = int (dmstore_shopid)
                 if dmstore_shopid in config.shellgoods_params["start_shop"].keys() and config.shellgoods_params["start_shop"][dmstore_shopid] > int(start_date):
                     print ("该店处于新店期，dmstore_shopid = "+str(dmstore_shopid))
                     sales_order_inss1,result = generate_order_2saler_newshop_notday.generate(dmstore_shopid)
@@ -160,6 +162,7 @@ def add_order_process():
                 conn.commit()
                 start_time = time.time()
                 print("补货单 batch_id =" + str(batch_id))
+                dmstore_shopid = int(dmstore_shopid)
                 sales_order_inss,result = generate_order_shop.generate(dmstore_shopid)
                 if sales_order_inss is None:
                     cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
