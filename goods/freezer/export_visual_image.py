@@ -17,7 +17,7 @@ def make_targz(output_filename, source_dir):
     tar.add(source_dir, arcname=os.path.basename(source_dir))
 
 if __name__ == "__main__":
-    args = parse_arguments(sys.argv[1:])
+    # args = parse_arguments(sys.argv[1:])
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     freezerimages_dir = os.path.join(cur_dir,'freezerimages')
     if not os.path.isdir(freezerimages_dir):
@@ -26,6 +26,7 @@ if __name__ == "__main__":
         os.removedirs(freezerimages_dir)
         os.mkdir(freezerimages_dir)
 
+    print(settings.MEDIA_ROOT)
     freezer_images = FreezerImage.objects.exclude(visual='')
     for freezer_image in freezer_images:
         visual = freezer_image.visual
