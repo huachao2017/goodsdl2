@@ -30,8 +30,8 @@ if __name__ == "__main__":
     for freezer_image in freezer_images:
         visual = freezer_image.visual
         visual_path = os.path.join(settings.MEDIA_ROOT, visual)
-        shutil.copy(visual_path,freezerimages_dir)
         print(visual_path)
+        shutil.copy(visual_path,freezerimages_dir)
 
     make_targz('{}/freezerimages.tar.gz'.format(cur_dir),freezerimages_dir)
 
