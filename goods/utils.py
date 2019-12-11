@@ -491,9 +491,9 @@ if __name__ == '__main__':
 
     # calculate_goods_up_datetime_first(806)
 
-    print(select_psd_data('6922577726258',1284,28))
+    # print(select_psd_data('6922577726258',1284,28))
 
     # check_order()
 
-    # data_exception_alarm(1284)
+    data_exception_alarm(1284)
 
