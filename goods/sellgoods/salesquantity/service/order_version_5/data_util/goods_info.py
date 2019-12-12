@@ -654,7 +654,7 @@ class DataRawGoods():
         self.min_disnums = min_disnums
         self.isnew_goods = False
         try:
-            if self.storage_day is not None and int(storage_day) > 0:
+            if storage_day is not None and int(storage_day) > 0:
                 self.storage_day = storage_day
         except:
             print("商品的保质期error,mch_code=" + str(self.mch_code)+",goods_name="+str(self.goods_name))
