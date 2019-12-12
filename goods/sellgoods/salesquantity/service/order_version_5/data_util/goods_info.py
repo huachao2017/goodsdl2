@@ -331,10 +331,11 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         # 获取商品的上架时间
                         try:
                             cursor_ai.execute(
-                                "select up_shelf_date,is_new_goods from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
+                                "select DATE_FORMAT(up_shelf_date,'%Y-%m-%d') as upshelf_date,is_new_goods from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
                                     uc_shopid, upc))
                             (up_shelf_date,up_status) = cursor_ai.fetchone()
-                            print('ai找到商品上架时间 :{}-{}！'.format(uc_shopid, upc))
+                            up_shelf_date = str(up_shelf_date)
+                            print('ai找到商品上架时间 :{}-{}-{}！'.format(uc_shopid, upc,up_shelf_date))
                         except:
                             # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
                             up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
