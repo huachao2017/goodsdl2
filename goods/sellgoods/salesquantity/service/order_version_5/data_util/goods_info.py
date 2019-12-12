@@ -656,6 +656,8 @@ class DataRawGoods():
         try:
             if storage_day is not None and int(storage_day) > 0:
                 self.storage_day = storage_day
+            else:
+                self.storage_day = 0
         except:
             print("商品的保质期error,mch_code=" + str(self.mch_code)+",goods_name="+str(self.goods_name))
             self.storage_day = 0
