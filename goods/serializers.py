@@ -163,13 +163,14 @@ class GoodsImageSerializer(serializers.ModelSerializer):
 class AllWorkFlowBatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = AllWorkFlowBatch
-        fields = ('pk', 'batch_id', 'uc_shopid', 'type',
+        fields = ('pk', 'batch_id', 'erp_warehouse_id', 'uc_shopid', 'type',
                   'select_goods_status',
                   'select_goods_calculate_time',
                   'auto_display_status',
                   'auto_display_calculate_time',
                   'order_goods_status',
                   'order_goods_calculate_time',
+                  'desc'
                   'create_time','update_time')
         read_only_fields = ('create_time','update_time')
 
