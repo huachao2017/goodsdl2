@@ -37,18 +37,19 @@ def generate(shop_id = None,order_type=None):
                     track_stock =int(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price * 2.5) + safe_stock
                     order_sale = track_stock - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
             else: # 日配订货
-                # 判断该品是否为新品
-                isnew_status = 0
-                shelf_up_date = drg_ins.up_shelf_date
-                end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-                time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
-                time2 = time.mktime(time.strptime(end_date,'%Y-%m-%d'))
-                days = int((time2 - time1)/(24*60*60))
-                if drg_ins.storage_day >=30  and days <= 14:
-                    isnew_status = 1
-                elif drg_ins.storage_day <30 and days <= 7:
-                    isnew_status = 1
-                drg_ins.up_status = isnew_status
+                # 判断该品是否为新品   TODO  目前线上数据不稳定，先暂时都按新店期订货 ，之后放开注释逻辑
+                # isnew_status = 0
+                # shelf_up_date = drg_ins.up_shelf_date
+                # end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                # time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
+                # time2 = time.mktime(time.strptime(end_date,'%Y-%m-%d'))
+                # days = int((time2 - time1)/(24*60*60))
+                # if drg_ins.storage_day >=30  and days <= 14:
+                #     isnew_status = 1
+                # elif drg_ins.storage_day <30 and days <= 7:
+                #     isnew_status = 1
+                # drg_ins.up_status = isnew_status
+                drg_ins.up_status = 1
                 # 如果是新品， 订货规则
                 if drg_ins.up_status ==1 :
                     psd_nums_2 = 2
@@ -65,7 +66,7 @@ def generate(shop_id = None,order_type=None):
                     track_stock = end_safe_stock + safe_day * psd_nums_2
                     order_sale = track_stock - max(0,drg_ins.stock) - max(0,drg_ins.supply_stock) - drg_ins.sub_count
                 else:
-                    # TODO  商品的psd*保质期＜1，则该商品建议剔除选品，不订货
+                    # TODO  商品的psd*保质期＜1，则该商品建议剔除选品，不订货    目前psd 取不到真实值， 这段逻辑先不走
                     # if drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price * drg_ins.storage_day < 1:
                     #     continue
                     end_safe_stock = drg_ins.min_disnums
