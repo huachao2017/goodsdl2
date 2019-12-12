@@ -3,7 +3,6 @@ import shutil
 import sys
 import argparse
 import main.import_django_settings
-from django.conf import settings
 
 from goods.models import FreezerImage
 
@@ -17,7 +16,7 @@ def make_targz(output_filename, source_dir):
     tar.add(source_dir, arcname=os.path.basename(source_dir))
 
 if __name__ == "__main__":
-    args = parse_arguments(sys.argv[1:])
+    # args = parse_arguments(sys.argv[1:])
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     freezerimages_dir = os.path.join(cur_dir,'freezerimages')
     if not os.path.isdir(freezerimages_dir):
@@ -29,9 +28,13 @@ if __name__ == "__main__":
     freezer_images = FreezerImage.objects.exclude(visual='')
     for freezer_image in freezer_images:
         visual = freezer_image.visual
-        visual_path = os.path.join(settings.MEDIA_ROOT, visual)
-        print(visual_path)
-        shutil.copy(visual_path,freezerimages_dir)
+        if visual[0] == '/':
+            visual = visual[1:]
+        # FIXME path is dead
+        visual_path = os.path.join('/home/ai/goodsdl2/media', visual)
+        if os.path.isfile(visual_path):
+            print(visual_path)
+            shutil.copy(visual_path,freezerimages_dir)
 
     make_targz('{}/freezerimages.tar.gz'.format(cur_dir),freezerimages_dir)
 
