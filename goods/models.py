@@ -164,7 +164,6 @@ class GoodsImage(models.Model):
 
 class AllWorkFlowBatch(models.Model):
     batch_id = models.CharField(max_length=20, unique=True)
-    erp_warehouse_id = models.IntegerField(default=None) # erp仓库id
     uc_shopid = models.IntegerField()
     type = models.IntegerField(default=0) # 0选品-陈列-首次订货，1日常订货，2补货
     select_goods_status = models.IntegerField(default=0) # 0未发起，1需计算，2正在计算，3计算结束，4计算失败
