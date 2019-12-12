@@ -47,6 +47,10 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.purchase_price = drg_ins.purchase_price
     sales_order_ins.max_scale = drg_ins.max_scale
     sales_order_ins.oneday_max_psd = drg_ins.oneday_max_psd
+    sales_order_ins.shelf_inss = drg_ins.shelf_inss
+    sales_order_ins.height = drg_ins.height
+    sales_order_ins.width = drg_ins.width
+    sales_order_ins.depth = drg_ins.depth
     shelf_data = []
     for shelf_ins in drg_ins.shelf_inss:
         sales_order_ins.face_num += shelf_ins.face_num
@@ -82,7 +86,7 @@ def get_order_all_data(result,sales_order_inss):
           "模板店4周预估psd,模板店4周预估psd金额,配送单位,最小陈列数,"
           "最大陈列数,门店库存,仓库库存,配送类型,保质期,"
           "起订量,在途订货数,进货价,商品单价,开店以来单天最大psd数量,"
-          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,是否是新品,安全天数")
+          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,是否是新品,7天平均废弃率,7天平均废弃后毛利率,7天平均废弃量,周1-5平均psd数量,周6-7平均psd数量")
     for mch_code in result:
         mch_goods_dict = {}
         drg_ins = result[mch_code]
@@ -117,10 +121,15 @@ def get_order_all_data(result,sales_order_inss):
         mch_goods_dict['upc_psd_amount_avg_4'] = float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)
         mch_goods_dict['upc_psd_amount_avg_1'] = float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)
         mch_goods_dict['up_status'] = drg_ins.up_status
-        mch_goods_dict['safe_day_nums'] = drg_ins.safe_day_nums
+        mch_goods_dict['loss_avg'] = drg_ins.loss_avg
+        mch_goods_dict['loss_avg_profit_amount'] = drg_ins.loss_avg_profit_amount
+        mch_goods_dict['loss_avg_nums'] = drg_ins.loss_avg_nums
+        mch_goods_dict['week_1_5_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)
+        mch_goods_dict['week_6_7_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)
         print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
+              "%s,%s,%s,%s"
               % (str(order_sale),
                  str(drg_ins.ucshop_id), str(drg_ins.shop_name), str(drg_ins.mch_code),
                  str(drg_ins.upc), str(drg_ins.goods_name),
@@ -133,8 +142,8 @@ def get_order_all_data(result,sales_order_inss):
                  str(math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)),
                  str(drg_ins.max_scale), str(float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),
                  str(float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)), str(drg_ins.up_status),
-                 str(drg_ins.safe_day_nums),
-                 ))
+                 str(drg_ins.loss_avg),str(drg_ins.loss_avg_profit_amount),str(drg_ins.loss_avg_nums),
+                 str(float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)),str(float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price))))
         jsondata.append(mch_goods_dict)
     order_all_data = demjson.encode(jsondata)
     return order_all_data
@@ -159,34 +168,34 @@ def data_process(shop_id,shop_type):
     else:
         config_ins.insert_many_disnums(data1)
 
-    # 插入安全库存天数 ， 并同时修订安全库存天数
-    safedays_inss = config_ins.select_all_safedays(shop_id)
-    data2 = get_insert_safedays_data(shop_id,safedays_inss,result)
-    if len(data2) == 0 :
-        print ("任务执行的一个周期内， 没有安全天数的 修订... ")
-    else:
-        config_ins.insert_many_safedays(data2)
+    # # 插入安全库存天数 ， 并同时修订安全库存天数
+    # safedays_inss = config_ins.select_all_safedays(shop_id)
+    # data2 = get_insert_safedays_data(shop_id,safedays_inss,result)
+    # if len(data2) == 0 :
+    #     print ("任务执行的一个周期内， 没有安全天数的 修订... ")
+    # else:
+    #     config_ins.insert_many_safedays(data2)
 
     return result
 
-
-def get_insert_safedays_data(shop_id,safedays_inss,result):
-    config_safedays_inss = []
-    safedays_inss_dict = {}
-    for safedays_ins in safedays_inss:
-        safedays_inss_dict[str(safedays_ins.upc)] = safedays_ins
-
-    for mch_code in result:
-        drg_ins = result[mch_code]
-        if drg_ins.upc in list(safedays_inss_dict.keys()):
-            drg_ins.safe_day_nums = safedays_inss_dict[drg_ins.upc].safe_day_nums
-        else:
-            config_safedays_ins = init_configsafedays(shop_id,drg_ins)
-            config_safedays_inss.append(config_safedays_ins)
-    data = []
-    for config_safedays_ins in config_safedays_inss:
-        data.append((config_safedays_ins.shop_id,config_safedays_ins.upc,config_safedays_ins.goods_name,config_safedays_ins.safe_day_nums,config_safedays_ins.create_time,config_safedays_ins.update_time))
-    return data
+#
+# def get_insert_safedays_data(shop_id,safedays_inss,result):
+#     config_safedays_inss = []
+#     safedays_inss_dict = {}
+#     for safedays_ins in safedays_inss:
+#         safedays_inss_dict[str(safedays_ins.upc)] = safedays_ins
+#
+#     for mch_code in result:
+#         drg_ins = result[mch_code]
+#         if drg_ins.upc in list(safedays_inss_dict.keys()):
+#             drg_ins.safe_day_nums = safedays_inss_dict[drg_ins.upc].safe_day_nums
+#         else:
+#             config_safedays_ins = init_configsafedays(shop_id,drg_ins)
+#             config_safedays_inss.append(config_safedays_ins)
+#     data = []
+#     for config_safedays_ins in config_safedays_inss:
+#         data.append((config_safedays_ins.shop_id,config_safedays_ins.upc,config_safedays_ins.goods_name,config_safedays_ins.safe_day_nums,config_safedays_ins.create_time,config_safedays_ins.update_time))
+#     return data
 def get_insert_disnums_data(shop_id ,disnums_inss,result):
     config_disnums_inss = []
     disnums_inss_dict = {}
@@ -236,13 +245,13 @@ def get_update_disnums(drg_ins,shelf_ins,disnums_ins):
     disnums_ins.update_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     return disnums_ins
 
-def init_configsafedays(shop_id,drg_ins):
-    configsafeday_ins = goods_config_safedays.ConfigSafedayas()
-    configsafeday_ins.shop_id = shop_id
-    configsafeday_ins.upc = drg_ins.upc
-    configsafeday_ins.goods_name = drg_ins.goods_name
-    configsafeday_ins.safe_day_nums = drg_ins.safe_day_nums
-    return configsafeday_ins
+# def init_configsafedays(shop_id,drg_ins):
+#     configsafeday_ins = goods_config_safedays.ConfigSafedayas()
+#     configsafeday_ins.shop_id = shop_id
+#     configsafeday_ins.upc = drg_ins.upc
+#     configsafeday_ins.goods_name = drg_ins.goods_name
+#     configsafeday_ins.safe_day_nums = drg_ins.safe_day_nums
+#     return configsafeday_ins
 
 def get_single_face_min_disnums(drg_ins,shelf_ins):
     if drg_ins.storage_day < 15 :
