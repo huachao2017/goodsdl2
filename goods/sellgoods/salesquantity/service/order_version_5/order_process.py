@@ -179,7 +179,7 @@ def add_order_process():
                     cursor_ai.connection.commit()
                     # 把订单结果和批次结果 通知给摩售
                     shop_type = config.shellgoods_params['shop_types'][0]  # 门店
-                    # erp_interface.order_commit(dmstore_shopid,shop_type,sales_order_inss,batch_id=batch_id)
+                    erp_interface.order_commit(dmstore_shopid,shop_type,sales_order_inss,batch_id=batch_id)
             except Exception as e:
                 cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, 0,
                                                        data[0]))  # 更新到“结束计算”和耗时多少
