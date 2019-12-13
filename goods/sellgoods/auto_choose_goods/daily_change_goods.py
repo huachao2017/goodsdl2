@@ -367,6 +367,7 @@ class DailyChangeGoods:
         taizhang_goods = self.get_taizhang_goods()  # 获取当前台账的商品
         taizhang_goods_mch_code_list = [i['mch_goods_code'] for i in taizhang_goods]
         all_goods_len = len(taizhang_goods)
+        print('台账goods',all_goods_len)
 
         #   1.3、遍历货架,得出每个货架的三级分类和该店所有的三级分类
         can_order_mch_code_list = self.get_can_order_list()
