@@ -41,7 +41,7 @@ def generate(shop_id = None,order_type=None):
                 end_safe_stock = drg_ins.min_disnums
                 safe_day = 0
                 if drg_ins.storage_day <=2:
-                    safe_day = 1
+                    safe_day = drg_ins.storage_day
                 else:
                     safe_day = 2.5
                 track_stock = end_safe_stock + safe_day * psd_nums_2
