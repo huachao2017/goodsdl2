@@ -376,6 +376,7 @@ class DailyChangeGoods:
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,ranking
                 must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'],None))
             elif data['mch_goods_code'] in sales_goods_mch_code_dict.keys():    # 有销量即为不动的品
+                print('有销量即为不动的品')
                 not_move_goods.append((None, data['goods_upc'],sales_goods_mch_code_dict[data['mch_goods_code']][2], None,data['mch_goods_code'], None, data['name'],None))
             else:       # 剩下没销量的为可选下架的品
                 optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'],1))  # FIXME 分类code为空
@@ -408,6 +409,12 @@ class DailyChangeGoods:
 
 
         # 3、保存至数据库
+
+
+        print(len(not_move_goods))
+        print(len(must_out_goods))
+        print(len(optional_out_goods))
+
         self.save_data(not_move_goods, 0, 2, None)
         self.save_data(must_out_goods, 0, 1, None)
         self.save_data(optional_out_goods, 0, 0, None)
