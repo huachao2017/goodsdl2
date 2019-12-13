@@ -92,3 +92,25 @@ def rule_start_price(sales_order_inss,dmshop_id):
     else:
         return sales_order_inss
 
+def rule_daydelivery_type(sales_order_inss):
+    shelf_id_dict = {}
+    V_goods_sum = 0
+    for sales_order_ins in sales_order_inss:
+        if sales_order_ins.delivery_type != 2: # 日配品
+            shelf_inss = sales_order_ins.shelf_inss
+            V_goods_sum += sales_order_ins.height * sales_order_ins.width * sales_order_ins.depth
+            for shelf_ins in shelf_inss:
+                shelf_id_dict[shelf_ins.shelf_id] = shelf_ins
+    V_shelf_sum = 0
+    for shelf_id in shelf_id_dict:
+        shelf_ins = shelf_id_dict[shelf_id]
+        V_shelf_sum += shelf_ins.shelf_length * shelf_ins.shelf_height * shelf_ins.shelf_depth
+
+    if V_goods_sum > V_shelf_sum:
+        sales_order_inss_new = []
+        for sales_order_ins in sales_order_inss:
+            if sales_order_ins.delivery_type == 2:  # 非日配配品
+                sales_order_inss_new.append(sales_order_ins)
+        return sales_order_inss_new
+    else:
+        return sales_order_inss

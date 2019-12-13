@@ -170,6 +170,7 @@ class AllWorkFlowBatchSerializer(serializers.ModelSerializer):
                   'auto_display_calculate_time',
                   'order_goods_status',
                   'order_goods_calculate_time',
+                  'desc',
                   'create_time','update_time')
         read_only_fields = ('create_time','update_time')
 
