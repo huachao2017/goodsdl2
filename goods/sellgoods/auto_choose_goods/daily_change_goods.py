@@ -447,9 +447,9 @@ class DailyChangeGoods:
 
         print(not_move_goods[:10])
 
-        self.save_data(not_move_goods, 0, 2, None)
-        self.save_data(must_out_goods, 0, 1, None)
-        self.save_data(optional_out_goods, 0, 0, None)
+        # self.save_data(not_move_goods, 0, 2, None)
+        # self.save_data(must_out_goods, 0, 1, None)
+        # self.save_data(optional_out_goods, 0, 0, None)
         self.save_data(must_up_goods, 1, None, 1)
         self.save_data(optional_up_goods, 1, None, 0)
 
@@ -462,6 +462,8 @@ class DailyChangeGoods:
         :param goods_add_status:新增上架状态，0：可选上架，1：必须上架
         :return:
         """
+
+        print('dtaa',data)
         tuple_data = tuple(data)
 
         conn = connections['default']
