@@ -6,7 +6,7 @@ import decimal
 import json
 from  decimal import Decimal
 import datetime,pymysql
-import os,django,math
+import os,django,math,copy
 
 import main.import_django_settings
 from django.db import connections
@@ -229,7 +229,7 @@ class DailyChangeGoods:
 
 
             # --以下是把第一个加进去，算的是结构品
-            structure_goods_list.append(goods_list[0])
+            structure_goods_list.append(copy.deepcopy(goods_list[0]))
 
             # --以下是求累计
             amount = 0  # 分类下psd金额的总额
