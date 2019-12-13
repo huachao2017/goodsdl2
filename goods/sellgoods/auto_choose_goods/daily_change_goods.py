@@ -376,7 +376,7 @@ class DailyChangeGoods:
             if not data['mch_goods_code'] in can_order_mch_code_list:    # 不可订货即必须下架
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,ranking
                 must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'],None))
-            elif data['mch_goods_code'] in sales_goods_mch_code_dict.keys():    # 有销量即为不动的品
+            elif int(data['mch_goods_code']) in sales_goods_mch_code_dict.keys():    # 有销量即为不动的品
                 print('有销量即为不动的品')
                 not_move_goods.append((None, data['goods_upc'],sales_goods_mch_code_dict[data['mch_goods_code']][2], None,data['mch_goods_code'], None, data['name'],None))
             else:       # 剩下没销量的为可选下架的品
@@ -411,6 +411,9 @@ class DailyChangeGoods:
 
         # 3、保存至数据库
 
+        not_move_goods = list(set(not_move_goods))
+        must_out_goods = list(set(must_out_goods))
+        optional_out_goods = list(set(optional_out_goods))
 
         print(len(not_move_goods))
         print(len(must_out_goods))
