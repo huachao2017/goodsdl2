@@ -190,7 +190,7 @@ class DailyChangeGoods:
         self.third_category_list = self.get_third_category_list()
         print('self.third_category_list',len(self.third_category_list))
         category_dict = {}    # k为三级分类，v为分类下的商品列表
-        for third_category in self.third_category_list[:1]:      # 遍历每个三级分类
+        for third_category in self.third_category_list[:3]:      # 遍历每个三级分类
             all_shop_data = self.get_third_category_data(third_category, self.template_shop_ids)
             # 以下14行代码主要是统计upc取数周期内在各店出现的次数
             all_one_shop_data_list = []
@@ -403,7 +403,7 @@ class DailyChangeGoods:
         print('本店已有三级分类',len(category_03_list))
 
 
-        must_up_goods_len = math.ceil(all_goods_len * 0.03)
+        must_up_goods_len = math.ceil(all_goods_len * 0.01)
         all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
         structure_goods_list = []     # 该店没有该三级分类的结构品列表
         for data in all_structure_goods_list:
@@ -420,12 +420,16 @@ class DailyChangeGoods:
         optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
         # 以下4行时添加ranking的值
         print('must_up_goods',must_up_goods)
+        print('optional_up_goods',optional_up_goods)
         for goods in must_up_goods:
             goods.append(None)
         for index,goods in enumerate(optional_up_goods):
             goods.append(index+1)
         must_up_goods = [tuple(goods) for goods in must_up_goods]
         optional_up_goods = [tuple(goods) for goods in optional_up_goods]
+
+        print('must_up_goods', must_up_goods)
+        print('optional_up_goods', optional_up_goods)
 
 
 
