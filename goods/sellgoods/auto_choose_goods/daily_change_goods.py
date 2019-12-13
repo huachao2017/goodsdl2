@@ -190,7 +190,7 @@ class DailyChangeGoods:
         self.third_category_list = self.get_third_category_list()
         print('self.third_category_list',self.third_category_list)
         category_dict = {}    # k为三级分类，v为分类下的商品列表
-        for third_category in self.third_category_list[:10]:      # 遍历每个三级分类
+        for third_category in self.third_category_list[:1]:      # 遍历每个三级分类
             all_shop_data = self.get_third_category_data(third_category, self.template_shop_ids)
             # 以下14行代码主要是统计upc取数周期内在各店出现的次数
             all_one_shop_data_list = []
@@ -212,11 +212,11 @@ class DailyChangeGoods:
             print('upc_time',upc_time)
             third_category_quick_seller_list = []
             for data in all_shop_data:     # psd金额除以商店数
-                try:
+                # try:
                     # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name
                     third_category_quick_seller_list.append([','.join(self.template_shop_ids), data[1], data[2], data[0]/(upc_time[data[1]]*self.days), data[3],data[0]/(upc_time[data[1]]*self.days*data[4]), data[5]])
-                except:
-                    print('11111')
+                # except:
+                #     print('11111')
             category_dict[third_category] = third_category_quick_seller_list
 
         quick_seller_list = []
