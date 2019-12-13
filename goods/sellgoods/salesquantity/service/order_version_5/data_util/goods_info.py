@@ -430,7 +430,11 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
 
                         psd_nums_2_cls, psd_amount_2_cls = 0, 0
                         try:
-                            psd_nums_2_cls, psd_amount_2_cls = utils.select_category_psd_data(category_id,shopid,14)
+                            crop_cls_code_sql = "select corp_classify_code from goods where upc='{}' and corp_classify_code != '' ".format(upc)
+                            cursor_dmstore.execute(crop_cls_code_sql)
+                            (corp_classify_code,) = cursor_dmstore.fetchone()
+                            if corp_classify_code is not None:
+                                psd_nums_2_cls, psd_amount_2_cls = utils.select_category_psd_data(corp_classify_code,shopid,14)
                         except:
                             print("select_psd_data is error ,upc=" + str(upc) + ",shop_id=" + str(shopid))
                             psd_nums_2_cls, psd_amount_2_cls = 0, 0
