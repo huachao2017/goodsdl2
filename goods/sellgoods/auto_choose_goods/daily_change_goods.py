@@ -455,6 +455,7 @@ class DailyChangeGoods:
             cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id))
             print("删掉{}该批次之前的数据".format(self.batch_id))
         insert_sql_02.replace('None', 'NULL').replace('"None"', 'NULL').replace("'None'", 'NULL')
+        print('haha',insert_sql_02.replace('None', 'NULL').replace('"None"', 'NULL').replace("'None'", 'NULL'))
         print(insert_sql_02)
         cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status), tuple_data[:])
         conn.commit()
