@@ -20,7 +20,7 @@ class DailyChangeGoods:
         self.category_goods_list = []    # 结构品
         self.template_shop_ids = template_shop_ids.split(',')
         self.shop_id = shop_id
-        self.uc_shopid = None
+        self.uc_shopid = 806
         self.batch_id = batch_id
         self.topn_ratio = Decimal(topn_ratio)  # 取累计psd金额的百分之多少作为畅销品
         self.days = days     # 取数周期
@@ -378,7 +378,7 @@ class DailyChangeGoods:
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,ranking
                 must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'],None))
             elif data['mch_goods_code'] in sales_goods_mch_code_dict.keys():    # 有销量即为不动的品
-                print('有销量即为不动的品')
+                # print('有销量即为不动的品')
                 not_move_goods.append((None, data['goods_upc'],sales_goods_mch_code_dict[data['mch_goods_code']][2], None,data['mch_goods_code'], None, data['name'],None))
             else:       # 剩下没销量的为可选下架的品
                 optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'],1))  # FIXME 分类code为空
@@ -420,6 +420,8 @@ class DailyChangeGoods:
         print(len(must_out_goods))
         print(len(optional_out_goods))
 
+        print(not_move_goods[:10])
+
         self.save_data(not_move_goods, 0, 2, None)
         self.save_data(must_out_goods, 0, 1, None)
         self.save_data(optional_out_goods, 0, 0, None)
@@ -441,18 +443,19 @@ class DailyChangeGoods:
         cursor = conn.cursor()
 
         # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
-        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,is_new_goods,goods_out_status,goods_add_status,ranking) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},{},{},s%)"
+        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,is_new_goods,goods_out_status,goods_add_status,ranking) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},{},{},%s)"
         delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
-        select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
+        select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and is_new_goods={} and goods_out_status={} and goods_add_status={}"
         # try:
         print('batch_id', self.batch_id, type(self.batch_id))
         print('len',len(tuple_data))
-        cursor.execute(select_sql.format(self.uc_shopid, self.batch_id))  # 查询有该批次，没有的话，插入，有的话，先删再插入
+        cursor.execute(select_sql.format(self.uc_shopid, self.batch_id,is_new_goods,goods_out_status,goods_add_status).replace('None', 'NULL'))  # 查询有该批次，没有的话，插入，有的话，先删再插入
         # print('history_batch_id', history_batch_id,type(history_batch_id))
         if cursor.fetchone():
             cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id))
             print("删掉{}该批次之前的数据".format(self.batch_id))
-        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status), tuple_data[:])
+        print(insert_sql_02)
+        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status).replace('None', 'NULL'), tuple_data[:])
         conn.commit()
         conn.close()
         print('ok')
