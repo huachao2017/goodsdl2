@@ -370,6 +370,7 @@ class DailyChangeGoods:
 
         #   1.3、遍历货架,得出每个货架的三级分类和该店所有的三级分类
         can_order_mch_code_list = self.get_can_order_list()
+        print('可订货len：',len(can_order_mch_code_list))
         for data in taizhang_goods:
             if not data['mch_goods_code'] in can_order_mch_code_list:    # 不可订货即必须下架
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,ranking
@@ -433,6 +434,7 @@ class DailyChangeGoods:
         select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
         try:
             print('batch_id', self.batch_id, type(self.batch_id))
+            print('len',len(tuple_data))
             cursor.execute(select_sql.format(self.uc_shopid, self.batch_id))  # 查询有该批次，没有的话，插入，有的话，先删再插入
             # print('history_batch_id', history_batch_id,type(history_batch_id))
             if cursor.fetchone():
