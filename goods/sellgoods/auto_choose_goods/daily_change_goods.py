@@ -58,11 +58,11 @@ class DailyChangeGoods:
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
         if type(shop_ids) is list:       # 多个门店
-            print('list,third_category',shop_ids,third_category)
+            # print('list,third_category',shop_ids,third_category)
             shop_ids = tuple(shop_ids)
             sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {} and g.corp_classify_code={} group by g.upc order by sum(p.amount) desc;"
         elif type(shop_ids) is str:     # 单个门店
-            print('str',shop_ids,type(shop_ids))
+            # print('str',shop_ids,type(shop_ids))
             sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.corp_classify_code={} group by g.upc order by sum(p.amount) desc;"
         else:
             print('none', shop_ids,type(shop_ids))
@@ -190,7 +190,7 @@ class DailyChangeGoods:
         self.third_category_list = self.get_third_category_list()
         print('self.third_category_list',len(self.third_category_list))
         category_dict = {}    # k为三级分类，v为分类下的商品列表
-        for third_category in self.third_category_list[:3]:      # 遍历每个三级分类
+        for third_category in self.third_category_list[:5]:      # 遍历每个三级分类
             all_shop_data = self.get_third_category_data(third_category, self.template_shop_ids)
             # 以下14行代码主要是统计upc取数周期内在各店出现的次数
             all_one_shop_data_list = []
@@ -420,7 +420,9 @@ class DailyChangeGoods:
         optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
         # 以下4行时添加ranking的值
         print('must_up_goods',must_up_goods)
+        print()
         print('optional_up_goods',optional_up_goods)
+        print()
         for goods in must_up_goods:
             goods.append(None)
         for index,goods in enumerate(optional_up_goods):
@@ -429,6 +431,7 @@ class DailyChangeGoods:
         optional_up_goods = [tuple(goods) for goods in optional_up_goods]
 
         print('must_up_goods', must_up_goods)
+        print()
         print('optional_up_goods', optional_up_goods)
 
 
