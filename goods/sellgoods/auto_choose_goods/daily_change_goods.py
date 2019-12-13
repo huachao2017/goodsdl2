@@ -379,27 +379,27 @@ class DailyChangeGoods:
             else:       # 剩下没销量的为可选下架的品
                 optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'],1))  # FIXME 分类code为空
 
-        # 2、计算新增品
-        must_up_goods_len = math.ceil(all_goods_len * 0.03)
-        all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
-        structure_goods_list = []     # 该店没有该三级分类的结构品列表
-        for data in all_structure_goods_list:
-            if not data[2] in category_03_list:
-                structure_goods_list.append(data)
-
-        quick_seller_list = []     # 该店没有的畅销品
-        for data in all_quick_seller_list:
-            if not data[3] in taizhang_goods_mch_code_list:
-                quick_seller_list.append(data)
-
-        candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
-        must_up_goods = candidate_up_goods_list[:must_up_goods_len]
-        optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
-        # 以下4行时添加ranking的值
-        for goods in must_up_goods:
-            goods.append(None)
-        for index,goods in enumerate(optional_up_goods):
-            goods.append(index+1)
+        # # 2、计算新增品
+        # must_up_goods_len = math.ceil(all_goods_len * 0.03)
+        # all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
+        # structure_goods_list = []     # 该店没有该三级分类的结构品列表
+        # for data in all_structure_goods_list:
+        #     if not data[2] in category_03_list:
+        #         structure_goods_list.append(data)
+        #
+        # quick_seller_list = []     # 该店没有的畅销品
+        # for data in all_quick_seller_list:
+        #     if not data[3] in taizhang_goods_mch_code_list:
+        #         quick_seller_list.append(data)
+        #
+        # candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
+        # must_up_goods = candidate_up_goods_list[:must_up_goods_len]
+        # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
+        # # 以下4行时添加ranking的值
+        # for goods in must_up_goods:
+        #     goods.append(None)
+        # for index,goods in enumerate(optional_up_goods):
+        #     goods.append(index+1)
 
 
 
@@ -410,8 +410,8 @@ class DailyChangeGoods:
         self.save_data(not_move_goods, 0, 2, None)
         self.save_data(must_out_goods, 0, 1, None)
         self.save_data(optional_out_goods, 0, 0, None)
-        self.save_data(must_up_goods, 1, None, 1)
-        self.save_data(optional_up_goods, 1, None, 0)
+        # self.save_data(must_up_goods, 1, None, 1)
+        # self.save_data(optional_up_goods, 1, None, 0)
 
     def save_data(self,data,is_new_goods,goods_out_status,goods_add_status):
         """
@@ -438,7 +438,7 @@ class DailyChangeGoods:
             if cursor.fetchone():
                 cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id))
                 print("删掉{}该批次之前的数据".format(self.batch_id))
-            cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status), upc_tuple[:])
+            cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status), tuple_data[:])
             conn.commit()
             conn.close()
             print('ok')
