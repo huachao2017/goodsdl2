@@ -87,7 +87,7 @@ class DailyChangeGoods:
         template_shop_ids_tuple = tuple(self.template_shop_ids)
         self.cursor.execute(sql.format(week_ago, now_date, template_shop_ids_tuple))
         results = self.cursor.fetchall()
-        print('get_third_category_list',results)
+        # print('get_third_category_list',results)
         return [i[0] for i in results if len(i[0]) == 6]    #存在空的情况，所以if len(i[0]) == 6
 
     def get_sale_goods(self):
@@ -188,7 +188,7 @@ class DailyChangeGoods:
         # return goods_time_dict
 
         self.third_category_list = self.get_third_category_list()
-        print('self.third_category_list',self.third_category_list)
+        print('self.third_category_list',len(self.third_category_list))
         category_dict = {}    # k为三级分类，v为分类下的商品列表
         for third_category in self.third_category_list[:1]:      # 遍历每个三级分类
             all_shop_data = self.get_third_category_data(third_category, self.template_shop_ids)
@@ -205,7 +205,7 @@ class DailyChangeGoods:
                     for data in one_shop_data:
                         if upc == data[1]: #FIXME
                             temp_num += 1
-                if temp_num > 2:    # 将出现大于2次的都加进去
+                if temp_num > 0:    # 将出现大于2次的都加进去
                     upc_time[upc] = temp_num
 
 
