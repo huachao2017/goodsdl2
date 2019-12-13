@@ -229,19 +229,20 @@ class DailyChangeGoods:
 
 
             # --以下是把第一个加进去，算的是结构品
-            structure_goods_list.append(copy.deepcopy(goods_list[0]))
+            structure_goods_list.append(goods_list[0])
 
             # --以下是求累计
             amount = 0  # 分类下psd金额的总额
             for goods in goods_list:
                 amount += goods[3]
             temp_amount = 0
-            for goods in goods_list:  # 将累计前占比60%psd金额的商品选出来，遇到边界少选策略
+            for index,goods in enumerate(goods_list):  # 将累计前占比60%psd金额的商品选出来，遇到边界少选策略
                 # quick_seller_list.append(goods[0])   # 遇到边界多选策略
                 temp_amount += goods[3]
                 if temp_amount > amount * self.topn_ratio:
                     break
-                quick_seller_list.append(goods)   # 遇到边界少选策略
+                if index != 0:
+                    quick_seller_list.append(goods)   # 遇到边界少选策略
 
         structure_goods_list.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
         quick_seller_list.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
