@@ -361,7 +361,7 @@ class DailyChangeGoods:
         sales_goods_mch_code_dict = {}
         for s in sales_data:
             sales_goods_mch_code_dict[s[3]] = s
-        print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
+        # print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
 
         #   1.2、获取当前台账的商品
         taizhang_goods = self.get_taizhang_goods()  # 获取当前台账的商品
@@ -375,7 +375,7 @@ class DailyChangeGoods:
             if not data['mch_goods_code'] in can_order_mch_code_list:    # 不可订货即必须下架
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,ranking
                 must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'],None))
-            elif data['mch_goods_code'] in sales_goods_mch_code_dict:    # 有销量即为不动的品
+            elif data['mch_goods_code'] in sales_goods_mch_code_dict.keys():    # 有销量即为不动的品
                 not_move_goods.append((None, data['goods_upc'],sales_goods_mch_code_dict[data['mch_goods_code']][2], None,data['mch_goods_code'], None, data['name'],None))
             else:       # 剩下没销量的为可选下架的品
                 optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'],1))  # FIXME 分类code为空
