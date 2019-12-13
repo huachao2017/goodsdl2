@@ -432,25 +432,24 @@ class DailyChangeGoods:
         insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,is_new_goods,goods_out_status,goods_add_status,ranking) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},{},{},s%)"
         delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
         select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
-        try:
-            print('batch_id', self.batch_id, type(self.batch_id))
-            print('len',len(tuple_data))
-            cursor.execute(select_sql.format(self.uc_shopid, self.batch_id))  # 查询有该批次，没有的话，插入，有的话，先删再插入
-            # print('history_batch_id', history_batch_id,type(history_batch_id))
-            if cursor.fetchone():
-                cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id))
-                print("删掉{}该批次之前的数据".format(self.batch_id))
-            cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status), tuple_data[:])
-            conn.commit()
-            conn.close()
-            print('ok')
-        except:
-            # 如果发生错误则回滚
-            conn.rollback()
-            # 关闭数据库连接
-            cursor.close()
-            conn.close()
-            print('error')
+        # try:
+        print('batch_id', self.batch_id, type(self.batch_id))
+        print('len',len(tuple_data))
+        cursor.execute(select_sql.format(self.uc_shopid, self.batch_id))  # 查询有该批次，没有的话，插入，有的话，先删再插入
+        # print('history_batch_id', history_batch_id,type(history_batch_id))
+        if cursor.fetchone():
+            cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id))
+            print("删掉{}该批次之前的数据".format(self.batch_id))
+        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status), tuple_data[:])
+        conn.commit()
+        conn.close()
+        print('ok')
+        # except:
+        #     # 如果发生错误则回滚
+        #     conn.rollback()
+        #     cursor.close()
+        #     conn.close()
+        #     print('error')
 
 
 
