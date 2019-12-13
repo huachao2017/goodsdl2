@@ -421,8 +421,11 @@ class DailyChangeGoods:
         # 以下4行时添加ranking的值
         for goods in must_up_goods:
             goods.append(None)
+            goods = tuple(goods)
         for index,goods in enumerate(optional_up_goods):
             goods.append(index+1)
+            goods = tuple(goods)
+
 
 
 
