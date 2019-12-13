@@ -37,6 +37,11 @@ def generate(shop_id = None,order_type=None):
                     track_stock =int(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price * 2.5) + safe_stock
                     order_sale = track_stock - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
             else: # 日配订货
+                # 日配类型 改变商品的最小陈列量
+                if drg_ins.storage_day < 15:
+                    drg_ins.min_disnums = 1
+                else:
+                    drg_ins.min_disnums = 2
                 # 判断该品是否为新品   TODO  目前线上数据不稳定，先暂时都按新店期订货 ，之后放开注释逻辑
                 # isnew_status = 0
                 # shelf_up_date = drg_ins.up_shelf_date
@@ -60,7 +65,7 @@ def generate(shop_id = None,order_type=None):
                     end_safe_stock = drg_ins.min_disnums
                     safe_day = 0
                     if drg_ins.storage_day <= 2:
-                        safe_day = drg_ins.storage_day
+                        safe_day = 1
                     else:
                         safe_day = 2.5
                     track_stock = end_safe_stock + safe_day * psd_nums_2

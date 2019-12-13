@@ -28,6 +28,11 @@ def generate(shop_id = None,order_type=None):
                 order_sale = max(x,y,drg_ins.start_sum)
                 order_sale = order_sale - max(0,drg_ins.stock) - max(0,drg_ins.supply_stock)-drg_ins.sub_count
             else: # 日配
+                # 日配类型 改变商品的最小陈列量
+                if drg_ins.storage_day < 15:
+                    drg_ins.min_disnums = 1
+                else:
+                    drg_ins.min_disnums = 2
                 psd_nums_2 = 2
                 if drg_ins.psd_nums_2 != 0:
                     psd_nums_2 = drg_ins.psd_nums_2
@@ -36,7 +41,7 @@ def generate(shop_id = None,order_type=None):
                 end_safe_stock = drg_ins.min_disnums
                 safe_day = 0
                 if drg_ins.storage_day <=2:
-                    safe_day = drg_ins.storage_day
+                    safe_day = 1
                 else:
                     safe_day = 2.5
                 track_stock = end_safe_stock + safe_day * psd_nums_2

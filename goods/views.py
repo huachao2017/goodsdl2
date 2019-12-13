@@ -18,6 +18,7 @@ import urllib.request
 import urllib.parse
 import requests
 import traceback
+from django.db import connections
 
 logger = logging.getLogger("django")
 from goods.freezer.keras_yolo3.yolo3 import yolo_freezer
@@ -196,19 +197,29 @@ class BeginAutoDisplay(APIView):
 
 class BeginOrderGoods(APIView):
     def get(self, request):
+        cursor = connections['ucenter'].cursor()
+        cursor_dmstore = connections['dmstore'].cursor()
         try:
-            uc_shopid = int(request.query_params['ucshopid'])
             batch_id = request.query_params['batchid']
-            if 'type' not in request.query_params:
-                type = 0
-            else:
-                type = int(request.query_params['type'])
+            type = int(request.query_params['type'])
 
-            if type == 0:
-                workflow = AllWorkFlowBatch.objects.filter(uc_shopid=uc_shopid).filter(batch_id=batch_id).get()
-                workflow.order_goods_status = 1
-                workflow.save()
-            else:
+            if type == 1:
+                erp_warehouse_id = int(request.query_params['erpwarehouseid'])
+                # 临时计算uc_shopid
+                cursor_dmstore.execute("select shop_id from erp_shop_related where erp_shop_id = {} and erp_shop_type = 1".format(erp_warehouse_id))
+                (shop_id,) = cursor_dmstore.fetchone()
+                cursor.execute("select id,mch_id from uc_shop where mch_shop_code = {}".format(shop_id))
+                (uc_shopid, mch_id) = cursor.fetchone()
+                workflow = AllWorkFlowBatch.objects.create(
+                    erp_warehouse_id = erp_warehouse_id,
+                    uc_shopid=uc_shopid,
+                    batch_id=batch_id,
+                    type=type,
+                    select_goods_status = 0,
+                    order_goods_status=1
+                )
+            elif type == 2:
+                uc_shopid = int(request.query_params['ucshopid'])
                 workflow = AllWorkFlowBatch.objects.create(
                     uc_shopid=uc_shopid,
                     batch_id=batch_id,
@@ -216,11 +227,15 @@ class BeginOrderGoods(APIView):
                     select_goods_status = 0,
                     order_goods_status=1
                 )
+            else:
+                return Response(-1, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             logger.error('BeginOrderGoods error:{}'.format(e))
             traceback.print_exc()
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
-        # TODO 开始订货
+        finally:
+            cursor.close()
+            cursor_dmstore.close()
 
         return Response()
