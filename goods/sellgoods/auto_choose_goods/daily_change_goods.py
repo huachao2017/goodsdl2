@@ -190,7 +190,7 @@ class DailyChangeGoods:
         self.third_category_list = self.get_third_category_list()
         print('self.third_category_list',len(self.third_category_list))
         category_dict = {}    # k为三级分类，v为分类下的商品列表
-        for third_category in self.third_category_list[:5]:      # 遍历每个三级分类
+        for third_category in self.third_category_list[:]:      # 遍历每个三级分类
             all_shop_data = self.get_third_category_data(third_category, self.template_shop_ids)
             # 以下14行代码主要是统计upc取数周期内在各店出现的次数
             all_one_shop_data_list = []
@@ -493,8 +493,8 @@ class DailyChangeGoods:
             cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id,is_new_goods,goods_out_status,goods_add_status).replace('=None', ' is NULL'))
             print("删掉{}该批次之前的数据".format(self.batch_id))
         print('开始入库')
-        print(insert_sql_02)
-        print(tuple_data)
+        # print(insert_sql_02)
+        print(tuple_data[:5])
         cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status).replace('None', 'NULL'), tuple_data[:])
         conn.commit()
         conn.close()
