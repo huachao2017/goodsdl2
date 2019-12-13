@@ -449,6 +449,7 @@ class DailyChangeGoods:
         # try:
         print('batch_id', self.batch_id, type(self.batch_id))
         print('len',len(tuple_data))
+        print(select_sql.format(self.uc_shopid, self.batch_id,is_new_goods,goods_out_status,goods_add_status).replace('=None', 'is NULL'))
         cursor.execute(select_sql.format(self.uc_shopid, self.batch_id,is_new_goods,goods_out_status,goods_add_status).replace('=None', 'is NULL'))  # 查询有该批次，没有的话，插入，有的话，先删再插入
         # print('history_batch_id', history_batch_id,type(history_batch_id))
         if cursor.fetchone():
