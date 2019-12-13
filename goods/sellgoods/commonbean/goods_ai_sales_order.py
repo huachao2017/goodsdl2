@@ -37,4 +37,8 @@ class SalesOrder:
     purchase_price = None
     max_scale = None
     oneday_max_psd = None
+    shelf_inss= None
+    height = None
+    width = None
+    depth = None
 

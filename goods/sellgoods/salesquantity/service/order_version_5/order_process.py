@@ -4,7 +4,7 @@ import main.import_django_settings
 from django.db import connections
 import time
 from goods.sellgoods.salesquantity.bean import taskflow
-from goods.sellgoods.salesquantity.service.order_version_5 import generate_order_2saler_first,generate_order_2saler_add,generate_order_2saler_add_day,generate_order_shop,generate_order_2saler_newshop_notday
+from goods.sellgoods.salesquantity.service.order_version_5 import generate_order_2saler_first,generate_order_2saler_add,generate_order_shop,generate_order_2saler_newshop_notday
 from goods.sellgoods.salesquantity.service.order_version_5.data_util import cacul_util
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from set_config import config
@@ -98,32 +98,24 @@ def day_order_process():
                 dmstore_shopid = int (dmstore_shopid)
                 if dmstore_shopid in config.shellgoods_params["start_shop"].keys() and config.shellgoods_params["start_shop"][dmstore_shopid] > int(start_date):
                     print ("该店处于新店期，dmstore_shopid = "+str(dmstore_shopid))
-                    sales_order_inss1,result = generate_order_2saler_newshop_notday.generate(dmstore_shopid)
+                    sales_order_inss,result = generate_order_2saler_newshop_notday.generate(dmstore_shopid)
                 else:
-                    sales_order_inss1,result = generate_order_2saler_add.generate(dmstore_shopid)
-                sales_order_inss2,result1 = generate_order_2saler_add_day.generate(dmstore_shopid)
-                if sales_order_inss1 is None or sales_order_inss2 is None:
+                    sales_order_inss,result = generate_order_2saler_add.generate(dmstore_shopid)
+                if sales_order_inss is None:
                     cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
                                                            id))  # 更新到“结束计算”和耗时多少
                     cursor_ai.connection.commit()
                 else:
                     # 把结果转成json , 存入数据库
-                    sales_order_inss=[]
-                    print ("非日配 订单商品数 ："+str(len(sales_order_inss1)))
-                    print("日配 订单商品数 ：" + str(len(sales_order_inss2)))
-                    for sales_order_ins in sales_order_inss1:
-                        sales_order_inss.append(sales_order_ins)
-                    for sales_order_ins in sales_order_inss2:
-                        sales_order_inss.append(sales_order_ins)
-
+                    print ("非日配 和 日配 订单商品数 ："+str(len(sales_order_inss)))
                     cursor_ai.execute(select_goods_batch_order.format(batch_id,uc_shop_id))
                     goods_batch_data = cursor_ai.fetchone()
                     if goods_batch_data is None:
-                        inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id,result1)
+                        inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id,result)
                         cursor_ai.executemany(insert_goods_batch_order, inert_data)
                         cursor_ai.connection.commit()
                     else:
-                        update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id,result1)
+                        update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id,result)
                         cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],update_data[0][5],goods_batch_data[0]))
                         cursor_ai.connection.commit()
                     # 更新数据库状态

@@ -5,6 +5,8 @@ from set_config import config
 from goods.sellgoods.salesquantity.proxy import order_rule
 from goods.sellgoods.salesquantity.service.order_version_5.data_util import cacul_util
 import traceback
+import time
+import datetime
 import demjson
 import math
 shop_type = config.shellgoods_params['shop_types'][1]  # 二批
@@ -18,23 +20,88 @@ def generate(shop_id = None,order_type=None):
         print ("规则0 商品数："+str(len(result.keys())))
         for mch_code  in result:
             drg_ins = result[mch_code]
-            if drg_ins.delivery_type != 2:
-                continue
             order_sale = 0
-            if drg_ins.up_status == 1: # 新品
-                # print ("规则1 ：psd 数量 与 最小最大陈列量 起订量")
-                if drg_ins.psd_nums_4 > 0:
-                    x = drg_ins.psd_nums_4 * 2.5  + drg_ins.min_disnums
+            if drg_ins.delivery_type == 2:
+                if drg_ins.up_status == 1: # 新品
+                    # print ("规则1 ：psd 数量 与 最小最大陈列量 起订量")
+                    if drg_ins.psd_nums_4 > 0:
+                        x = drg_ins.psd_nums_4 * 2.5  + drg_ins.min_disnums
+                    else:
+                        x = 0
+                    y = min(drg_ins.max_disnums,drg_ins.min_disnums * 2 )
+                    order_sale = max(x,y,drg_ins.start_sum)
+                    if drg_ins.delivery_type == 2: #非日配
+                        order_sale = order_sale - drg_ins.stock - drg_ins.sub_count  - drg_ins.supply_stock
                 else:
-                    x = 0
-                y = min(drg_ins.max_disnums,drg_ins.min_disnums * 2 )
-                order_sale = max(x,y,drg_ins.start_sum)
-                if drg_ins.delivery_type == 2: #非日配
-                    order_sale = order_sale - drg_ins.stock - drg_ins.sub_count  - drg_ins.supply_stock
-            else:
-                safe_stock = max(drg_ins.min_disnums,math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price), math.ceil(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
-                track_stock =int(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price * 2.5) + safe_stock
-                order_sale = track_stock - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
+                    safe_stock = max(drg_ins.min_disnums,math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price), math.ceil(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
+                    track_stock =int(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price * 2.5) + safe_stock
+                    order_sale = track_stock - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
+            else: # 日配订货
+                # 日配类型 改变商品的最小陈列量
+                if drg_ins.storage_day < 15:
+                    drg_ins.min_disnums = 1
+                else:
+                    drg_ins.min_disnums = 2
+                # 判断该品是否为新品   TODO  目前线上数据不稳定，先暂时都按新店期订货 ，之后放开注释逻辑
+                # isnew_status = 0
+                # shelf_up_date = drg_ins.up_shelf_date
+                # end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                # time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
+                # time2 = time.mktime(time.strptime(end_date,'%Y-%m-%d'))
+                # days = int((time2 - time1)/(24*60*60))
+                # if drg_ins.storage_day >=30  and days <= 14:
+                #     isnew_status = 1
+                # elif drg_ins.storage_day <30 and days <= 7:
+                #     isnew_status = 1
+                # drg_ins.up_status = isnew_status
+                drg_ins.up_status = 1
+                # 如果是新品， 订货规则
+                if drg_ins.up_status ==1 :
+                    psd_nums_2 = 2
+                    if drg_ins.psd_nums_2 != 0:
+                        psd_nums_2 = drg_ins.psd_nums_2
+                    if drg_ins.psd_nums_2 == 0 and drg_ins.psd_nums_2_cls != 0:
+                        psd_nums_2 = drg_ins.psd_nums_2_cls
+                    end_safe_stock = drg_ins.min_disnums
+                    safe_day = 0
+                    if drg_ins.storage_day <= 2:
+                        safe_day = 1
+                    else:
+                        safe_day = 2.5
+                    track_stock = end_safe_stock + safe_day * psd_nums_2
+                    order_sale = track_stock - max(0,drg_ins.stock) - max(0,drg_ins.supply_stock) - drg_ins.sub_count
+                else:
+                    # TODO  商品的psd*保质期＜1，则该商品建议剔除选品，不订货    目前psd 取不到真实值， 这段逻辑先不走
+                    # if drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price * drg_ins.storage_day < 1:
+                    #     continue
+                    end_safe_stock = drg_ins.min_disnums
+                    end_date = str(time.strftime('%Y%m%d', time.localtime()))
+                    # 到货日 TODO 需要抽出作为配置文件 2
+                    order_get_date = str(
+                        (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
+                            days=2)).strftime("%Y%m%d"))
+                    order_get_week_i = datetime.datetime.strptime(order_get_date, "%Y%m%d").weekday() + 1
+                    one_day_psd = 0
+                    if order_get_week_i>=1 and order_get_week_i<=5:
+                        one_day_psd = float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)
+                    else:
+                        one_day_psd = float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)
+                    loss_oneday_nums =  drg_ins.loss_avg * one_day_psd / (1- drg_ins.loss_avg)
+                    fudong_nums = 0
+                    if loss_oneday_nums > 1 and drg_ins.loss_avg_profit_amount >0:
+                        fudong_nums = -1
+                    if loss_oneday_nums <= 0 and drg_ins.loss_avg_profit_amount >0:
+                        fudong_nums = 1
+                    if drg_ins.loss_avg_profit_amount <=0:
+                        fudong_nums = 0-drg_ins.loss_avg_nums
+                    safe_day = 0
+                    if drg_ins.storage_day < 2:
+                        safe_day = drg_ins.storage_day
+                    else:
+                        safe_day = 2.5
+                    track_stock = safe_day * one_day_psd + fudong_nums + end_safe_stock
+                    order_sale = math.ceil(track_stock) - max(0,drg_ins.stock) - max(0,drg_ins.supply_stock) - drg_ins.sub_count
+
             if order_sale <= 0:
                 continue
             # print ("规则2： 起订量规则")
