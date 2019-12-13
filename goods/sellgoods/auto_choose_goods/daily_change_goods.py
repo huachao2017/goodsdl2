@@ -366,6 +366,7 @@ class DailyChangeGoods:
         #   1.2、获取当前台账的商品
         taizhang_goods = self.get_taizhang_goods()  # 获取当前台账的商品
         taizhang_goods_mch_code_list = [i['mch_goods_code'] for i in taizhang_goods]
+        print('去重台账goods',len(set(taizhang_goods_mch_code_list)))
         all_goods_len = len(taizhang_goods)
         print('台账goods',all_goods_len)
 
