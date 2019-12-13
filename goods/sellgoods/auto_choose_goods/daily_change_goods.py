@@ -123,8 +123,23 @@ class DailyChangeGoods:
                         taizhang_data_list.append(goods)
         return taizhang_data_list
 
-    def get_third_category(self,mch_code):
-        pass
+    def get_third_category(self,mch_code_list):
+        """
+        获取本店三级分类的code的列表
+        :param mch_code:
+        :return:
+        """
+        sql = "SELECT DISTINCT(corp_classify_code) from goods WHERE neighbor_goods_id in {}"
+        self.cursor.execute(sql.format(tuple(mch_code_list)))
+        all_data = self.cursor.fetchall()
+        result = []
+        for data in all_data:
+            if type(data[0]) is str:
+                if len(data[0]) == 6:
+                    result.append(data[0])
+        return result
+
+
 
 
     def calculate_first_category_goods_count(self):
@@ -175,7 +190,7 @@ class DailyChangeGoods:
         self.third_category_list = self.get_third_category_list()
         print('self.third_category_list',self.third_category_list)
         category_dict = {}    # k为三级分类，v为分类下的商品列表
-        for third_category in self.third_category_list[:]:      # 遍历每个三级分类
+        for third_category in self.third_category_list[:10]:      # 遍历每个三级分类
             all_shop_data = self.get_third_category_data(third_category, self.template_shop_ids)
             # 以下14行代码主要是统计upc取数周期内在各店出现的次数
             all_one_shop_data_list = []
@@ -365,8 +380,8 @@ class DailyChangeGoods:
 
         #   1.2、获取当前台账的商品
         taizhang_goods = self.get_taizhang_goods()  # 获取当前台账的商品
-        taizhang_goods_mch_code_list = [i['mch_goods_code'] for i in taizhang_goods]
-        print('去重台账goods',len(set(taizhang_goods_mch_code_list)))
+        taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_goods]))    # 去重
+        print('去重台账goods',len(taizhang_goods_mch_code_list))
         all_goods_len = len(taizhang_goods)
         print('台账goods',all_goods_len)
 
@@ -383,27 +398,31 @@ class DailyChangeGoods:
             else:       # 剩下没销量的为可选下架的品
                 optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'],1))  # FIXME 分类code为空
 
-        # # 2、计算新增品
-        # must_up_goods_len = math.ceil(all_goods_len * 0.03)
-        # all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
-        # structure_goods_list = []     # 该店没有该三级分类的结构品列表
-        # for data in all_structure_goods_list:
-        #     if not data[2] in category_03_list:
-        #         structure_goods_list.append(data)
-        #
-        # quick_seller_list = []     # 该店没有的畅销品
-        # for data in all_quick_seller_list:
-        #     if not data[3] in taizhang_goods_mch_code_list:
-        #         quick_seller_list.append(data)
-        #
-        # candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
-        # must_up_goods = candidate_up_goods_list[:must_up_goods_len]
-        # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
-        # # 以下4行时添加ranking的值
-        # for goods in must_up_goods:
-        #     goods.append(None)
-        # for index,goods in enumerate(optional_up_goods):
-        #     goods.append(index+1)
+        # 2、计算新增品
+        category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
+        print('本店已有三级分类',len(category_03_list))
+
+
+        must_up_goods_len = math.ceil(all_goods_len * 0.03)
+        all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
+        structure_goods_list = []     # 该店没有该三级分类的结构品列表
+        for data in all_structure_goods_list:
+            if not data[2] in category_03_list:
+                structure_goods_list.append(data)
+
+        quick_seller_list = []     # 该店没有的畅销品
+        for data in all_quick_seller_list:
+            if not data[3] in taizhang_goods_mch_code_list:
+                quick_seller_list.append(data)
+
+        candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
+        must_up_goods = candidate_up_goods_list[:must_up_goods_len]
+        optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
+        # 以下4行时添加ranking的值
+        for goods in must_up_goods:
+            goods.append(None)
+        for index,goods in enumerate(optional_up_goods):
+            goods.append(index+1)
 
 
 
@@ -425,8 +444,8 @@ class DailyChangeGoods:
         self.save_data(not_move_goods, 0, 2, None)
         self.save_data(must_out_goods, 0, 1, None)
         self.save_data(optional_out_goods, 0, 0, None)
-        # self.save_data(must_up_goods, 1, None, 1)
-        # self.save_data(optional_up_goods, 1, None, 0)
+        self.save_data(must_up_goods, 1, None, 1)
+        self.save_data(optional_up_goods, 1, None, 0)
 
     def save_data(self,data,is_new_goods,goods_out_status,goods_add_status):
         """
@@ -449,7 +468,6 @@ class DailyChangeGoods:
         # try:
         print('batch_id', self.batch_id, type(self.batch_id))
         print('len',len(tuple_data))
-        print(select_sql.format(self.uc_shopid, self.batch_id,is_new_goods,goods_out_status,goods_add_status).replace('=None', 'is NULL'))
         cursor.execute(select_sql.format(self.uc_shopid, self.batch_id,is_new_goods,goods_out_status,goods_add_status).replace('=None', ' is NULL'))  # 查询有该批次，没有的话，插入，有的话，先删再插入
         # print('history_batch_id', history_batch_id,type(history_batch_id))
         if cursor.fetchone():
