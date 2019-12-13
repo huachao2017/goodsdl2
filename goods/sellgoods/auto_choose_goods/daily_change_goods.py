@@ -445,7 +445,7 @@ class DailyChangeGoods:
         # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
         insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,is_new_goods,goods_out_status,goods_add_status,ranking) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},{},{},%s)"
         delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
-        select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and is_new_goods={} and goods_out_status={} and goods_add_status{}"
+        select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and is_new_goods={} and goods_out_status={} and goods_add_status={}"
         # try:
         print('batch_id', self.batch_id, type(self.batch_id))
         print('len',len(tuple_data))
