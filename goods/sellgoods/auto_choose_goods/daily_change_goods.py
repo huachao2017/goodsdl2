@@ -20,7 +20,7 @@ class DailyChangeGoods:
         self.category_goods_list = []    # 结构品
         self.template_shop_ids = template_shop_ids.split(',')
         self.shop_id = shop_id
-        self.uc_shopid = None
+        self.uc_shopid = 806
         self.batch_id = batch_id
         self.topn_ratio = Decimal(topn_ratio)  # 取累计psd金额的百分之多少作为畅销品
         self.days = days     # 取数周期
