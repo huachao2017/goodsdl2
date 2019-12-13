@@ -190,7 +190,7 @@ class DailyChangeGoods:
         self.third_category_list = self.get_third_category_list()
         print('self.third_category_list',len(self.third_category_list))
         category_dict = {}    # k为三级分类，v为分类下的商品列表
-        for third_category in self.third_category_list[:50]:      # 遍历每个三级分类
+        for third_category in self.third_category_list[:5]:      # 遍历每个三级分类
             all_shop_data = self.get_third_category_data(third_category, self.template_shop_ids)
             # 以下14行代码主要是统计upc取数周期内在各店出现的次数
             all_one_shop_data_list = []
@@ -475,7 +475,6 @@ class DailyChangeGoods:
         :return:
         """
 
-        print('dtaa',data)
         tuple_data = tuple(data)
 
         conn = connections['default']
