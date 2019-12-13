@@ -86,7 +86,8 @@ def get_order_all_data(result,sales_order_inss):
           "模板店4周预估psd,模板店4周预估psd金额,配送单位,最小陈列数,"
           "最大陈列数,门店库存,仓库库存,配送类型,保质期,"
           "起订量,在途订货数,进货价,商品单价,开店以来单天最大psd数量,"
-          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,是否是新品,7天平均废弃率,7天平均废弃后毛利率,7天平均废弃量,周1-5平均psd数量,周6-7平均psd数量")
+          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,是否是新品,"
+          "7天平均废弃率,7天平均废弃后毛利率,7天平均废弃量,周1-5平均psd数量,周6-7平均psd数量,2周的psd数量,2周小类的psd数量")
     for mch_code in result:
         mch_goods_dict = {}
         drg_ins = result[mch_code]
@@ -107,6 +108,8 @@ def get_order_all_data(result,sales_order_inss):
         mch_goods_dict['package_type'] = drg_ins.package_type
         mch_goods_dict['psd_nums_4'] = drg_ins.psd_nums_4
         mch_goods_dict['psd_amount_4'] = drg_ins.psd_amount_4
+        mch_goods_dict['psd_nums_2'] = drg_ins.psd_nums_2
+        mch_goods_dict['psd_nums_2_cls'] = drg_ins.psd_nums_2_cls
         mch_goods_dict['start_sum'] = drg_ins.start_sum
         mch_goods_dict['min_disnums'] = drg_ins.min_disnums
         mch_goods_dict['max_disnums'] = drg_ins.max_disnums
@@ -126,10 +129,11 @@ def get_order_all_data(result,sales_order_inss):
         mch_goods_dict['loss_avg_nums'] = drg_ins.loss_avg_nums
         mch_goods_dict['week_1_5_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)
         mch_goods_dict['week_6_7_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)
+
         print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
-              "%s,%s,%s,%s"
+              "%s,%s,%s,%s,%s,%s"
               % (str(order_sale),
                  str(drg_ins.ucshop_id), str(drg_ins.shop_name), str(drg_ins.mch_code),
                  str(drg_ins.upc), str(drg_ins.goods_name),
@@ -143,7 +147,8 @@ def get_order_all_data(result,sales_order_inss):
                  str(drg_ins.max_scale), str(float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),
                  str(float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)), str(drg_ins.up_status),
                  str(drg_ins.loss_avg),str(drg_ins.loss_avg_profit_amount),str(drg_ins.loss_avg_nums),
-                 str(float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)),str(float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price))))
+                 str(float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)),str(float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)),
+                 str(float(drg_ins.psd_nums_2)),str(float(drg_ins.psd_nums_2_cls))))
         jsondata.append(mch_goods_dict)
     order_all_data = demjson.encode(jsondata)
     return order_all_data
