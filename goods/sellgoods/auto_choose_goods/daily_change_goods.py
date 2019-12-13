@@ -232,11 +232,11 @@ class DailyChangeGoods:
             # --以下是求累计
             amount = 0  # 分类下psd金额的总额
             for goods in goods_list:
-                amount += goods[1]
+                amount += goods[3]
             temp_amount = 0
             for goods in goods_list:  # 将累计前占比60%psd金额的商品选出来，遇到边界少选策略
                 # quick_seller_list.append(goods[0])   # 遇到边界多选策略
-                temp_amount += goods[1]
+                temp_amount += goods[3]
                 if temp_amount > amount * self.topn_ratio:
                     break
                 quick_seller_list.append(goods)   # 遇到边界少选策略
