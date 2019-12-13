@@ -416,6 +416,8 @@ class DailyChangeGoods:
                 quick_seller_list.append(data)
 
         candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
+        candidate_up_goods_list = list(set(candidate_up_goods_list))
+
         must_up_goods = candidate_up_goods_list[:must_up_goods_len]
         optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
         # 以下4行时添加ranking的值
