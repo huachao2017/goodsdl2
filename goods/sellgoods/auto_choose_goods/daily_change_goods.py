@@ -71,8 +71,8 @@ class DailyChangeGoods:
         results = self.cursor.fetchall()
         # cursor.close()
 
-        print(results)
-        print(len(results))
+        # print(results)
+        # print(len(results))
         return results
 
     def get_third_category_list(self):
@@ -190,7 +190,7 @@ class DailyChangeGoods:
         self.third_category_list = self.get_third_category_list()
         print('self.third_category_list',len(self.third_category_list))
         category_dict = {}    # k为三级分类，v为分类下的商品列表
-        for third_category in self.third_category_list[:5]:      # 遍历每个三级分类
+        for third_category in self.third_category_list[:50]:      # 遍历每个三级分类
             all_shop_data = self.get_third_category_data(third_category, self.template_shop_ids)
             # 以下14行代码主要是统计upc取数周期内在各店出现的次数
             all_one_shop_data_list = []
@@ -209,7 +209,7 @@ class DailyChangeGoods:
                     upc_time[upc] = temp_num
 
 
-            print('upc_time',upc_time)
+            # print('upc_time',upc_time)
             third_category_quick_seller_list = list()
             for data in all_shop_data:     # psd金额除以商店数
                 # try:
@@ -385,7 +385,7 @@ class DailyChangeGoods:
         taizhang_goods = self.get_taizhang_goods()  # 获取当前台账的商品
         taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_goods]))    # 去重
         print('去重台账goods',len(taizhang_goods_mch_code_list))
-        all_goods_len = len(taizhang_goods)
+        all_goods_len = len(taizhang_goods_mch_code_list)
         print('台账goods',all_goods_len)
 
         #   1.3、遍历货架,得出每个货架的三级分类和该店所有的三级分类
@@ -406,7 +406,7 @@ class DailyChangeGoods:
         print('本店已有三级分类',len(category_03_list))
 
 
-        must_up_goods_len = math.ceil(all_goods_len * 0.01)
+        must_up_goods_len = math.ceil(all_goods_len * 0.03)
         all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
         structure_goods_list = []     # 该店没有该三级分类的结构品列表
         for data in all_structure_goods_list:
@@ -420,20 +420,14 @@ class DailyChangeGoods:
 
         candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
         # candidate_up_goods_list = list(set(candidate_up_goods_list))
-        print('====================================')
-        print('structure_goods_list',len(structure_goods_list),structure_goods_list)
-        print('====================================')
-
-        print('quick_seller_list',len(quick_seller_list),quick_seller_list)
-        print('====================================')
+        print('structure_goods_list',len(structure_goods_list))
+        print('quick_seller_list',len(quick_seller_list))
 
         must_up_goods = candidate_up_goods_list[:must_up_goods_len]
         optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
         # 以下4行时添加ranking的值
-        print('must_up_goods',must_up_goods)
-        print()
-        print('optional_up_goods',optional_up_goods)
-        print()
+        print('must_up_goods',len(must_up_goods))
+        print('optional_up_goods',len(optional_up_goods))
         for goods in must_up_goods:
             goods.append(None)
         for index,goods in enumerate(optional_up_goods):
@@ -441,9 +435,9 @@ class DailyChangeGoods:
         must_up_goods = [tuple(goods) for goods in must_up_goods]
         optional_up_goods = [tuple(goods) for goods in optional_up_goods]
 
-        print('must_up_goods', must_up_goods)
+        # print('must_up_goods', must_up_goods)
         print()
-        print('optional_up_goods', optional_up_goods)
+        # print('optional_up_goods', optional_up_goods)
 
 
 
@@ -465,9 +459,9 @@ class DailyChangeGoods:
 
         print(not_move_goods[:10])
 
-        # self.save_data(not_move_goods, 0, 2, None)
-        # self.save_data(must_out_goods, 0, 1, None)
-        # self.save_data(optional_out_goods, 0, 0, None)
+        self.save_data(not_move_goods, 0, 2, None)
+        self.save_data(must_out_goods, 0, 1, None)
+        self.save_data(optional_out_goods, 0, 0, None)
         self.save_data(must_up_goods, 1, None, 1)
         self.save_data(optional_up_goods, 1, None, 0)
 
