@@ -223,7 +223,7 @@ class DailyChangeGoods:
         structure_goods_list = []
         for category, goods_list in category_dict.items():
             goods_list.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
-            print('goods_list',goods_list)
+            # print('goods_list',goods_list)
 
 
             # --以下是把第一个加进去，算的是结构品
@@ -416,7 +416,13 @@ class DailyChangeGoods:
                 quick_seller_list.append(data)
 
         candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
-        candidate_up_goods_list = list(set(candidate_up_goods_list))
+        # candidate_up_goods_list = list(set(candidate_up_goods_list))
+        print('====================================')
+        print('structure_goods_list',len(structure_goods_list),structure_goods_list)
+        print('====================================')
+
+        print('quick_seller_list',len(quick_seller_list),quick_seller_list)
+        print('====================================')
 
         must_up_goods = candidate_up_goods_list[:must_up_goods_len]
         optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
