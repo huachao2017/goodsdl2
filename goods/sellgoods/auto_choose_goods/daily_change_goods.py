@@ -419,6 +419,7 @@ class DailyChangeGoods:
         must_up_goods = candidate_up_goods_list[:must_up_goods_len]
         optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
         # 以下4行时添加ranking的值
+        print('must_up_goods',must_up_goods)
         for goods in must_up_goods:
             goods.append(None)
         for index,goods in enumerate(optional_up_goods):
