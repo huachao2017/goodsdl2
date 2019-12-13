@@ -210,7 +210,7 @@ class DailyChangeGoods:
 
 
             print('upc_time',upc_time)
-            third_category_quick_seller_list = []
+            third_category_quick_seller_list = list()
             for data in all_shop_data:     # psd金额除以商店数
                 # try:
                     # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name
