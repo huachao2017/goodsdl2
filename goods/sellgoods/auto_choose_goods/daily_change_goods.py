@@ -457,7 +457,7 @@ class DailyChangeGoods:
         insert_sql_02.replace('None', 'NULL').replace('"None"', 'NULL').replace("'None'", 'NULL')
         print('haha',insert_sql_02.replace('None', 'NULL').replace('"None"', 'NULL').replace("'None'", 'NULL'))
         print(insert_sql_02)
-        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status), tuple_data[:])
+        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status).replace('None', 'NULL'), tuple_data[:])
         conn.commit()
         conn.close()
         print('ok')
