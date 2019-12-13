@@ -361,7 +361,7 @@ class DailyChangeGoods:
         sales_goods_mch_code_dict = {}
         for s in sales_data:
             sales_goods_mch_code_dict[s[3]] = s
-        print(len(sales_data))
+        print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
 
         #   1.2、获取当前台账的商品
         taizhang_goods = self.get_taizhang_goods()  # 获取当前台账的商品
