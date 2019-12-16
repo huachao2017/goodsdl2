@@ -256,9 +256,9 @@ class OrderConfirm(APIView):
         try:
             erp_warehouse_id = int(request.query_params['erpwarehouseid'])
             batch_id = request.query_params['batchid']
-            print(erp_warehouse_id)
-            print(batch_id)
-            print(request.data)
+            logger.info(erp_warehouse_id)
+            logger.info(batch_id)
+            logger.info(request.data)
 
 
             # TODO 调用计算方法
