@@ -8,6 +8,21 @@ ai接口：
 
 数据表goods_allworkflowbatch增加erp_warehouse_id
 
+erp业务接口
+到货确认：（post）http://ai.aicvs.cn/api/orderconfirm?erpwarehouseid=xx&batchid=xx
+post data（json对象）：
+[
+  {
+    mch_goods_code: xx
+    upc: xx
+    number:xx
+  },
+ {
+    mch_goods_code: xx
+    upc: xx
+    number:xx
+  }
+]
 
 1.0版
 发起选品：（get）http://ai.aicvs.cn/api/beginselectgoods?ucshopid=xx&batchid=xx

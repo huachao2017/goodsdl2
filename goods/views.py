@@ -251,3 +251,21 @@ class BeginOrderGoods(APIView):
             cursor_dmstore.close()
 
         return Response()
+
+class OrderConfirm(APIView):
+    def post(self, request):
+        try:
+            erp_warehouse_id = int(request.query_params['erpwarehouseid'])
+            batch_id = request.query_params['batchid']
+            data = json.loads(request.data)
+
+            print(data)
+
+
+            # TODO 调用计算方法
+
+
+        except Exception as e:
+            logger.error('OrderConfirm error:{}'.format(e))
+            traceback.print_exc()
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)
