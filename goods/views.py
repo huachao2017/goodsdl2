@@ -2,7 +2,6 @@ import logging
 import os
 import shutil
 import time
-import tensorflow as tf
 import json
 import numpy as np
 from rest_framework.response import Response
@@ -257,13 +256,14 @@ class OrderConfirm(APIView):
         try:
             erp_warehouse_id = int(request.query_params['erpwarehouseid'])
             batch_id = request.query_params['batchid']
-            data = json.loads(request.data)
-
-            print(data)
+            print(erp_warehouse_id)
+            print(batch_id)
+            print(request.data)
 
 
             # TODO 调用计算方法
 
+            return Response(erp_warehouse_id, status=status.HTTP_200_OK)
 
         except Exception as e:
             logger.error('OrderConfirm error:{}'.format(e))
