@@ -1,4 +1,5 @@
 ai接口：
+1.1版
 发起选品：（get）http://ai.aicvs.cn/api/beginselectgoods?ucshopid=xx&batchid=xx
 发起陈列：（get）http://ai.aicvs.cn/api/beginautodisplay?ucshopid=xx&batchid=xx
 
@@ -6,3 +7,26 @@ ai接口：
 发起补货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshopid=xx&batchid=xx&type=2
 
 数据表goods_allworkflowbatch增加erp_warehouse_id
+
+erp业务接口
+到货确认：（post）http://ai.aicvs.cn/api/orderconfirm?erpwarehouseid=xx&batchid=xx
+post data（json对象）：
+[
+  {
+    mch_goods_code: xx
+    upc: xx
+    number:xx
+  },
+ {
+    mch_goods_code: xx
+    upc: xx
+    number:xx
+  }
+]
+
+1.0版
+发起选品：（get）http://ai.aicvs.cn/api/beginselectgoods?ucshopid=xx&batchid=xx
+发起陈列：（get）http://ai.aicvs.cn/api/beginautodisplay?ucshopid=xx&batchid=xx
+
+发起日常订货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshopid=xx&batchid=xx&type=1
+发起补货：（get）http://ai.aicvs.cn/api/beginordergoods?ucshopid=xx&batchid=xx&type=2

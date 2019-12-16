@@ -2,7 +2,6 @@ import logging
 import os
 import shutil
 import time
-import tensorflow as tf
 import json
 import numpy as np
 from rest_framework.response import Response
@@ -204,20 +203,32 @@ class BeginOrderGoods(APIView):
             type = int(request.query_params['type'])
 
             if type == 1:
-                erp_warehouse_id = int(request.query_params['erpwarehouseid'])
-                # 临时计算uc_shopid
-                cursor_dmstore.execute("select shop_id from erp_shop_related where erp_shop_id = {} and erp_shop_type = 1".format(erp_warehouse_id))
-                (shop_id,) = cursor_dmstore.fetchone()
-                cursor.execute("select id,mch_id from uc_shop where mch_shop_code = {}".format(shop_id))
-                (uc_shopid, mch_id) = cursor.fetchone()
-                workflow = AllWorkFlowBatch.objects.create(
-                    erp_warehouse_id = erp_warehouse_id,
-                    uc_shopid=uc_shopid,
-                    batch_id=batch_id,
-                    type=type,
-                    select_goods_status = 0,
-                    order_goods_status=1
-                )
+                if 'erpwarehouseid' in request.query_params:
+                    erp_warehouse_id = int(request.query_params['erpwarehouseid'])
+                    # 临时计算uc_shopid
+                    cursor_dmstore.execute("select shop_id from erp_shop_related where erp_shop_id = {} and erp_shop_type = 1".format(erp_warehouse_id))
+                    (shop_id,) = cursor_dmstore.fetchone()
+                    cursor.execute("select id,mch_id from uc_shop where mch_shop_code = {}".format(shop_id))
+                    (uc_shopid, mch_id) = cursor.fetchone()
+                    workflow = AllWorkFlowBatch.objects.create(
+                        erp_warehouse_id = erp_warehouse_id,
+                        uc_shopid=uc_shopid,
+                        batch_id=batch_id,
+                        type=type,
+                        select_goods_status = 0,
+                        order_goods_status=1
+                    )
+                else:
+                    # 兼容旧的接口
+                    uc_shopid = int(request.query_params['ucshopid'])
+                    workflow = AllWorkFlowBatch.objects.create(
+                        uc_shopid=uc_shopid,
+                        batch_id=batch_id,
+                        type=type,
+                        select_goods_status = 0,
+                        order_goods_status=1
+                    )
+
             elif type == 2:
                 uc_shopid = int(request.query_params['ucshopid'])
                 workflow = AllWorkFlowBatch.objects.create(
@@ -239,3 +250,23 @@ class BeginOrderGoods(APIView):
             cursor_dmstore.close()
 
         return Response()
+
+class OrderConfirm(APIView):
+    def post(self, request):
+        try:
+            erp_warehouse_id = int(request.query_params['erpwarehouseid'])
+            batch_id = request.query_params['batchid']
+            logger.info(erp_warehouse_id)
+            logger.info(batch_id)
+            logger.info(request.data)
+            logger.info(type(request.data))
+
+
+            # TODO 调用计算方法
+
+            return Response(erp_warehouse_id, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            logger.error('OrderConfirm error:{}'.format(e))
+            traceback.print_exc()
+            return Response(-1, status=status.HTTP_400_BAD_REQUEST)

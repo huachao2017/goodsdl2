@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'^api/beginselectgoods', views.BeginSelectGoods.as_view()),
     url(r'^api/beginautodisplay', views.BeginAutoDisplay.as_view()),
     url(r'^api/beginordergoods', views.BeginOrderGoods.as_view()),
+    url(r'^api/orderconfirm', views.OrderConfirm.as_view()),
     url(r'^api/', include(router.urls)),
     url(r'^arm/', include(arm_router.urls))
 ]
