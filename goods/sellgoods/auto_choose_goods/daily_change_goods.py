@@ -386,7 +386,6 @@ class DailyChangeGoods:
         taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_goods]))    # 去重
         print('去重台账goods',len(taizhang_goods_mch_code_list))
         all_goods_len = len(taizhang_goods_mch_code_list)
-        print('台账goods',all_goods_len)
 
         #   1.3、遍历货架,得出每个货架的三级分类和该店所有的三级分类
         can_order_mch_code_list = self.get_can_order_list()
@@ -410,13 +409,13 @@ class DailyChangeGoods:
         all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
         structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
-            if not data[2] in category_03_list and data[3] in can_order_mch_code_list:
+            if not data[2] in category_03_list and str(data[3]) in can_order_mch_code_list:
                 data.extend([1,0,0])       # is_structure,is_qiuck_seller,is_relation
                 structure_goods_list.append(data)
 
         quick_seller_list = []     # 该店没有的畅销品，并且可订货
         for data in all_quick_seller_list:
-            if not data[3] in taizhang_goods_mch_code_list and data[3] in can_order_mch_code_list:
+            if not str(data[3]) in taizhang_goods_mch_code_list and str(data[3]) in can_order_mch_code_list:
                 data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
                 quick_seller_list.append(data)
 
