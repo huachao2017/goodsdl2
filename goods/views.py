@@ -259,6 +259,7 @@ class OrderConfirm(APIView):
             logger.info(erp_warehouse_id)
             logger.info(batch_id)
             logger.info(request.data)
+            logger.info(type(request.data))
 
 
             # TODO 调用计算方法
