@@ -272,6 +272,14 @@ class DailyChangeGoods:
         for category in category_03_list:
             data = self.get_third_category_data(category,self.shop_id)
             pass
+    def calculate_not_move_goods(self,category_03_list):
+        """
+        计算保护品列表
+        :return:
+        """
+        for category in category_03_list:
+            data = self.get_third_category_data(category,self.shop_id)
+            pass
 
 
 
@@ -387,6 +395,12 @@ class DailyChangeGoods:
         print('去重台账goods',len(taizhang_goods_mch_code_list))
         all_goods_len = len(taizhang_goods_mch_code_list)
 
+        category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
+        print('本店已有三级分类', len(category_03_list))
+
+        not_move_goods_list = self.calculate_not_move_goods(category_03_list)
+
+
         #   1.3、遍历货架,得出每个货架的三级分类和该店所有的三级分类
         can_order_mch_code_list = self.get_can_order_list()
         print('可订货len：',len(can_order_mch_code_list))
@@ -401,21 +415,20 @@ class DailyChangeGoods:
                 optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, 1))  # FIXME 分类code为空
 
         # 2、计算新增品
-        category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
-        print('本店已有三级分类',len(category_03_list))
+
 
 
         must_up_goods_len = math.ceil(all_goods_len * 0.03)
         all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
         structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
-            if not data[2] in category_03_list and str(data[3]) in can_order_mch_code_list:
+            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
                 data.extend([1,0,0])       # is_structure,is_qiuck_seller,is_relation
                 structure_goods_list.append(data)
 
         quick_seller_list = []     # 该店没有的畅销品，并且可订货
         for data in all_quick_seller_list:
-            if not str(data[3]) in taizhang_goods_mch_code_list and str(data[3]) in can_order_mch_code_list:
+            if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_list:
                 data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
                 quick_seller_list.append(data)
 
