@@ -22,13 +22,18 @@ def generate(shop_id = None,order_type=None):
             drg_ins = result[mch_code]
             order_sale = 0
             if drg_ins.delivery_type == 2:
-                if drg_ins.up_status == 1: # 新品
+                shelf_up_date = drg_ins.up_shelf_date
+                end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
+                time2 = time.mktime(time.strptime(end_date, '%Y-%m-%d'))
+                days = int((time2 - time1) / (24 * 60 * 60))
+                if drg_ins.up_status == 1 and days <= 28: # 新品
                     # print ("规则1 ：psd 数量 与 最小最大陈列量 起订量")
                     if drg_ins.psd_nums_4 > 0:
                         x = drg_ins.psd_nums_4 * 2.5  + drg_ins.min_disnums
                     else:
                         x = 0
-                    y = min(drg_ins.max_disnums,drg_ins.min_disnums * 2 )
+                    y = min(drg_ins.max_disnums,drg_ins.min_disnums * 2)
                     order_sale = max(x,y,drg_ins.start_sum)
                     if drg_ins.delivery_type == 2: #非日配
                         order_sale = order_sale - drg_ins.stock - drg_ins.sub_count  - drg_ins.supply_stock
@@ -43,18 +48,18 @@ def generate(shop_id = None,order_type=None):
                 else:
                     drg_ins.min_disnums = 2
                 # 判断该品是否为新品   TODO  目前线上数据不稳定，先暂时都按新店期订货 ，之后放开注释逻辑
-                # isnew_status = 0
-                # shelf_up_date = drg_ins.up_shelf_date
-                # end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-                # time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
-                # time2 = time.mktime(time.strptime(end_date,'%Y-%m-%d'))
-                # days = int((time2 - time1)/(24*60*60))
-                # if drg_ins.storage_day >=30  and days <= 14:
-                #     isnew_status = 1
-                # elif drg_ins.storage_day <30 and days <= 7:
-                #     isnew_status = 1
-                # drg_ins.up_status = isnew_status
-                drg_ins.up_status = 1
+                isnew_status = 0
+                shelf_up_date = drg_ins.up_shelf_date
+                end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
+                time2 = time.mktime(time.strptime(end_date,'%Y-%m-%d'))
+                days = int((time2 - time1)/(24*60*60))
+                if drg_ins.storage_day >=30  and days <= 14:
+                    isnew_status = 1
+                elif drg_ins.storage_day <30 and days <= 7:
+                    isnew_status = 1
+                drg_ins.up_status = isnew_status
+                # drg_ins.up_status = 1
                 # 如果是新品， 订货规则
                 if drg_ins.up_status ==1 :
                     psd_nums_2 = 2
@@ -65,7 +70,7 @@ def generate(shop_id = None,order_type=None):
                     end_safe_stock = drg_ins.min_disnums
                     safe_day = 0
                     if drg_ins.storage_day <= 2:
-                        safe_day = 1
+                        safe_day = drg_ins.storage_day
                     else:
                         safe_day = 2.5
                     track_stock = end_safe_stock + safe_day * psd_nums_2
@@ -88,12 +93,13 @@ def generate(shop_id = None,order_type=None):
                         one_day_psd = float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)
                     loss_oneday_nums =  drg_ins.loss_avg * one_day_psd / (1- drg_ins.loss_avg)
                     fudong_nums = 0
-                    if loss_oneday_nums > 1 and drg_ins.loss_avg_profit_amount >0:
-                        fudong_nums = -1
-                    if loss_oneday_nums <= 0 and drg_ins.loss_avg_profit_amount >0:
-                        fudong_nums = 1
-                    if drg_ins.loss_avg_profit_amount <=0:
-                        fudong_nums = 0-drg_ins.loss_avg_nums
+                    #  浮动量 这块去掉 TODO 以后可能会加上
+                    # if loss_oneday_nums > 1 and drg_ins.loss_avg_profit_amount >0:
+                    #     fudong_nums = -1
+                    # if loss_oneday_nums <= 0 and drg_ins.loss_avg_profit_amount >0:
+                    #     fudong_nums = 1
+                    # if drg_ins.loss_avg_profit_amount <=0:
+                    #     fudong_nums = 0-drg_ins.loss_avg_nums
                     safe_day = 0
                     if drg_ins.storage_day < 2:
                         safe_day = drg_ins.storage_day
