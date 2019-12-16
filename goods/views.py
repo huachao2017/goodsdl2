@@ -204,20 +204,32 @@ class BeginOrderGoods(APIView):
             type = int(request.query_params['type'])
 
             if type == 1:
-                erp_warehouse_id = int(request.query_params['erpwarehouseid'])
-                # 临时计算uc_shopid
-                cursor_dmstore.execute("select shop_id from erp_shop_related where erp_shop_id = {} and erp_shop_type = 1".format(erp_warehouse_id))
-                (shop_id,) = cursor_dmstore.fetchone()
-                cursor.execute("select id,mch_id from uc_shop where mch_shop_code = {}".format(shop_id))
-                (uc_shopid, mch_id) = cursor.fetchone()
-                workflow = AllWorkFlowBatch.objects.create(
-                    erp_warehouse_id = erp_warehouse_id,
-                    uc_shopid=uc_shopid,
-                    batch_id=batch_id,
-                    type=type,
-                    select_goods_status = 0,
-                    order_goods_status=1
-                )
+                if 'erpwarehouseid' in request.query_params:
+                    erp_warehouse_id = int(request.query_params['erpwarehouseid'])
+                    # 临时计算uc_shopid
+                    cursor_dmstore.execute("select shop_id from erp_shop_related where erp_shop_id = {} and erp_shop_type = 1".format(erp_warehouse_id))
+                    (shop_id,) = cursor_dmstore.fetchone()
+                    cursor.execute("select id,mch_id from uc_shop where mch_shop_code = {}".format(shop_id))
+                    (uc_shopid, mch_id) = cursor.fetchone()
+                    workflow = AllWorkFlowBatch.objects.create(
+                        erp_warehouse_id = erp_warehouse_id,
+                        uc_shopid=uc_shopid,
+                        batch_id=batch_id,
+                        type=type,
+                        select_goods_status = 0,
+                        order_goods_status=1
+                    )
+                else:
+                    # 兼容旧的接口
+                    uc_shopid = int(request.query_params['ucshopid'])
+                    workflow = AllWorkFlowBatch.objects.create(
+                        uc_shopid=uc_shopid,
+                        batch_id=batch_id,
+                        type=type,
+                        select_goods_status = 0,
+                        order_goods_status=1
+                    )
+
             elif type == 2:
                 uc_shopid = int(request.query_params['ucshopid'])
                 workflow = AllWorkFlowBatch.objects.create(
