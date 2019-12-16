@@ -93,7 +93,7 @@ def day_order_process():
                 end_date = str(time.strftime('%Y%m%d', time.localtime()))
                 start_date = str(
                     (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
-                        days=-30)).strftime("%Y%m%d"))
+                        days=-28)).strftime("%Y%m%d"))
                 print("日常订单 batch_id =" + str(batch_id))
                 dmstore_shopid = int (dmstore_shopid)
                 if dmstore_shopid in config.shellgoods_params["start_shop"].keys() and config.shellgoods_params["start_shop"][dmstore_shopid] > int(start_date):

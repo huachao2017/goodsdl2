@@ -22,13 +22,18 @@ def generate(shop_id = None,order_type=None):
             drg_ins = result[mch_code]
             order_sale = 0
             if drg_ins.delivery_type == 2:
-                if drg_ins.up_status == 1: # 新品
+                shelf_up_date = drg_ins.up_shelf_date
+                end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+                time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
+                time2 = time.mktime(time.strptime(end_date, '%Y-%m-%d'))
+                days = int((time2 - time1) / (24 * 60 * 60))
+                if drg_ins.up_status == 1 and days <= 28: # 新品
                     # print ("规则1 ：psd 数量 与 最小最大陈列量 起订量")
                     if drg_ins.psd_nums_4 > 0:
                         x = drg_ins.psd_nums_4 * 2.5  + drg_ins.min_disnums
                     else:
                         x = 0
-                    y = min(drg_ins.max_disnums,drg_ins.min_disnums * 2 )
+                    y = min(drg_ins.max_disnums,drg_ins.min_disnums * 2)
                     order_sale = max(x,y,drg_ins.start_sum)
                     if drg_ins.delivery_type == 2: #非日配
                         order_sale = order_sale - drg_ins.stock - drg_ins.sub_count  - drg_ins.supply_stock
