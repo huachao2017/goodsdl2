@@ -287,7 +287,7 @@ class DailyChangeGoods:
                     amount += goods[0]
                 temp_amount = 0
                 for index, goods in enumerate(category_goods_tuple):  # 将累计前占比80%psd金额的商品选出来
-                    ab_quick_seller_list.append(goods[3])   # 遇到边界多选策略,neighbor_goods_id
+                    ab_quick_seller_list.append(str(goods[3]))   # 遇到边界多选策略,neighbor_goods_id
                     temp_amount += goods[0]
                     if temp_amount > float(amount) * self.ab_ratio:
                         break
