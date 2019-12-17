@@ -289,8 +289,8 @@ class DailyChangeGoods:
                 for index, goods in enumerate(category_goods_tuple):  # 将累计前占比80%psd金额的商品选出来
                     ab_quick_seller_list.append(str(goods[3]))   # 遇到边界多选策略,neighbor_goods_id
                     temp_amount += goods[0]
-                    # if temp_amount > float(amount) * self.ab_ratio:
-                    if temp_amount > float(amount) * 1:
+                    if temp_amount > float(amount) * self.ab_ratio:
+                    # if temp_amount > float(amount) * 1:
                         print('不可能！！')
                         break
                     # ab_quick_seller_list.append(goods)  # 遇到边界少选策略,neighbor_goods_id
@@ -463,42 +463,42 @@ class DailyChangeGoods:
             optional_out_goods.append(tuple(goods))
 
 
-        # # 2、计算新增品
-        # must_up_goods_len = math.ceil(all_goods_len * 0.03)
-        # all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
-        # structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
-        # for data in all_structure_goods_list:
-        #     if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
-        #         data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
-        #         structure_goods_list.append(data)
-        #
-        # quick_seller_list = []     # 该店没有的畅销品，并且可订货
-        # for data in all_quick_seller_list:
-        #     if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_list:
-        #         data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
-        #         quick_seller_list.append(data)
-        #
-        # candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
-        # # candidate_up_goods_list = list(set(candidate_up_goods_list))
-        # print('structure_goods_list',len(structure_goods_list))
-        # print('quick_seller_list',len(quick_seller_list))
-        #
-        # must_up_goods = candidate_up_goods_list[:must_up_goods_len]
-        # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
-        # # 以下4行时添加ranking的值
-        # print('must_up_goods',len(must_up_goods))
-        # print('optional_up_goods',len(optional_up_goods))
-        # for goods in must_up_goods:
-        #     goods.append(None)
-        # for index,goods in enumerate(optional_up_goods):
-        #     goods.append(index+1)
-        # must_up_goods = [tuple(goods) for goods in must_up_goods]
-        # optional_up_goods = [tuple(goods) for goods in optional_up_goods]
-        #
-        # # print('must_up_goods', must_up_goods)
-        # print()
-        # # print('optional_up_goods', optional_up_goods)
-        #
+        # 2、计算新增品
+        must_up_goods_len = math.ceil(all_goods_len * 0.03)
+        all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
+        structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
+        for data in all_structure_goods_list:
+            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
+                data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
+                structure_goods_list.append(data)
+
+        quick_seller_list = []     # 该店没有的畅销品，并且可订货
+        for data in all_quick_seller_list:
+            if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_list:
+                data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
+                quick_seller_list.append(data)
+
+        candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
+        # candidate_up_goods_list = list(set(candidate_up_goods_list))
+        print('structure_goods_list',len(structure_goods_list))
+        print('quick_seller_list',len(quick_seller_list))
+
+        must_up_goods = candidate_up_goods_list[:must_up_goods_len]
+        optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
+        # 以下4行时添加ranking的值
+        print('must_up_goods',len(must_up_goods))
+        print('optional_up_goods',len(optional_up_goods))
+        for goods in must_up_goods:
+            goods.append(None)
+        for index,goods in enumerate(optional_up_goods):
+            goods.append(index+1)
+        must_up_goods = [tuple(goods) for goods in must_up_goods]
+        optional_up_goods = [tuple(goods) for goods in optional_up_goods]
+
+        # print('must_up_goods', must_up_goods)
+        print()
+        # print('optional_up_goods', optional_up_goods)
+
 
 
 
