@@ -418,8 +418,11 @@ class DailyChangeGoods:
         sales_data = self.get_shop_sales_data(self.shop_id)
         sales_goods_mch_code_dict = {}
         print('本店有销量的品len',len(sales_data))
+        have_sale_category_code = []
         for s in sales_data:
             sales_goods_mch_code_dict[str(s[3])] = s
+            have_sale_category_code.append(str(s[2]))
+        print("有销量的三级分类的code",len(have_sale_category_code),sorted(have_sale_category_code))
         # print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
 
         #   1.2、获取当前台账的商品
@@ -430,7 +433,7 @@ class DailyChangeGoods:
 
         # 1.3 获取本店的保护品，即不动的品
         category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
-        print('本店已有三级分类', len(category_03_list))
+        print('本店已有三级分类', len(category_03_list),sorted(category_03_list))
         not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list)
         print("本店保护品len",len(not_move_goods_mch_code_list))
 
