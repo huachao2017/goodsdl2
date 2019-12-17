@@ -84,7 +84,7 @@ class DailyChangeGoods:
         now = datetime.datetime.now()
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
-        sql = "select distinct g.corp_classify_code from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {};"
+        sql = "select distinct g.third_cate_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {};"
         template_shop_ids_tuple = tuple(self.template_shop_ids)
         self.cursor.execute(sql.format(week_ago, now_date, template_shop_ids_tuple))
         results = self.cursor.fetchall()
@@ -130,13 +130,13 @@ class DailyChangeGoods:
         :param mch_code:
         :return:
         """
-        sql = "SELECT DISTINCT(corp_classify_code) from goods WHERE neighbor_goods_id in {}"
+        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in {}"
         self.cursor.execute(sql.format(tuple(mch_code_list)))
         all_data = self.cursor.fetchall()
         result = []
         for data in all_data:
-            if type(data[0]) is str:
-                if len(data[0]) == 6:
+            if type(data[0]) is int:
+                if not data[0] is None:
                     result.append(data[0])
         return result
 
