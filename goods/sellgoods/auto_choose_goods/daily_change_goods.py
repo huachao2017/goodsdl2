@@ -291,7 +291,7 @@ class DailyChangeGoods:
                     temp_amount += goods[0]
                     if temp_amount > float(amount) * self.ab_ratio:
                     # if temp_amount > float(amount) * 1:
-                        print('不可能！！')
+                    #     print('不可能！！')
                         break
                     # ab_quick_seller_list.append(goods)  # 遇到边界少选策略,neighbor_goods_id
                 category_protect_goods_list.extend(ab_quick_seller_list)
