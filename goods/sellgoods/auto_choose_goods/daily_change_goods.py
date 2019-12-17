@@ -422,7 +422,7 @@ class DailyChangeGoods:
         for s in sales_data:
             sales_goods_mch_code_dict[str(s[3])] = s
             have_sale_category_code.append(str(s[2]))
-        print("有销量的三级分类的code",len(have_sale_category_code),sorted(have_sale_category_code))
+        print("有销量的三级分类的code",len(have_sale_category_code),sorted(list(set(have_sale_category_code))))
         # print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
 
         #   1.2、获取当前台账的商品
