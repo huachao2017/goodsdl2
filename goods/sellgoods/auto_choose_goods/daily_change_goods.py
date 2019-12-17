@@ -417,6 +417,7 @@ class DailyChangeGoods:
         #   1.1、获取本店有销量的商品
         sales_data = self.get_shop_sales_data(self.shop_id)
         sales_goods_mch_code_dict = {}
+        print('本店有销量的品len',len(sales_data))
         for s in sales_data:
             sales_goods_mch_code_dict[str(s[3])] = s
         # print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
