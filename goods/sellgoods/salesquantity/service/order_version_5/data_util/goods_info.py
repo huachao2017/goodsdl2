@@ -720,14 +720,14 @@ class DataRawGoods():
         #         self.upc_status_type = 2
         # 临时判断商品的生命周期 ， 只用上架时间和保质期 判断
         if self.delivery_type == 2: # 非日配
-            if days <=7:
+            if days <=5:
                 self.upc_status_type = 0
-            elif days >7 and days <= 28:
+            elif days >5 and days <= 28:
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2
         else:
-            if days <=7:
+            if days <=5:
                 self.upc_status_type = 0
             elif (self.storage_day >= 30 and days <= 14) or (self.storage_day < 30 and days <= 7):
                 self.upc_status_type = 1
