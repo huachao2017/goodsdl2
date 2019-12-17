@@ -7,6 +7,7 @@ import json
 from  decimal import Decimal
 import datetime,pymysql
 import os,django,math,copy
+from goods.third_tools.dingtalk import send_message
 
 import main.import_django_settings
 from django.db import connections
@@ -476,7 +477,7 @@ class DailyChangeGoods:
         structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
             if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
-                data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
+                data.extend([1,0,0])       # is_structure,is_qiuck_seller,is_relation
                 structure_goods_list.append(data)
 
         quick_seller_list = []     # 该店没有的畅销品，并且可订货
@@ -490,8 +491,38 @@ class DailyChangeGoods:
         print('structure_goods_list',len(structure_goods_list))
         print('quick_seller_list',len(quick_seller_list))
 
-        must_up_goods = candidate_up_goods_list[:must_up_goods_len]
-        optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
+        # must_up_goods = candidate_up_goods_list[:must_up_goods_len]
+        # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
+
+        # 非日配选出来
+        delivery_type_sql = "select delivery_type from uc_merchant_goods where mch_goods_code='{}';"
+        conn_ucenter = connections['ucenter']
+        cursor_ucenter = conn_ucenter.cursor()
+
+        temp_number = 0    # 上架品选到candidate_up_goods_list候选集的第几个啦
+        for goods in candidate_up_goods_list:
+
+            if len(must_up_goods) == must_up_goods_len:
+                break
+            cursor_ucenter.execute(delivery_type_sql.format(goods[4]))
+            try:
+                delivery_type = cursor_ucenter.fetchone()[0]
+                if delivery_type == 2:
+                    must_up_goods.append(goods)
+                elif delivery_type == 1:
+                    pass
+                else:
+                    send_message('pos店号为{}的店，获取mch_goods_code为{}的日配类型（delivery_type）异常：{}'.format(self.shop_id, goods[4],delivery_type), 1)
+            except:
+                send_message('pos店号为{}的店，获取不到mch_goods_code为{}的日配类型（delivery_type）'.format(self.shop_id,goods[4]), 1)
+            temp_number += 1
+        optional_up_goods = candidate_up_goods_list[temp_number:]
+
+
+
+
+
+
         # 以下4行时添加ranking的值
         print('must_up_goods',len(must_up_goods))
         print('optional_up_goods',len(optional_up_goods))
