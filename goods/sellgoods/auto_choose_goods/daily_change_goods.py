@@ -89,7 +89,14 @@ class DailyChangeGoods:
         self.cursor.execute(sql.format(week_ago, now_date, template_shop_ids_tuple))
         results = self.cursor.fetchall()
         print('get_third_category_list',results)
-        return [i[0] for i in results if type(i[0]) is int]    #存在空的情况，所以if len(i[0]) == 6
+        results_list = []
+        for i in results:
+            try:
+                if type(i[0]) is int:
+                    results_list.append(i[0])
+            except:
+                continue
+        return results_list
 
     def get_sale_goods(self):
         """
@@ -457,7 +464,7 @@ class DailyChangeGoods:
                 else:       # 剩下没销量的为可选下架品的第一优先级
                     optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, 1))  # FIXME 分类code为空
 
-        temp_optional_out_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
+        temp_optional_out_goods.sort(key=lambda x: x[3], reverse=False)  # 基于psd金额排序
         for index,goods in enumerate(temp_optional_out_goods):
             goods.append(index+2)
             optional_out_goods.append(tuple(goods))
