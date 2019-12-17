@@ -704,17 +704,32 @@ class DataRawGoods():
         time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
         time2 = time.mktime(time.strptime(end_date, '%Y-%m-%d'))
         days = int((time2 - time1) / (24 * 60 * 60))
+        # if self.delivery_type == 2: # 非日配
+        #     if self.up_status == 1 and self.upc_order_number == 0 and days <=7:
+        #         self.upc_status_type = 0
+        #     elif self.up_status == 0 and self.upc_order_number >=1 and days <= 28:
+        #         self.upc_status_type = 1
+        #     else:
+        #         self.upc_status_type = 2
+        # else:
+        #     if self.up_status == 1 and self.upc_order_number == 0 and days <=7:
+        #         self.upc_status_type = 0
+        #     elif self.up_status == 0 and (self.storage_day >= 30 and days <= 14) or (self.storage_day < 30 and days <= 7):
+        #         self.upc_status_type = 1
+        #     else:
+        #         self.upc_status_type = 2
+        # 临时判断商品的生命周期 ， 只用上架时间和保质期 判断
         if self.delivery_type == 2: # 非日配
-            if self.up_status == 1 and self.upc_order_number == 0:
+            if days <=7:
                 self.upc_status_type = 0
-            elif self.up_status == 0 and self.upc_order_number >=1 and days <= 28:
+            elif days >7 and days <= 28:
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2
         else:
-            if self.up_status == 1 and self.upc_order_number == 0:
+            if days <=7:
                 self.upc_status_type = 0
-            elif self.up_status == 0 and (self.storage_day >= 30 and days <= 14) or (self.storage_day < 30 and days <= 7):
+            elif (self.storage_day >= 30 and days <= 14) or (self.storage_day < 30 and days <= 7):
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2

@@ -102,13 +102,13 @@ def get_order_all_data(result,sales_order_inss,batch_id):
             if drg_ins.upc == sales_order_ins.upc:
                 order_sale = sales_order_ins.order_sale
 
-        # 更新选品表，订货次数
-        try:
-            if "testabc" not in batch_id:  # 特殊订单测试，用于线上 不更新订货次数
-                order_nums_util.cal_order_nums2(drg_ins.dmstoreshop_id,drg_ins.select_batch_no,drg_ins.upc)
-        except Exception as e:
-            print ("update 选品历史表失败 ，{}-{}-{} ".format(drg_ins.dmstoreshop_id,drg_ins.select_batch_no,drg_ins.upc))
-            traceback.print_exc()
+        # 更新选品表，订货次数  TODO 先不做
+        # try:
+        #     if "testabc" not in batch_id:  # 特殊订单测试，用于线上 不更新订货次数
+        #         order_nums_util.cal_order_nums2(drg_ins.dmstoreshop_id,drg_ins.select_batch_no,drg_ins.upc)
+        # except Exception as e:
+        #     print ("update 选品历史表失败 ，{}-{}-{} ".format(drg_ins.dmstoreshop_id,drg_ins.select_batch_no,drg_ins.upc))
+        #     traceback.print_exc()
         mch_goods_dict['order_sale'] = order_sale
         mch_goods_dict['ucshop_id'] = drg_ins.ucshop_id
         mch_goods_dict['shop_name'] = drg_ins.shop_name
