@@ -88,8 +88,8 @@ class DailyChangeGoods:
         template_shop_ids_tuple = tuple(self.template_shop_ids)
         self.cursor.execute(sql.format(week_ago, now_date, template_shop_ids_tuple))
         results = self.cursor.fetchall()
-        # print('get_third_category_list',results)
-        return [i[0] for i in results if len(i[0]) == 6]    #存在空的情况，所以if len(i[0]) == 6
+        print('get_third_category_list',results)
+        return [i[0] for i in results if type(i[0]) is int]    #存在空的情况，所以if len(i[0]) == 6
 
     def get_sale_goods(self):
         """
