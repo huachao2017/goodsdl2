@@ -23,6 +23,7 @@ class DailyChangeGoods:
         self.uc_shopid = 806
         self.batch_id = batch_id
         self.topn_ratio = Decimal(topn_ratio)  # 取累计psd金额的百分之多少作为畅销品
+        self.ab_ratio = 0.8     # 某三级分类下累计前多少是a+b类
         self.days = days     # 取数周期
         self.third_category_list = []      # 三级分类的列表
         self.first_category_goods_count_dict = {}     # 一级分类选品预估的数量
@@ -61,7 +62,7 @@ class DailyChangeGoods:
             # print('list,third_category',shop_ids,third_category)
             shop_ids = tuple(shop_ids)
             sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {} and g.corp_classify_code={} group by g.upc order by sum(p.amount) desc;"
-        elif type(shop_ids) is str:     # 单个门店
+        elif type(shop_ids) is str or type(shop_ids) is int:     # 单个门店
             # print('str',shop_ids,type(shop_ids))
             sql = "select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.corp_classify_code={} group by g.upc order by sum(p.amount) desc;"
         else:
@@ -138,9 +139,6 @@ class DailyChangeGoods:
                 if len(data[0]) == 6:
                     result.append(data[0])
         return result
-
-
-
 
     def calculate_first_category_goods_count(self):
         """
@@ -264,22 +262,54 @@ class DailyChangeGoods:
         results = ms_cursor.fetchall()
         return [i[1] for i in results]
 
-    def calculate_optional_out_goods(self,category_03_list):
-        """
-        计算可选下架的品
-        :return:
-        """
-        for category in category_03_list:
-            data = self.get_third_category_data(category,self.shop_id)
-            pass
     def calculate_not_move_goods(self,category_03_list):
         """
         计算保护品列表
         :return:
         """
+        shop_protect_goods_mch_code_list = []
         for category in category_03_list:
-            data = self.get_third_category_data(category,self.shop_id)
-            pass
+            category_protect_goods_list = []    # 保护品
+            # 新品期的品
+            new_goods = []
+
+
+
+            # select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.corp_classify_code={} group by g.upc order by sum(p.amount) desc;"
+            category_goods_tuple = self.get_third_category_data(category,self.shop_id)     # 获取该分类下有销量的数据
+            # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,is_structure,is_qiuck_seller,is_relation,ranking
+
+            ab_quick_seller_list = []
+            if category_goods_tuple:
+                # --以下是求累计
+                amount = 0  # 分类下psd金额的总额
+                for goods in category_goods_tuple:
+                    amount += goods[0]
+                temp_amount = 0
+                for index, goods in enumerate(category_goods_tuple):  # 将累计前占比80%psd金额的商品选出来
+                    ab_quick_seller_list.append(goods[3])   # 遇到边界多选策略,neighbor_goods_id
+                    temp_amount += goods[0]
+                    if temp_amount > amount * self.ab_ratio:
+                        break
+                    # ab_quick_seller_list.append(goods)  # 遇到边界少选策略,neighbor_goods_id
+                category_protect_goods_list.extend(ab_quick_seller_list)
+            else:
+                if not new_goods:
+                    all_category_goods_tuple = self.get_third_category_data(category, self.shop_id)  # 获取同组门店该分类下有销量的数据
+                    if all_category_goods_tuple:
+                        category_protect_goods_list.append(all_category_goods_tuple[0][3])
+                    else:
+                        pass                # 保留毛利最大那个
+
+            shop_protect_goods_mch_code_list.extend(category_protect_goods_list)
+        return shop_protect_goods_mch_code_list
+
+
+
+
+
+
+
 
 
 
@@ -377,11 +407,12 @@ class DailyChangeGoods:
         optional_up_goods = []  # 可选上架的品
         must_out_goods = []  # 必须下架的品
         optional_out_goods = []  # 可选下架的品
+        temp_optional_out_goods = []  # 临时可选下架
 
         category_03_list = []   # 本店已有三级分类的code列表
 
 
-        # 1、计算本店a+b类品和结构品
+
         #   1.1、获取本店有销量的商品
         sales_data = self.get_shop_sales_data(self.shop_id)
         sales_goods_mch_code_dict = {}
@@ -395,64 +426,72 @@ class DailyChangeGoods:
         print('去重台账goods',len(taizhang_goods_mch_code_list))
         all_goods_len = len(taizhang_goods_mch_code_list)
 
+        # 1.3 获取本店的保护品，即不动的品
         category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
         print('本店已有三级分类', len(category_03_list))
+        not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list)
 
-        not_move_goods_list = self.calculate_not_move_goods(category_03_list)
 
-
-        #   1.3、遍历货架,得出每个货架的三级分类和该店所有的三级分类
+        # 1.4、遍历货架,得出下架品、不动品和可选下架品
         can_order_mch_code_list = self.get_can_order_list()
         print('可订货len：',len(can_order_mch_code_list))
         for data in taizhang_goods:
             if not data['mch_goods_code'] in can_order_mch_code_list:    # 不可订货即必须下架
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,is_structure,is_qiuck_seller,is_relation,ranking
                 must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, None))
-            elif data['mch_goods_code'] in sales_goods_mch_code_dict.keys():    # 有销量即为不动的品
+
+            elif data['mch_goods_code'] in not_move_goods_mch_code_list:    # 保护品即为不动的品
                 # print('有销量即为不动的品')
-                not_move_goods.append((None, data['goods_upc'],sales_goods_mch_code_dict[data['mch_goods_code']][2], None,data['mch_goods_code'], None, data['name'], 0, 0, 0, None))
-            else:       # 剩下没销量的为可选下架的品
-                optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, 1))  # FIXME 分类code为空
+                not_move_goods.append((None, data['goods_upc'],None, None,data['mch_goods_code'], None, data['name'], 0, 0, 0, None))
+            else:    # 剩下的是可选下架的
+                if data['mch_goods_code'] in sales_goods_mch_code_dict.keys():    # 有销量的进行排序
+                    # print('有销量即为不动的品')
+                    temp_optional_out_goods.append([None, data['goods_upc'],None, sales_goods_mch_code_dict[data['mch_goods_code']][0],data['mch_goods_code'], None, data['name'], 0, 0, 0])
+                else:       # 剩下没销量的为可选下架品的第一优先级
+                    optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, 1))  # FIXME 分类code为空
 
-        # 2、计算新增品
+        temp_optional_out_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
+        for index,goods in enumerate(temp_optional_out_goods):
+            goods.append(index+2)
+            optional_out_goods.append(tuple(goods))
 
 
-
-        must_up_goods_len = math.ceil(all_goods_len * 0.03)
-        all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
-        structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
-        for data in all_structure_goods_list:
-            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
-                data.extend([1,0,0])       # is_structure,is_qiuck_seller,is_relation
-                structure_goods_list.append(data)
-
-        quick_seller_list = []     # 该店没有的畅销品，并且可订货
-        for data in all_quick_seller_list:
-            if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_list:
-                data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
-                quick_seller_list.append(data)
-
-        candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
-        # candidate_up_goods_list = list(set(candidate_up_goods_list))
-        print('structure_goods_list',len(structure_goods_list))
-        print('quick_seller_list',len(quick_seller_list))
-
-        must_up_goods = candidate_up_goods_list[:must_up_goods_len]
-        optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
-        # 以下4行时添加ranking的值
-        print('must_up_goods',len(must_up_goods))
-        print('optional_up_goods',len(optional_up_goods))
-        for goods in must_up_goods:
-            goods.append(None)
-        for index,goods in enumerate(optional_up_goods):
-            goods.append(index+1)
-        must_up_goods = [tuple(goods) for goods in must_up_goods]
-        optional_up_goods = [tuple(goods) for goods in optional_up_goods]
-
-        # print('must_up_goods', must_up_goods)
-        print()
-        # print('optional_up_goods', optional_up_goods)
-
+        # # 2、计算新增品
+        # must_up_goods_len = math.ceil(all_goods_len * 0.03)
+        # all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
+        # structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
+        # for data in all_structure_goods_list:
+        #     if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
+        #         data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
+        #         structure_goods_list.append(data)
+        #
+        # quick_seller_list = []     # 该店没有的畅销品，并且可订货
+        # for data in all_quick_seller_list:
+        #     if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_list:
+        #         data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
+        #         quick_seller_list.append(data)
+        #
+        # candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
+        # # candidate_up_goods_list = list(set(candidate_up_goods_list))
+        # print('structure_goods_list',len(structure_goods_list))
+        # print('quick_seller_list',len(quick_seller_list))
+        #
+        # must_up_goods = candidate_up_goods_list[:must_up_goods_len]
+        # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
+        # # 以下4行时添加ranking的值
+        # print('must_up_goods',len(must_up_goods))
+        # print('optional_up_goods',len(optional_up_goods))
+        # for goods in must_up_goods:
+        #     goods.append(None)
+        # for index,goods in enumerate(optional_up_goods):
+        #     goods.append(index+1)
+        # must_up_goods = [tuple(goods) for goods in must_up_goods]
+        # optional_up_goods = [tuple(goods) for goods in optional_up_goods]
+        #
+        # # print('must_up_goods', must_up_goods)
+        # print()
+        # # print('optional_up_goods', optional_up_goods)
+        #
 
 
 
@@ -528,7 +567,7 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    f = DailyChangeGoods(1284, "3955,3779,1925,4076,1924",'lishu_test_002')
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924",'lishu_test_002')
     # data = first_choose_goods.recommend()
     # # data = add_goods.get_third_category_list()
     # print('最终增品',data)
