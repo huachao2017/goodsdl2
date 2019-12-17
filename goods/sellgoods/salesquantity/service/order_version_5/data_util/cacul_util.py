@@ -3,9 +3,11 @@ from goods.sellgoods.salesquantity.service.order_version_5.data_util.goods_info 
 from goods.sellgoods.salesquantity.local_util.config_table_util import ConfigTableUtil
 from goods.sellgoods.salesquantity.bean import goods_config_disnums,goods_config_safedays
 from goods.sellgoods.salesquantity.bean import taskflow
+from goods.sellgoods.salesquantity.local_util import order_nums_util
 import math
 import demjson
 import time
+import traceback
 def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins = SalesOrder()
     sales_order_ins.shopid = shop_id
@@ -59,7 +61,7 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     return sales_order_ins
 
 
-def get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id,result):
+def get_goods_batch_order_data(batch_id,sales_order_inss,result):
     jsondata = []
     for sales_order_ins in sales_order_inss:
         data_dict = {}
@@ -73,28 +75,40 @@ def get_goods_batch_order_data(batch_id,sales_order_inss,uc_shop_id,result):
         data_dict['shelf_order_info'] = sales_order_ins.shelf_order_info
         jsondata.append(data_dict)
     order_data = demjson.encode(jsondata)
-    order_all_data = get_order_all_data(result,sales_order_inss)
+    order_all_data,dsshopid_selectbatch = get_order_all_data(result,sales_order_inss,batch_id)
     create_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     update_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
-    return [(batch_id,order_data,create_time,update_time,uc_shop_id,order_all_data)]
+    return [(batch_id,order_data,create_time,update_time,order_all_data,dsshopid_selectbatch)]
 
 
-def get_order_all_data(result,sales_order_inss):
+
+
+def get_order_all_data(result,sales_order_inss,batch_id):
     jsondata=[]
     print("订货数,门店id,门店名称,商品id,upc,商品名称,"
           "一级分类,二级分类,三级分类,face数,陈列规格,"
           "模板店4周预估psd,模板店4周预估psd金额,配送单位,最小陈列数,"
           "最大陈列数,门店库存,仓库库存,配送类型,保质期,"
           "起订量,在途订货数,进货价,商品单价,开店以来单天最大psd数量,"
-          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,是否是新品,"
+          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,品的生命周期:0首次1新品2旧品,"
           "7天平均废弃率,7天平均废弃后毛利率,7天平均废弃量,周1-5平均psd数量,周6-7平均psd数量,2周的psd数量,2周小类的psd数量")
+    dsshopid_selectbatch = {}
     for mch_code in result:
         mch_goods_dict = {}
         drg_ins = result[mch_code]
+        dsshopid_selectbatch[drg_ins.dmstoreshop_id] = drg_ins.select_batch_no
         order_sale = 0
         for sales_order_ins in sales_order_inss:
             if drg_ins.upc == sales_order_ins.upc:
                 order_sale = sales_order_ins.order_sale
+
+        # 更新选品表，订货次数
+        try:
+            if "testabc" not in batch_id:  # 特殊订单测试，用于线上 不更新订货次数
+                order_nums_util.cal_order_nums2(drg_ins.dmstoreshop_id,drg_ins.select_batch_no,drg_ins.upc)
+        except Exception as e:
+            print ("update 选品历史表失败 ，{}-{}-{} ".format(drg_ins.dmstoreshop_id,drg_ins.select_batch_no,drg_ins.upc))
+            traceback.print_exc()
         mch_goods_dict['order_sale'] = order_sale
         mch_goods_dict['ucshop_id'] = drg_ins.ucshop_id
         mch_goods_dict['shop_name'] = drg_ins.shop_name
@@ -123,7 +137,7 @@ def get_order_all_data(result,sales_order_inss):
         mch_goods_dict['oneday_max_psd'] = math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)
         mch_goods_dict['upc_psd_amount_avg_4'] = float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)
         mch_goods_dict['upc_psd_amount_avg_1'] = float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)
-        mch_goods_dict['up_status'] = drg_ins.up_status
+        mch_goods_dict['upc_status_type'] = drg_ins.upc_status_type
         mch_goods_dict['loss_avg'] = drg_ins.loss_avg
         mch_goods_dict['loss_avg_profit_amount'] = drg_ins.loss_avg_profit_amount
         mch_goods_dict['loss_avg_nums'] = drg_ins.loss_avg_nums
@@ -145,15 +159,13 @@ def get_order_all_data(result,sales_order_inss):
                  str(drg_ins.start_sum), str(drg_ins.sub_count), str(drg_ins.purchase_price), str(drg_ins.upc_price),
                  str(math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)),
                  str(drg_ins.max_scale), str(float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),
-                 str(float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)), str(drg_ins.up_status),
+                 str(float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)), str(drg_ins.upc_status_type),
                  str(drg_ins.loss_avg),str(drg_ins.loss_avg_profit_amount),str(drg_ins.loss_avg_nums),
                  str(float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)),str(float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)),
                  str(float(drg_ins.psd_nums_2)),str(float(drg_ins.psd_nums_2_cls))))
         jsondata.append(mch_goods_dict)
     order_all_data = demjson.encode(jsondata)
-    return order_all_data
-
-
+    return order_all_data,dsshopid_selectbatch
 
 def data_process(shop_id,shop_type):
     result = get_shop_order_goods(shop_id, shop_type)
@@ -180,7 +192,6 @@ def data_process(shop_id,shop_type):
     #     print ("任务执行的一个周期内， 没有安全天数的 修订... ")
     # else:
     #     config_ins.insert_many_safedays(data2)
-
     return result
 
 #

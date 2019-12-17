@@ -22,21 +22,27 @@ def generate(shop_id = None,order_type=None):
             drg_ins = result[mch_code]
             order_sale = 0
             if drg_ins.delivery_type == 2:
-                shelf_up_date = drg_ins.up_shelf_date
-                end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-                time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
-                time2 = time.mktime(time.strptime(end_date, '%Y-%m-%d'))
-                days = int((time2 - time1) / (24 * 60 * 60))
-                if drg_ins.up_status == 1 and days <= 28: # 新品
-                    # print ("规则1 ：psd 数量 与 最小最大陈列量 起订量")
+                if drg_ins.upc_status_type == 0:# 首次订货
                     if drg_ins.psd_nums_4 > 0:
-                        x = drg_ins.psd_nums_4 * 2.5  + drg_ins.min_disnums
+                        x = drg_ins.psd_nums_4 * 2.5 + drg_ins.min_disnums
                     else:
                         x = 0
-                    y = min(drg_ins.max_disnums,drg_ins.min_disnums * 2)
-                    order_sale = max(x,y,drg_ins.start_sum)
-                    if drg_ins.delivery_type == 2: #非日配
-                        order_sale = order_sale - drg_ins.stock - drg_ins.sub_count  - drg_ins.supply_stock
+                    y = min(drg_ins.max_disnums, drg_ins.min_disnums * 2)
+                    order_sale = max(x, y, drg_ins.start_sum)
+                    if drg_ins.delivery_type == 2:  # 非日配
+                        order_sale = order_sale - drg_ins.stock - drg_ins.sub_count - drg_ins.supply_stock
+                elif drg_ins.upc_status_type == 1: # 新品
+                    if drg_ins.psd_nums_4 > 0:
+                        x = drg_ins.psd_nums_4 * 2.5 + drg_ins.min_disnums
+                    else:
+                        x = 0
+                    y = min(drg_ins.max_disnums, drg_ins.min_disnums * 2)
+                    a = max(x, y, drg_ins.start_sum)
+                    if math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price) < a:
+                        order_sale = a
+                    else:
+                        order_sale = math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price) + drg_ins.min_disnums
+                    order_sale = order_sale - drg_ins.stock - drg_ins.sub_count - drg_ins.supply_stock
                 else:
                     safe_stock = max(drg_ins.min_disnums,math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price), math.ceil(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
                     track_stock =int(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price * 2.5) + safe_stock
@@ -47,21 +53,10 @@ def generate(shop_id = None,order_type=None):
                     drg_ins.min_disnums = 1
                 else:
                     drg_ins.min_disnums = 2
-                # 判断该品是否为新品   TODO  目前线上数据不稳定，先暂时都按新店期订货 ，之后放开注释逻辑
-                isnew_status = 0
-                shelf_up_date = drg_ins.up_shelf_date
-                end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-                time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
-                time2 = time.mktime(time.strptime(end_date,'%Y-%m-%d'))
-                days = int((time2 - time1)/(24*60*60))
-                if drg_ins.storage_day >=30  and days <= 14:
-                    isnew_status = 1
-                elif drg_ins.storage_day <30 and days <= 7:
-                    isnew_status = 1
-                drg_ins.up_status = isnew_status
-                # drg_ins.up_status = 1
+                # 判断该品是否为新品  TODO 设置为新品期
+                # drg_ins.upc_status_type = 1
                 # 如果是新品， 订货规则
-                if drg_ins.up_status ==1 :
+                if drg_ins.upc_status_type ==1 or drg_ins.upc_status_type ==0 :
                     psd_nums_2 = 2
                     if drg_ins.psd_nums_2 != 0:
                         psd_nums_2 = drg_ins.psd_nums_2

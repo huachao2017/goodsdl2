@@ -16,7 +16,7 @@ def generate(shop_id = None):
           "模板店4周预估psd,模板店4周预估psd金,最小陈列数,"
           "最大陈列数,门店库存,仓库库存,配送类型,保质期,"
           "起订量,在途订货数,进货价,商品单价,开店以来单天最大psd数量,"
-          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,是否是新品,安全天数")
+          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,品生命周期,安全天数")
     for mch_code  in result:
         drg_ins = result[mch_code]
         order_sale = 0
@@ -33,7 +33,7 @@ def generate(shop_id = None):
                 str(drg_ins.psd_nums_4),str(drg_ins.psd_amount_4),str(drg_ins.min_disnums),
                 str(drg_ins.max_disnums),str(drg_ins.stock),str(drg_ins.supply_stock),str(drg_ins.delivery_type),str(drg_ins.storage_day),
                 str(drg_ins.start_sum),str(drg_ins.sub_count),str(drg_ins.purchase_price),str(drg_ins.upc_price),str(math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)),
-                str(drg_ins.max_scale),str(float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),str(float(drg_ins.upc_psd_amount_avg_1/drg_ins.upc_price)),str(drg_ins.up_status),str(drg_ins.safe_day_nums),
+                str(drg_ins.max_scale),str(float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),str(float(drg_ins.upc_psd_amount_avg_1/drg_ins.upc_price)),str(drg_ins.upc_status_type),str(drg_ins.safe_day_nums),
                        ))
 
 if __name__=="__main__":
