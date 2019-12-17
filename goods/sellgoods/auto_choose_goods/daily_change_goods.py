@@ -291,6 +291,7 @@ class DailyChangeGoods:
                     temp_amount += goods[0]
                     # if temp_amount > float(amount) * self.ab_ratio:
                     if temp_amount > float(amount) * 1:
+                        print('不可能！！')
                         break
                     # ab_quick_seller_list.append(goods)  # 遇到边界少选策略,neighbor_goods_id
                 category_protect_goods_list.extend(ab_quick_seller_list)
@@ -435,7 +436,7 @@ class DailyChangeGoods:
         category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
         print('本店已有三级分类', len(category_03_list),sorted(category_03_list))
         not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list)
-        print("本店保护品len",len(not_move_goods_mch_code_list))
+        print("本店保护品len",len(not_move_goods_mch_code_list),not_move_goods_mch_code_list)
 
 
         # 1.4、遍历货架,得出下架品、不动品和可选下架品
