@@ -342,24 +342,14 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         # 获取商品的上架时间
                         try:
                             cursor_ai.execute(
-                                "select DATE_FORMAT(up_shelf_date,'%Y-%m-%d') as upshelf_date from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
+                                "select DATE_FORMAT(up_shelf_date,'%Y-%m-%d') as upshelf_date,is_new_goods from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
                                     uc_shopid, upc))
-                            (up_shelf_date,) = cursor_ai.fetchone()
+                            (up_shelf_date,up_status) = cursor_ai.fetchone()
                             up_shelf_date = str(up_shelf_date)
                             print('ai找到商品上架时间 :{}-{}-{}！'.format(uc_shopid, upc,up_shelf_date))
                         except:
                             # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
                             up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-
-                        # 获取商品的订货次数 读选品表
-                        try:
-                            cursor_ai.execute(
-                                "select order_number,is_new_goods from goods_goodsselectionhistory where batch_id='{}' and shopid={} and upc='{}' and code={}".format(
-                                    select_batch_no,shopid,upc,mch_code))
-                            (upc_order_number,up_status) = cursor_ai.fetchone()
-                        except:
-                            print ("ai 选品表找不到商品的order_number,upc={},shopid={},batch_id={},code={}".format(upc,shopid,select_batch_no,mch_code))
-                            upc_order_number = 0
                             up_status = 1
                         # TODO 获取bi 数据库 ， 品的psd金额   mch_id  dmstore_shopid  goods_code
                         upc_psd_amount_avg_1 = 0
@@ -484,7 +474,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      psd_amount_2=psd_amount_2,psd_nums_2_cls=psd_nums_2_cls, psd_amount_2_cls=psd_nums_2_cls,
                                                      upc_psd_amount_avg_1_5 = upc_psd_amount_avg_1_5,upc_psd_amount_avg_6_7 = upc_psd_amount_avg_6_7, loss_avg = loss_avg,
                                                      loss_avg_profit_amount = loss_avg_profit_amount, loss_avg_amount = loss_avg_amount,loss_avg_nums=loss_avg_nums,
-                                                     upc_order_number=upc_order_number,select_batch_no=select_batch_no)
+                                                     )
     cursor.close()
     cursor_dmstore.close()
     cursor_erp.close()
@@ -493,6 +483,27 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
         cursor_bi.close()
     procee_max_disnums(ret)
     return ret
+
+def get_taizhang(uc_shopid,cursor):
+    # 获取台账 TODO 只能获取店相关的台账，不能获取商家相关的台账
+    cursor.execute(
+        "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {}".format(
+            uc_shopid))
+    status1_taizhangs = cursor.fetchall()  #计划执行的台账
+
+    cursor.execute(
+        "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=2 and st.shop_id = {}".format(
+            uc_shopid))
+    status2_taizhangs = cursor.fetchall() #执行中的台账 （一个店只会有一份）
+
+    cursor.execute(
+        "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=3 and st.shop_id = {}".format(
+            uc_shopid))
+    status3_taizhangs = cursor.fetchall() # 执行完成的台账
+
+
+
+
 
 # 最大陈列量做处理
 def procee_max_disnums(ret):
@@ -506,8 +517,8 @@ class DataRawGoods():
                  storage_day=None,shelf_inss=None,shop_name=None,uc_shopid =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
                  up_status=None,sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None,
                  psd_nums_4=None, psd_amount_4=None,max_scale=None,oneday_max_psd = None ,psd_nums_2=None, psd_amount_2=None,psd_nums_2_cls=None, psd_amount_2_cls=None,
-                 upc_psd_amount_avg_1_5= None, upc_psd_amount_avg_6_7 = None, loss_avg = None,loss_avg_profit_amount = None, loss_avg_amount = None,loss_avg_nums = None,
-                 upc_order_number = None,select_batch_no=None):
+                 upc_psd_amount_avg_1_5= None, upc_psd_amount_avg_6_7 = None, loss_avg = None,loss_avg_profit_amount = None, loss_avg_amount = None,loss_avg_nums = None
+                 ):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -519,10 +530,6 @@ class DataRawGoods():
         self.display_code = corp_classify_code # FIXME 需要修订为真实陈列分类
         self.spec = spec
         self.volume = volume
-        if select_batch_no is None:
-            self.select_batch_no = ''
-        else:
-            self.select_batch_no = select_batch_no
         if width is None:
             self.width = 0
         else:
@@ -685,10 +692,6 @@ class DataRawGoods():
         self.shelf_inss = new_shelf_inss
         self.max_disnums = max_disnums
         self.min_disnums = min_disnums
-        if upc_order_number is None:
-            self.upc_order_number = 0
-        else:
-            self.upc_order_number = upc_order_number
         try:
             if storage_day is not None and int(storage_day) > 0:
                 self.storage_day = storage_day
@@ -720,16 +723,16 @@ class DataRawGoods():
         #         self.upc_status_type = 2
         # 临时判断商品的生命周期 ， 只用上架时间和保质期 判断
         if self.delivery_type == 2: # 非日配
-            if days <=5:
+            if days <=5 and self.up_status ==1:
                 self.upc_status_type = 0
-            elif days >5 and days <= 28:
+            elif days >5 and days <= 28 and self.up_status ==1:
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2
         else:
-            if days <=5:
+            if days <=5 and self.up_status ==1:
                 self.upc_status_type = 0
-            elif (self.storage_day >= 30 and days <= 14) or (self.storage_day < 30 and days <= 7):
+            elif (self.storage_day >= 30 and days <= 14) or (self.storage_day < 30 and days <= 7) and self.up_status ==1:
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2

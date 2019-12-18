@@ -200,7 +200,6 @@ def save_data(data,batch_id,uc_shopid):
 
     # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
     insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
-    delete_sql = "delete from goods_firstgoodsselection where shopid={}"
     delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
     select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
     try:
@@ -264,9 +263,9 @@ def start_choose_goods(batch_id,uc_shopid,pos_shopid):
     a = get_data(pos_shopid, '88')
     print("uc_shopid,pos_shopid",uc_shopid,pos_shopid)
     # a = storage_day_choose(a)
-    c = choose_goods(a)
+    # c = choose_goods(a)
     # c = check_order(c)
-    save_data(c,batch_id,uc_shopid)
+    save_data(a,batch_id,uc_shopid)
 
 
 

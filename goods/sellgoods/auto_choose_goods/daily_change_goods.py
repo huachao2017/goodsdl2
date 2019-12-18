@@ -463,11 +463,11 @@ class DailyChangeGoods:
                     # print('有销量即为不动的品')
                     temp_optional_out_goods.append([None, data['goods_upc'],None, sales_goods_mch_code_dict[data['mch_goods_code']][0],data['mch_goods_code'], None, data['name'], 0, 0, 0])
                 else:       # 剩下没销量的为可选下架品的第一优先级
-                    optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, 1))  # FIXME 分类code为空
+                    optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, 10000))  # FIXME 分类code为空
 
-        temp_optional_out_goods.sort(key=lambda x: x[3], reverse=False)  # 基于psd金额排序
+        temp_optional_out_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
         for index,goods in enumerate(temp_optional_out_goods):
-            goods.append(index+2)
+            goods.append(index+1)
             optional_out_goods.append(tuple(goods))
 
 
@@ -477,7 +477,7 @@ class DailyChangeGoods:
         structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
             if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
-                data.extend([1,0,0])       # is_structure,is_qiuck_seller,is_relation
+                data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
                 structure_goods_list.append(data)
 
         quick_seller_list = []     # 该店没有的畅销品，并且可订货
@@ -530,8 +530,11 @@ class DailyChangeGoods:
         print('optional_up_goods',len(optional_up_goods))
         for goods in must_up_goods:
             goods.append(None)
+
+        optional_up_goods.sort(key=lambda x: x[3], reverse=False)  # 基于psd金额排序
         for index,goods in enumerate(optional_up_goods):
             goods.append(index+1)
+
         must_up_goods = [tuple(goods) for goods in must_up_goods]
         optional_up_goods = [tuple(goods) for goods in optional_up_goods]
 
@@ -559,13 +562,14 @@ class DailyChangeGoods:
 
         print(not_move_goods[:10])
 
-        self.save_data(not_move_goods, 0, 2, None)
-        self.save_data(must_out_goods, 0, 1, None)
-        self.save_data(optional_out_goods, 0, 0, None)
-        self.save_data(must_up_goods, 1, None, 1)
-        self.save_data(optional_up_goods, 1, None, 0)
+        self.save_data(not_move_goods, 0)
+        self.save_data(must_out_goods, 2)
+        self.save_data(optional_out_goods,4)
+        self.save_data(must_up_goods, 1)
+        self.save_data(optional_up_goods, 3)
 
-    def save_data(self,data,is_new_goods,goods_out_status,goods_add_status):
+    def save_data(self,data,goods_role):
+    # def save_data(self,data,is_new_goods,goods_out_status,goods_add_status):
         """
         保存选品的数据
         :param batch_id: 批次号
@@ -581,21 +585,21 @@ class DailyChangeGoods:
         cursor = conn.cursor()
 
         # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
-        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,is_new_goods,goods_out_status,goods_add_status,is_structure,is_qiuck_seller,is_relation,ranking) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},{},{},%s,%s,%s,%s)"
-        delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and is_new_goods={} and goods_out_status={} and goods_add_status={}"
-        select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and is_new_goods={} and goods_out_status={} and goods_add_status={}"
+        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,goods_role,is_structure,is_qiuck_seller,is_relation,ranking) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},%s,%s,%s,%s)"
+        delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
+        select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
         # try:
         print('batch_id', self.batch_id, type(self.batch_id))
         print('len',len(tuple_data))
-        cursor.execute(select_sql.format(self.uc_shopid, self.batch_id,is_new_goods,goods_out_status,goods_add_status).replace('=None', ' is NULL'))  # 查询有该批次，没有的话，插入，有的话，先删再插入
+        cursor.execute(select_sql.format(self.uc_shopid, self.batch_id,goods_role).replace('=None', ' is NULL'))  # 查询有该批次，没有的话，插入，有的话，先删再插入
         # print('history_batch_id', history_batch_id,type(history_batch_id))
         if cursor.fetchone():
-            cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id,is_new_goods,goods_out_status,goods_add_status).replace('=None', ' is NULL'))
+            cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id,goods_role).replace('=None', ' is NULL'))
             print("删掉{}该批次之前的数据".format(self.batch_id))
         print('开始入库')
         # print(insert_sql_02)
         print(tuple_data[:5])
-        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,is_new_goods,goods_out_status,goods_add_status).replace('None', 'NULL'), tuple_data[:])
+        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,goods_role).replace('None', 'NULL'), tuple_data[:])
         conn.commit()
         conn.close()
         print('ok')
