@@ -350,16 +350,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         except:
                             # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
                             up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-
-                        # 获取商品的订货次数 读选品表
-                        try:
-                            cursor_ai.execute(
-                                "select order_number,is_new_goods from goods_goodsselectionhistory where batch_id='{}' and shopid={} and upc='{}' and code={}".format(
-                                    select_batch_no,shopid,upc,mch_code))
-                            (upc_order_number,is_new_goods) = cursor_ai.fetchone()
-                        except:
-                            print ("ai 选品表找不到商品的order_number,upc={},shopid={},batch_id={},code={}".format(upc,shopid,select_batch_no,mch_code))
-                            upc_order_number = 0
                             up_status = 1
                         # TODO 获取bi 数据库 ， 品的psd金额   mch_id  dmstore_shopid  goods_code
                         upc_psd_amount_avg_1 = 0
@@ -484,7 +474,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      psd_amount_2=psd_amount_2,psd_nums_2_cls=psd_nums_2_cls, psd_amount_2_cls=psd_nums_2_cls,
                                                      upc_psd_amount_avg_1_5 = upc_psd_amount_avg_1_5,upc_psd_amount_avg_6_7 = upc_psd_amount_avg_6_7, loss_avg = loss_avg,
                                                      loss_avg_profit_amount = loss_avg_profit_amount, loss_avg_amount = loss_avg_amount,loss_avg_nums=loss_avg_nums,
-                                                     upc_order_number=upc_order_number,select_batch_no=select_batch_no)
+                                                     )
     cursor.close()
     cursor_dmstore.close()
     cursor_erp.close()
@@ -527,8 +517,8 @@ class DataRawGoods():
                  storage_day=None,shelf_inss=None,shop_name=None,uc_shopid =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
                  up_status=None,sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None,
                  psd_nums_4=None, psd_amount_4=None,max_scale=None,oneday_max_psd = None ,psd_nums_2=None, psd_amount_2=None,psd_nums_2_cls=None, psd_amount_2_cls=None,
-                 upc_psd_amount_avg_1_5= None, upc_psd_amount_avg_6_7 = None, loss_avg = None,loss_avg_profit_amount = None, loss_avg_amount = None,loss_avg_nums = None,
-                 upc_order_number = None,select_batch_no=None):
+                 upc_psd_amount_avg_1_5= None, upc_psd_amount_avg_6_7 = None, loss_avg = None,loss_avg_profit_amount = None, loss_avg_amount = None,loss_avg_nums = None
+                 ):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -540,10 +530,6 @@ class DataRawGoods():
         self.display_code = corp_classify_code # FIXME 需要修订为真实陈列分类
         self.spec = spec
         self.volume = volume
-        if select_batch_no is None:
-            self.select_batch_no = ''
-        else:
-            self.select_batch_no = select_batch_no
         if width is None:
             self.width = 0
         else:
@@ -706,10 +692,6 @@ class DataRawGoods():
         self.shelf_inss = new_shelf_inss
         self.max_disnums = max_disnums
         self.min_disnums = min_disnums
-        if upc_order_number is None:
-            self.upc_order_number = 0
-        else:
-            self.upc_order_number = upc_order_number
         try:
             if storage_day is not None and int(storage_day) > 0:
                 self.storage_day = storage_day
