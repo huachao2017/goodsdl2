@@ -32,9 +32,11 @@ def generate_workflow_displays(uc_shopid, batch_id):
                 uc_shopid))
         taizhangs = cursor.fetchall()
     except:
+        traceback.print_exc()
         print('获取台账失败：{}！'.format(uc_shopid))
         raise ValueError('taizhang error:{}'.format(uc_shopid))
-    cursor.close()
+    finally:
+        cursor.close()
 
     # 计算陈列
     taizhang_display_list = []
