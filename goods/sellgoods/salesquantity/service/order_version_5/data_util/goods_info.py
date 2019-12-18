@@ -342,9 +342,9 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         # 获取商品的上架时间
                         try:
                             cursor_ai.execute(
-                                "select DATE_FORMAT(up_shelf_date,'%Y-%m-%d') as upshelf_date from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
+                                "select DATE_FORMAT(up_shelf_date,'%Y-%m-%d') as upshelf_date,is_new_goods from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
                                     uc_shopid, upc))
-                            (up_shelf_date,) = cursor_ai.fetchone()
+                            (up_shelf_date,up_status) = cursor_ai.fetchone()
                             up_shelf_date = str(up_shelf_date)
                             print('ai找到商品上架时间 :{}-{}-{}！'.format(uc_shopid, upc,up_shelf_date))
                         except:
@@ -356,7 +356,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             cursor_ai.execute(
                                 "select order_number,is_new_goods from goods_goodsselectionhistory where batch_id='{}' and shopid={} and upc='{}' and code={}".format(
                                     select_batch_no,shopid,upc,mch_code))
-                            (upc_order_number,up_status) = cursor_ai.fetchone()
+                            (upc_order_number,is_new_goods) = cursor_ai.fetchone()
                         except:
                             print ("ai 选品表找不到商品的order_number,upc={},shopid={},batch_id={},code={}".format(upc,shopid,select_batch_no,mch_code))
                             upc_order_number = 0
@@ -493,6 +493,27 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
         cursor_bi.close()
     procee_max_disnums(ret)
     return ret
+
+def get_taizhang(uc_shopid,cursor):
+    # 获取台账 TODO 只能获取店相关的台账，不能获取商家相关的台账
+    cursor.execute(
+        "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {}".format(
+            uc_shopid))
+    status1_taizhangs = cursor.fetchall()  #计划执行的台账
+
+    cursor.execute(
+        "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=2 and st.shop_id = {}".format(
+            uc_shopid))
+    status2_taizhangs = cursor.fetchall() #执行中的台账 （一个店只会有一份）
+
+    cursor.execute(
+        "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=3 and st.shop_id = {}".format(
+            uc_shopid))
+    status3_taizhangs = cursor.fetchall() # 执行完成的台账
+
+
+
+
 
 # 最大陈列量做处理
 def procee_max_disnums(ret):
@@ -720,16 +741,16 @@ class DataRawGoods():
         #         self.upc_status_type = 2
         # 临时判断商品的生命周期 ， 只用上架时间和保质期 判断
         if self.delivery_type == 2: # 非日配
-            if days <=5:
+            if days <=5 and self.up_status ==1:
                 self.upc_status_type = 0
-            elif days >5 and days <= 28:
+            elif days >5 and days <= 28 and self.up_status ==1:
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2
         else:
-            if days <=5:
+            if days <=5 and self.up_status ==1:
                 self.upc_status_type = 0
-            elif (self.storage_day >= 30 and days <= 14) or (self.storage_day < 30 and days <= 7):
+            elif (self.storage_day >= 30 and days <= 14) or (self.storage_day < 30 and days <= 7) and self.up_status ==1:
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2
