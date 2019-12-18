@@ -495,7 +495,7 @@ class DailyChangeGoods:
         # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
 
         # 非日配选出来
-        delivery_type_sql = "select delivery_type from uc_merchant_goods where mch_goods_code='{}';"
+        delivery_type_sql = "select delivery_type from uc_merchant_goods where mch_goods_code='{}' and delivery_type is not NULL;"
         conn_ucenter = connections['ucenter']
         cursor_ucenter = conn_ucenter.cursor()
 
@@ -512,9 +512,11 @@ class DailyChangeGoods:
                 elif delivery_type == 1:
                     pass
                 else:
-                    send_message('pos店号为{}的店，获取mch_goods_code为{}的日配类型（delivery_type）异常：{}'.format(self.shop_id, goods[4],delivery_type), 1)
+                    print("怎么回事？")
+                    # send_message('pos店号为{}的店，获取mch_goods_code为{}的日配类型（delivery_type）异常：{}'.format(self.shop_id, goods[4],delivery_type), 1)
             except:
-                send_message('pos店号为{}的店，获取不到mch_goods_code为{}的日配类型（delivery_type）'.format(self.shop_id,goods[4]), 1)
+                print("怎么回事222？")
+                # send_message('pos店号为{}的店，获取不到mch_goods_code为{}的日配类型（delivery_type）'.format(self.shop_id,goods[4]), 1)
             temp_number += 1
         optional_up_goods = candidate_up_goods_list[temp_number:]
 
