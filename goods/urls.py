@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 
-from goods import views,views_shelf,views_shelf2,views_sellgoods, views_display, views_arm
+from goods import views,views_shelf,views_shelf2, views_display, views_arm
 
 router = DefaultRouter()
 
@@ -40,7 +40,7 @@ urlpatterns = [
     url(r'^api/detect_shelfimage', views_shelf.DetectShelfImage.as_view()),
     url(r'^api/createshelfimage2', views_shelf2.CreateShelfImage.as_view()),
     url(r'^api/rectifyshelfimage2', views_shelf2.RectifyShelfImage.as_view()),
-    url(r'^api/notify_generate_shop_add', views_sellgoods.SellGoodsViewSet.as_view()),
+    # url(r'^api/notify_generate_shop_add', views_sellgoods.SellGoodsViewSet.as_view()),
     url(r'^api/autoDisplay', views_display.AutoDisplay.as_view()),
     url(r'^api/beginselectgoods', views.BeginSelectGoods.as_view()),
     url(r'^api/beginautodisplay', views.BeginAutoDisplay.as_view()),
