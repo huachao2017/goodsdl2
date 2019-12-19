@@ -3,12 +3,11 @@
 初始化陈列相关的台账、货架、指定分类数据，最终生成初始化好的taizhang_display对象
 """
 
-
 import json
 
 from django.db import connections
-from goods.models import FirstGoodsSelection
 from goods.shelfdisplay.display_taizhang import TaizhangDisplay, Shelf
+
 
 def init_base_data(uc_shopid, batch_id):
     """
@@ -28,7 +27,9 @@ def init_base_data(uc_shopid, batch_id):
 
     # category_area_ratio: 分类陈列面积比例表
     base_data.category_area_ratio = {}
-    cursor.execute("select a.cat_id,a.ratio from sf_goods_categoryarearatio as a, sf_goods_shoptoshoptype as b where a.mch_id=b.mch_id and a.shop_type=b.shop_type and b.shop_id={}".format(uc_shopid))
+    cursor.execute(
+        "select a.cat_id,a.ratio from sf_goods_categoryarearatio as a, sf_goods_shoptoshoptype as b where a.mch_id=b.mch_id and a.shop_type=b.shop_type and b.shop_id={}".format(
+            uc_shopid))
     all_category_area_ratio = cursor.fetchall()
     for one in all_category_area_ratio:
         base_data.category_area_ratio[one[0]] = one[1]
@@ -48,7 +49,9 @@ def init_base_data(uc_shopid, batch_id):
         base_data.category3_level_value[one[0]] = one[1]
 
     # 获取选品数据
-    cursor_default.execute("select mch_goods_code, predict_sales_num from goods_goodsselectionhistory where shopid={} and batch_id={}".format(shopid,batch_id))
+    cursor_default.execute(
+        "select mch_goods_code, predict_sales_num, goods_role, ranking from goods_goodsselectionhistory where shopid={} and batch_id={}".format(
+            shopid, batch_id))
     all_selection_goods = cursor_default.fetchall()
 
     # 获取选品详细信息
@@ -62,35 +65,42 @@ def init_base_data(uc_shopid, batch_id):
             continue
         mch_goods_code_list.append(mch_goods_code)
         try:
-            cursor.execute("select id, goods_name,upc, tz_display_img, category1_id, category2_id, category_id, package_type, brand, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(mch_id, mch_goods_code))
-            (goods_id, goods_name, upc, tz_display_img, category1_id, category2_id, category3_id, package_type, brand, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
+            cursor.execute(
+                "select id, goods_name,upc, tz_display_img, category1_id, category2_id, category_id, package_type, brand, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                    mch_id, mch_goods_code))
+            (goods_id, goods_name, upc, tz_display_img, category1_id, category2_id, category3_id, package_type, brand,
+             width, height, depth, is_superimpose, is_suspension) = cursor.fetchone()
             # TODO 需要获取四级分类的数据
         except:
             not_found_goods += 1
             continue
 
         base_data.goods_data_list.append(GoodsData(mch_goods_code,
-                             goods_name,
-                             upc,
-                             tz_display_img,
-                             category1_id,
-                             category2_id,
-                             category3_id,
-                             None,
-                             package_type,
-                             brand,
-                             width,
-                             height,
-                             depth,
-                             is_superimpose,
-                             is_suspension,
-                             selection_goods[1]))
+                                                   goods_name,
+                                                   upc,
+                                                   tz_display_img,
+                                                   category1_id,
+                                                   category2_id,
+                                                   category3_id,
+                                                   None,
+                                                   package_type,
+                                                   brand,
+                                                   width,
+                                                   height,
+                                                   depth,
+                                                   is_superimpose,
+                                                   is_suspension,
+                                                   selection_goods[1],
+                                                   selection_goods[2],
+                                                   selection_goods[3]
+                                                   ))
 
     print('台账找不到选品表的商品共有:{}个！'.format(not_found_goods))
     cursor.close()
     cursor_default.close()
 
     return base_data
+
 
 class BaseData:
     """
@@ -99,14 +109,17 @@ class BaseData:
     category3_level_value: 三级分类层数分值
     goods_data_list: GoodsData列表
     """
+
     def __init__(self):
         self.category_area_ratio = None
         self.category3_intimate_weight = None
         self.category3_level_value = None
         self.goods_data_list = []
 
+
 class GoodsData:
-    def __init__(self, mch_code, goods_name, upc, tz_display_img, category1, category2, category3, category4, package_type, brand, width, height, depth, is_superimpose, is_suspension, psd):
+    def __init__(self, mch_code, goods_name, upc, tz_display_img, category1, category2, category3, category4,
+                 package_type, brand, width, height, depth, is_superimpose, is_suspension, psd, goods_role, ranking):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -125,9 +138,11 @@ class GoodsData:
         self.is_superimpose = is_superimpose  # 1可叠放，2不可叠放
         self.is_suspension = is_suspension  # 1可挂放，2不可挂放
         self.psd = psd  # 预测销量
-        self.face_num = 1 # 在某层陈列时填入
-        self.add_face_num = 0 # 商品不足做扩面处理
-        self.superimpose_num = 1 #在商品初始化时填入
+        self.face_num = 1  # 在某层陈列时填入
+        self.add_face_num = 0  # 商品不足做扩面处理
+        self.superimpose_num = 1  # 在商品初始化时填入
+        self.goods_role = goods_role # 商品的角色类型，0保护品，1上架，2下架，3可选上架，4可选下架'
+        self.ranking = ranking # 该品为可选上下品时的优先级，越大越优先，可重复
 
     def equal(self, another_goods):
         if another_goods is not None:
@@ -140,9 +155,9 @@ class GoodsData:
                    and abs(self.height - another_goods.height) < 5 and abs(self.width - another_goods.width) < 5
         return False
 
-    def height_diff(self,another_goods):
+    def height_diff(self, another_goods):
         if another_goods is not None:
-            return (self.height*self.superimpose_num) - (another_goods.height-another_goods.superimpose_num)
+            return (self.height * self.superimpose_num) - (another_goods.height - another_goods.superimpose_num)
         return 0
 
     def __str__(self):
@@ -203,7 +218,7 @@ def init_display_data(uc_shopid, tz_id, base_data):
             "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_taizhang t where t.id = {}".format(tz_id))
         (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
         if third_cate_ids is None or third_cate_ids == '':
-            raise ValueError('third_cate_ids is None:{},{},{}'.format(taizhang_id,shelf_id,count))
+            raise ValueError('third_cate_ids is None:{},{},{}'.format(taizhang_id, shelf_id, count))
     except:
         print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
         cursor.close()
@@ -262,7 +277,7 @@ def init_display_data(uc_shopid, tz_id, base_data):
 
     if len(shelf_goods_data_list) == 0:
         raise ValueError('no display category:{},{}'.format(uc_shopid, taizhang_id))
-    shelf_goods_data_list.sort(key=lambda x:x.mch_code)
+    shelf_goods_data_list.sort(key=lambda x: x.mch_code)
     for goods_data in shelf_goods_data_list:
         print(goods_data)
 
@@ -275,7 +290,8 @@ def init_display_data(uc_shopid, tz_id, base_data):
         base_data, shelf_category3_list, category3_to_category3_obj)
 
     # 重新计算货架的三级分类比例
-    shelf_category3_area_ratio = calculate_shelf_category3_area_ratio(shelf_category3_list, base_data.category_area_ratio)
+    shelf_category3_area_ratio = calculate_shelf_category3_area_ratio(shelf_category3_list,
+                                                                      base_data.category_area_ratio)
 
     # TODO 需要支持多个货架
     for i in range(count):
@@ -317,6 +333,7 @@ def filter_to_shelf_data(base_data, shelf_category3_list, category3_to_category3
 
     return shelf_category3_intimate_weight, shelf_category3_level_value, shelf_category3_to_category3_obj
 
+
 def calculate_shelf_category3_area_ratio(categoryid_list, category_area_ratio):
     """
     计算出本货架的比例
@@ -328,7 +345,7 @@ def calculate_shelf_category3_area_ratio(categoryid_list, category_area_ratio):
 
     shelf_category3_area_ratio = {}
     total_ratio = 0.0
-    ratio_valid = True #
+    ratio_valid = True  #
     for categoryid in categoryid_list:
         if categoryid not in category_area_ratio:
             ratio_valid = False
@@ -344,8 +361,8 @@ def calculate_shelf_category3_area_ratio(categoryid_list, category_area_ratio):
         for categoryid in categoryid_list:
             shelf_category3_area_ratio[categoryid] = 1 / len(categoryid_list)
 
-
     return shelf_category3_area_ratio
+
 
 class Category3:
     def __init__(self, category3, name, pid, average_height):
@@ -353,4 +370,3 @@ class Category3:
         self.name = name
         self.pid = pid
         self.average_height = average_height
-
