@@ -41,7 +41,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     (erp_resupply_id,) = cursor_dmstore.fetchone()  # 供货商id
 
     # 获取台账和前一天台账中的pin
-    taizhangs,last_tz_upcs = get_taizhang(uc_shopid,shopid)
+    taizhangs,last_tz_upcs = get_taizhang(uc_shopid,shopid,mch_id)
     if taizhangs is None:
         print ("获取订货日台账失败 uc_shopid="+str(uc_shopid))
     shelf_inss = []
@@ -428,7 +428,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     procee_max_disnums(ret)
     return ret
 
-def get_taizhang(uc_shopid,shopid):
+def get_taizhang(uc_shopid,shopid,mch_id):
     """
     取订货日的台账 和 订货日前一天的台账所有的品
     :param uc_shopid:
@@ -489,8 +489,20 @@ def get_taizhang(uc_shopid,shopid):
                     level = level_array[i]
                     goods_level_array = goods_array[i]
                     for goods in goods_level_array:
-                        upc = goods['upc']
-                        if upc != '':
+                        mch_code = goods['mch_goods_code']
+                        try:
+                            cursor.execute(
+                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                    mch_id, mch_code))
+                            # FIXME width,height暂时翻转
+                            # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
+                            (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
+                             is_suspension, delivery_type, category1_id, category2_id, category_id, storage_day,
+                             package_type) = cursor.fetchone()
+                        except:
+                            print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
+                            continue
+                        if upc is None or upc != '':
                             lasttaizhang_upcs.append(upc)
     lasttaizhang_upcs = list(set(lasttaizhang_upcs))
     print ("上版台账upcs = "+str(len(lasttaizhang_upcs)))
