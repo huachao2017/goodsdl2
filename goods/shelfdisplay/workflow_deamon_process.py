@@ -1,6 +1,7 @@
 import time
 import os
 import sys
+import traceback
 import main.import_django_settings
 
 from goods.shelfdisplay.generate_shelf_display import generate_workflow_displays
@@ -37,6 +38,7 @@ if __name__ == "__main__":
                     workflow.auto_display_calculate_time = auto_display_calculate_time
                     workflow.save()
                 except Exception as e:
+                    traceback.print_exc()
                     print('陈列出现错误：{}'.format(e))
                     # 更新workflow
                     workflow.auto_display_status = 4
