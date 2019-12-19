@@ -250,7 +250,7 @@ def init_display_data(uc_shopid, tz_id, base_data):
         cat_id = None
         try:
             cursor.execute(
-                "select cat_id, name, pid from uc_category where mch_id={} and cat_id='{}' and level=3".format(
+                "select cat_id, name, pid from ao_display_category where mch_id={} and cat_id='{}' and level=3".format(
                     mch_id, category3))
             (cat_id, name, pid) = cursor.fetchone()
         except:
