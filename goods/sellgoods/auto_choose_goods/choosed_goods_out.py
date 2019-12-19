@@ -30,7 +30,12 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     select_sql = "select * from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
     cursor_ai.execute(select_sql.format(uc_shopid,batch_id))
     all_data = cursor_ai.fetchall()
-    for data in all_data[:10]:
+    for data in all_data[:]:
+        print()
+        print()
+        if not data[19] in [ 1, 3]:
+            continue
+
         print('data',data)
         "时间,门店id,门店名称,一级分类,二级分类,三级分类,配送类型,商品编码,商品名称,商品upc,策略标签,商品角色	,上品优先级排名,商品实际销售4周预期psd,商品实际销售4周预期psd金额,组内门店4周预期psd	组内门店4周预期psd金额	全店4周预期psd	全店4周预期psd金额"
         line_str = ""    # 一条记录
@@ -101,7 +106,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
         # 商品角色
         goods_role_dict = {0:'保护品',1:'必上',2:'必下',3:'可选上架',4:'可选下架'}
-        if data[19]:
+        if data[19] in [0,1,2,3,4]:
             try:
                 line_str += str(goods_role_dict[data[19]])  # 商品角色
             except:
