@@ -41,7 +41,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     (erp_resupply_id,) = cursor_dmstore.fetchone()  # 供货商id
 
     # 获取台账和前一天台账中的pin
-    taizhangs,last_tz_upcs = get_taizhang(uc_shopid,cursor,shopid)
+    taizhangs,last_tz_upcs = get_taizhang(uc_shopid,shopid)
     if taizhangs is None:
         print ("获取订货日台账失败 uc_shopid="+str(uc_shopid))
     shelf_inss = []
@@ -428,7 +428,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     procee_max_disnums(ret)
     return ret
 
-def get_taizhang(uc_shopid,cursor,shopid):
+def get_taizhang(uc_shopid,shopid):
     """
     取订货日的台账 和 订货日前一天的台账所有的品
     :param uc_shopid:
@@ -437,6 +437,7 @@ def get_taizhang(uc_shopid,cursor,shopid):
     :return:
     """
     # 获取台账
+    cursor = connections['ucenter'].cursor()
     if shopid in config.shellgoods_params['get_goods_days'].keys():
         get_goods_days = config.shellgoods_params['get_goods_days'][shopid]
     else:
@@ -716,4 +717,5 @@ class Shelf:
 
 
 if __name__=='__main__':
-    get_shop_order_goods(1284)
+    ret = get_shop_order_goods(1284)
+    print (len(ret.keys()))
