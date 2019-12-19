@@ -7,7 +7,7 @@ class ConfigTableUtil:
     # goods_config_disnums 表
     def select_all_disnums(self,shop_id):
         cursor_ai = connections['default'].cursor()
-        cursor_ai.execute('select * from goods_config_disnums where shop_id = {}'.format(shop_id))
+        cursor_ai.execute('select id,shop_id,shelf_id,shelf_type,shelf_depth,upc,goods_name,goods_depth,single_face_min_disnums,single_face_max_disnums,create_time,update_time from goods_config_disnums where shop_id = {}'.format(shop_id))
         results = cursor_ai.fetchall()
         disnums_inss = []
         if results != None and len(list(results))> 0:
