@@ -55,7 +55,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         class_type_sql = "select category1_id,category2_id,category_id,delivery_type from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
         cursor_ucenter.execute(class_type_sql.format(data[10]))
         class_type_data = cursor_ucenter.fetchone()
-        # print('分类',data[10],class_type_data)
+        print('分类',data[10],class_type_data)
         try:
             line_str += str(class_type_data[0])  # 一级分类
             line_str += ","
