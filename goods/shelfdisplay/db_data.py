@@ -6,7 +6,8 @@
 import json
 
 from django.db import connections
-from goods.shelfdisplay.display_taizhang import TaizhangDisplay, Shelf
+
+from goods.shelfdisplay.firstdisplay.display_taizhang import TaizhangDisplay, Shelf
 
 
 def init_base_data(uc_shopid, batch_id):

@@ -10,10 +10,11 @@ spu：四级分类、品牌、规格（包装）、尺寸（只选宽和高）�
 根据算法4.1选品和算法4.2商品排列计算所有候选解。
 根据算法4.3打分规则在给每个解打分后，获得最优解。
 """
-import goods.shelfdisplay.goods_arrange_category3
-from goods.shelfdisplay import display_taizhang
-from goods.shelfdisplay import single_algorithm
 import math
+
+import goods.shelfdisplay.firstdisplay.goods_arrange_category3
+from goods.shelfdisplay.firstdisplay import display_taizhang, single_algorithm
+
 
 def goods_arrange(shelf):
     """
@@ -28,7 +29,7 @@ def goods_arrange(shelf):
     categoryid_to_sorted_goods_list = {}
 
     for categoryid in shelf.shelf_category3_list:
-        sorted_goods_list = single_algorithm.choose_goods_for_category3(shelf,categoryid,
+        sorted_goods_list = single_algorithm.choose_goods_for_category3(shelf, categoryid,
                                                                         extra_add=extra_add_num)
         categoryid_to_sorted_goods_list[categoryid] = sorted_goods_list
 
@@ -44,7 +45,7 @@ def goods_arrange(shelf):
     candidate_result_shelf_list = []
     max_goods_combination = 1
     for categoryid in shelf.shelf_category3_list:
-        arrange_goods_list_list = goods.shelfdisplay.goods_arrange_category3.goods_arrange(
+        arrange_goods_list_list = goods.shelfdisplay.firstdisplay.goods_arrange_category3.goods_arrange(
             shelf.categoryid_to_sorted_goods_list[categoryid])
         categoryid_to_arrange_goods_list_list[categoryid] = arrange_goods_list_list
         max_goods_combination *= len(arrange_goods_list_list)

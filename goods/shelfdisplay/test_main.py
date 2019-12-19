@@ -1,9 +1,12 @@
-import os
 import sys
 import argparse
-import main.import_django_settings
 
-from goods.shelfdisplay.generate_shelf_display import generate_displays
+from goods.shelfdisplay.firstdisplay.generate_shelf_display import generate_displays
+import argparse
+import sys
+
+from goods.shelfdisplay.firstdisplay.generate_shelf_display import generate_displays
+
 
 def parse_arguments(argv):
     parser = argparse.ArgumentParser()

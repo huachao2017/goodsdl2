@@ -6,7 +6,9 @@
 3.2、商品在同一分组中且高度差小于10mm并且宽度差大于10mm可交换解输出（此条暂不做）
 """
 import math
-from goods.shelfdisplay import single_algorithm
+
+from goods.shelfdisplay.firstdisplay import single_algorithm
+
 
 def goods_arrange(goods_list):
     """

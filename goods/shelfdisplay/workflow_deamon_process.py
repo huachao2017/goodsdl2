@@ -1,12 +1,8 @@
 import time
-import os
-import sys
 import traceback
-import main.import_django_settings
 
-from goods.shelfdisplay.generate_shelf_display import generate_workflow_displays
 from goods.models import AllWorkFlowBatch
-
+from goods.shelfdisplay.firstdisplay.generate_shelf_display import generate_workflow_displays
 
 # class Logger(object):
 #     def __init__(self, filename="Default.log"):
