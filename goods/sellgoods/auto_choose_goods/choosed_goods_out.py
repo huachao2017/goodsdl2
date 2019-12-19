@@ -33,8 +33,8 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     all_data = cursor_ai.fetchall()
     for data in all_data[:]:
         # print('==================================================')
-        if not data[19] in [ 1, 3]:
-            continue
+        # if not data[19] in [ 1, 3]:
+        #     continue
 
         # print('data',data)
         "时间,门店id,门店名称,一级分类,二级分类,三级分类,配送类型,商品编码,商品名称,商品upc,策略标签,商品角色	,上品优先级排名,商品实际销售4周预期psd,商品实际销售4周预期psd金额,组内门店4周预期psd	组内门店4周预期psd金额	全店4周预期psd	全店4周预期psd金额"
