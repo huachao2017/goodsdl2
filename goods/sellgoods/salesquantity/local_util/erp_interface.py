@@ -9,6 +9,7 @@ import time
 from goods.models import ai_sales_order
 from set_config import config
 
+# 该方式以及废弃 ， 2019-12-05 （自动流程上线后）
 def order_clear(shop_id,erp_shop_type):
     try:
         cursor_dmstore = connections['dmstore'].cursor()
@@ -40,17 +41,13 @@ def order_clear(shop_id,erp_shop_type):
     except Exception as e:
         print('order_clear error:{}'.format(e))
 
-
-
 def order_commit(shopid, erp_shop_type, shop_upc_ordersales,batch_id=None):
-
     try:
         cursor_dmstore = connections['dmstore'].cursor()
         cursor_dmstore.execute('select erp_shop_id from erp_shop_related where shop_id={} and erp_shop_type = {}'.format(shopid,erp_shop_type))
         (erp_shopid,) = cursor_dmstore.fetchone()
         print('店号{}类型{}开始订货'.format(erp_shopid,erp_shop_type))
         cursor_dmstore.close()
-
         create_date = str(time.strftime('%Y-%m-%d', time.localtime()))
         # urltest = "http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}"
         url =  config.shellgoods_params["ms_add_url"]
@@ -59,7 +56,6 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales,batch_id=None):
             "Accept":"application/json",
             "Content-Type":"application/json"
         }
-
         order_data = []
         for one_order in shop_upc_ordersales:
             order_data.append({
@@ -87,24 +83,24 @@ def order_commit(shopid, erp_shop_type, shop_upc_ordersales,batch_id=None):
                 print('order_commit error:{}'.format(e))
                 time.sleep(1)
                 continue
-        # 提交正确加入数据库
-        for one_order in shop_upc_ordersales:
-            ai_sales_order.objects.create(
-                shopid=shopid,
-                upc = one_order.upc,
-                order_sale = one_order.order_sale,
-                predict_sale = one_order.predict_sale,
-                min_stock = one_order.min_stock,
-                max_stock = one_order.max_stock,
-                stock = one_order.stock,
-                create_date = create_date,
-                multiple = one_order.multiple,
-                start_max = one_order.start_max,
-                start_min = one_order.start_min,
-                start_sum = one_order.start_sum,
-                erp_shop_type = one_order.erp_shop_type,
-                goods_name = one_order.goods_name
-            )
+        # # 提交正确加入数据库
+        # for one_order in shop_upc_ordersales:
+        #     ai_sales_order.objects.create(
+        #         shopid=shopid,
+        #         upc = one_order.upc,
+        #         order_sale = one_order.order_sale,
+        #         predict_sale = one_order.predict_sale,
+        #         min_stock = one_order.min_stock,
+        #         max_stock = one_order.max_stock,
+        #         stock = one_order.stock,
+        #         create_date = create_date,
+        #         multiple = one_order.multiple,
+        #         start_max = one_order.start_max,
+        #         start_min = one_order.start_min,
+        #         start_sum = one_order.start_sum,
+        #         erp_shop_type = one_order.erp_shop_type,
+        #         goods_name = one_order.goods_name
+        #     )
     except Exception as e:
         print('order_commit error:{}'.format(e))
 

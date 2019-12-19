@@ -5,16 +5,15 @@
 
 陈列需要批次是因为依赖于选品，选品目前是通过店号和批次去获取
 """
-import goods.shelfdisplay.db_data
-from goods.shelfdisplay import db_data
-from goods.shelfdisplay import display_taizhang
-from goods.models import ShelfDisplayDebug, AllWorkFlowBatch
 import json
-import traceback
 import os
-import time
+import traceback
+
 from django.db import connections
-import requests
+
+from goods.models import ShelfDisplayDebug
+from goods.shelfdisplay import db_data
+
 
 def generate_workflow_displays(uc_shopid, batch_id):
     """
@@ -81,7 +80,7 @@ def generate_displays(uc_shopid, tz_id, batch_id):
 
     try:
         # 初始化台账数据
-        taizhang_display = goods.shelfdisplay.db_data.init_display_data(uc_shopid, tz_id, base_data)
+        taizhang_display = db_data.init_display_data(uc_shopid, tz_id, base_data)
         taizhang_display.display()
         # 打印陈列图
         try:

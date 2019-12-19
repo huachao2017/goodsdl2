@@ -13,8 +13,7 @@ import cv2
 import numpy as np
 from django.conf import settings
 
-from goods.shelfdisplay import goods_arrange
-from goods.shelfdisplay import shelf_arrange
+from goods.shelfdisplay.firstdisplay import goods_arrange, shelf_arrange
 
 
 class TaizhangDisplay:

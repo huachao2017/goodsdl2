@@ -105,11 +105,16 @@ def generate(shop_id = None,order_type=None):
 
             if order_sale <= 0:
                 continue
-            # print ("规则2： 起订量规则")
+
             order_sale = order_rule.rule_start_num2(order_sale,drg_ins.start_sum)
             sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id,shop_type)
             sales_order_ins.order_sale = order_sale
             sales_order_inss.append(sales_order_ins)
+        # 检验日配品的 存储空间
+        print("规则1： 检验日配品前" + str(len(sales_order_inss)))
+        sales_order_inss = order_rule.rule_daydelivery_type(sales_order_inss)
+        # 检验订单数小于0的品
+        print("规则2：  检验订单数小于0的品前" + str(len(sales_order_inss)))
         sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
         # 起订价规则
         # sales_order_inss = order_rule.rule_start_price(sales_order_inss,shop_id)

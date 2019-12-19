@@ -41,7 +41,6 @@ urlpatterns = [
     url(r'^api/createshelfimage2', views_shelf2.CreateShelfImage.as_view()),
     url(r'^api/rectifyshelfimage2', views_shelf2.RectifyShelfImage.as_view()),
     # url(r'^api/notify_generate_shop_add', views_sellgoods.SellGoodsViewSet.as_view()),
-    url(r'^api/autoDisplay', views_display.AutoDisplay.as_view()),
     url(r'^api/beginselectgoods', views.BeginSelectGoods.as_view()),
     url(r'^api/beginautodisplay', views.BeginAutoDisplay.as_view()),
     url(r'^api/beginordergoods', views.BeginOrderGoods.as_view()),
