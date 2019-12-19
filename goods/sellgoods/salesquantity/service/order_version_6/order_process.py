@@ -41,30 +41,29 @@ def day_order_process():
                 if dmstore_shopids is not None and len(dmstore_shopids) > 0 :
                     cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                     cursor_ai.connection.commit()
+                    start_time = time.time()
+                    print("日常订单 batch_id =" + str(batch_id))
                     for dmstore_shopid in dmstore_shopids:
-                start_time = time.time()
-                end_date = str(time.strftime('%Y%m%d', time.localtime()))
-                print("日常订单 batch_id =" + str(batch_id))
-                dmstore_shopid = int (dmstore_shopid)
-                sales_order_inss,result = generate_order_2saler_add.generate(dmstore_shopid)
-                if sales_order_inss is None:
-                    cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
-                                                           id))  # 更新到“结束计算”和耗时多少
-                    cursor_ai.connection.commit()
-                else:
-                    # 把结果转成json , 存入数据库
-                    print ("非日配 和 日配 订单商品数 ："+str(len(sales_order_inss)))
-                    cursor_ai.execute(select_goods_batch_order.format(batch_id))
-                    goods_batch_data = cursor_ai.fetchone()
-                    if goods_batch_data is None:
-                        inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,result)
-                        cursor_ai.executemany(insert_goods_batch_order, inert_data)
-                        cursor_ai.connection.commit()
-                    else:
-                        update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,result)
-                        cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],update_data[0][4],goods_batch_data[0]))
-                        cursor_ai.connection.commit()
-                    # 更新数据库状态
+                        dmstore_shopid = int (dmstore_shopid)
+                        sales_order_inss,result = generate_order_2saler_add.generate(dmstore_shopid)
+                        if sales_order_inss is None:
+                            cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
+                                                                   id))  # 更新到“结束计算”和耗时多少
+                            cursor_ai.connection.commit()
+                        else:
+                            # 把结果转成json , 存入数据库
+                            print ("非日配 和 日配 订单商品数 ："+str(len(sales_order_inss)))
+                            cursor_ai.execute(select_goods_batch_order.format(batch_id))
+                            goods_batch_data = cursor_ai.fetchone()
+                            if goods_batch_data is None:
+                                inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,result)
+                                cursor_ai.executemany(insert_goods_batch_order, inert_data)
+                                cursor_ai.connection.commit()
+                            else:
+                                update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,result)
+                                cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],update_data[0][4],goods_batch_data[0]))
+                                cursor_ai.connection.commit()
+                            # 更新数据库状态
                     cursor_ai.execute(
                         update_sql_02.format(taskflow.cal_status_end, int(time.time() - start_time), data[0]))
                     cursor_ai.connection.commit()
