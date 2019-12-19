@@ -713,3 +713,7 @@ class Shelf:
     shelf_length = None
     shelf_height = None
     shelf_depth = None
+
+
+if __name__=='__main__':
+    get_shop_order_goods(1284)
