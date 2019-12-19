@@ -66,9 +66,9 @@ def init_base_data(uc_shopid, batch_id):
         mch_goods_code_list.append(mch_goods_code)
         try:
             cursor.execute(
-                "select id, goods_name,upc, tz_display_img, category1_id, category2_id, category_id, package_type, brand, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                "select id, goods_name,upc, tz_display_img, display_first_cat_id, display_second_cat_id, display_third_cat_id, display_fourth_cat_id, package_type, brand, width,height,depth,is_superimpose,is_suspension from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                     mch_id, mch_goods_code))
-            (goods_id, goods_name, upc, tz_display_img, category1_id, category2_id, category3_id, package_type, brand,
+            (goods_id, goods_name, upc, tz_display_img, category1_id, category2_id, category3_id, category4_id, package_type, brand,
              width, height, depth, is_superimpose, is_suspension) = cursor.fetchone()
             # TODO 需要获取四级分类的数据
         except:
@@ -82,7 +82,7 @@ def init_base_data(uc_shopid, batch_id):
                                                    category1_id,
                                                    category2_id,
                                                    category3_id,
-                                                   None,
+                                                   category4_id,
                                                    package_type,
                                                    brand,
                                                    width,
