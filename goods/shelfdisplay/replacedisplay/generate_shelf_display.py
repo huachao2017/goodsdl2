@@ -5,6 +5,7 @@
 
 陈列需要批次是因为依赖于选品，选品目前是通过店号和批次去获取
 """
+import goods.shelfdisplay.firstdisplay.db_display_data
 from goods.shelfdisplay import db_data
 from goods.models import ShelfDisplayDebug
 import json
@@ -63,7 +64,7 @@ def generate_displays(uc_shopid, tz_id, batch_id):
 
     try:
         # 初始化台账数据 TODO
-        taizhang_display = db_data.init_display_data(uc_shopid, tz_id, base_data)
+        taizhang_display = goods.shelfdisplay.firstdisplay.db_display_data.init_display_data(uc_shopid, tz_id, base_data)
         taizhang_display.display()
         # 打印陈列图
         try:
