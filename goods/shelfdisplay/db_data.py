@@ -50,7 +50,7 @@ def init_base_data(uc_shopid, batch_id):
 
     # 获取选品数据
     cursor_default.execute(
-        "select mch_goods_code, predict_sales_num, goods_role, ranking from goods_goodsselectionhistory where shopid={} and batch_id={}".format(
+        "select mch_goods_code, predict_sales_num, goods_role, ranking from goods_goodsselectionhistory where shopid={} and batch_id='{}'".format(
             shopid, batch_id))
     all_selection_goods = cursor_default.fetchall()
 
