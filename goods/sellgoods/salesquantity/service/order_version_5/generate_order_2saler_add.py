@@ -13,6 +13,17 @@ shop_type = config.shellgoods_params['shop_types'][1]  # 二批
 def generate(shop_id = None,order_type=None):
     try:
         print("二批向供货商非日配的首次订货,shop_id" + str(shop_id))
+        if shop_id in config.shellgoods_params['save_goods_days'].keys():
+            bhuo_days = config.shellgoods_params['save_goods_days'][shop_id]
+        else:
+            bhuo_days = config.shellgoods_params['save_goods_days'][-8888]
+
+        if shop_id in config.shellgoods_params['get_goods_days'].keys():
+            gethuo_days = config.shellgoods_params['get_goods_days'][shop_id]
+        else:
+            gethuo_days = config.shellgoods_params['get_goods_days'][-8888]
+
+
         if shop_id == None:
             return None
         sales_order_inss = []
@@ -24,7 +35,7 @@ def generate(shop_id = None,order_type=None):
             if drg_ins.delivery_type == 2:
                 if drg_ins.upc_status_type == 0:# 首次订货
                     if drg_ins.psd_nums_4 > 0:
-                        x = drg_ins.psd_nums_4 * 2.5 + drg_ins.min_disnums
+                        x = drg_ins.psd_nums_4 * bhuo_days + drg_ins.min_disnums
                     else:
                         x = 0
                     y = min(drg_ins.max_disnums, drg_ins.min_disnums * 2)
@@ -33,7 +44,7 @@ def generate(shop_id = None,order_type=None):
                         order_sale = order_sale - drg_ins.stock - drg_ins.sub_count - drg_ins.supply_stock
                 elif drg_ins.upc_status_type == 1: # 新品
                     if drg_ins.psd_nums_4 > 0:
-                        x = drg_ins.psd_nums_4 * 2.5 + drg_ins.min_disnums
+                        x = drg_ins.psd_nums_4 * bhuo_days + drg_ins.min_disnums
                     else:
                         x = 0
                     y = min(drg_ins.max_disnums, drg_ins.min_disnums * 2)
@@ -45,7 +56,7 @@ def generate(shop_id = None,order_type=None):
                     order_sale = order_sale - drg_ins.stock - drg_ins.sub_count - drg_ins.supply_stock
                 else:
                     safe_stock = max(drg_ins.min_disnums,math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price), math.ceil(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
-                    track_stock =int(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price * 2.5) + safe_stock
+                    track_stock =int(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price * bhuo_days) + safe_stock
                     order_sale = track_stock - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
             else: # 日配订货
                 # 日配类型 改变商品的最小陈列量
@@ -67,7 +78,7 @@ def generate(shop_id = None,order_type=None):
                     if drg_ins.storage_day <= 2:
                         safe_day = drg_ins.storage_day
                     else:
-                        safe_day = 2.5
+                        safe_day = bhuo_days
                     track_stock = end_safe_stock + safe_day * psd_nums_2
                     order_sale = track_stock - max(0,drg_ins.stock) - max(0,drg_ins.supply_stock) - drg_ins.sub_count
                 else:
@@ -76,10 +87,10 @@ def generate(shop_id = None,order_type=None):
                     #     continue
                     end_safe_stock = drg_ins.min_disnums
                     end_date = str(time.strftime('%Y%m%d', time.localtime()))
-                    # 到货日 TODO 需要抽出作为配置文件 2
+                    # 到货日
                     order_get_date = str(
                         (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
-                            days=2)).strftime("%Y%m%d"))
+                            days=gethuo_days)).strftime("%Y%m%d"))
                     order_get_week_i = datetime.datetime.strptime(order_get_date, "%Y%m%d").weekday() + 1
                     one_day_psd = 0
                     if order_get_week_i>=1 and order_get_week_i<=5:
@@ -99,7 +110,7 @@ def generate(shop_id = None,order_type=None):
                     if drg_ins.storage_day < 2:
                         safe_day = drg_ins.storage_day
                     else:
-                        safe_day = 2.5
+                        safe_day = bhuo_days
                     track_stock = safe_day * one_day_psd + fudong_nums + end_safe_stock
                     order_sale = math.ceil(track_stock) - max(0,drg_ins.stock) - max(0,drg_ins.supply_stock) - drg_ins.sub_count
 
