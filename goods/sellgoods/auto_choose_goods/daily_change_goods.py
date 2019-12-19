@@ -261,14 +261,21 @@ class DailyChangeGoods:
         """
         sql = "SELECT erp_shop_id from erp_shop_related WHERE shop_id='{}' and erp_shop_type=2"
         self.cursor.execute(sql.format(self.shop_id))
-        erp_shop_id = self.cursor.fetchone()[0]
+        try:
+            erp_shop_id = self.cursor.fetchone()[0]
+        except:
+            print('erp_shop_id获取失败！')
+            return []
 
         ms_conn = connections['erp']     # 魔兽系统库
         ms_cursor = ms_conn.cursor()
         sql_02 = "SELECT p.model_id,p.party_code from ls_prod p, ms_sku_relation ms WHERE ms.prod_id=p.prod_id AND  p.shop_id='{}' AND ms.status=1;"
         ms_cursor.execute(sql_02.format(erp_shop_id))
         results = ms_cursor.fetchall()
-        return [i[1] for i in results]
+        try:
+            return [i[1] for i in results]
+        except:
+            return []
 
     def calculate_not_move_goods(self,category_03_list):
         """
