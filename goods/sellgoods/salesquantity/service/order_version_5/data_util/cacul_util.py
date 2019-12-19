@@ -152,12 +152,16 @@ def get_order_all_data(result,sales_order_inss):
     return order_all_data
 
 def data_process(shop_id,shop_type):
-    result = get_shop_order_goods(shop_id, shop_type)
+    try:
+        result = get_shop_order_goods(shop_id, shop_type)
+    except:
+        traceback.print_exc()
+        print("shop_id day generate order failed ,get_data error   " + str(shop_id))
+        result = None
     sales_order_inss = []
     if result == None or len(result.keys()) < 1:
         print("shop_id day generate order failed ,get_data error   " + str(shop_id))
         return
-
     config_ins = ConfigTableUtil()
     disnums_inss = config_ins.select_all_disnums(shop_id)
 
