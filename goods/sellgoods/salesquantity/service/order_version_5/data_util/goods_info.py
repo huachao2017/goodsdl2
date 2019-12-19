@@ -491,6 +491,7 @@ def get_taizhang(uc_shopid,shopid):
                         if upc != '':
                             lasttaizhang_upcs.append(upc)
     lasttaizhang_upcs = list(set(lasttaizhang_upcs))
+    print ("上版台账upcs = "+str(len(lasttaizhang_upcs)))
     return nowday_taizhangs,lasttaizhang_upcs
 
 
