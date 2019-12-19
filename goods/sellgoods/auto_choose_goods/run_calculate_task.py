@@ -3,9 +3,10 @@ import pymysql
 import datetime
 import os,django,time,math,sys
 from goods.util import SendEmail
-from goods.sellgoods.auto_choose_goods.haolinju_template import start_choose_goods
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
-# django.setup()
+# from goods.sellgoods.auto_choose_goods.haolinju_template import start_choose_goods
+from goods.sellgoods.auto_choose_goods.daily_change_goods import start_choose_goods
+
+
 import main.import_django_settings
 
 from goods.models import AllWorkFlowBatch
