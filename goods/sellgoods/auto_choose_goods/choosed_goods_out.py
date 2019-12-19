@@ -51,28 +51,29 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
         class_type_sql = "select category1_id,category2_id,category_id,delivery_type from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
         cursor_ucenter.execute(class_type_sql.format(data[10]))
+        class_type_data = cursor_ucenter.fetchone()
         print('分类',data[10],cursor_ucenter.fetchone())
         try:
-            line_str += str(cursor_ucenter.fetchone()[0])  # 一级分类
+            line_str += str(class_type_data[0])  # 一级分类
             line_str += ","
         except:
             line_str += str('None')
             line_str += ","
         try:
-            line_str += str(cursor_ucenter.fetchone()[1])  # 二级分类
+            line_str += str(class_type_data[1])  # 二级分类
             line_str += ","
         except:
             line_str += str('None')
             line_str += ","
         try:
-            line_str += str(cursor_ucenter.fetchone()[2])  # 三级分类
+            line_str += str(class_type_data[2])  # 三级分类
             line_str += ","
         except:
             line_str += str('None')
             line_str += ","
         delivery_type_dict = {1:'日配',2:'非日配','1':'日配','2':'非日配'}
         try:
-            line_str += str(delivery_type_dict[cursor_ucenter.fetchone()[3]])  # 配送类型
+            line_str += str(delivery_type_dict[class_type_data])  # 配送类型
             line_str += ","
         except:
             line_str += str('None')
@@ -89,6 +90,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
         #策略标签
         which_strategy_dict = {0:'结构品',1:'畅销品',2:'关联品',3:'品库可定商品',4:'品谱选品',5:'决策树标签选品',6:'人工临时加品',7:'网红品'}
+        print('data[19]',data[19])
         if data[19] == 1:
             try:
                 line_str += str(which_strategy_dict[data[20]])  # 策略标签
