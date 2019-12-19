@@ -13,6 +13,7 @@ from django.db import connections
 
 from goods.models import ShelfDisplayDebug
 from goods.shelfdisplay import db_data
+from goods.shelfdisplay.firstdisplay import db_display_data
 
 
 def generate_workflow_displays(uc_shopid, batch_id):
@@ -80,7 +81,7 @@ def generate_displays(uc_shopid, tz_id, batch_id):
 
     try:
         # 初始化台账数据
-        taizhang_display = db_data.init_display_data(uc_shopid, tz_id, base_data)
+        taizhang_display = db_display_data.init_display_data(uc_shopid, tz_id, base_data)
         taizhang_display.display()
         # 打印陈列图
         try:
