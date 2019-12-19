@@ -20,6 +20,7 @@ def init_base_data(uc_shopid, batch_id):
     base_data = BaseData()
     # 获取数据
     cursor = connections['ucenter'].cursor()
+    cursor_default = connections['default'].cursor()
 
     # 获取fx系统的shopid,台账系统的商家mch_id
     cursor.execute("select mch_shop_code,mch_id from uc_shop where id = {}".format(uc_shopid))
@@ -47,14 +48,15 @@ def init_base_data(uc_shopid, batch_id):
         base_data.category3_level_value[one[0]] = one[1]
 
     # 获取选品数据
-    all_selection_goods = FirstGoodsSelection.objects.filter(shopid=shopid).filter(batch_id=batch_id)
+    cursor_default.execute("select mch_goods_code, predict_sales_num from goods_goodsselectionhistory where shopid={} and batch_id={}".format(shopid,batch_id))
+    all_selection_goods = cursor_default.fetchall()
 
     # 获取选品详细信息
     not_found_goods = 0
     mch_goods_code_list = []
     for selection_goods in all_selection_goods:
         # 获取商品属性
-        mch_goods_code = selection_goods.mch_goods_code
+        mch_goods_code = selection_goods[0]
         # 做商品去重
         if mch_goods_code in mch_goods_code_list:
             continue
@@ -82,10 +84,11 @@ def init_base_data(uc_shopid, batch_id):
                              depth,
                              is_superimpose,
                              is_suspension,
-                             selection_goods.predict_sales_num))
+                             selection_goods[1]))
 
     print('台账找不到选品表的商品共有:{}个！'.format(not_found_goods))
     cursor.close()
+    cursor_default.close()
 
     return base_data
 
