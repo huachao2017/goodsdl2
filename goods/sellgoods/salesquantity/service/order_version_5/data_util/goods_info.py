@@ -449,27 +449,27 @@ def get_taizhang(uc_shopid,shopid):
         "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY) ORDER BY td.start_datetime ".format(
             uc_shopid,get_goods_days))
     nowday_taizhangs = cursor.fetchall()  #计划执行的台账  台账保证一个店仅有一份 对订货可见
-    if nowday_taizhangs is None:
+    if nowday_taizhangs is None or len(nowday_taizhangs) == 0 :
         cursor.execute(
             "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime ".format(
                 uc_shopid))
         nowday_taizhangs = cursor.fetchall() #执行中的台账 （一个店只会有一份）
     print (nowday_taizhangs)
-    if nowday_taizhangs is None :
+    if nowday_taizhangs is None or len(nowday_taizhangs) == 0  :
         return None,None
     lastday_taizhangs = None
     cursor.execute(
         "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY) ORDER BY td.start_datetime ".format(
             uc_shopid, get_goods_days-1))
     lastday_taizhangs = cursor.fetchall()  # 计划执行的台账  台账保证一个店仅有一份 对订货可见
-    if lastday_taizhangs is None :
+    if lastday_taizhangs is None or len(lastday_taizhangs) == 0  :
         cursor.execute(
             "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime ".format(
                 uc_shopid))
         lastday_taizhangs = cursor.fetchall()  # 执行中的台账 （一个店只会有一份）
     print(lastday_taizhangs)
     lasttaizhang_upcs = []
-    if lastday_taizhangs is not None:
+    if lastday_taizhangs is not None and len(lastday_taizhangs) > 0:
         for taizhang in lastday_taizhangs:
             display_shelf_info = taizhang[2]
             display_goods_info = taizhang[3]
