@@ -73,14 +73,26 @@ shellgoods_params={
     'shop_types':[0,1], #门店类型 0：门店 1：批发商
     'day_order_time_weekday':[1,2,3,6,7],
     'yinliao_cat_ids':[110,402,501,502,201,202,203,204,205],
-    # 开店期
+     # 开店期
     "start_shop": {
-        1284:20191105
+        1284:20191105,
+        -8888:20191105
     },
-    # 起订价规则
-    "start_price" : {
-        1284:50000
+    # 订货时备货天数
+    "save_goods_days":{
+        1284:2.5,
+        -8888:3
     },
+    # 到货间隔天数
+    "get_goods_days": {
+        1284: 2,
+        -8888: 5
+    },
+
+    # # 起订价规则
+    # "start_price" : {
+    #     1284:50000
+    # },
     "ms_add_url":"http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}&erpShopType={}&batchId={}",
     # 自动陈列
     'shelf_display':[(1284,True)],

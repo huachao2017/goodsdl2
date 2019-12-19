@@ -19,7 +19,6 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.start_max = drg_ins.max_disnums
     sales_order_ins.start_min = drg_ins.min_disnums
     sales_order_ins.upc = drg_ins.upc
-    sales_order_ins.predict_sale = drg_ins.predict_sales
     sales_order_ins.erp_shop_type = shop_type
     sales_order_ins.order_sale = 0
     sales_order_ins.max_stock = drg_ins.max_disnums
@@ -31,7 +30,6 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.multiple = drg_ins.multiple
     sales_order_ins.goods_name = drg_ins.goods_name
     sales_order_ins.supply_stock = drg_ins.supply_stock
-    sales_order_ins.sales_nums = drg_ins.old_sales
     sales_order_ins.delivery_type = drg_ins.delivery_type
     sales_order_ins.storage_day = drg_ins.storage_day
     sales_order_ins.mch_goods_code = drg_ins.mch_code
@@ -96,14 +94,6 @@ def get_order_all_data(result,sales_order_inss):
         for sales_order_ins in sales_order_inss:
             if drg_ins.upc == sales_order_ins.upc:
                 order_sale = sales_order_ins.order_sale
-
-        # 更新选品表，订货次数  TODO 先不做
-        # try:
-        #     if "testabc" not in batch_id:  # 特殊订单测试，用于线上 不更新订货次数
-        #         order_nums_util.cal_order_nums2(drg_ins.dmstoreshop_id,drg_ins.select_batch_no,drg_ins.upc)
-        # except Exception as e:
-        #     print ("update 选品历史表失败 ，{}-{}-{} ".format(drg_ins.dmstoreshop_id,drg_ins.select_batch_no,drg_ins.upc))
-        #     traceback.print_exc()
         mch_goods_dict['order_sale'] = order_sale
         mch_goods_dict['ucshop_id'] = drg_ins.ucshop_id
         mch_goods_dict['shop_name'] = drg_ins.shop_name
@@ -178,34 +168,8 @@ def data_process(shop_id,shop_type):
         print ("任务执行的一个周期内， 没有单face的最小最大陈列数 修订... ")
     else:
         config_ins.insert_many_disnums(data1)
-
-    # # 插入安全库存天数 ， 并同时修订安全库存天数
-    # safedays_inss = config_ins.select_all_safedays(shop_id)
-    # data2 = get_insert_safedays_data(shop_id,safedays_inss,result)
-    # if len(data2) == 0 :
-    #     print ("任务执行的一个周期内， 没有安全天数的 修订... ")
-    # else:
-    #     config_ins.insert_many_safedays(data2)
     return result
 
-#
-# def get_insert_safedays_data(shop_id,safedays_inss,result):
-#     config_safedays_inss = []
-#     safedays_inss_dict = {}
-#     for safedays_ins in safedays_inss:
-#         safedays_inss_dict[str(safedays_ins.upc)] = safedays_ins
-#
-#     for mch_code in result:
-#         drg_ins = result[mch_code]
-#         if drg_ins.upc in list(safedays_inss_dict.keys()):
-#             drg_ins.safe_day_nums = safedays_inss_dict[drg_ins.upc].safe_day_nums
-#         else:
-#             config_safedays_ins = init_configsafedays(shop_id,drg_ins)
-#             config_safedays_inss.append(config_safedays_ins)
-#     data = []
-#     for config_safedays_ins in config_safedays_inss:
-#         data.append((config_safedays_ins.shop_id,config_safedays_ins.upc,config_safedays_ins.goods_name,config_safedays_ins.safe_day_nums,config_safedays_ins.create_time,config_safedays_ins.update_time))
-#     return data
 def get_insert_disnums_data(shop_id ,disnums_inss,result):
     config_disnums_inss = []
     disnums_inss_dict = {}
@@ -254,14 +218,6 @@ def get_update_disnums(drg_ins,shelf_ins,disnums_ins):
     disnums_ins.create_time =str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     disnums_ins.update_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     return disnums_ins
-
-# def init_configsafedays(shop_id,drg_ins):
-#     configsafeday_ins = goods_config_safedays.ConfigSafedayas()
-#     configsafeday_ins.shop_id = shop_id
-#     configsafeday_ins.upc = drg_ins.upc
-#     configsafeday_ins.goods_name = drg_ins.goods_name
-#     configsafeday_ins.safe_day_nums = drg_ins.safe_day_nums
-#     return configsafeday_ins
 
 def get_single_face_min_disnums(drg_ins,shelf_ins):
     if drg_ins.storage_day < 15 :
