@@ -41,7 +41,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     (erp_resupply_id,) = cursor_dmstore.fetchone()  # 供货商id
 
     # 获取台账和前一天台账中的pin
-    taizhangs,last_tz_upcs = get_taizhang(uc_shopid,cursor,shopid)
+    taizhangs,last_tz_upcs = get_taizhang(uc_shopid,shopid)
     if taizhangs is None:
         print ("获取订货日台账失败 uc_shopid="+str(uc_shopid))
     shelf_inss = []
@@ -428,7 +428,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     procee_max_disnums(ret)
     return ret
 
-def get_taizhang(uc_shopid,cursor,shopid):
+def get_taizhang(uc_shopid,shopid):
     """
     取订货日的台账 和 订货日前一天的台账所有的品
     :param uc_shopid:
@@ -437,6 +437,7 @@ def get_taizhang(uc_shopid,cursor,shopid):
     :return:
     """
     # 获取台账
+    cursor = connections['ucenter'].cursor()
     if shopid in config.shellgoods_params['get_goods_days'].keys():
         get_goods_days = config.shellgoods_params['get_goods_days'][shopid]
     else:
@@ -444,7 +445,7 @@ def get_taizhang(uc_shopid,cursor,shopid):
         get_goods_days = config.shellgoods_params['get_goods_days'][-8888]
     nowday_taizhangs = None
     cursor.execute(
-        "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY)ORDER BY td.start_datetime ".format(
+        "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY) ORDER BY td.start_datetime ".format(
             uc_shopid,get_goods_days))
     nowday_taizhangs = cursor.fetchall()  #计划执行的台账  台账保证一个店仅有一份 对订货可见
     if  nowday_taizhangs is None:
@@ -456,7 +457,7 @@ def get_taizhang(uc_shopid,cursor,shopid):
         return None,None
 
     cursor.execute(
-        "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY)ORDER BY td.start_datetime ".format(
+        "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY) ORDER BY td.start_datetime ".format(
             uc_shopid, get_goods_days-1))
     lastday_taizhangs = cursor.fetchall()  # 计划执行的台账  台账保证一个店仅有一份 对订货可见
     if lastday_taizhangs is None :
@@ -713,3 +714,8 @@ class Shelf:
     shelf_length = None
     shelf_height = None
     shelf_depth = None
+
+
+if __name__=='__main__':
+    ret = get_shop_order_goods(1284)
+    print (len(ret.keys()))
