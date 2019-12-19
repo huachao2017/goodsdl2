@@ -7,9 +7,11 @@ a，b，c如分值都大于5，则以最大的计算
 a，b，c如分值都小于5，则以最小的计算
 a，b，c如分值既有大于5又有小于5，则为N（未定义）
 """
-import itertools, copy, random, math
+import itertools
+import math
 from functools import reduce
-from goods.shelfdisplay import single_algorithm
+
+from goods.shelfdisplay.firstdisplay import single_algorithm
 
 
 def shelf_arrange(shelf):
