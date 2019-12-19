@@ -41,7 +41,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     (erp_resupply_id,) = cursor_dmstore.fetchone()  # 供货商id
 
     # 获取台账和前一天台账中的pin
-    taizhangs,last_tz_upcs = get_taizhang(uc_shopid,shopid,mch_id)
+    taizhangs,last_tz_upcs,last_v_upcs = get_taizhang(uc_shopid,shopid,mch_id)
     if taizhangs is None:
         print ("获取订货日台账失败 uc_shopid="+str(uc_shopid))
     shelf_inss = []
@@ -417,7 +417,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      psd_amount_2=psd_amount_2,psd_nums_2_cls=psd_nums_2_cls, psd_amount_2_cls=psd_nums_2_cls,
                                                      upc_psd_amount_avg_1_5 = upc_psd_amount_avg_1_5,upc_psd_amount_avg_6_7 = upc_psd_amount_avg_6_7, loss_avg = loss_avg,
                                                      loss_avg_profit_amount = loss_avg_profit_amount, loss_avg_amount = loss_avg_amount,loss_avg_nums=loss_avg_nums,
-                                                     last_tz_upcs = last_tz_upcs
+                                                     last_tz_upcs = last_tz_upcs,last_v_upcs=last_v_upcs
                                                      )
     cursor.close()
     cursor_dmstore.close()
@@ -427,6 +427,47 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
         cursor_bi.close()
     procee_max_disnums(ret)
     return ret
+
+def for_taizhang_upc(taizhangs,mch_id):
+    upcs = []
+    cursor = connections['ucenter'].cursor()
+    for taizhang in taizhangs:
+        display_shelf_info = taizhang[2]
+        display_goods_info = taizhang[3]
+        display_shelf_info = json.loads(display_shelf_info)
+        display_goods_info = json.loads(display_goods_info)
+        shelfs = display_shelf_info['shelf']
+        shelf_dict = {}
+        goods_array_dict = {}
+        for shelf in shelfs:
+            shelf_dict[shelf['shelfId']] = shelf['layer']
+        for goods_info in display_goods_info:
+            goods_array_dict[goods_info['shelfId']] = goods_info['layerArray']
+        for shelfId in shelf_dict.keys():
+            level_array = shelf_dict[shelfId]
+            goods_array = goods_array_dict[shelfId]
+            for i in range(len(level_array)):
+                level = level_array[i]
+                goods_level_array = goods_array[i]
+                for goods in goods_level_array:
+                    mch_code = goods['mch_goods_code']
+                    try:
+                        cursor.execute(
+                            "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                mch_id, mch_code))
+                        # FIXME width,height暂时翻转
+                        # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
+                        (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
+                         is_suspension, delivery_type, category1_id, category2_id, category_id, storage_day,
+                         package_type) = cursor.fetchone()
+                    except:
+                        print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
+                        continue
+                    if upc is None or upc != '':
+                        upcs.append(upc)
+    return upcs
+
+
 
 def get_taizhang(uc_shopid,shopid,mch_id):
     """
@@ -445,6 +486,7 @@ def get_taizhang(uc_shopid,shopid,mch_id):
         get_goods_days = config.shellgoods_params['get_goods_days'][-8888]
     print (get_goods_days)
     nowday_taizhangs = None
+
     cursor.execute(
         "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY) ORDER BY td.start_datetime ".format(
             uc_shopid,get_goods_days))
@@ -457,6 +499,31 @@ def get_taizhang(uc_shopid,shopid,mch_id):
     # print (nowday_taizhangs)
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0  :
         return None,None
+
+    last_v_taizhang = []
+    if nowday_taizhangs is None or len(nowday_taizhangs) == 0 : # 没有计划执行台账，上一版陈列从已完成陈列取
+        cursor.execute(
+            "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =3 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime desc".format(
+                uc_shopid))
+        last_v_taizhangs_v1 =  cursor.fetchall()
+    else:# 存在计划执行陈列， 上一版陈列从正在执行陈列取
+        cursor.execute(
+            "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime desc".format(
+                uc_shopid))
+        last_v_taizhangs_v1 = cursor.fetchall()
+    ids = []
+    for last_taizhangs_v1 in last_v_taizhangs_v1:
+        id = last_taizhangs_v1[0]
+        shelf_id = last_taizhangs_v1[1]
+        display_shelf_info = last_taizhangs_v1[2]
+        display_goods_info = last_taizhangs_v1[3]
+        if id not in ids:
+            ids.append(id)
+            last_v_taizhang.append((id, shelf_id, display_shelf_info, display_goods_info))
+    last_v_taizhang_upcs = []
+    if len(last_v_taizhang) > 0:
+        last_v_taizhang_upcs =  for_taizhang_upc(last_v_taizhang,mch_id)
+
     lastday_taizhangs = None
     cursor.execute(
         "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY) ORDER BY td.start_datetime ".format(
@@ -470,43 +537,10 @@ def get_taizhang(uc_shopid,shopid,mch_id):
     # print(lastday_taizhangs)
     lasttaizhang_upcs = []
     if lastday_taizhangs is not None and len(lastday_taizhangs) > 0:
-        for taizhang in lastday_taizhangs:
-            display_shelf_info = taizhang[2]
-            display_goods_info = taizhang[3]
-            display_shelf_info = json.loads(display_shelf_info)
-            display_goods_info = json.loads(display_goods_info)
-            shelfs = display_shelf_info['shelf']
-            shelf_dict = {}
-            goods_array_dict = {}
-            for shelf in shelfs:
-                shelf_dict[shelf['shelfId']] = shelf['layer']
-            for goods_info in display_goods_info:
-                goods_array_dict[goods_info['shelfId']] = goods_info['layerArray']
-            for shelfId in shelf_dict.keys():
-                level_array = shelf_dict[shelfId]
-                goods_array = goods_array_dict[shelfId]
-                for i in range(len(level_array)):
-                    level = level_array[i]
-                    goods_level_array = goods_array[i]
-                    for goods in goods_level_array:
-                        mch_code = goods['mch_goods_code']
-                        try:
-                            cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
-                                    mch_id, mch_code))
-                            # FIXME width,height暂时翻转
-                            # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
-                            (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
-                             is_suspension, delivery_type, category1_id, category2_id, category_id, storage_day,
-                             package_type) = cursor.fetchone()
-                        except:
-                            print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
-                            continue
-                        if upc is None or upc != '':
-                            lasttaizhang_upcs.append(upc)
+        lasttaizhang_upcs = for_taizhang_upc(lastday_taizhangs,mch_id)
     lasttaizhang_upcs = list(set(lasttaizhang_upcs))
     print ("上版台账upcs = "+str(len(lasttaizhang_upcs)))
-    return nowday_taizhangs,lasttaizhang_upcs
+    return nowday_taizhangs,lasttaizhang_upcs,last_v_taizhang_upcs
 
 
 
@@ -525,7 +559,7 @@ class DataRawGoods():
                  sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None,
                  psd_nums_4=None, psd_amount_4=None,max_scale=None,oneday_max_psd = None ,psd_nums_2=None, psd_amount_2=None,psd_nums_2_cls=None, psd_amount_2_cls=None,
                  upc_psd_amount_avg_1_5= None, upc_psd_amount_avg_6_7 = None, loss_avg = None,loss_avg_profit_amount = None, loss_avg_amount = None,loss_avg_nums = None
-                ,last_tz_upcs = None):
+                ,last_tz_upcs = None,last_v_upcs=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -705,14 +739,14 @@ class DataRawGoods():
         if self.delivery_type == 2: # 非日配
             if  last_tz_upcs is None or self.upc not in last_tz_upcs :
                 self.upc_status_type = 0
-            elif last_tz_upcs is not None and days <= 28 and self.upc in last_tz_upcs:
+            elif last_v_upcs is not None and days <= 28 and self.upc not in last_v_upcs:
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2
         else:
             if last_tz_upcs is None or self.upc not in last_tz_upcs:
                 self.upc_status_type = 0
-            elif (self.storage_day >= 30 and days <= 14) or (self.storage_day < 30 and days <= 7) and last_tz_upcs is not None and self.upc in last_tz_upcs:
+            elif (self.storage_day >= 30 and days <= 14) or (self.storage_day < 30 and days <= 7) and last_v_upcs is not None and self.upc not in last_v_upcs:
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2
