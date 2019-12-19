@@ -221,7 +221,7 @@ class DailyChangeGoods:
                 # try:
                     # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name
                     # temp_list = [','.join(self.template_shop_ids), data[1], data[2], data[0]/(upc_time[data[1]]*self.days), data[3],data[0]/(upc_time[data[1]]*self.days*data[4]), data[5]]
-                    temp_list = [','.join(self.template_shop_ids), data[1], data[2], data[0]/(data[6]*self.days), data[3],data[0]/(upc_time[data[1]]*self.days*data[4]), data[5]]
+                    temp_list = [','.join(self.template_shop_ids), data[1], data[2], data[0]/(data[6]*self.days), data[3],data[0]/(data[6]*self.days*data[4]), data[5]]
 
                     third_category_quick_seller_list.append(temp_list)
                 # except:
