@@ -151,10 +151,10 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         psd_data_shops = cursor_dmstore.fetchone()
         print('psd_data_shops',psd_data_shops)
         if psd_data_shops[0]:
-            line_str += str(psd_data[0] / days)  # psd金额,同组
+            line_str += str(psd_data_shops[0] / days)  # psd金额,同组
             line_str += ","
             try:
-                line_str += str(psd_data[0] / (days * psd_data[1] * psd_data[2]))  # psd,同组
+                line_str += str(psd_data_shops[0] / (days * psd_data_shops[1] * psd_data_shops[2]))  # psd,同组
             except:
                 line_str += str(0)
             line_str += ","
