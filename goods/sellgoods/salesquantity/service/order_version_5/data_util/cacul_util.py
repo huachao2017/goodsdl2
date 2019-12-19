@@ -40,7 +40,6 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.psd_amount_4 = drg_ins.psd_amount_4
     sales_order_ins.face_num = 0
     sales_order_ins.sub_count = drg_ins.sub_count
-    sales_order_ins.up_status = drg_ins.up_status
     sales_order_ins.upc_price = drg_ins.upc_price
     sales_order_ins.upc_psd_amount_avg_4 = drg_ins.upc_psd_amount_avg_4
     sales_order_ins.upc_psd_amount_avg_1 = drg_ins.upc_psd_amount_avg_1
