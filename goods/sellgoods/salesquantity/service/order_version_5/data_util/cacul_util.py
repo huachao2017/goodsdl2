@@ -40,7 +40,6 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.psd_amount_4 = drg_ins.psd_amount_4
     sales_order_ins.face_num = 0
     sales_order_ins.sub_count = drg_ins.sub_count
-    sales_order_ins.up_status = drg_ins.up_status
     sales_order_ins.upc_price = drg_ins.upc_price
     sales_order_ins.upc_psd_amount_avg_4 = drg_ins.upc_psd_amount_avg_4
     sales_order_ins.upc_psd_amount_avg_1 = drg_ins.upc_psd_amount_avg_1
@@ -152,12 +151,16 @@ def get_order_all_data(result,sales_order_inss):
     return order_all_data
 
 def data_process(shop_id,shop_type):
-    result = get_shop_order_goods(shop_id, shop_type)
+    try:
+        result = get_shop_order_goods(shop_id, shop_type)
+    except:
+        traceback.print_exc()
+        print("shop_id day generate order failed ,get_data error   " + str(shop_id))
+        result = None
     sales_order_inss = []
     if result == None or len(result.keys()) < 1:
         print("shop_id day generate order failed ,get_data error   " + str(shop_id))
         return
-
     config_ins = ConfigTableUtil()
     disnums_inss = config_ins.select_all_disnums(shop_id)
 
