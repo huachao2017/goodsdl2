@@ -448,7 +448,7 @@ def get_taizhang(uc_shopid,shopid):
         "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY) ORDER BY td.start_datetime ".format(
             uc_shopid,get_goods_days))
     nowday_taizhangs = cursor.fetchall()  #计划执行的台账  台账保证一个店仅有一份 对订货可见
-    if  nowday_taizhangs is None:
+    if nowday_taizhangs is None:
         cursor.execute(
             "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime ".format(
                 uc_shopid))
@@ -469,6 +469,7 @@ def get_taizhang(uc_shopid,shopid):
     lasttaizhang_upcs = []
     if lastday_taizhangs is not None:
         for taizhang in lastday_taizhangs:
+            display_shelf_info = taizhang[2]
             display_goods_info = taizhang[3]
             display_shelf_info = json.loads(display_shelf_info)
             display_goods_info = json.loads(display_goods_info)
@@ -487,7 +488,7 @@ def get_taizhang(uc_shopid,shopid):
                     goods_level_array = goods_array[i]
                     for goods in goods_level_array:
                         upc = goods['upc']
-                        if upc !='':
+                        if upc != '':
                             lasttaizhang_upcs.append(upc)
     lasttaizhang_upcs = list(set(lasttaizhang_upcs))
     return nowday_taizhangs,lasttaizhang_upcs
