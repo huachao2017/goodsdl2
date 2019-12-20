@@ -167,7 +167,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         print(line_str)
 
 if __name__ == '__main__':
-    goods_out(806,"1284,3955,3779,1925,4076,1924",'lishu_test_002',28)
+    goods_out(806,"1284,3955,3779,1925,4076,1924",'lishu_test_003',28)
 
 
 
