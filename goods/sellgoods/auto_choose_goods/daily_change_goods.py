@@ -117,8 +117,8 @@ class DailyChangeGoods:
         uc_conn = connections['ucenter']
         uc_cursor = uc_conn.cursor()
         # 获取台账系统的uc_shopid
-        uc_cursor.execute('select id from uc_shop where mch_shop_code = {}'.format(self.shop_id))
-        self.uc_shopid = uc_cursor.fetchone()[0]
+        # uc_cursor.execute('select id from uc_shop where mch_shop_code = {}'.format(self.shop_id))
+        # self.uc_shopid = uc_cursor.fetchone()[0]
         # 获取当前的台账
         select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(self.uc_shopid)
         uc_cursor.execute(select_sql_02)
