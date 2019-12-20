@@ -93,6 +93,11 @@ def rule_start_price(sales_order_inss,dmshop_id):
         return sales_order_inss
 
 def rule_daydelivery_type(sales_order_inss):
+    """
+    单店 使用的  对日配品订货，超出可用空间的限制
+    :param sales_order_inss:
+    :return:
+    """
     shelf_id_dict = {}
     V_goods_sum = 0
     for sales_order_ins in sales_order_inss:
@@ -114,3 +119,11 @@ def rule_daydelivery_type(sales_order_inss):
         return sales_order_inss_new
     else:
         return sales_order_inss
+    
+    
+def rule_daydelivery_type_v2():
+    """
+    多店 使用对日配品订货，超出可用空间的限制
+    :return:
+    """
+    return None

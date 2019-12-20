@@ -750,6 +750,7 @@ class DataRawGoods():
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2
+        self.order_sale = 0
 
 
 
