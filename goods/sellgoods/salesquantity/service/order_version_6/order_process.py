@@ -54,7 +54,6 @@ def day_order_process():
                             cursor_ai.connection.commit()
                             return
                         else:
-                            # 把结果转成json , 存入数据库
                             for drg_ins in goods_orders:
                                 goods_orders_all.append(drg_ins)
                     print ("非日配 和 日配 订单所有店 所有商品数 ："+str(len(goods_orders_all)))
@@ -65,7 +64,7 @@ def day_order_process():
                         cursor_ai.executemany(insert_goods_batch_order, inert_data)
                         cursor_ai.connection.commit()
                     else:
-                        update_data = cacul_util.get_goods_batch_order_data_warhouse(batch_id,goods_batch_data)
+                        update_data = cacul_util.get_goods_batch_order_data_warhouse(batch_id,goods_orders_all)
                         cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],update_data[0][4],goods_batch_data[0]))
                         cursor_ai.connection.commit()
                     # 更新数据库状态
