@@ -1,5 +1,6 @@
 import sys
 import argparse
+import main.import_django_settings
 
 from goods.shelfdisplay.firstdisplay.generate_shelf_display import generate_displays
 import argparse
