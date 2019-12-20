@@ -110,8 +110,11 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         for shelf_ins in shelf_inss:
                             if shelf_ins.mch_code == mch_code:
                                 face_num += shelf_ins.face_num
-                                min_disnums += shelf_ins.face_num
-                                max_disnums += int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / drg_ins.depth))
+                                if drg_ins.single_face_min_disnums >0 :
+                                    min_disnums += shelf_ins.face_num  *  drg_ins.single_face_min_disnums
+                                else:
+                                    min_disnums += shelf_ins.face_num * get_single_face_min_disnums(drg_ins,shelf_ins)
+                                max_disnums += shelf_ins.face_num * get_single_face_max_disnums(drg_ins,shelf_ins)
                                 new_shelf_inss.append(shelf_ins)
                         drg_ins.face_num = face_num
                         drg_ins.max_disnums = max_disnums
@@ -130,6 +133,16 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         except:
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue
+
+                        # 获取商品的最小陈列量
+                        single_face_min_disnums = 0
+                        try:
+                            cursor_ai.execute("select single_face_min_disnums from goods_config_disnums where upc = '{}'".format(upc))
+                            (single_face_min_disnums,) = cursor_ai.fetchone()
+                        except:
+                            print ("ai 找不到商品的单face最小陈列量 ")
+                            single_face_min_disnums = 0
+
                         scale = None
                         max_scale = 1
                         # 获取最大陈列系数
@@ -417,7 +430,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      psd_amount_2=psd_amount_2,psd_nums_2_cls=psd_nums_2_cls, psd_amount_2_cls=psd_nums_2_cls,
                                                      upc_psd_amount_avg_1_5 = upc_psd_amount_avg_1_5,upc_psd_amount_avg_6_7 = upc_psd_amount_avg_6_7, loss_avg = loss_avg,
                                                      loss_avg_profit_amount = loss_avg_profit_amount, loss_avg_amount = loss_avg_amount,loss_avg_nums=loss_avg_nums,
-                                                     last_tz_upcs = last_tz_upcs,last_v_upcs=last_v_upcs
+                                                     last_tz_upcs = last_tz_upcs,last_v_upcs=last_v_upcs,single_face_min_disnums = single_face_min_disnums
                                                      )
     cursor.close()
     cursor_dmstore.close()
@@ -425,7 +438,6 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     cursor_ai.close()
     if cursor_bi is not None:
         cursor_bi.close()
-    procee_max_disnums(ret)
     return ret
 
 def for_taizhang_upc(taizhangs,mch_id):
@@ -498,7 +510,7 @@ def get_taizhang(uc_shopid,shopid,mch_id):
         nowday_taizhangs = cursor.fetchall() #执行中的台账 （一个店只会有一份）
     # print (nowday_taizhangs)
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0  :
-        return None,None
+        return None,None,None
 
     last_v_taizhang = []
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0 : # 没有计划执行台账，上一版陈列从已完成陈列取
@@ -544,13 +556,34 @@ def get_taizhang(uc_shopid,shopid,mch_id):
 
 
 
+def get_single_face_min_disnums(drg_ins,shelf_ins):
+    if drg_ins.storage_day < 15 :
+        single_face_min_disnums = 1
+    else:
+        if shelf_ins.level_depth <= drg_ins.depth:
+            min_face_disnum = 1
+        else:
+            min_face_disnum = math.floor(shelf_ins.level_depth / drg_ins.depth)
+        single_face_min_disnums = min(3,min_face_disnum)
+    return single_face_min_disnums
+
+def get_single_face_max_disnums(drg_ins,shelf_ins):
+    return max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
 
 
-# 最大陈列量做处理
-def procee_max_disnums(ret):
-    for mch_code in ret:
-        drg_ins = ret[mch_code]
-        drg_ins.max_disnums = drg_ins.max_disnums * drg_ins.max_scale
+def get_single_face_min_disnums_col(storage_day,depth,shelf_ins):
+    if storage_day < 15 :
+        single_face_min_disnums = 1
+    else:
+        if shelf_ins.level_depth <= depth:
+            min_face_disnum = 1
+        else:
+            min_face_disnum = math.floor(shelf_ins.level_depth / depth)
+        single_face_min_disnums = min(3,min_face_disnum)
+    return single_face_min_disnums
+
+def get_single_face_max_disnums_col(depth,shelf_ins):
+    return max(1,math.floor(float(shelf_ins.level_depth) / depth))
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
@@ -559,7 +592,7 @@ class DataRawGoods():
                  sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None,
                  psd_nums_4=None, psd_amount_4=None,max_scale=None,oneday_max_psd = None ,psd_nums_2=None, psd_amount_2=None,psd_nums_2_cls=None, psd_amount_2_cls=None,
                  upc_psd_amount_avg_1_5= None, upc_psd_amount_avg_6_7 = None, loss_avg = None,loss_avg_profit_amount = None, loss_avg_amount = None,loss_avg_nums = None
-                ,last_tz_upcs = None,last_v_upcs=None):
+                ,last_tz_upcs = None,last_v_upcs=None,single_face_min_disnums=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -706,20 +739,12 @@ class DataRawGoods():
             self.max_scale = 1
         else:
             self.max_scale = float(max_scale)
-        new_shelf_inss = []
-        max_disnums = 0
-        min_disnums = 0
-        face_num = 0
-        for shelf_ins in shelf_inss:
-            if shelf_ins.mch_code == mch_code:
-                face_num += shelf_ins.face_num
-                min_disnums += shelf_ins.face_num
-                max_disnums += int(shelf_ins.face_num * math.floor(shelf_ins.level_depth / self.depth))
-                new_shelf_inss.append(shelf_ins)
-        self.face_num = face_num
-        self.shelf_inss = new_shelf_inss
-        self.max_disnums = max_disnums
-        self.min_disnums = min_disnums
+
+        if single_face_min_disnums is None:
+            self.single_face_min_disnums  = 0
+        else:
+            self.single_face_min_disnums = single_face_min_disnums
+
         try:
             if storage_day is not None and int(storage_day) > 0:
                 self.storage_day = storage_day
@@ -728,6 +753,25 @@ class DataRawGoods():
         except:
             print("商品的保质期error,mch_code=" + str(self.mch_code)+",goods_name="+str(self.goods_name))
             self.storage_day = 0
+
+        new_shelf_inss = []
+        max_disnums = 0
+        min_disnums = 0
+        face_num = 0
+        for shelf_ins in shelf_inss:
+            if shelf_ins.mch_code == mch_code:
+                face_num += shelf_ins.face_num
+                if self.single_face_min_disnums >0 :
+                    min_disnums += shelf_ins.face_num * self.single_face_min_disnums
+                else:
+                    min_disnums += shelf_ins.face_num * get_single_face_min_disnums_col(self.storage_day,self.depth,shelf_ins)
+                max_disnums += shelf_ins.face_num * get_single_face_max_disnums_col(self.depth,shelf_ins)
+                new_shelf_inss.append(shelf_ins)
+        self.face_num = face_num
+        self.shelf_inss = new_shelf_inss
+        self.max_disnums = max_disnums
+        self.min_disnums = min_disnums
+
 
         # 判断商品的生命周期 0 首次订货 1 新品期订货 2 旧品期
         shelf_up_date = self.up_shelf_date
@@ -750,7 +794,6 @@ class DataRawGoods():
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2
-        self.order_sale = 0
 
 
 
