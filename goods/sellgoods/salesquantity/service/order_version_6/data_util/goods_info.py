@@ -286,6 +286,16 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         except:
                             print('ErpSupply找不到商品:{}-{}！'.format(upc, erp_supply_id))
                             supply_stock = 0
+
+                        #获取在途补货单数
+                        try:
+                            sql_add_shop = "SELECT sum(item.sub_item_count) FROM ls_sub_item item LEFT JOIN ls_sku sku ON item.sku_id=sku.sku_id WHERE sub_number IN ( " \
+	                                            "SELECT sub_number FROM ls_sub WHERE buyer_shop_id IN ( SELECT is_authorized_shop_id FROM ms_relation WHERE authorized_shop_id = {}) AND status = 50 " \
+                                                " ) and  sku.model_id='{}'"
+                            (add_sub_count,) = cursor_erp.fetchone()
+                        except:
+                            print ("ErpSupply 获取在途补货单数 找不到商品{}-{}".format(erp_supply_id,upc))
+                            add_sub_count = 0
                         # 获取在途订单数
                         try:
                             cursor_erp.execute(
@@ -293,7 +303,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                     erp_resupply_id,erp_resupply_id,upc))
                             (sub_count,) = cursor_erp.fetchone()
                         except:
-                            print('ErpSupply 获取在途订单数 找不到商品:{}-{}！'.format(upc, erp_supply_id))
+                            print('ErpSupply 获取在途订单数 找不到商品:{}-{}！'.format(upc, erp_resupply_id))
                             sub_count = 0
                         # 获取商品的上架时间
                         try:
@@ -430,7 +440,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                                                      psd_amount_2=psd_amount_2,psd_nums_2_cls=psd_nums_2_cls, psd_amount_2_cls=psd_nums_2_cls,
                                                      upc_psd_amount_avg_1_5 = upc_psd_amount_avg_1_5,upc_psd_amount_avg_6_7 = upc_psd_amount_avg_6_7, loss_avg = loss_avg,
                                                      loss_avg_profit_amount = loss_avg_profit_amount, loss_avg_amount = loss_avg_amount,loss_avg_nums=loss_avg_nums,
-                                                     last_tz_upcs = last_tz_upcs,last_v_upcs=last_v_upcs,single_face_min_disnums = single_face_min_disnums
+                                                     last_tz_upcs = last_tz_upcs,last_v_upcs=last_v_upcs,single_face_min_disnums = single_face_min_disnums,add_sub_count=add_sub_count
                                                      )
     cursor.close()
     cursor_dmstore.close()
@@ -592,7 +602,7 @@ class DataRawGoods():
                  sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None,
                  psd_nums_4=None, psd_amount_4=None,max_scale=None,oneday_max_psd = None ,psd_nums_2=None, psd_amount_2=None,psd_nums_2_cls=None, psd_amount_2_cls=None,
                  upc_psd_amount_avg_1_5= None, upc_psd_amount_avg_6_7 = None, loss_avg = None,loss_avg_profit_amount = None, loss_avg_amount = None,loss_avg_nums = None
-                ,last_tz_upcs = None,last_v_upcs=None,single_face_min_disnums=None):
+                ,last_tz_upcs = None,last_v_upcs=None,single_face_min_disnums=None,add_sub_count=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -795,6 +805,10 @@ class DataRawGoods():
             else:
                 self.upc_status_type = 2
 
+        if add_sub_count is None:
+            self.add_sub_count = 0
+        else:
+            self.add_sub_count = add_sub_count
 
 
 class Shelf:

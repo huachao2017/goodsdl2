@@ -83,7 +83,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
           "最大陈列数,门店库存,仓库库存,配送类型,保质期,"
           "起订量,在途订货数,进货价,商品单价,开店以来单天最大psd数量,"
           "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,品的生命周期:0首次1新品2旧品,"
-          "7天平均废弃率,7天平均废弃后毛利率,7天平均废弃量,周1-5平均psd数量,周6-7平均psd数量,2周的psd数量,2周小类的psd数量")
+          "7天平均废弃率,7天平均废弃后毛利率,7天平均废弃量,周1-5平均psd数量,周6-7平均psd数量,2周的psd数量,2周小类的psd数量,单face配置最小陈列量,补货单在途订单数")
     for drg_ins in goods_order_all:
         mch_goods_dict = {}
         warhouse_order_sale = 0
@@ -128,7 +128,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
         print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
-              "%s,%s,%s,%s,%s,%s,%s"
+              "%s,%s,%s,%s,%s,%s,%s,%s"
               % (str(drg_ins.order_sale),str(warhouse_order_sale),
                  str(drg_ins.ucshop_id), str(drg_ins.shop_name), str(drg_ins.mch_code),
                  str(drg_ins.upc), str(drg_ins.goods_name),
@@ -144,7 +144,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
                  str(drg_ins.loss_avg), str(drg_ins.loss_avg_profit_amount), str(drg_ins.loss_avg_nums),
                  str(float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)),
                  str(float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)),
-                 str(float(drg_ins.psd_nums_2)), str(float(drg_ins.psd_nums_2_cls)),str(drg_ins.single_face_min_disnums)))
+                 str(float(drg_ins.psd_nums_2)), str(float(drg_ins.psd_nums_2_cls)),str(drg_ins.single_face_min_disnums),str(drg_ins.add_sub_count)))
         jsondata.append(mch_goods_dict)
     order_all_data = demjson.encode(jsondata)
     return order_all_data
@@ -186,9 +186,10 @@ def get_order_data_warhouse(goods_order_all):
             order_data_ins.shop_stock = drg_ins.stock
             order_data_ins.supply_stock = drg_ins.supply_stock
             order_data_ins.sub_count = drg_ins.sub_count
-            order_data_ins.shelf_order_info = []
+            shelf_inss = []
             for shelf_ins in drg_ins.shelf_inss:
-                order_data_ins.shelf_inss.append(shelf_ins)
+                shelf_inss.append(shelf_ins)
+            order_data_ins.shelf_inss = shelf_inss
             data_dict[key] = order_data_ins
         else:
             order_data_ins = data_dict[key]
@@ -197,7 +198,7 @@ def get_order_data_warhouse(goods_order_all):
             order_data_ins.max_disnums =  order_data_ins.max_disnums + drg_ins.max_disnums
             order_data_ins.shop_stock = drg_ins.stock + order_data_ins.shop_stock
             shelf_order_info = []
-            for shelf_ins1 in order_data_ins.shelf_order_info:
+            for shelf_ins1 in order_data_ins.shelf_inss:
                 shelf_order_info.append(shelf_ins1)
             for shelf_ins2 in drg_ins.shelf_inss:
                 shelf_order_info.append(shelf_ins2)
