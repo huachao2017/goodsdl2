@@ -109,10 +109,8 @@ def generate(shop_id = None,order_type=None):
                         safe_day = bhuo_days
                     track_stock = safe_day * one_day_psd + fudong_nums + end_safe_stock
                     order_sale = math.ceil(track_stock)
-            if order_sale <= 0:
-                continue
             drg_ins.order_sale = order_sale
-        goods_orders.append(drg_ins)
+            goods_orders.append(drg_ins)
         return goods_orders
     except Exception as e:
         print ("not day sales2 order faield ,e ={}".format(e))
