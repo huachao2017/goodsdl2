@@ -37,7 +37,7 @@ def day_order_process():
                 batch_id = data[1]
                 erp_warehouse_id = data[3]
                 cursor_dmstore.execute(sql_dmshop.format(int(erp_warehouse_id)))
-                dmstore_shopids = ucenter_cursor.fetchall()
+                dmstore_shopids = cursor_dmstore.fetchall()
                 if dmstore_shopids is not None and len(dmstore_shopids) > 0 :
                     cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                     cursor_ai.connection.commit()
