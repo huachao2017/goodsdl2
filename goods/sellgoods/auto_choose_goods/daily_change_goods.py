@@ -59,16 +59,16 @@ class DailyChangeGoods:
         now = datetime.datetime.now()
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
-        if type(shop_ids) is list:       # 多个门店
+        if type(shop_ids) is list and len(shop_ids) > 0:       # 多个门店
             # print('list,third_category',shop_ids,third_category)
-            shop_ids = tuple(shop_ids)
-            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {} and g.third_cate_id={} group by g.upc order by sum(p.amount) desc;"
+            shop_ids = ",".join(shop_ids)
+            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.third_cate_id={} group by g.upc order by sum(p.amount) desc;"
         elif type(shop_ids) is str or type(shop_ids) is int:     # 单个门店
             # print('str',shop_ids,type(shop_ids))
             sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.third_cate_id={} group by g.upc order by sum(p.amount) desc;"
         else:
             print('none', shop_ids,type(shop_ids))
-            return None
+            return []
         self.cursor.execute(sql.format(week_ago, now_date, shop_ids,third_category))
         results = self.cursor.fetchall()
         # cursor.close()
@@ -85,9 +85,9 @@ class DailyChangeGoods:
         now = datetime.datetime.now()
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
-        sql = "select distinct g.third_cate_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {};"
-        template_shop_ids_tuple = tuple(self.template_shop_ids)
-        self.cursor.execute(sql.format(week_ago, now_date, template_shop_ids_tuple))
+        sql = "select distinct g.third_cate_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({});"
+        template_shop_ids = ",".join(self.template_shop_ids)
+        self.cursor.execute(sql.format(week_ago, now_date, template_shop_ids))
         results = self.cursor.fetchall()
         print('get_third_category_list',results)
         results_list = []
@@ -581,9 +581,9 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924",'lishu_test_003',806)
-    # f.recommend_03()
-    start_choose_goods('lishu_test_01',806,88)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924",'lishu_test_003',806)
+    f.recommend_03()
+    # start_choose_goods('lishu_test_01',806,88)
 
 
 
