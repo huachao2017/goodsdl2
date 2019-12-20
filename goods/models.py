@@ -79,6 +79,13 @@ class FreezerImage(models.Model):
     visual = models.URLField(max_length=200, default='')
     create_time = models.DateTimeField('date created', auto_now_add=True, db_index=True)
 
+class MengniuFreezerImage(models.Model):
+    deviceid = models.CharField(max_length=20, default='0', db_index=True)
+    ret = models.TextField(default='')
+    source = models.ImageField(max_length=200, upload_to=image_upload_source)
+    visual = models.URLField(max_length=200, default='')
+    create_time = models.DateTimeField('date created', auto_now_add=True, db_index=True)
+
 class FirstGoodsSelection(models.Model):
     shopid = models.IntegerField(db_index=True)
     uc_shopid = models.IntegerField(default=806)
