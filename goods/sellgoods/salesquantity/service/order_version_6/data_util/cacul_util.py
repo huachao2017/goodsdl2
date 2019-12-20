@@ -1,5 +1,5 @@
 from goods.sellgoods.commonbean.goods_ai_sales_order import SalesOrder
-from goods.sellgoods.salesquantity.service.order_version_5.data_util.goods_info import get_shop_order_goods
+from goods.sellgoods.salesquantity.service.order_version_6.data_util.goods_info import get_shop_order_goods
 from goods.sellgoods.salesquantity.local_util.config_table_util import ConfigTableUtil
 from goods.sellgoods.salesquantity.bean import goods_config_disnums,goods_config_safedays
 from goods.sellgoods.salesquantity.bean import taskflow
@@ -151,13 +151,19 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
 
 
 class  Cls_Order_Data:
+    mch_goods_code = None
+    upc = None
+    delivery_type = 1
     order_sale =  0
     min_disnums = 0
     max_disnums = 0
     shop_stock  = 0
     supply_stock = 0
     start_sum = 0
-    shelf_order_info = None
+    shelf_inss = None
+    height = 0
+    width = 0
+    depth = 0
 
 
 def get_order_data_warhouse(goods_order_all):
@@ -169,7 +175,11 @@ def get_order_data_warhouse(goods_order_all):
             order_data_ins = Cls_Order_Data()
             order_data_ins.mch_goods_code = drg_ins.mch_code
             order_data_ins.upc = drg_ins.upc
+            order_data_ins.delivery_type = drg_ins.delivery_type
             order_data_ins.start_sum = drg_ins.start_sum
+            order_data_ins.height = drg_ins.height
+            order_data_ins.depth = drg_ins.depth
+            order_data_ins.width = drg_ins.width
             order_data_ins.order_sale = drg_ins.order_sale
             order_data_ins.min_disnums = drg_ins.min_disnums
             order_data_ins.max_disnums = drg_ins.max_disnums
@@ -177,6 +187,8 @@ def get_order_data_warhouse(goods_order_all):
             order_data_ins.supply_stock = drg_ins.supply_stock
             order_data_ins.sub_count = drg_ins.sub_count
             order_data_ins.shelf_order_info = []
+            for shelf_ins in drg_ins.shelf_inss:
+                order_data_ins.shelf_inss.append(shelf_ins)
             data_dict[key] = order_data_ins
         else:
             order_data_ins = data_dict[key]
@@ -184,27 +196,51 @@ def get_order_data_warhouse(goods_order_all):
             order_data_ins.min_disnums = order_data_ins.min_disnums + drg_ins.min_disnums
             order_data_ins.max_disnums =  order_data_ins.max_disnums + drg_ins.max_disnums
             order_data_ins.shop_stock = drg_ins.stock + order_data_ins.shop_stock
+            shelf_order_info = []
+            for shelf_ins1 in order_data_ins.shelf_order_info:
+                shelf_order_info.append(shelf_ins1)
+            for shelf_ins2 in drg_ins.shelf_inss:
+                shelf_order_info.append(shelf_ins2)
+            order_data_ins.shelf_inss = shelf_order_info
 
-    new_data_dict = {}
+    order_data_inss = []
     for key in data_dict:
         order_data_ins = data_dict[key]
         order_sale = order_data_ins.order_sale - order_data_ins.sub_count - order_data_ins.shop_stock - order_data_ins.supply_stock
         if order_sale > 0 :
+            # 起订量规则
             order_sale = order_rule.rule_start_num2(order_sale, order_data_ins.start_sum)
-        if order_sale > 0 :
+            order_data_ins.order_sale = order_sale
+        else:
+            order_data_ins.order_sale = 0
+        if order_data_ins.order_sale > 0 :
+            order_data_inss.append(order_data_ins)
+    # 日配品 空间限制规则
+    print ("日配品 空间限制前：len(order_data_inss) = "+str(len(order_data_inss)))
+    order_data_inss = order_rule.rule_daydelivery_type(order_data_inss)
+    print("日配品 空间限制后：len(order_data_inss) = " + str(len(order_data_inss)))
+    new_data_dict = {}
+    for order_data_ins in order_data_inss:
+        if order_data_ins.order_sale > 0 :
             order_data_dict = {}
             key = str(order_data_ins.mch_goods_code)+","+ order_data_ins.upc
-            new_data_dict[key] = order_sale
+            new_data_dict[key] = order_data_ins.order_sale
             order_data_dict["mch_goods_code"] =order_data_ins.mch_goods_code
             order_data_dict["upc"] = order_data_ins.upc
-            order_data_dict["order_sale"] = order_sale
+            order_data_dict["order_sale"] = order_data_ins.order_sale
             order_data_dict["min_disnums"] = order_data_ins.min_disnums
             order_data_dict["max_disnums"] = order_data_ins.max_disnums
             order_data_dict["shop_stock"] = order_data_ins.shop_stock
             order_data_dict["supply_stock"] = order_data_ins.supply_stock
-            order_data_dict["shelf_order_info"] = []
+            shelf_data = []
+            face_num = 0
+            for shelf_ins in order_data_ins.shelf_inss:
+                face_num += shelf_ins.face_num
+                shelf_data.append({"tz_id": shelf_ins.taizhang_id, "shelf_id": shelf_ins.shelf_id, "shelf_order": 0,
+                                   "face_num": shelf_ins.face_num})
+            order_data_dict["shelf_order_info"] = shelf_data
             jsondata.append(order_data_dict)
-    order_data =  demjson.encode(jsondata)
+    order_data = demjson.encode(jsondata)
     return order_data,new_data_dict
 
 
