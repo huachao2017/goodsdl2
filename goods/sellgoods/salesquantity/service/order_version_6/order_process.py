@@ -45,7 +45,7 @@ def day_order_process():
                     print("日常订单 batch_id =" + str(batch_id))
                     goods_orders_all = []
                     for dmstore_shopid in dmstore_shopids:
-                        dmstore_shopid = int (dmstore_shopid)
+                        dmstore_shopid = int (dmstore_shopid[0])
                         goods_orders = generate_order_2saler_add.generate(dmstore_shopid)
                         if goods_orders is None:
                             print ("下订单时，仓库下单失败 erp_warehouse_id = {}， 存在一个店 下单失败 dmstore_shopid={}".format(erp_warehouse_id,dmstore_shopid))
