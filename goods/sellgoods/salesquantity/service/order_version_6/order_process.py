@@ -18,15 +18,13 @@ select_goods_batch_order = "select id,batch_order_id order_data from goods_batch
 update_goods_batch_order = "update goods_batch_order set order_data = '{}',update_time='{}',order_all_data='{}' where id = {}"
 sql_uc_shop = "select mch_shop_code from uc_shop where id = {}"
 
-sql_dmshop = "select shop_id from erp_shop_related where erp_shop_id = {} and erp_shop_type = 1"
+sql_dmshop = "SELECT is_authorized_shop_id FROM ms_relation WHERE authorized_shop_id = {}"
 # 订货单
 def day_order_process():
     conn = connections['default']
-    conn_ucenter = connections['ucenter']
-    conn_dmstore = connections['dmstore']
-    ucenter_cursor = conn_ucenter.cursor()
     cursor_ai = conn.cursor()
-    cursor_dmstore = conn_dmstore.cursor()
+    conn_erp = connections['erp']
+    cursor_erp = conn_erp.cursor()
     # 获取日常订单
     cursor_ai.execute(sql_workflow.format(taskflow.day_order_type))
     first_flow_data = cursor_ai.fetchall()
@@ -36,8 +34,8 @@ def day_order_process():
                 id = data[0]
                 batch_id = data[1]
                 erp_warehouse_id = data[3]
-                cursor_dmstore.execute(sql_dmshop.format(int(erp_warehouse_id)))
-                dmstore_shopids = cursor_dmstore.fetchall()
+                cursor_erp.execute(sql_dmshop.format(int(erp_warehouse_id)))
+                dmstore_shopids = cursor_erp.fetchall()
                 if dmstore_shopids is not None and len(dmstore_shopids) > 0 :
                     cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                     cursor_ai.connection.commit()
@@ -77,9 +75,8 @@ def day_order_process():
                 cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, 0,
                                                        data[0]))  # 更新到“结束计算”和耗时多少
                 cursor_ai.connection.commit()
-
     conn.close()
-    conn_ucenter.close()
+    conn_erp.close()
 
 
 # 补货单
