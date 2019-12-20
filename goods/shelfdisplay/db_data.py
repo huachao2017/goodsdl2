@@ -134,6 +134,8 @@ class GoodsData:
             self.depth = self.width
         self.is_superimpose = is_superimpose  # 1可叠放，2不可叠放
         self.is_suspension = is_suspension  # 1可挂放，2不可挂放
+        if psd is None:
+            psd = 0
         self.psd = psd  # 预测销量
         self.face_num = 1  # 在某层陈列时填入
         self.add_face_num = 0  # 商品不足做扩面处理
