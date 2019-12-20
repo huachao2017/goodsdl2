@@ -1,5 +1,6 @@
 import time
 import traceback
+import main.import_django_settings
 
 from goods.models import AllWorkFlowBatch
 from goods.shelfdisplay.firstdisplay.generate_shelf_display import generate_workflow_displays

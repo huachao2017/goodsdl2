@@ -30,16 +30,18 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     cursor.execute('select id, shop_name , mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
     (uc_shopid, shop_name,mch_id) = cursor.fetchone()
     # 获取erp系统的erp_shopid
+
     cursor_dmstore.execute("select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
     (erp_shop_id,) = cursor_dmstore.fetchone() # 门店id
-    cursor_dmstore.execute(
-        "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 1".format(shopid))
-    (erp_supply_id,) = cursor_dmstore.fetchone() # 仓库id
-
-    cursor_dmstore.execute(
-        "select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 2".format(shopid))
-    (erp_resupply_id,) = cursor_dmstore.fetchone()  # 供货商id
-
+    print("erp 门店id" + str(erp_shop_id))
+    cursor_erp.execute(
+        "SELECT authorized_shop_id from ms_relation WHERE is_authorized_shop_id = {} and  status=1".format(erp_shop_id))
+    (erp_supply_id,) = cursor_erp.fetchone() # 仓库id
+    print ("erp 仓库id"+str(erp_supply_id))
+    cursor_erp.execute(
+        "SELECT authorized_shop_id from ms_relation WHERE is_authorized_shop_id = {} and  status=1".format(erp_supply_id))
+    (erp_resupply_id,) = cursor_erp.fetchone()  # 供货商id
+    print("erp 供货商id" + str(erp_resupply_id))
     # 获取台账和前一天台账中的pin
     taizhangs,last_tz_upcs,last_v_upcs = get_taizhang(uc_shopid,shopid,mch_id)
     if taizhangs is None:
@@ -124,24 +126,42 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         # 获取商品属性
                         try:
                             cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,category1_id,category2_id,category_id,storage_day,package_type,display_goods_num from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                                     mch_id, mch_code))
                             # FIXME width,height暂时翻转
                             # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
                             (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
-                             is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type) = cursor.fetchone()
+                             is_suspension,category1_id,category2_id,category_id,storage_day,package_type,single_face_min_disnums) = cursor.fetchone()
                         except:
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue
 
-                        # 获取商品的最小陈列量
-                        single_face_min_disnums = 0
+                        # 获取商品的 可定  起订量  配送类型
                         try:
-                            cursor_ai.execute("select single_face_min_disnums from goods_config_disnums where upc = '{}'".format(upc))
-                            (single_face_min_disnums,) = cursor_ai.fetchone()
+                            cursor.execute("select id from uc_supplier where supplier_code = '{}'".format(erp_resupply_id))
+                            (supplier_id,) = cursor.fetchone()
+                            cursor.execute(
+                                "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and upc = '{}' and order_status = 1 ".format(supplier_id,mch_code,upc))
+
+                            (start_sum,order_status,delivery_type_str) = cursor.fetchone()
+
+                            cursor.execute(
+                                "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
+                                    delivery_type_str))
+                            (delivery_type,) = cursor.fetchone()
                         except:
-                            print ("ai 找不到商品的单face最小陈列量 ")
-                            single_face_min_disnums = 0
+                            print ("该品 不订货，获取商品的可定  起订量  配送类型 失败 ！ erp_resupply_id={},upc={},mch_code={}".format(erp_resupply_id,upc,mch_code))
+                            continue
+
+
+                        # # 获取商品的最小陈列量  切换到sass 获取
+                        # single_face_min_disnums = 0
+                        # try:
+                        #     cursor_ai.execute("select single_face_min_disnums from goods_config_disnums where upc = '{}'".format(upc))
+                        #     (single_face_min_disnums,) = cursor_ai.fetchone()
+                        # except:
+                        #     print ("ai 找不到商品的单face最小陈列量 ")
+                        #     single_face_min_disnums = 0
 
                         scale = None
                         max_scale = 1
@@ -254,25 +274,25 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             loss_avg_profit_amount = 0
                             loss_avg_amount = 0
                             loss_avg_nums = 0
-                        if erp_resupply_id is not None:
-                            try:
-                                # 获取起订量
-                                # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
-                                cursor_erp.execute(
-                                    "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}' and s.party_code = '{}'".format(
-                                        erp_resupply_id, upc,mch_code))
-                                (sku_id,) = cursor_erp.fetchone()
-                                cursor_erp.execute(
-                                    "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
-                                        sku_id))
-                                (start_sum, multiple) = cursor_erp.fetchone()
-                            except:
-                                print('Erp找不到商品:{}-{}！'.format(upc, erp_resupply_id))
-                                start_sum = 0
-                                multiple = 0
-                        else:
-                            start_sum = 0
-                            multiple = 0
+                        # if erp_resupply_id is not None:
+                        #     try:
+                        #         # 获取起订量
+                        #         # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
+                        #         cursor_erp.execute(
+                        #             "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}' and s.party_code = '{}'".format(
+                        #                 erp_resupply_id, upc,mch_code))
+                        #         (sku_id,) = cursor_erp.fetchone()
+                        #         cursor_erp.execute(
+                        #             "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                        #                 sku_id))
+                        #         (start_sum, multiple) = cursor_erp.fetchone()
+                        #     except:
+                        #         print('Erp找不到商品:{}-{}！'.format(upc, erp_resupply_id))
+                        #         start_sum = 0
+                        #         multiple = 0
+                        # else:
+                        #     start_sum = 0
+                        #     multiple = 0
                         try:
                             # 获取小仓库库存
                             cursor_erp.execute(
@@ -427,7 +447,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             psd_nums_4 = 0
                             psd_amount_4 = 0
                             psd_nums_2, psd_amount_2 = 0,0
-
+                        multiple = 0
                         ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
                                                       start_sum,multiple,
                                                      stock = stock,
