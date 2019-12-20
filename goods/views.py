@@ -25,6 +25,8 @@ from set_config import config
 freezer_check_yolov3_switch = config.common_params['freezer_check_yolov3_switch']
 # yolov3 = yolo_freezer.YOLO()
 yolov3 = None
+# mengniu_yolov3 = yolo_freezer.YOLO()
+mengniu_yolov3 = None
 class Test(APIView):
     def get(self, request):
         url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
@@ -83,6 +85,28 @@ class FreezerImageViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
         logger.info('end detect:{}'.format(serializer.instance.deviceid))
         return Response(serializer.instance.ret, status=status.HTTP_201_CREATED, headers=headers)
 
+class MengniuFreezerImageViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                          viewsets.GenericViewSet):
+    queryset = MengniuFreezerImage.objects.order_by('-id')
+    serializer_class = MengniuFreezerImageSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        logger.info('begin detect:{},{}'.format(serializer.instance.deviceid, serializer.instance.source.path))
+        ret = []
+        detect_ret, aiinterval, visual_image_path = mengniu_yolov3.detect(serializer.instance.source.path)
+
+        ret = json.dumps(detect_ret, cls=NumpyEncoder)
+        serializer.instance.ret = ret
+        serializer.instance.visual = visual_image_path.replace(settings.MEDIA_ROOT,'')
+        serializer.instance.save()
+
+        logger.info('end detect:{}'.format(serializer.instance.deviceid))
+        return Response(serializer.instance.ret, status=status.HTTP_201_CREATED, headers=headers)
 class GoodsImageViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
                    viewsets.GenericViewSet):
     queryset = GoodsImage.objects.order_by('-id')

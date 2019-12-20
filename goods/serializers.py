@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,GoodsImage,ShelfDisplayDebug,ShelfDisplayDebugGoods,AllWorkFlowBatch, ArmImage
+from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,MengniuFreezerImage, GoodsImage,ShelfDisplayDebug,ShelfDisplayDebugGoods,AllWorkFlowBatch, ArmImage
 import os
 from django.conf import settings
 
@@ -113,6 +113,26 @@ class FreezerImageSerializer(serializers.ModelSerializer):
 
         else:
             return None
+class MengniuFreezerImageSerializer(serializers.ModelSerializer):
+    visual_url = serializers.SerializerMethodField()
+    class Meta:
+        model = MengniuFreezerImage
+        fields = ('pk', 'deviceid', 'ret', 'source','visual_url',
+                  'create_time')
+        read_only_fields = ('ret', 'visual','create_time')
+
+    def get_visual_url(self, freezerImage):
+        request = self.context.get('request')
+        if freezerImage.visual:
+            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
+                                                           host=request.get_host(),
+                                                           path=settings.MEDIA_URL,
+                                                           visual=freezerImage.visual)
+            return current_uri
+
+        else:
+            return None
+
 
 class GoodsImageSerializer(serializers.ModelSerializer):
 
