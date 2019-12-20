@@ -21,11 +21,12 @@ from django.db import connections
 
 logger = logging.getLogger("django")
 from goods.freezer.keras_yolo3.yolo3 import yolo_freezer
+from goods.freezer.keras_yolo3.yolo3 import yolo_mengniu
 from set_config import config
 freezer_check_yolov3_switch = config.common_params['freezer_check_yolov3_switch']
 # yolov3 = yolo_freezer.YOLO()
 yolov3 = None
-# mengniu_yolov3 = yolo_freezer.YOLO()
+# mengniu_yolov3 = yolo_mengniu.YOLO()
 mengniu_yolov3 = None
 class Test(APIView):
     def get(self, request):

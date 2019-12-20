@@ -13,6 +13,20 @@ yolov3_params={
     "single_switch_iou_minscore":(True,0.0,0.28)
 }
 
+#########################################YOLOV3-mengniu##################################################################
+mengniu_yolov3_params={
+    'good_model_path' :'/home/ai/model/mengniu/ep4741-loss37.220-val_loss39.538.h5',
+    'anchors_path' :'./goods/freezer/keras_yolo3/model_data/mengniu_yolo_anchors.txt',
+    'classes_path' : './goods/freezer/keras_yolo3/model_data/mengniu_voc_classes.txt',
+    'label_path':'./goods/freezer/keras_yolo3/model_data/mengniu_label_map.pbtxt',
+    'score' :0.25,
+    'iou' :0.45,
+    'model_image_size' : (416, 416),
+    'gpu_num' : 1,
+    "diff_switch_iou":(True,0.6),
+    "single_switch_iou_minscore":(True,0.0,0.28)
+}
+
 #########################################shelf_good##################################################################
 
 aliyun_instance1={
