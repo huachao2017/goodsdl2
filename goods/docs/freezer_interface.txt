@@ -1,4 +1,4 @@
-1、通用检测图片接口：http://ai.aicvs.cn/api/freezerimage/
+1、通用检测图片接口：http://ai.aicvs.cn:8000/api/freezerimage/
 post入参：
 source  file
 deviceid  string，可以根据客户端需要传参，便于区分设备
@@ -22,7 +22,7 @@ deviceid  string，可以根据客户端需要传参，便于区分设备
     }
 ]
 
-2、蒙牛检测图片接口：http://ai.aicvs.cn/api/mengniufreezerimage/
+2、蒙牛检测图片接口：http://ai.aicvs.cn:8000/api/mengniufreezerimage/
 post入参：
 source  file
 deviceid  string，可以根据客户端需要传参，便于区分设备
