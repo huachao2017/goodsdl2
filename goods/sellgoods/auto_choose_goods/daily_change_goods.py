@@ -580,7 +580,7 @@ if __name__ == '__main__':
 
     # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924",'lishu_test_003',806)
     # f.recommend_03()
-    start_choose_goods('lishu_test_01',806,1284)
+    start_choose_goods('lishu_test_01',806,88)
 
 
 
