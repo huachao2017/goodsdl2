@@ -576,12 +576,13 @@ class DailyChangeGoods:
 
 
 def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
-    f = DailyChangeGoods(pos_shopid, "88,3156",batch_id,uc_shop_id)
+    # f = DailyChangeGoods(pos_shopid, "88,3156",batch_id,uc_shop_id)
+    f = DailyChangeGoods(pos_shopid, "1284,3955,3779,1925,4076,1924,3598",batch_id,uc_shop_id)
     f.recommend_03()
 
 if __name__ == '__main__':
 
-    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924",'lishu_test_003',806)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598",'lishu_test_003',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
 

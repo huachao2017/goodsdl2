@@ -47,6 +47,7 @@ def day_order_process():
                     start_time = time.time()
                     print("日常订单 batch_id =" + str(batch_id))
                     goods_orders_all = []
+                    flag_error = False
                     for erp_shopid in erp_shopids:
                         erp_shopid = int (erp_shopid[0])
                         cursor_dmstore.execute(sql_dmstore_shop.format(erp_shopid))
@@ -54,13 +55,19 @@ def day_order_process():
                         goods_orders = generate_order_2saler_add.generate(dmstore_shopid)
                         if goods_orders is None:
                             print ("下订单时，仓库下单失败 erp_warehouse_id = {}， 存在一个店 下单失败 dmstore_shopid={}".format(erp_warehouse_id,dmstore_shopid))
-                            cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
-                                                                   id))  # 更新到“结束计算”和耗时多少
-                            cursor_ai.connection.commit()
-                            return
+                            # cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
+                            #                                        id))  # 更新到“结束计算”和耗时多少
+                            # cursor_ai.connection.commit()
+                            continue
                         else:
+                            flag_error = True
                             for drg_ins in goods_orders:
                                 goods_orders_all.append(drg_ins)
+                    if flag_error == False:
+                        print ("下订单时，仓库下所有店 下单失败 erp_warehouse_id = {}".format(erp_warehouse_id))
+                        cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
+                                                               id))  # 更新到“结束计算”和耗时多少
+                        cursor_ai.connection.commit()
                     print ("非日配 和 日配 订单所有店 所有商品数 ："+str(len(goods_orders_all)))
                     cursor_ai.execute(select_goods_batch_order.format(batch_id))
                     goods_batch_data = cursor_ai.fetchone()

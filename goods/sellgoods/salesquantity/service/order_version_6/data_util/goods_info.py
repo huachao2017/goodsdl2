@@ -35,11 +35,11 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     (erp_shop_id,) = cursor_dmstore.fetchone() # 门店id
     print("erp 门店id" + str(erp_shop_id))
     cursor_erp.execute(
-        "SELECT authorized_shop_id from ms_relation WHERE is_authorized_shop_id = {}".format(erp_shop_id))
+        "SELECT authorized_shop_id from ms_relation WHERE is_authorized_shop_id = {} and  status=1".format(erp_shop_id))
     (erp_supply_id,) = cursor_erp.fetchone() # 仓库id
     print ("erp 仓库id"+str(erp_supply_id))
     cursor_erp.execute(
-        "SELECT authorized_shop_id from ms_relation WHERE is_authorized_shop_id = {}".format(erp_supply_id))
+        "SELECT authorized_shop_id from ms_relation WHERE is_authorized_shop_id = {} and  status=1".format(erp_supply_id))
     (erp_resupply_id,) = cursor_erp.fetchone()  # 供货商id
     print("erp 供货商id" + str(erp_resupply_id))
     # 获取台账和前一天台账中的pin
