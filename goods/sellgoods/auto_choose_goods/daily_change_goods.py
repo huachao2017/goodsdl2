@@ -544,7 +544,7 @@ class DailyChangeGoods:
         cursor = conn.cursor()
 
         # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
-        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,goods_role,is_structure,is_qiuck_seller,is_relation,ranking) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},%s,%s,%s,%s)"
+        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,goods_role,is_structure,is_qiuck_seller,is_relation,ranking,handle_goods_role) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},%s,%s,%s,%s,{})"
         delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
         select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
         # try:
@@ -558,7 +558,7 @@ class DailyChangeGoods:
         print('开始入库')
         # print(insert_sql_02)
         print(tuple_data[:5])
-        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,goods_role).replace('None', 'NULL'), tuple_data[:])
+        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
         conn.commit()
         conn.close()
         print('ok')
