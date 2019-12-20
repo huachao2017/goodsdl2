@@ -498,7 +498,7 @@ def get_taizhang(uc_shopid,shopid,mch_id):
         nowday_taizhangs = cursor.fetchall() #执行中的台账 （一个店只会有一份）
     # print (nowday_taizhangs)
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0  :
-        return None,None
+        return None,None,None
 
     last_v_taizhang = []
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0 : # 没有计划执行台账，上一版陈列从已完成陈列取

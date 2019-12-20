@@ -4,8 +4,8 @@ import main.import_django_settings
 from django.db import connections
 import time
 from goods.sellgoods.salesquantity.bean import taskflow
-from goods.sellgoods.salesquantity.service.order_version_5 import generate_order_2saler_add,generate_order_shop
-from goods.sellgoods.salesquantity.service.order_version_5.data_util import cacul_util
+from goods.sellgoods.salesquantity.service.order_version_6 import generate_order_2saler_add,generate_order_shop
+from goods.sellgoods.salesquantity.service.order_version_6.data_util import cacul_util
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from set_config import config
 import datetime
@@ -43,27 +43,32 @@ def day_order_process():
                     cursor_ai.connection.commit()
                     start_time = time.time()
                     print("日常订单 batch_id =" + str(batch_id))
+                    goods_orders_all = []
                     for dmstore_shopid in dmstore_shopids:
                         dmstore_shopid = int (dmstore_shopid)
-                        sales_order_inss,result = generate_order_2saler_add.generate(dmstore_shopid)
-                        if sales_order_inss is None:
+                        goods_orders = generate_order_2saler_add.generate(dmstore_shopid)
+                        if goods_orders is None:
+                            print ("下订单时，仓库下单失败 erp_warehouse_id = {}， 存在一个店 下单失败 dmstore_shopid={}".format(erp_warehouse_id,dmstore_shopid))
                             cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, int(time.time() - start_time),
                                                                    id))  # 更新到“结束计算”和耗时多少
                             cursor_ai.connection.commit()
+                            return
                         else:
                             # 把结果转成json , 存入数据库
-                            print ("非日配 和 日配 订单商品数 ："+str(len(sales_order_inss)))
-                            cursor_ai.execute(select_goods_batch_order.format(batch_id))
-                            goods_batch_data = cursor_ai.fetchone()
-                            if goods_batch_data is None:
-                                inert_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,result)
-                                cursor_ai.executemany(insert_goods_batch_order, inert_data)
-                                cursor_ai.connection.commit()
-                            else:
-                                update_data = cacul_util.get_goods_batch_order_data(batch_id,sales_order_inss,result)
-                                cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],update_data[0][4],goods_batch_data[0]))
-                                cursor_ai.connection.commit()
-                            # 更新数据库状态
+                            for drg_ins in goods_orders:
+                                goods_orders_all.append(drg_ins)
+                    print ("非日配 和 日配 订单所有店 所有商品数 ："+str(len(goods_orders_all)))
+                    cursor_ai.execute(select_goods_batch_order.format(batch_id))
+                    goods_batch_data = cursor_ai.fetchone()
+                    if goods_batch_data is None:
+                        inert_data = cacul_util.get_goods_batch_order_data_warhouse(batch_id,goods_orders_all)
+                        cursor_ai.executemany(insert_goods_batch_order, inert_data)
+                        cursor_ai.connection.commit()
+                    else:
+                        update_data = cacul_util.get_goods_batch_order_data_warhouse(batch_id,goods_batch_data)
+                        cursor_ai.execute(update_goods_batch_order.format(update_data[0][1], update_data[0][3],update_data[0][4],goods_batch_data[0]))
+                        cursor_ai.connection.commit()
+                    # 更新数据库状态
                     cursor_ai.execute(
                         update_sql_02.format(taskflow.cal_status_end, int(time.time() - start_time), data[0]))
                     cursor_ai.connection.commit()
