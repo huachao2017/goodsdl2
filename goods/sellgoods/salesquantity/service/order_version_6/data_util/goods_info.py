@@ -498,7 +498,7 @@ def get_taizhang(uc_shopid,shopid,mch_id):
         nowday_taizhangs = cursor.fetchall() #执行中的台账 （一个店只会有一份）
     # print (nowday_taizhangs)
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0  :
-        return None,None,None
+        return None,None
 
     last_v_taizhang = []
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0 : # 没有计划执行台账，上一版陈列从已完成陈列取
@@ -750,6 +750,7 @@ class DataRawGoods():
                 self.upc_status_type = 1
             else:
                 self.upc_status_type = 2
+        self.order_sale = 0
 
 
 

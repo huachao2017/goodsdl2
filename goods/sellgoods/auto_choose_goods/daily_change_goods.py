@@ -62,7 +62,7 @@ class DailyChangeGoods:
         if type(shop_ids) is list:       # 多个门店
             # print('list,third_category',shop_ids,third_category)
             shop_ids = tuple(shop_ids)
-            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {} and g.third_cate_id={} group by g.upc order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {} and g.third_cate_id={} group by g.upc order by sum(p.amount) desc;"
         elif type(shop_ids) is str or type(shop_ids) is int:     # 单个门店
             # print('str',shop_ids,type(shop_ids))
             sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.third_cate_id={} group by g.upc order by sum(p.amount) desc;"
@@ -138,8 +138,8 @@ class DailyChangeGoods:
         :param mch_code:
         :return:
         """
-        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in {}"
-        self.cursor.execute(sql.format(tuple(mch_code_list)))
+        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in ({})"
+        self.cursor.execute(sql.format(",".join(mch_code_list)))
         all_data = self.cursor.fetchall()
         result = []
         for data in all_data:
@@ -198,21 +198,21 @@ class DailyChangeGoods:
         category_dict = {}    # k为三级分类，v为分类下的商品列表
         for third_category in self.third_category_list[:]:      # 遍历每个三级分类
             all_shop_data = self.get_third_category_data(third_category, self.template_shop_ids)
-            # 以下14行代码主要是统计upc取数周期内在各店出现的次数
-            all_one_shop_data_list = []
-            for template_shop_id in self.template_shop_ids:
-                one_shop_data = self.get_third_category_data(third_category, template_shop_id)
-                all_one_shop_data_list.append(one_shop_data)
-            all_upc = [i[1] for i in all_shop_data]   #FIXME
-            upc_time = {}           # upc在各店出现的次数，k为upc，v为次数
-            for upc in all_upc:
-                temp_num = 0
-                for one_shop_data in all_one_shop_data_list:
-                    for data in one_shop_data:
-                        if upc == data[1]: #FIXME
-                            temp_num += 1
-                if temp_num > 0:    # 将出现大于2次的都加进去
-                    upc_time[upc] = temp_num
+            # # 以下14行代码主要是统计upc取数周期内在各店出现的次数
+            # all_one_shop_data_list = []
+            # for template_shop_id in self.template_shop_ids:
+            #     one_shop_data = self.get_third_category_data(third_category, template_shop_id)
+            #     all_one_shop_data_list.append(one_shop_data)
+            # all_upc = [i[1] for i in all_shop_data]   # FIXME
+            # upc_time = {}           # upc在各店出现的次数，k为upc，v为次数
+            # for upc in all_upc:
+            #     temp_num = 0
+            #     for one_shop_data in all_one_shop_data_list:
+            #         for data in one_shop_data:
+            #             if upc == data[1]: # FIXME
+            #                 temp_num += 1
+            #     if temp_num > 0:    # 将出现大于N次的都加进去
+            #         upc_time[upc] = temp_num
 
 
             # print('upc_time',upc_time)
@@ -220,7 +220,8 @@ class DailyChangeGoods:
             for data in all_shop_data:     # psd金额除以商店数
                 # try:
                     # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name
-                    temp_list = [','.join(self.template_shop_ids), data[1], data[2], data[0]/(upc_time[data[1]]*self.days), data[3],data[0]/(upc_time[data[1]]*self.days*data[4]), data[5]]
+                    # temp_list = [','.join(self.template_shop_ids), data[1], data[2], data[0]/(upc_time[data[1]]*self.days), data[3],data[0]/(upc_time[data[1]]*self.days*data[4]), data[5]]
+                    temp_list = [','.join(self.template_shop_ids), data[1], data[2], data[0]/(data[6]*self.days), data[3],data[0]/(data[6]*self.days*data[4]), data[5]]
 
                     third_category_quick_seller_list.append(temp_list)
                 # except:
@@ -286,7 +287,7 @@ class DailyChangeGoods:
         for category in category_03_list:
             category_protect_goods_list = []    # 保护品
             # 新品期的品
-            new_goods = []
+            new_goods = []   # TODO
 
 
 
@@ -321,55 +322,6 @@ class DailyChangeGoods:
             shop_protect_goods_mch_code_list.extend(category_protect_goods_list)
         return shop_protect_goods_mch_code_list
 
-
-
-
-
-
-
-
-
-
-    def recommend(self):
-
-        # 1、遍历一级分类
-        # 2、计算畅销品，检查是否可订货
-        # 3、计算结构品，检查是否可订货和是否在畅销品列表里，进行删减去重
-        # 4、其他候补品，检查是否可订货，最终加起来是预估选品的120%
-        # 4.1、先根据‘预估选品减去畅销和结构’计算出剩余该选的数量
-        # 4.2、计算一级分类下psd金额排序列表，依次选出检查是否在畅销品、结构品、可订货列表中，然后加到候补品列表中，加满为止
-
-        quick_seller = self.calculate_quick_seller()
-        print('quick_seller',quick_seller)
-        print('quick_seller',len(quick_seller))
-
-
-
-
-
-
-
-        # print('quick_seller_list',quick_seller_list)
-        # print('quick_seller_list长度',len(quick_seller_list))
-        # TODO 畅销品列表计算
-
-        self.calculate_category_goods()   #计算结构品的数据
-
-        sale_goods = self.get_sale_goods()  # 在售的商品
-        sale_goods_upc_list = [i[0] for i in sale_goods]
-        print('sale_goods',sale_goods)
-        print('sale_goods',len(sale_goods))
-        print('sale_goods_upc_list',sale_goods_upc_list)
-        recommend_list = []
-        for goods in self.category_goods_list:
-            if goods not in sale_goods:        #FIXME goods是一回事吗
-                recommend_list.append(goods)
-
-        # for goods in quick_seller_list:
-        #     if goods not in sale_goods_upc_list and goods not in recommend_list:
-        #         recommend_list.append(goods)
-
-        return recommend_list
 
     def recommend_02(self):
         """
@@ -448,7 +400,10 @@ class DailyChangeGoods:
         all_goods_len = len(taizhang_goods_mch_code_list)
 
         # 1.3 获取本店的保护品，即不动的品
-        category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
+        if all_goods_len == 0:
+            category_03_list = []
+        else:
+            category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
         print('本店已有三级分类', len(category_03_list),sorted(category_03_list))
         not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list)
         print("本店保护品len",len(not_move_goods_mch_code_list),not_move_goods_mch_code_list)
@@ -592,7 +547,7 @@ class DailyChangeGoods:
         cursor = conn.cursor()
 
         # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
-        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,goods_role,is_structure,is_qiuck_seller,is_relation,ranking) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},%s,%s,%s,%s)"
+        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,goods_role,is_structure,is_qiuck_seller,is_relation,ranking,handle_goods_role) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},%s,%s,%s,%s,{})"
         delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
         select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
         # try:
@@ -606,7 +561,7 @@ class DailyChangeGoods:
         print('开始入库')
         # print(insert_sql_02)
         print(tuple_data[:5])
-        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,goods_role).replace('None', 'NULL'), tuple_data[:])
+        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
         conn.commit()
         conn.close()
         print('ok')
@@ -626,9 +581,9 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924",'lishu_test_002',806)
+    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924",'lishu_test_003',806)
     # f.recommend_03()
-    start_choose_goods('lishu_test_01',806,1284)
+    start_choose_goods('lishu_test_01',806,88)
 
 
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-#source /etc/profile
+source /etc/profile
 today=`date +"%Y-%m-%d"`
 killid=`ps -ef | grep listener_order.py | grep -v grep | awk 'BEGIN{FS=" "}{print $2}' | head -1`
 kill -9 $killid
