@@ -138,8 +138,8 @@ class DailyChangeGoods:
         :param mch_code:
         :return:
         """
-        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in {}"
-        self.cursor.execute(sql.format(tuple(mch_code_list)))
+        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in ({})"
+        self.cursor.execute(sql.format(",".join(mch_code_list)))
         all_data = self.cursor.fetchall()
         result = []
         for data in all_data:
@@ -400,7 +400,10 @@ class DailyChangeGoods:
         all_goods_len = len(taizhang_goods_mch_code_list)
 
         # 1.3 获取本店的保护品，即不动的品
-        category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
+        if all_goods_len == 0:
+            category_03_list = []
+        else:
+            category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
         print('本店已有三级分类', len(category_03_list),sorted(category_03_list))
         not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list)
         print("本店保护品len",len(not_move_goods_mch_code_list),not_move_goods_mch_code_list)
