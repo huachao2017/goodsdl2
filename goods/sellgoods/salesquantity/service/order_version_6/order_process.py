@@ -19,12 +19,17 @@ update_goods_batch_order = "update goods_batch_order set order_data = '{}',updat
 sql_uc_shop = "select mch_shop_code from uc_shop where id = {}"
 
 sql_dmshop = "SELECT is_authorized_shop_id FROM ms_relation WHERE authorized_shop_id = {}"
+
+sql_dmstore_shop = "select shop_id from erp_shop_related where erp_shop_id = {} and erp_shop_type = 0"
 # 订货单
 def day_order_process():
     conn = connections['default']
     cursor_ai = conn.cursor()
     conn_erp = connections['erp']
     cursor_erp = conn_erp.cursor()
+
+    conn_dmstore = connections['dmstore']
+    cursor_dmstore = conn_dmstore.cursor()
     # 获取日常订单
     cursor_ai.execute(sql_workflow.format(taskflow.day_order_type))
     first_flow_data = cursor_ai.fetchall()
@@ -35,15 +40,17 @@ def day_order_process():
                 batch_id = data[1]
                 erp_warehouse_id = data[3]
                 cursor_erp.execute(sql_dmshop.format(int(erp_warehouse_id)))
-                dmstore_shopids = cursor_erp.fetchall()
-                if dmstore_shopids is not None and len(dmstore_shopids) > 0 :
+                erp_shopids = cursor_erp.fetchall()
+                if erp_shopids is not None and len(erp_shopids) > 0 :
                     cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                     cursor_ai.connection.commit()
                     start_time = time.time()
                     print("日常订单 batch_id =" + str(batch_id))
                     goods_orders_all = []
-                    for dmstore_shopid in dmstore_shopids:
-                        dmstore_shopid = int (dmstore_shopid[0])
+                    for erp_shopid in erp_shopids:
+                        erp_shopid = int (erp_shopid[0])
+                        cursor_dmstore.execute(sql_dmstore_shop.format(erp_shopid))
+                        (dmstore_shopid,) = cursor_dmstore.fetchone()
                         goods_orders = generate_order_2saler_add.generate(dmstore_shopid)
                         if goods_orders is None:
                             print ("下订单时，仓库下单失败 erp_warehouse_id = {}， 存在一个店 下单失败 dmstore_shopid={}".format(erp_warehouse_id,dmstore_shopid))
@@ -77,6 +84,7 @@ def day_order_process():
                 cursor_ai.connection.commit()
     conn.close()
     conn_erp.close()
+    conn_dmstore.close()
 
 
 # 补货单
