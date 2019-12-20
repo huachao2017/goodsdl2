@@ -576,7 +576,7 @@ class DailyChangeGoods:
 
 
 def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
-    f = DailyChangeGoods(pos_shopid, "88,89",batch_id,uc_shop_id)
+    f = DailyChangeGoods(pos_shopid, "88,3156",batch_id,uc_shop_id)
     f.recommend_03()
 
 if __name__ == '__main__':
