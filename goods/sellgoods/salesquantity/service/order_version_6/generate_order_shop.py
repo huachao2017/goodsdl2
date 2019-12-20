@@ -5,7 +5,7 @@ from set_config import config
 import traceback
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from goods.sellgoods.salesquantity.proxy import order_rule
-from goods.sellgoods.salesquantity.service.order_version_6.data_util import cacul_util
+from goods.sellgoods.salesquantity.service.order_version_5.data_util import cacul_util
 shop_type = config.shellgoods_params['shop_types'][0]  # 门店
 yinliao_cat_ids = config.shellgoods_params['yinliao_cat_ids'] # 饮料台账分类
 def generate(shop_id = None):
@@ -21,6 +21,7 @@ def generate(shop_id = None):
             drg_ins = result[mch_code]
             if (max(0,drg_ins.stock) < drg_ins.max_disnums and drg_ins.category_id in yinliao_cat_ids)  or (max(0,drg_ins.stock) <= drg_ins.min_disnums and drg_ins.category_id not in yinliao_cat_ids):
                 order_sale = min(drg_ins.max_disnums-max(0,drg_ins.stock),max(0,drg_ins.supply_stock))
+                order_sale = order_sale - drg_ins.add_sub_count
                 if order_sale <= 0:
                     continue
                 sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id,shop_type)
