@@ -29,9 +29,9 @@ class DailyChangeGoods:
         self.third_category_list = []      # 三级分类的列表
         self.first_category_goods_count_dict = {}     # 一级分类选品预估的数量
 
-        conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
-        self.cursor = conn.cursor()
-        # self.cursor = connections['dmstore'].cursor()
+        # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
+        # self.cursor = conn.cursor()
+        self.cursor = connections['dmstore'].cursor()
 
     def get_shop_sales_data(self, shop_id):
         """
