@@ -28,6 +28,7 @@ class DailyChangeGoods:
         self.days = days     # 取数周期
         self.third_category_list = []      # 三级分类的列表
         self.first_category_goods_count_dict = {}     # 一级分类选品预估的数量
+        self.debug = True
 
         # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
         # self.cursor = conn.cursor()
@@ -268,7 +269,7 @@ class DailyChangeGoods:
             print('erp_shop_id获取失败！')
             return []
 
-        ms_conn = connections['erp']     # 魔兽系统库
+        ms_conn = connections['erp']     # 魔兽系统库ms_sku_relation
         ms_cursor = ms_conn.cursor()
         sql_02 = "SELECT p.model_id,p.party_code from ls_prod p, ms_sku_relation ms WHERE ms.prod_id=p.prod_id AND  p.shop_id='{}' AND ms.status=1;"
         ms_cursor.execute(sql_02.format(erp_shop_id))
@@ -436,6 +437,21 @@ class DailyChangeGoods:
         # 2、计算新增品
         must_up_goods_len = math.ceil(all_goods_len * 0.03)
         all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
+
+
+        if self.debug:
+            print('================')
+            structure_goods_list_test = []  # 该店没有该三级分类的结构品列表，并且可订货
+            for data in all_structure_goods_list:
+                structure_goods_list_test.append(data[4])
+
+            quick_seller_list_test = []  # 该店没有的畅销品，并且可订货
+            for data in all_quick_seller_list:
+                quick_seller_list_test.append(data[4])
+            print(structure_goods_list_test)
+            print(quick_seller_list_test)
+            print('================')
+
         structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
             if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
