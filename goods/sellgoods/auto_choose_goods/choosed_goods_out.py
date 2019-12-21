@@ -33,7 +33,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     cursor_ai.execute(select_sql.format(uc_shopid,batch_id))
     all_data = cursor_ai.fetchall()
     for data in all_data[:]:
-        close_old_connections()
+        # close_old_connections()
         # print('==================================================')
         # if not data[19] in [ 1, 3]:
         #     continue
