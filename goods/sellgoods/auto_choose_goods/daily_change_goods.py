@@ -487,16 +487,16 @@ class DailyChangeGoods:
                 delivery_type = cursor_ucenter.fetchone()[0]
                 if delivery_type == 2:
                     must_up_goods.append(goods)
-                elif delivery_type == 1:
-                    pass
                 else:
                     print("怎么回事？")
+                    optional_up_goods.append(goods)
                     # send_message('pos店号为{}的店，获取mch_goods_code为{}的日配类型（delivery_type）异常：{}'.format(self.shop_id, goods[4],delivery_type), 1)
             except:
                 print("怎么回事222？")
+                optional_up_goods.append(goods)
                 # send_message('pos店号为{}的店，获取不到mch_goods_code为{}的日配类型（delivery_type）'.format(self.shop_id,goods[4]), 1)
             temp_number += 1
-        optional_up_goods = candidate_up_goods_list[temp_number:]
+        optional_up_goods += candidate_up_goods_list[temp_number:]
 
 
 
