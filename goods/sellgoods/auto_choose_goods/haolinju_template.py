@@ -260,7 +260,7 @@ def start_choose_goods(batch_id,uc_shopid,pos_shopid):
     :param pos_shopid: pos系统的id
     :return:
     """
-    a = get_data(pos_shopid, '88')
+    a = get_data(pos_shopid, '88,3156,3238')
     print("uc_shopid,pos_shopid",uc_shopid,pos_shopid)
     # a = storage_day_choose(a)
     # c = choose_goods(a)
