@@ -452,22 +452,32 @@ class DailyChangeGoods:
             print(quick_seller_list_test)
             print('================')
 
-        structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
+        candidate_up_goods_list = []     # 上架候选列表，依次是本店没有的结构品、畅销品
+
+        # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
             if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
-                structure_goods_list.append(data)
+                candidate_up_goods_list.append(data)
 
-        quick_seller_list = []     # 该店没有的畅销品，并且可订货
+        # 该店有该三级分类,并且可订货
+        for data in all_structure_goods_list:
+            if data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
+                data.extend([1, 1, 0])  # is_structure,is_qiuck_seller,is_relation
+                candidate_up_goods_list.append(data)
+
+        # 该店没有的畅销品，并且可订货
         for data in all_quick_seller_list:
             if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_list:
                 data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
-                quick_seller_list.append(data)
+                candidate_up_goods_list.append(data)
 
-        candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
+
+
+        # candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
         # candidate_up_goods_list = list(set(candidate_up_goods_list))
-        print('structure_goods_list',len(structure_goods_list))
-        print('quick_seller_list',len(quick_seller_list))
+        # print('structure_goods_list',len(structure_goods_list))
+        # print('quick_seller_list',len(quick_seller_list))
 
         # must_up_goods = candidate_up_goods_list[:must_up_goods_len]
         # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
