@@ -33,7 +33,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     cursor_ai.execute(select_sql.format(uc_shopid,batch_id))
     all_data = cursor_ai.fetchall()
     for data in all_data[:]:
-
+        close_old_connections()
         # print('==================================================')
         # if not data[19] in [ 1, 3]:
         #     continue
@@ -48,7 +48,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         line_str += ","
 
         shop_name_sql = "select shop_name from uc_shop a where id={}"
-        close_old_connections()
+        # close_old_connections()
         cursor_ucenter.execute(shop_name_sql.format(uc_shopid))
         try:
             line_str += str(cursor_ucenter.fetchone()[0])   #门店名称
@@ -57,7 +57,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         line_str += ","
 
         class_type_sql = "select category1_id,category2_id,category_id,delivery_type from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
-        close_old_connections()
+        # close_old_connections()
         cursor_ucenter.execute(class_type_sql.format(data[10]))
         class_type_data = cursor_ucenter.fetchone()
         # print('分类',data[10],class_type_data)
@@ -134,7 +134,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         week_ago = (now - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
         #商品实际销售4周预期psd,商品实际销售4周预期psd金额,组内门店4周预期psd	组内门店4周预期psd金额	全店4周预期psd	全店4周预期psd金额
         psd_sql = "select sum(p.amount),g.first_cate_id,g.second_cate_id,g.third_cate_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id ={} and g.neighbor_goods_id={};"
-        close_old_connections()
+        # close_old_connections()
         cursor_dmstore.execute(psd_sql.format(week_ago,now_date,data[1],data[10]))
         psd_data = cursor_dmstore.fetchone()
         # print('psd_data',psd_data)
@@ -153,7 +153,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             line_str += ","
 
         psd_sql_shops = "select sum(p.amount), COUNT(DISTINCT shop_id),g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {} and g.neighbor_goods_id={};"
-        close_old_connections()
+        # close_old_connections()
         cursor_dmstore.execute(psd_sql_shops.format(week_ago,now_date,tuple(template_shop_ids.split(',')),data[10]))
         psd_data_shops = cursor_dmstore.fetchone()
         # print('psd_data_shops',psd_data_shops)
