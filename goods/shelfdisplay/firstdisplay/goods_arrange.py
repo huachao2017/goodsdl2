@@ -129,7 +129,7 @@ def _display_shelf(candidate_shelf):
 
             # 减少候选品
             reduce_width = 0
-            for j in range(10):  # 每个品最多减十轮
+            for j in range(6):  # 每个品最多减六轮
                 for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
                     if len(candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid]) > 2:
                         # 每个分类至少保留2个品
@@ -144,8 +144,8 @@ def _display_shelf(candidate_shelf):
                 if reduce_width > addition_width:
                     break
             # FIXME 如果减完还是太多，需要做再次处理：包括减少扩面和继续删分类的品到只有一个
-            if addition_width - reduce_width > candidate_shelf.shelf.width:
-                raise(ValueError('商品数太多了，需要检查商品！'))
+            # if addition_width - reduce_width > candidate_shelf.shelf.width:
+            #     raise(ValueError('商品数太多了，需要检查商品！'))
         else:
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
