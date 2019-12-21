@@ -88,7 +88,7 @@ def create_candidate_shelf_list(shelf, categoryid_list, categoryid_to_arrange_go
     :return: candidate_shelf_list
     """
 
-    all_goods_combination_threshhold = 500 # 所有商品组合的阈值
+    all_goods_combination_threshhold = 100 # 所有商品组合的阈值
     if max_goods_combination > all_goods_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
         step_size = math.ceil(max_goods_combination / all_goods_combination_threshhold)
     else:
@@ -129,7 +129,7 @@ def _display_shelf(candidate_shelf):
 
             # 减少候选品
             reduce_width = 0
-            for j in range(3):  # 每个品最多减三轮
+            for j in range(6):  # 每个品最多减六轮
                 for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
                     if len(candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid]) > 2:
                         # 每个分类至少保留2个品
@@ -144,8 +144,8 @@ def _display_shelf(candidate_shelf):
                 if reduce_width > addition_width:
                     break
             # FIXME 如果减完还是太多，需要做再次处理：包括减少扩面和继续删分类的品到只有一个
-            if addition_width - reduce_width > candidate_shelf.shelf.width:
-                raise(ValueError('商品数太多了，需要检查商品！'))
+            # if addition_width - reduce_width > candidate_shelf.shelf.width:
+            #     raise(ValueError('商品数太多了，需要检查商品！'))
         else:
             positive_addition_width = -addition_width
             if positive_addition_width < candidate_shelf.goods_mean_width * 2:  # FIXME 阈值多少合适？
@@ -154,7 +154,7 @@ def _display_shelf(candidate_shelf):
 
             # 增加候选品
             add_width = 0
-            for j in range(2):  # 每个品最多加两轮
+            for j in range(3):  # 每个品最多加三轮
                 for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
                     if len(candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid]) > 0:  # 防止没有候选商品
                         goods = candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid][0]

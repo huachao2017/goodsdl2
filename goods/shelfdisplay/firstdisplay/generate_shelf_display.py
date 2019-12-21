@@ -10,6 +10,7 @@ import os
 import traceback
 
 from django.db import connections
+from django.db import close_old_connections
 
 from goods.models import ShelfDisplayDebug
 from goods.shelfdisplay import db_data
@@ -68,6 +69,7 @@ def generate_displays(uc_shopid, tz_id, batch_id):
     """
 
     print("begin generate_displays:{},{},{}".format(uc_shopid, tz_id, batch_id))
+    close_old_connections()
 
     # 初始化基础数据
     base_data = db_data.init_base_data(uc_shopid, batch_id)

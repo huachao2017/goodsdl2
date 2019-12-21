@@ -4,6 +4,7 @@ import main.import_django_settings
 
 from goods.models import AllWorkFlowBatch
 from goods.shelfdisplay.firstdisplay.generate_shelf_display import generate_workflow_displays
+from django.db import close_old_connections
 
 # class Logger(object):
 #     def __init__(self, filename="Default.log"):
@@ -21,6 +22,7 @@ if __name__ == "__main__":
     # sys.stdout = Logger('/home/src/goodsdl2/logs/display.log')
     while True:
         print('workflow deamon is alive')
+        close_old_connections()
 
         try:
             workflows = AllWorkFlowBatch.objects.filter(auto_display_status=1).all()
