@@ -129,7 +129,7 @@ def _display_shelf(candidate_shelf):
 
             # 减少候选品
             reduce_width = 0
-            for j in range(6):  # 每个品最多减六轮
+            for j in range(10):  # 每个品最多减十轮
                 for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
                     if len(candidate_shelf.categoryid_to_used_sorted_goods_list[categoryid]) > 2:
                         # 每个分类至少保留2个品
@@ -154,7 +154,7 @@ def _display_shelf(candidate_shelf):
 
             # 增加候选品
             add_width = 0
-            for j in range(3):  # 每个品最多加两轮
+            for j in range(3):  # 每个品最多加三轮
                 for categoryid in candidate_shelf.categoryid_to_used_sorted_goods_list.keys():
                     if len(candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid]) > 0:  # 防止没有候选商品
                         goods = candidate_shelf.categoryid_to_candidate_sorted_goods_list[categoryid][0]
