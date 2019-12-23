@@ -322,8 +322,6 @@ class DailyChangeGoods:
             # 新品期的品
             new_goods = []   # TODO
 
-
-
             # select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.corp_classify_code={} group by g.upc order by sum(p.amount) desc;"
             category_goods_tuple = self.get_third_category_data(category,self.shop_id)     # 获取该分类下有销量的数据
             # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,is_structure,is_qiuck_seller,is_relation,ranking
@@ -339,11 +337,11 @@ class DailyChangeGoods:
                     if str(goods[3]) in taizhang_goods_mch_code_list:
                         # print('yes0')
                         ab_quick_seller_list.append(str(goods[3]))   # 遇到边界多选策略,neighbor_goods_id
-                        temp_amount += goods[0]
-                        if temp_amount > float(amount) * self.ab_ratio:
-                        # if temp_amount > float(amount) * 1:
-                        #     print('不可能！！')
-                            break
+                    temp_amount += goods[0]
+                    if temp_amount > float(amount) * self.ab_ratio:
+                    # if temp_amount > float(amount) * 1:
+                    #     print('不可能！！')
+                        break
                         # ab_quick_seller_list.append(goods)  # 遇到边界少选策略,neighbor_goods_id
                 category_protect_goods_list.extend(ab_quick_seller_list)
             else:
@@ -424,7 +422,7 @@ class DailyChangeGoods:
 
         print('本店已有三级分类', len(category_03_list),sorted(category_03_list))
         not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list,taizhang_goods_mch_code_list)
-        print("本店保护品len",len(not_move_goods_mch_code_list),not_move_goods_mch_code_list)
+        print("本店保护品len",len(not_move_goods_mch_code_list),len(set(not_move_goods_mch_code_list)))
 
 
         # 1.4、遍历货架,得出下架品、不动品和可选下架品
