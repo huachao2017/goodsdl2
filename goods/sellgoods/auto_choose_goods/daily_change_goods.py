@@ -338,7 +338,7 @@ class DailyChangeGoods:
                 temp_amount = 0
                 for index, goods in enumerate(category_goods_tuple):  # 将累计前占比80%psd金额的商品选出来
                     if str(goods[3]) in taizhang_goods_mch_code_list:
-                        print('yes0')
+                        # print('yes0')
                         ab_quick_seller_list.append(str(goods[3]))   # 遇到边界多选策略,neighbor_goods_id
                         temp_amount += goods[0]
                         if temp_amount > float(amount) * self.ab_ratio:
@@ -353,7 +353,7 @@ class DailyChangeGoods:
                     if all_category_goods_tuple:
                         for goods in all_category_goods_tuple:
                             if str(goods[3]) in taizhang_goods_mch_code_list:
-                                print('yes1')
+                                # print('yes1')
                                 category_protect_goods_list.append(str(goods[3]))
                                 break
                     if not category_protect_goods_list:
@@ -376,7 +376,7 @@ class DailyChangeGoods:
         """
         sql = "SELECT neighbor_goods_id,price-purchase_price as p from goods where third_cate_id={} ORDER BY p desc"
         self.cursor.execute(sql.format(category))
-        all_data = self.cursor.fetchall
+        all_data = self.cursor.fetchall()
         for data in all_data:
             if str(data[0]) in taizhang_goods_mch_code_list:
                 return str(data[0])
