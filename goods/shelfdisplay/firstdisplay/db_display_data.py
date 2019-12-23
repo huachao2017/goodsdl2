@@ -68,6 +68,9 @@ def init_display_data(uc_shopid, tz_id, base_data):
             (cat_id, name, pid) = cursor.fetchone()
         except:
             print('台账陈列类别无法找到：{}！'.format(category3))
+
+        # FIXME 目前只支持cat_id是字符串
+        cat_id = str(cat_id)
         if cat_id is not None:
             total_height = 0
             # 筛选商品

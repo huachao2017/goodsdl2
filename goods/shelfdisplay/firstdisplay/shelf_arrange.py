@@ -39,6 +39,13 @@ def main_calculate(category3_to_category3_obj, category3_intimate_weight, catego
     :return: 总体后选列表
     """
 
+    # FIXME 做CategoryTree.one_category_combination_threshhold的限制
+    len_category3 = len(category3_to_category3_obj)
+    if len_category3 > 10 and len_category3 <= 20:
+        CategoryTree.one_category_combination_threshhold = 5
+    elif len_category3 > 20:
+        CategoryTree.one_category_combination_threshhold = 2
+
     # 1，初始化数据
     root_category_tree = init_category_tree(category3_to_category3_obj, category3_intimate_weight,
                                             category3_level_value)
@@ -96,6 +103,7 @@ def init_category_tree(category3_to_category3_obj, category3_intimate_weight, ca
 
     category2_tree_root = CategoryTree(tree_id, 0)
     category2_tree_root.init_parent(root_tree_list)
+    print('init category2_tree_root finish')
     return category2_tree_root
 
 
@@ -463,7 +471,7 @@ class CategoryTree:
     def __str__(self):
         ret = ''
         if self.children is None:
-            return str(self.level_value) + ':' + self.category + ','
+            return str(self.level_value) + ':' + str(self.category) + ','
         else:
             if self.result_list is not None:
                 ret += str(self.level_value)
@@ -474,12 +482,12 @@ class CategoryTree:
                     ret += str(child)
                 ret += '),'
 
-                if self.parent is None:
-                    ret += '\n'
-                    simple_results = self.get_all_simple_result()
-                    ret += str(len(simple_results))
-                    ret += '-'
-                    ret += str(simple_results)
+                # if self.parent is None:
+                #     ret += '\n'
+                #     simple_results = self.get_all_simple_result()
+                #     ret += str(len(simple_results))
+                #     ret += '-'
+                #     ret += str(simple_results)
             else:
                 ret += str(self.level_value)
                 ret += ':('
