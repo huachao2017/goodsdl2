@@ -64,10 +64,10 @@ class DailyChangeGoods:
         if type(shop_ids) is list and len(shop_ids) > 0:       # 多个门店
             # print('list,third_category',shop_ids,third_category)
             shop_ids = ",".join(shop_ids)
-            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.third_cate_id={} group by g.upc order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.third_cate_id={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
         elif type(shop_ids) is str or type(shop_ids) is int:     # 单个门店
             # print('str',shop_ids,type(shop_ids))
-            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.third_cate_id={} group by g.upc order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.third_cate_id={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
         else:
             print('none', shop_ids,type(shop_ids))
             return []
@@ -403,7 +403,7 @@ class DailyChangeGoods:
         for s in sales_data:
             sales_goods_mch_code_dict[str(s[3])] = s
             have_sale_category_code.append(str(s[2]))
-        print("有销量的三级分类的code",len(have_sale_category_code),sorted(list(set(have_sale_category_code))))
+        print("有销量的三级分类的code",len(set(have_sale_category_code)),sorted(list(set(have_sale_category_code))))
         # print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
 
 
