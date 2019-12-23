@@ -146,6 +146,7 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
     sorted_intimate_list = sorted(category3_intimate_weight.items(), key=lambda item: item[1], reverse=True)
     # print(sorted_intimate_list)
 
+    print(1)
     all_category_tree_without_parent = []
     all_intimate_category_tree_only_parent = []
 
@@ -227,6 +228,7 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
             category_tree_parent.init_parent(category_tree_leaf_list)
             all_intimate_category_tree_only_parent.append(category_tree_parent)
 
+    print(2)
     id_to_intimate_root_parent_tree = {}
     for parent_tree in all_intimate_category_tree_only_parent:
         if parent_tree.parent == None:
@@ -285,6 +287,7 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
             all_category_tree_without_parent.append(category_tree)
             all_root_tree_children.append(category_tree)
 
+    print(3)
     # 初始化非节点tree的level_value
     for child_tree in all_category_tree_without_parent:
         if child_tree.category in category3_level_value:
@@ -292,6 +295,7 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
 
     category_tree_root = CategoryTree(tree_id, 100)
     category_tree_root.init_parent(all_root_tree_children)
+    print(4)
     return category_tree_root
 
 
