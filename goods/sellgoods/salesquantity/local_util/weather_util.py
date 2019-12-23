@@ -64,10 +64,7 @@ def get_old_weather(start_date=None,cron=False):
                 for_citys_get_weather(results,start_date1)
     elif cron:
         end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-        start_date1 = str(
-            (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
-                days=-1)).strftime("%Y-%m-%d"))
-        for_citys_get_weather(results,start_date1)
+        for_citys_get_weather(results,end_date)
 
 
 
