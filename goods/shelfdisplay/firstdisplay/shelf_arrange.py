@@ -464,7 +464,7 @@ class CategoryTree:
     def __str__(self):
         ret = ''
         if self.children is None:
-            return str(self.level_value) + ':' + self.category + ','
+            return str(self.level_value) + ':' + str(self.category) + ','
         else:
             if self.result_list is not None:
                 ret += str(self.level_value)
