@@ -126,25 +126,21 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         # 获取商品属性
                         try:
                             cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,category1_id,category2_id,category_id,storage_day,package_type,display_goods_num from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,category1_id,category2_id,category_id,storage_day,package_type,display_goods_num,supplier_id,supplier_goods_code from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                                     mch_id, mch_code))
                             # FIXME width,height暂时翻转
                             # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
                             (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
-                             is_suspension,category1_id,category2_id,category_id,storage_day,package_type,single_face_min_disnums) = cursor.fetchone()
+                             is_suspension,category1_id,category2_id,category_id,storage_day,package_type,single_face_min_disnums,supplier_id,supplier_goods_code) = cursor.fetchone()
                         except:
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue
 
                         # 获取商品的 可定  起订量  配送类型
                         try:
-                            cursor.execute("select id from uc_supplier where supplier_code = '{}'".format(erp_resupply_id))
-                            (supplier_id,) = cursor.fetchone()
                             cursor.execute(
-                                "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and upc = '{}' and order_status = 1 ".format(supplier_id,mch_code,upc))
-
+                                "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and order_status = 1 ".format(supplier_id,supplier_goods_code))
                             (start_sum,order_status,delivery_type_str) = cursor.fetchone()
-
                             cursor.execute(
                                 "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
                                     delivery_type_str))

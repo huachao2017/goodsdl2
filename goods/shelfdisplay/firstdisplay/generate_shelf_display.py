@@ -42,9 +42,7 @@ def generate_workflow_displays(uc_shopid, batch_id):
     # 计算陈列
     taizhang_display_list = []
     for one_tz_id in taizhangs:
-        taizhang_display = generate_displays(uc_shopid, one_tz_id[0], batch_id)
-        if taizhang_display is not None:
-            taizhang_display_list.append(taizhang_display)
+        generate_displays(uc_shopid, one_tz_id[0], batch_id)
 
     # 通知台账系统
     # url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
