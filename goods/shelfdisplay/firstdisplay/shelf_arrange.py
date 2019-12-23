@@ -43,14 +43,14 @@ def main_calculate(category3_to_category3_obj, category3_intimate_weight, catego
     root_category_tree = init_category_tree(category3_to_category3_obj, category3_intimate_weight,
                                             category3_level_value)
 
-    # print(root_category_tree)
+    print(root_category_tree)
     # 2，计算level_value
     root_category_tree.calculate_level_value()
-    # print(root_category_tree)
+    print(root_category_tree)
 
     # 3, 输出组合
     root_category_tree.calculate_result()
-    # print(root_category_tree)
+    print(root_category_tree)
 
     return root_category_tree.get_all_simple_result()
 
@@ -96,6 +96,7 @@ def init_category_tree(category3_to_category3_obj, category3_intimate_weight, ca
 
     category2_tree_root = CategoryTree(tree_id, 0)
     category2_tree_root.init_parent(root_tree_list)
+    print('init category2_tree_root finish')
     return category2_tree_root
 
 
@@ -146,7 +147,6 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
     sorted_intimate_list = sorted(category3_intimate_weight.items(), key=lambda item: item[1], reverse=True)
     # print(sorted_intimate_list)
 
-    print(1)
     all_category_tree_without_parent = []
     all_intimate_category_tree_only_parent = []
 
@@ -228,7 +228,6 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
             category_tree_parent.init_parent(category_tree_leaf_list)
             all_intimate_category_tree_only_parent.append(category_tree_parent)
 
-    print(2)
     id_to_intimate_root_parent_tree = {}
     for parent_tree in all_intimate_category_tree_only_parent:
         if parent_tree.parent == None:
@@ -287,7 +286,6 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
             all_category_tree_without_parent.append(category_tree)
             all_root_tree_children.append(category_tree)
 
-    print(3)
     # 初始化非节点tree的level_value
     for child_tree in all_category_tree_without_parent:
         if child_tree.category in category3_level_value:
@@ -295,7 +293,6 @@ def init_one_category2_tree(category3_to_category3_obj, category3_intimate_weigh
 
     category_tree_root = CategoryTree(tree_id, 100)
     category_tree_root.init_parent(all_root_tree_children)
-    print(4)
     return category_tree_root
 
 
@@ -478,12 +475,12 @@ class CategoryTree:
                     ret += str(child)
                 ret += '),'
 
-                if self.parent is None:
-                    ret += '\n'
-                    simple_results = self.get_all_simple_result()
-                    ret += str(len(simple_results))
-                    ret += '-'
-                    ret += str(simple_results)
+                # if self.parent is None:
+                #     ret += '\n'
+                #     simple_results = self.get_all_simple_result()
+                #     ret += str(len(simple_results))
+                #     ret += '-'
+                #     ret += str(simple_results)
             else:
                 ret += str(self.level_value)
                 ret += ':('
