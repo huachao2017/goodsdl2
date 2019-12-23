@@ -312,7 +312,7 @@ class DailyChangeGoods:
         return delivery_type_dict
 
 
-    def calculate_not_move_goods(self,category_03_list):
+    def calculate_not_move_goods(self,category_03_list,taizhang_goods_mch_code_list):
         """
         计算保护品列表
         :return:
@@ -337,69 +337,38 @@ class DailyChangeGoods:
                     amount += goods[0]
                 temp_amount = 0
                 for index, goods in enumerate(category_goods_tuple):  # 将累计前占比80%psd金额的商品选出来
-                    ab_quick_seller_list.append(str(goods[3]))   # 遇到边界多选策略,neighbor_goods_id
-                    temp_amount += goods[0]
-                    if temp_amount > float(amount) * self.ab_ratio:
-                    # if temp_amount > float(amount) * 1:
-                    #     print('不可能！！')
-                        break
-                    # ab_quick_seller_list.append(goods)  # 遇到边界少选策略,neighbor_goods_id
+                    if str(goods[3]) in taizhang_goods_mch_code_list:
+                        ab_quick_seller_list.append(str(goods[3]))   # 遇到边界多选策略,neighbor_goods_id
+                        temp_amount += goods[0]
+                        if temp_amount > float(amount) * self.ab_ratio:
+                        # if temp_amount > float(amount) * 1:
+                        #     print('不可能！！')
+                            break
+                        # ab_quick_seller_list.append(goods)  # 遇到边界少选策略,neighbor_goods_id
                 category_protect_goods_list.extend(ab_quick_seller_list)
             else:
                 if not new_goods:
                     all_category_goods_tuple = self.get_third_category_data(category, self.template_shop_ids)  # 获取同组门店该分类下有销量的数据
                     if all_category_goods_tuple:
-                        category_protect_goods_list.append(all_category_goods_tuple[0][3])
-                    else:
+                        for goods in all_category_goods_tuple:
+                            if str(goods[3]) in taizhang_goods_mch_code_list:
+                                category_protect_goods_list.append(str(goods[3]))
+                                break
+                    if not category_protect_goods_list:
+
                         print('{}保留毛利最大那个'.format(category))                # 保留毛利最大那个
 
             shop_protect_goods_mch_code_list.extend(category_protect_goods_list)
         return shop_protect_goods_mch_code_list
 
 
-    def recommend_02(self):
+    def profit_max(self,category):
         """
-        计算得出汰换的必须陈列列表、可选陈列列表
+        分类下毛利最大那个商品得mch_code
+        :param category:
         :return:
         """
-        must_display_old_goods = []     # 必须陈列的旧品
-        optional_display_goods = []     # 可选陈列列表
-        must_display_new_goods = []     # 必须的陈列的新加的品
-
-        # 1、计算本店a+b类品和结构品
-        #   1.1、获取本店有销量的商品
-        sales_data = self.get_shop_sales_data(self.shop_id)
-        sales_goods_mch_code_dict = {}
-        for s in sales_data:
-            sales_goods_mch_code_dict[s[3]] = s
-        print(len(sales_data))
-
-        #   1.2、获取当前台账的商品
-        taizhang_goods = self.get_taizhang_goods()  # 获取当前台账的商品
-        taizhang_goods_mch_code_list = [i['mch_goods_code'] for i in taizhang_goods]
-        all_goods_len = len(taizhang_goods)
-
-        #   1.3、遍历台账商品,得出必须陈列的旧品和可选陈列
-        for data in taizhang_goods:
-            if data['mch_goods_code'] in sales_goods_mch_code_dict:
-                # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name
-                must_display_old_goods.append((None,data['goods_upc'],sales_goods_mch_code_dict[data['mch_goods_code']][2],None,data['mch_goods_code'],None,data['name']))
-            else:
-                optional_display_goods.append((None,data['goods_upc'],None,None,data['mch_goods_code'],None,data['name'])) #FIXME 分类code为空
-
-        # 2、计算新增品
-        selected_quick_seller_len = math.ceil(all_goods_len * 0.03)
-        quick_seller = self.calculate_quick_seller()    # 获取同组门店的畅销品
-        for data in quick_seller:
-            if not data[3] in taizhang_goods_mch_code_list:
-                must_display_new_goods.append(data)
-                if len(must_display_new_goods) == selected_quick_seller_len:
-                    break
-
-        # 3、保存至数据库
-        self.save_data(must_display_old_goods, 0, 1, 0)
-        self.save_data(optional_display_goods, 0, 0, 0)
-        self.save_data(must_display_new_goods, 1, 1, 0)
+        pass
 
     def recommend_03(self):
 
@@ -438,8 +407,9 @@ class DailyChangeGoods:
             category_03_list = []
         else:
             category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
+
         print('本店已有三级分类', len(category_03_list),sorted(category_03_list))
-        not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list)
+        not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list,taizhang_goods_mch_code_list)
         print("本店保护品len",len(not_move_goods_mch_code_list),not_move_goods_mch_code_list)
 
 
