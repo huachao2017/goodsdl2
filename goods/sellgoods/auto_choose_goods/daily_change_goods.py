@@ -33,6 +33,7 @@ class DailyChangeGoods:
         # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
         # self.cursor = conn.cursor()
         self.cursor = connections['dmstore'].cursor()
+        # self.cursor_ucenter = connections['ucenter'].cursor()
 
     def get_shop_sales_data(self, shop_id):
         """
@@ -121,7 +122,7 @@ class DailyChangeGoods:
         # uc_cursor.execute('select id from uc_shop where mch_shop_code = {}'.format(self.shop_id))
         # self.uc_shopid = uc_cursor.fetchone()[0]
         # 获取当前的台账
-        select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(self.uc_shopid)
+        select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info,t.mch_id from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(self.uc_shopid)
         uc_cursor.execute(select_sql_02)
         all_data = uc_cursor.fetchall()
         taizhang_data_list = []
@@ -131,7 +132,7 @@ class DailyChangeGoods:
                     for goods in layer:
                         # goods_upc = goods['goods_upc']
                         taizhang_data_list.append(goods)
-        return taizhang_data_list
+        return taizhang_data_list,all_data[0][5]
 
     def get_third_category(self,mch_code_list):
         """
@@ -258,7 +259,7 @@ class DailyChangeGoods:
 
     def get_can_order_list(self):
         """
-        获取可订货的mch_code的列表
+        获取可订货的mch_code的列表,从魔兽查询
         :return:
         """
         sql = "SELECT erp_shop_id from erp_shop_related WHERE shop_id='{}' and erp_shop_type=2"
@@ -279,7 +280,38 @@ class DailyChangeGoods:
         except:
             return []
 
-    def calculate_not_move_goods(self,category_03_list):
+    def get_can_order_dict(self):
+        """
+        获取可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
+        :return:
+        """
+        sql = "SELECT erp_shop_id from erp_shop_related WHERE shop_id='{}' and erp_shop_type=2"
+        self.cursor.execute(sql.format(self.shop_id))
+        try:
+            erp_shop_id = self.cursor.fetchone()[0]
+        except:
+            print('erp_shop_id获取失败！')
+            return []
+
+        # 获取商品的 可定 配送类型
+        conn_ucenter = connections['ucenter']
+        cursor_ucenter = conn_ucenter.cursor()
+        delivery_type_dict = {}    # 店内码是key，配送类型是value
+        try:
+            cursor_ucenter.execute("select id from uc_supplier where supplier_code = '{}'".format(erp_shop_id))
+            (supplier_id,) = cursor_ucenter.fetchone()
+            cursor_ucenter.execute(
+                # "select supplier_goods_code,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(supplier_id))
+                "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
+            all_data = cursor_ucenter.fetchall()
+            for data in all_data:
+                delivery_type_dict[data[0]] = data[1]
+        except:
+            print('pos店号是{},查询是否可订货和配送类型失败'.format(self.shop_id))
+        return delivery_type_dict
+
+
+    def calculate_not_move_goods(self,category_03_list,taizhang_goods_mch_code_list):
         """
         计算保护品列表
         :return:
@@ -304,69 +336,51 @@ class DailyChangeGoods:
                     amount += goods[0]
                 temp_amount = 0
                 for index, goods in enumerate(category_goods_tuple):  # 将累计前占比80%psd金额的商品选出来
-                    ab_quick_seller_list.append(str(goods[3]))   # 遇到边界多选策略,neighbor_goods_id
-                    temp_amount += goods[0]
-                    if temp_amount > float(amount) * self.ab_ratio:
-                    # if temp_amount > float(amount) * 1:
-                    #     print('不可能！！')
-                        break
-                    # ab_quick_seller_list.append(goods)  # 遇到边界少选策略,neighbor_goods_id
+                    if str(goods[3]) in taizhang_goods_mch_code_list:
+                        # print('yes0')
+                        ab_quick_seller_list.append(str(goods[3]))   # 遇到边界多选策略,neighbor_goods_id
+                        temp_amount += goods[0]
+                        if temp_amount > float(amount) * self.ab_ratio:
+                        # if temp_amount > float(amount) * 1:
+                        #     print('不可能！！')
+                            break
+                        # ab_quick_seller_list.append(goods)  # 遇到边界少选策略,neighbor_goods_id
                 category_protect_goods_list.extend(ab_quick_seller_list)
             else:
                 if not new_goods:
-                    all_category_goods_tuple = self.get_third_category_data(category, self.shop_id)  # 获取同组门店该分类下有销量的数据
+                    all_category_goods_tuple = self.get_third_category_data(category, self.template_shop_ids)  # 获取同组门店该分类下有销量的数据
                     if all_category_goods_tuple:
-                        category_protect_goods_list.append(all_category_goods_tuple[0][3])
-                    else:
-                        pass                # 保留毛利最大那个
+                        for goods in all_category_goods_tuple:
+                            if str(goods[3]) in taizhang_goods_mch_code_list:
+                                # print('yes1')
+                                category_protect_goods_list.append(str(goods[3]))
+                                break
+                    if not category_protect_goods_list:
+                        profit_max = self.profit_max(category, taizhang_goods_mch_code_list)
+                        if profit_max:
+                            # print('yes2')
+                            category_protect_goods_list.append(profit_max)
+                        else:
+                            print('{}保留毛利最大那个,但是没找到'.format(category))                # 保留毛利最大那个
 
             shop_protect_goods_mch_code_list.extend(category_protect_goods_list)
         return shop_protect_goods_mch_code_list
 
 
-    def recommend_02(self):
+    def profit_max(self,category,taizhang_goods_mch_code_list):
         """
-        计算得出汰换的必须陈列列表、可选陈列列表
+        分类下毛利最大那个商品得mch_code
+        :param category:
         :return:
         """
-        must_display_old_goods = []     # 必须陈列的旧品
-        optional_display_goods = []     # 可选陈列列表
-        must_display_new_goods = []     # 必须的陈列的新加的品
+        sql = "SELECT neighbor_goods_id,price-purchase_price as p from goods where third_cate_id={} ORDER BY p desc"
+        self.cursor.execute(sql.format(category))
+        all_data = self.cursor.fetchall()
+        for data in all_data:
+            if str(data[0]) in taizhang_goods_mch_code_list:
+                return str(data[0])
+        return None
 
-        # 1、计算本店a+b类品和结构品
-        #   1.1、获取本店有销量的商品
-        sales_data = self.get_shop_sales_data(self.shop_id)
-        sales_goods_mch_code_dict = {}
-        for s in sales_data:
-            sales_goods_mch_code_dict[s[3]] = s
-        print(len(sales_data))
-
-        #   1.2、获取当前台账的商品
-        taizhang_goods = self.get_taizhang_goods()  # 获取当前台账的商品
-        taizhang_goods_mch_code_list = [i['mch_goods_code'] for i in taizhang_goods]
-        all_goods_len = len(taizhang_goods)
-
-        #   1.3、遍历台账商品,得出必须陈列的旧品和可选陈列
-        for data in taizhang_goods:
-            if data['mch_goods_code'] in sales_goods_mch_code_dict:
-                # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name
-                must_display_old_goods.append((None,data['goods_upc'],sales_goods_mch_code_dict[data['mch_goods_code']][2],None,data['mch_goods_code'],None,data['name']))
-            else:
-                optional_display_goods.append((None,data['goods_upc'],None,None,data['mch_goods_code'],None,data['name'])) #FIXME 分类code为空
-
-        # 2、计算新增品
-        selected_quick_seller_len = math.ceil(all_goods_len * 0.03)
-        quick_seller = self.calculate_quick_seller()    # 获取同组门店的畅销品
-        for data in quick_seller:
-            if not data[3] in taizhang_goods_mch_code_list:
-                must_display_new_goods.append(data)
-                if len(must_display_new_goods) == selected_quick_seller_len:
-                    break
-
-        # 3、保存至数据库
-        self.save_data(must_display_old_goods, 0, 1, 0)
-        self.save_data(optional_display_goods, 0, 0, 0)
-        self.save_data(must_display_new_goods, 1, 1, 0)
 
     def recommend_03(self):
 
@@ -394,27 +408,30 @@ class DailyChangeGoods:
         print("有销量的三级分类的code",len(have_sale_category_code),sorted(list(set(have_sale_category_code))))
         # print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
 
+
         #   1.2、获取当前台账的商品
-        taizhang_goods = self.get_taizhang_goods()  # 获取当前台账的商品
+        taizhang_goods,mch_code = self.get_taizhang_goods()  # 获取当前台账的商品
         taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_goods]))    # 去重
         print('去重台账goods',len(taizhang_goods_mch_code_list))
         all_goods_len = len(taizhang_goods_mch_code_list)
+
 
         # 1.3 获取本店的保护品，即不动的品
         if all_goods_len == 0:
             category_03_list = []
         else:
             category_03_list = self.get_third_category(taizhang_goods_mch_code_list)
+
         print('本店已有三级分类', len(category_03_list),sorted(category_03_list))
-        not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list)
+        not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list,taizhang_goods_mch_code_list)
         print("本店保护品len",len(not_move_goods_mch_code_list),not_move_goods_mch_code_list)
 
 
         # 1.4、遍历货架,得出下架品、不动品和可选下架品
-        can_order_mch_code_list = self.get_can_order_list()
-        print('可订货len：',len(can_order_mch_code_list))
+        can_order_mch_code_dict = self.get_can_order_dict()
+        print('可订货len：', len(can_order_mch_code_dict))
         for data in taizhang_goods:
-            if not data['mch_goods_code'] in can_order_mch_code_list:    # 不可订货即必须下架
+            if not data['mch_goods_code'] in can_order_mch_code_dict:    # 不可订货即必须下架
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,is_structure,is_qiuck_seller,is_relation,ranking
                 must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, None))
 
@@ -456,19 +473,19 @@ class DailyChangeGoods:
 
         # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
-            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
+            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict:
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
         # 该店有该三级分类,并且可订货,并且本店本来是没有的
         for data in all_structure_goods_list:
-            if data[2] in category_03_list and str(data[4]) in can_order_mch_code_list and not str(data[4]) in taizhang_goods_mch_code_list:
+            if data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
                 data.extend([1, 1, 0])  # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
         # 该店没有的畅销品，并且可订货
         for data in all_quick_seller_list:
-            if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_list:
+            if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_dict:
                 data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
@@ -483,27 +500,38 @@ class DailyChangeGoods:
         # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
 
         # 非日配选出来
-        delivery_type_sql = "select delivery_type from uc_merchant_goods where mch_goods_code='{}' and delivery_type is not NULL;"
-        conn_ucenter = connections['ucenter']
-        cursor_ucenter = conn_ucenter.cursor()
+        # delivery_type_sql = "select delivery_type from uc_merchant_goods where mch_goods_code='{}' and delivery_type is not NULL;"
+        # conn_ucenter = connections['ucenter']
+        # cursor_ucenter = conn_ucenter.cursor()
 
         temp_number = 0    # 上架品选到candidate_up_goods_list候选集的第几个啦
         for goods in candidate_up_goods_list:
 
             if len(must_up_goods) == must_up_goods_len:
                 break
-            cursor_ucenter.execute(delivery_type_sql.format(goods[4]))
             try:
-                delivery_type = cursor_ucenter.fetchone()[0]
-                if delivery_type == 2:
-                    must_up_goods.append(goods)
-                else:
-                    print("怎么回事？")
-                    optional_up_goods.append(goods)
-                    # send_message('pos店号为{}的店，获取mch_goods_code为{}的日配类型（delivery_type）异常：{}'.format(self.shop_id, goods[4],delivery_type), 1)
+                if str(goods[4]) in can_order_mch_code_dict:
+                    delivery_type = can_order_mch_code_dict[str(goods[4])]
+                    if delivery_type == 2:
+                        must_up_goods.append(goods)
+                    else:
+                        print("怎么回事？")
+                        optional_up_goods.append(goods)
             except:
-                print("怎么回事222？")
+                print("怎么回事啊啊啊啊啊啊啊啊啊？")
                 optional_up_goods.append(goods)
+
+            # try:
+            #     delivery_type = cursor_ucenter.fetchone()[0]
+            #     if delivery_type == 2:
+            #         must_up_goods.append(goods)
+            #     else:
+            #         print("怎么回事？")
+            #         optional_up_goods.append(goods)
+            #         # send_message('pos店号为{}的店，获取mch_goods_code为{}的日配类型（delivery_type）异常：{}'.format(self.shop_id, goods[4],delivery_type), 1)
+            # except:
+            #     print("怎么回事222？")
+            #     optional_up_goods.append(goods)
                 # send_message('pos店号为{}的店，获取不到mch_goods_code为{}的日配类型（delivery_type）'.format(self.shop_id,goods[4]), 1)
             temp_number += 1
         optional_up_goods += candidate_up_goods_list[temp_number:]
@@ -531,13 +559,6 @@ class DailyChangeGoods:
         # print('optional_up_goods', optional_up_goods)
 
 
-
-
-
-
-
-
-
         # 3、保存至数据库
 
         not_move_goods = list(set(not_move_goods))
@@ -548,22 +569,18 @@ class DailyChangeGoods:
         print(len(must_out_goods))
         print(len(optional_out_goods))
 
-        print(not_move_goods[:10])
+        self.save_data(not_move_goods, 0,mch_code)
+        self.save_data(must_out_goods, 2,mch_code)
+        self.save_data(optional_out_goods,4,mch_code)
+        self.save_data(must_up_goods, 1,mch_code)
+        self.save_data(optional_up_goods, 3,mch_code)
 
-        self.save_data(not_move_goods, 0)
-        self.save_data(must_out_goods, 2)
-        self.save_data(optional_out_goods,4)
-        self.save_data(must_up_goods, 1)
-        self.save_data(optional_up_goods, 3)
-
-    def save_data(self,data,goods_role):
-    # def save_data(self,data,is_new_goods,goods_out_status,goods_add_status):
+    def save_data(self,data,goods_role,mch_code):
         """
         保存选品的数据
-        :param batch_id: 批次号
-        :param is_new_goods: 是否是新增的品，1代表是，0代表否
-        :param goods_out_status:下架状态，0：可选下架，1：必须下架，2：不动的品
-        :param goods_add_status:新增上架状态，0：可选上架，1：必须上架
+        :param data:
+        :param goods_role: 商品角色
+        :param mch_code:
         :return:
         """
 
@@ -573,7 +590,7 @@ class DailyChangeGoods:
         cursor = conn.cursor()
 
         # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
-        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,goods_role,is_structure,is_qiuck_seller,is_relation,ranking,handle_goods_role) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},%s,%s,%s,%s,{})"
+        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,goods_role,is_structure,is_qiuck_seller,is_relation,ranking,handle_goods_role) values ({},%s,%s,%s,%s,{},%s,%s,%s,'{}','{}',{},%s,%s,%s,%s,{})"
         delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
         select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
         # try:
@@ -587,7 +604,7 @@ class DailyChangeGoods:
         print('开始入库')
         # print(insert_sql_02)
         print(tuple_data[:5])
-        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
+        cursor.executemany(insert_sql_02.format(self.shop_id,mch_code,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
         conn.commit()
         conn.close()
         print('ok')
