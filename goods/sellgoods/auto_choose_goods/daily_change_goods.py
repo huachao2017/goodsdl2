@@ -33,6 +33,7 @@ class DailyChangeGoods:
         # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
         # self.cursor = conn.cursor()
         self.cursor = connections['dmstore'].cursor()
+        # self.cursor_ucenter = connections['ucenter'].cursor()
 
     def get_shop_sales_data(self, shop_id):
         """
@@ -121,7 +122,7 @@ class DailyChangeGoods:
         # uc_cursor.execute('select id from uc_shop where mch_shop_code = {}'.format(self.shop_id))
         # self.uc_shopid = uc_cursor.fetchone()[0]
         # 获取当前的台账
-        select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(self.uc_shopid)
+        select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info,t.mch_id from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(self.uc_shopid)
         uc_cursor.execute(select_sql_02)
         all_data = uc_cursor.fetchall()
         taizhang_data_list = []
@@ -131,7 +132,7 @@ class DailyChangeGoods:
                     for goods in layer:
                         # goods_upc = goods['goods_upc']
                         taizhang_data_list.append(goods)
-        return taizhang_data_list
+        return taizhang_data_list,all_data[0][5]
 
     def get_third_category(self,mch_code_list):
         """
@@ -258,7 +259,7 @@ class DailyChangeGoods:
 
     def get_can_order_list(self):
         """
-        获取可订货的mch_code的列表
+        获取可订货的mch_code的列表,从魔兽查询
         :return:
         """
         sql = "SELECT erp_shop_id from erp_shop_related WHERE shop_id='{}' and erp_shop_type=2"
@@ -268,6 +269,51 @@ class DailyChangeGoods:
         except:
             print('erp_shop_id获取失败！')
             return []
+
+        ms_conn = connections['erp']     # 魔兽系统库ms_sku_relation
+        ms_cursor = ms_conn.cursor()
+        sql_02 = "SELECT p.model_id,p.party_code from ls_prod p, ms_sku_relation ms WHERE ms.prod_id=p.prod_id AND  p.shop_id='{}' AND ms.status=1;"
+        ms_cursor.execute(sql_02.format(erp_shop_id))
+        results = ms_cursor.fetchall()
+        try:
+            return [i[1] for i in results]
+        except:
+            return []
+
+    def get_can_order_list_02(self):
+        """
+        获取可订货的mch_code的列表,从saas查询
+        :return:
+        """
+        sql = "SELECT erp_shop_id from erp_shop_related WHERE shop_id='{}' and erp_shop_type=2"
+        self.cursor.execute(sql.format(self.shop_id))
+        try:
+            erp_shop_id = self.cursor.fetchone()[0]
+        except:
+            print('erp_shop_id获取失败！')
+            return []
+
+        # 获取商品的 可定  起订量  配送类型
+        conn_ucenter = connections['ucenter']
+        cursor_ucenter = conn_ucenter.cursor()
+        try:
+            cursor_ucenter.execute("select id from uc_supplier where supplier_code = '{}'".format(erp_shop_id))
+            (supplier_id,) = cursor_ucenter.fetchone()
+            cursor_ucenter.execute(
+                "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(
+                    supplier_id))
+
+            (start_sum, order_status, delivery_type_str) = cursor_ucenter.fetchone()
+
+            cursor_ucenter.execute(
+                "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
+                    delivery_type_str))
+            (delivery_type,) = cursor_ucenter.fetchone()
+        except:
+            print(
+                "该品 不订货，获取商品的可定  起订量  配送类型 失败 ！ erp_resupply_id={},upc={},mch_code={}".format(erp_resupply_id, upc,
+                                                                                              mch_code))
+
 
         ms_conn = connections['erp']     # 魔兽系统库ms_sku_relation
         ms_cursor = ms_conn.cursor()
@@ -314,11 +360,11 @@ class DailyChangeGoods:
                 category_protect_goods_list.extend(ab_quick_seller_list)
             else:
                 if not new_goods:
-                    all_category_goods_tuple = self.get_third_category_data(category, self.shop_id)  # 获取同组门店该分类下有销量的数据
+                    all_category_goods_tuple = self.get_third_category_data(category, self.template_shop_ids)  # 获取同组门店该分类下有销量的数据
                     if all_category_goods_tuple:
                         category_protect_goods_list.append(all_category_goods_tuple[0][3])
                     else:
-                        pass                # 保留毛利最大那个
+                        print('{}保留毛利最大那个'.format(category))                # 保留毛利最大那个
 
             shop_protect_goods_mch_code_list.extend(category_protect_goods_list)
         return shop_protect_goods_mch_code_list
@@ -395,7 +441,7 @@ class DailyChangeGoods:
         # print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
 
         #   1.2、获取当前台账的商品
-        taizhang_goods = self.get_taizhang_goods()  # 获取当前台账的商品
+        taizhang_goods,mch_code = self.get_taizhang_goods()  # 获取当前台账的商品
         taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_goods]))    # 去重
         print('去重台账goods',len(taizhang_goods_mch_code_list))
         all_goods_len = len(taizhang_goods_mch_code_list)
@@ -550,13 +596,13 @@ class DailyChangeGoods:
 
         print(not_move_goods[:10])
 
-        self.save_data(not_move_goods, 0)
-        self.save_data(must_out_goods, 2)
-        self.save_data(optional_out_goods,4)
-        self.save_data(must_up_goods, 1)
-        self.save_data(optional_up_goods, 3)
+        self.save_data(not_move_goods, 0,mch_code)
+        self.save_data(must_out_goods, 2,mch_code)
+        self.save_data(optional_out_goods,4,mch_code)
+        self.save_data(must_up_goods, 1,mch_code)
+        self.save_data(optional_up_goods, 3,mch_code)
 
-    def save_data(self,data,goods_role):
+    def save_data(self,data,goods_role,mch_code):
     # def save_data(self,data,is_new_goods,goods_out_status,goods_add_status):
         """
         保存选品的数据
