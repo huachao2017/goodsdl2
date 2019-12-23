@@ -306,7 +306,6 @@ class DailyChangeGoods:
             all_data = cursor_ucenter.fetchall()
             for data in all_data:
                 delivery_type_dict[data[0]] = data[1]
-
         except:
             print('pos店号是{},查询是否可订货和配送类型失败'.format(self.shop_id))
         return delivery_type_dict
@@ -338,6 +337,7 @@ class DailyChangeGoods:
                 temp_amount = 0
                 for index, goods in enumerate(category_goods_tuple):  # 将累计前占比80%psd金额的商品选出来
                     if str(goods[3]) in taizhang_goods_mch_code_list:
+                        # print('yes0')
                         ab_quick_seller_list.append(str(goods[3]))   # 遇到边界多选策略,neighbor_goods_id
                         temp_amount += goods[0]
                         if temp_amount > float(amount) * self.ab_ratio:
@@ -352,23 +352,35 @@ class DailyChangeGoods:
                     if all_category_goods_tuple:
                         for goods in all_category_goods_tuple:
                             if str(goods[3]) in taizhang_goods_mch_code_list:
+                                # print('yes1')
                                 category_protect_goods_list.append(str(goods[3]))
                                 break
                     if not category_protect_goods_list:
-
-                        print('{}保留毛利最大那个'.format(category))                # 保留毛利最大那个
+                        profit_max = self.profit_max(category, taizhang_goods_mch_code_list)
+                        if profit_max:
+                            # print('yes2')
+                            category_protect_goods_list.append(profit_max)
+                        else:
+                            print('{}保留毛利最大那个,但是没找到'.format(category))                # 保留毛利最大那个
 
             shop_protect_goods_mch_code_list.extend(category_protect_goods_list)
         return shop_protect_goods_mch_code_list
 
 
-    def profit_max(self,category):
+    def profit_max(self,category,taizhang_goods_mch_code_list):
         """
         分类下毛利最大那个商品得mch_code
         :param category:
         :return:
         """
-        pass
+        sql = "SELECT neighbor_goods_id,price-purchase_price as p from goods where third_cate_id={} ORDER BY p desc"
+        self.cursor.execute(sql.format(category))
+        all_data = self.cursor.fetchall()
+        for data in all_data:
+            if str(data[0]) in taizhang_goods_mch_code_list:
+                return str(data[0])
+        return None
+
 
     def recommend_03(self):
 
@@ -396,11 +408,13 @@ class DailyChangeGoods:
         print("有销量的三级分类的code",len(have_sale_category_code),sorted(list(set(have_sale_category_code))))
         # print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
 
+
         #   1.2、获取当前台账的商品
         taizhang_goods,mch_code = self.get_taizhang_goods()  # 获取当前台账的商品
         taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_goods]))    # 去重
         print('去重台账goods',len(taizhang_goods_mch_code_list))
         all_goods_len = len(taizhang_goods_mch_code_list)
+
 
         # 1.3 获取本店的保护品，即不动的品
         if all_goods_len == 0:
@@ -486,27 +500,38 @@ class DailyChangeGoods:
         # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
 
         # 非日配选出来
-        delivery_type_sql = "select delivery_type from uc_merchant_goods where mch_goods_code='{}' and delivery_type is not NULL;"
-        conn_ucenter = connections['ucenter']
-        cursor_ucenter = conn_ucenter.cursor()
+        # delivery_type_sql = "select delivery_type from uc_merchant_goods where mch_goods_code='{}' and delivery_type is not NULL;"
+        # conn_ucenter = connections['ucenter']
+        # cursor_ucenter = conn_ucenter.cursor()
 
         temp_number = 0    # 上架品选到candidate_up_goods_list候选集的第几个啦
         for goods in candidate_up_goods_list:
 
             if len(must_up_goods) == must_up_goods_len:
                 break
-            cursor_ucenter.execute(delivery_type_sql.format(goods[4]))
             try:
-                delivery_type = cursor_ucenter.fetchone()[0]
-                if delivery_type == 2:
-                    must_up_goods.append(goods)
-                else:
-                    print("怎么回事？")
-                    optional_up_goods.append(goods)
-                    # send_message('pos店号为{}的店，获取mch_goods_code为{}的日配类型（delivery_type）异常：{}'.format(self.shop_id, goods[4],delivery_type), 1)
+                if str(goods[4]) in can_order_mch_code_dict:
+                    delivery_type = can_order_mch_code_dict[str(goods[4])]
+                    if delivery_type == 2:
+                        must_up_goods.append(goods)
+                    else:
+                        print("怎么回事？")
+                        optional_up_goods.append(goods)
             except:
-                print("怎么回事222？")
+                print("怎么回事啊啊啊啊啊啊啊啊啊？")
                 optional_up_goods.append(goods)
+
+            # try:
+            #     delivery_type = cursor_ucenter.fetchone()[0]
+            #     if delivery_type == 2:
+            #         must_up_goods.append(goods)
+            #     else:
+            #         print("怎么回事？")
+            #         optional_up_goods.append(goods)
+            #         # send_message('pos店号为{}的店，获取mch_goods_code为{}的日配类型（delivery_type）异常：{}'.format(self.shop_id, goods[4],delivery_type), 1)
+            # except:
+            #     print("怎么回事222？")
+            #     optional_up_goods.append(goods)
                 # send_message('pos店号为{}的店，获取不到mch_goods_code为{}的日配类型（delivery_type）'.format(self.shop_id,goods[4]), 1)
             temp_number += 1
         optional_up_goods += candidate_up_goods_list[temp_number:]
@@ -534,13 +559,6 @@ class DailyChangeGoods:
         # print('optional_up_goods', optional_up_goods)
 
 
-
-
-
-
-
-
-
         # 3、保存至数据库
 
         not_move_goods = list(set(not_move_goods))
@@ -551,8 +569,6 @@ class DailyChangeGoods:
         print(len(must_out_goods))
         print(len(optional_out_goods))
 
-        print(not_move_goods[:10])
-
         self.save_data(not_move_goods, 0,mch_code)
         self.save_data(must_out_goods, 2,mch_code)
         self.save_data(optional_out_goods,4,mch_code)
@@ -560,13 +576,11 @@ class DailyChangeGoods:
         self.save_data(optional_up_goods, 3,mch_code)
 
     def save_data(self,data,goods_role,mch_code):
-    # def save_data(self,data,is_new_goods,goods_out_status,goods_add_status):
         """
         保存选品的数据
-        :param batch_id: 批次号
-        :param is_new_goods: 是否是新增的品，1代表是，0代表否
-        :param goods_out_status:下架状态，0：可选下架，1：必须下架，2：不动的品
-        :param goods_add_status:新增上架状态，0：可选上架，1：必须上架
+        :param data:
+        :param goods_role: 商品角色
+        :param mch_code:
         :return:
         """
 
@@ -576,7 +590,7 @@ class DailyChangeGoods:
         cursor = conn.cursor()
 
         # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
-        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,goods_role,is_structure,is_qiuck_seller,is_relation,ranking,handle_goods_role) values ({},%s,%s,%s,%s,2,%s,%s,%s,'{}','{}',{},%s,%s,%s,%s,{})"
+        insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,goods_role,is_structure,is_qiuck_seller,is_relation,ranking,handle_goods_role) values ({},%s,%s,%s,%s,{},%s,%s,%s,'{}','{}',{},%s,%s,%s,%s,{})"
         delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
         select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
         # try:
@@ -590,7 +604,7 @@ class DailyChangeGoods:
         print('开始入库')
         # print(insert_sql_02)
         print(tuple_data[:5])
-        cursor.executemany(insert_sql_02.format(self.shop_id,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
+        cursor.executemany(insert_sql_02.format(self.shop_id,mch_code,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
         conn.commit()
         conn.close()
         print('ok')
