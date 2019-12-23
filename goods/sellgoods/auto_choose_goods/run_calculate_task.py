@@ -12,7 +12,7 @@ import main.import_django_settings
 from goods.models import AllWorkFlowBatch
 
 from django.db import connections
-
+from django.db import close_old_connections
 
 # if __name__ == '__main__':
 #     # conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     select_sql_shopid = "select mch_shop_code from uc_shop where id = {}"
     while True:
         print('workflow deamon is alive')
-
+        close_old_connections()
         try:
             workflows = AllWorkFlowBatch.objects.filter(select_goods_status=1).all()
             for workflow in workflows:

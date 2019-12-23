@@ -452,22 +452,32 @@ class DailyChangeGoods:
             print(quick_seller_list_test)
             print('================')
 
-        structure_goods_list = []     # 该店没有该三级分类的结构品列表，并且可订货
+        candidate_up_goods_list = []     # 上架候选列表，依次是本店没有的结构品、畅销品
+
+        # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
             if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
-                structure_goods_list.append(data)
+                candidate_up_goods_list.append(data)
 
-        quick_seller_list = []     # 该店没有的畅销品，并且可订货
+        # 该店有该三级分类,并且可订货,并且本店本来是没有的
+        for data in all_structure_goods_list:
+            if data[2] in category_03_list and str(data[4]) in can_order_mch_code_list and not str(data[4]) in taizhang_goods_mch_code_list:
+                data.extend([1, 1, 0])  # is_structure,is_qiuck_seller,is_relation
+                candidate_up_goods_list.append(data)
+
+        # 该店没有的畅销品，并且可订货
         for data in all_quick_seller_list:
             if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_list:
                 data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
-                quick_seller_list.append(data)
+                candidate_up_goods_list.append(data)
 
-        candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
+
+
+        # candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
         # candidate_up_goods_list = list(set(candidate_up_goods_list))
-        print('structure_goods_list',len(structure_goods_list))
-        print('quick_seller_list',len(quick_seller_list))
+        # print('structure_goods_list',len(structure_goods_list))
+        # print('quick_seller_list',len(quick_seller_list))
 
         # must_up_goods = candidate_up_goods_list[:must_up_goods_len]
         # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
@@ -487,16 +497,16 @@ class DailyChangeGoods:
                 delivery_type = cursor_ucenter.fetchone()[0]
                 if delivery_type == 2:
                     must_up_goods.append(goods)
-                elif delivery_type == 1:
-                    pass
                 else:
                     print("怎么回事？")
+                    optional_up_goods.append(goods)
                     # send_message('pos店号为{}的店，获取mch_goods_code为{}的日配类型（delivery_type）异常：{}'.format(self.shop_id, goods[4],delivery_type), 1)
             except:
                 print("怎么回事222？")
+                optional_up_goods.append(goods)
                 # send_message('pos店号为{}的店，获取不到mch_goods_code为{}的日配类型（delivery_type）'.format(self.shop_id,goods[4]), 1)
             temp_number += 1
-        optional_up_goods = candidate_up_goods_list[temp_number:]
+        optional_up_goods += candidate_up_goods_list[temp_number:]
 
 
 
@@ -592,7 +602,7 @@ class DailyChangeGoods:
 
 
 def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
-    # f = DailyChangeGoods(pos_shopid, "88,3156",batch_id,uc_shop_id)
+    # f = DailyChangeGoods(pos_shopid, "88,3156,3238",batch_id,uc_shop_id)
     f = DailyChangeGoods(pos_shopid, "1284,3955,3779,1925,4076,1924,3598",batch_id,uc_shop_id)
     f.recommend_03()
 
