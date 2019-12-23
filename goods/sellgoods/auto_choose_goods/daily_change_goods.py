@@ -460,9 +460,9 @@ class DailyChangeGoods:
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
-        # 该店有该三级分类,并且可订货
+        # 该店有该三级分类,并且可订货,并且本店本来是没有的
         for data in all_structure_goods_list:
-            if data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
+            if data[2] in category_03_list and str(data[4]) in can_order_mch_code_list and not str(data[4]) in taizhang_goods_mch_code_list:
                 data.extend([1, 1, 0])  # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
