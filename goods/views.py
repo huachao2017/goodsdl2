@@ -237,7 +237,7 @@ class BeginOrderGoods(APIView):
                     # (uc_shopid, mch_id) = cursor.fetchone()
                     workflow = AllWorkFlowBatch.objects.create(
                         erp_warehouse_id = erp_warehouse_id,
-                        # uc_shopid=uc_shopid,
+                        uc_shopid=0,
                         batch_id=batch_id,
                         type=type,
                         select_goods_status = 0,
