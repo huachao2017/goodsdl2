@@ -280,9 +280,9 @@ class DailyChangeGoods:
         except:
             return []
 
-    def get_can_order_list_02(self):
+    def get_can_order_dict(self):
         """
-        获取可订货的mch_code的列表,从saas查询
+        获取可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
         :return:
         """
         sql = "SELECT erp_shop_id from erp_shop_related WHERE shop_id='{}' and erp_shop_type=2"
@@ -293,37 +293,24 @@ class DailyChangeGoods:
             print('erp_shop_id获取失败！')
             return []
 
-        # 获取商品的 可定  起订量  配送类型
+        # 获取商品的 可定 配送类型
         conn_ucenter = connections['ucenter']
         cursor_ucenter = conn_ucenter.cursor()
+        delivery_type_dict = {}    # 店内码是key，配送类型是value
         try:
             cursor_ucenter.execute("select id from uc_supplier where supplier_code = '{}'".format(erp_shop_id))
             (supplier_id,) = cursor_ucenter.fetchone()
             cursor_ucenter.execute(
-                "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(
-                    supplier_id))
+                # "select supplier_goods_code,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(supplier_id))
+                "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
+            all_data = cursor_ucenter.fetchall()
+            for data in all_data:
+                delivery_type_dict[data[0]] = data[1]
 
-            (start_sum, order_status, delivery_type_str) = cursor_ucenter.fetchone()
-
-            cursor_ucenter.execute(
-                "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
-                    delivery_type_str))
-            (delivery_type,) = cursor_ucenter.fetchone()
         except:
-            print(
-                "该品 不订货，获取商品的可定  起订量  配送类型 失败 ！ erp_resupply_id={},upc={},mch_code={}".format(erp_resupply_id, upc,
-                                                                                              mch_code))
+            print('pos店号是{},查询是否可订货和配送类型失败'.format(self.shop_id))
+        return delivery_type_dict
 
-
-        ms_conn = connections['erp']     # 魔兽系统库ms_sku_relation
-        ms_cursor = ms_conn.cursor()
-        sql_02 = "SELECT p.model_id,p.party_code from ls_prod p, ms_sku_relation ms WHERE ms.prod_id=p.prod_id AND  p.shop_id='{}' AND ms.status=1;"
-        ms_cursor.execute(sql_02.format(erp_shop_id))
-        results = ms_cursor.fetchall()
-        try:
-            return [i[1] for i in results]
-        except:
-            return []
 
     def calculate_not_move_goods(self,category_03_list):
         """
@@ -457,10 +444,10 @@ class DailyChangeGoods:
 
 
         # 1.4、遍历货架,得出下架品、不动品和可选下架品
-        can_order_mch_code_list = self.get_can_order_list()
-        print('可订货len：',len(can_order_mch_code_list))
+        can_order_mch_code_dict = self.get_can_order_dict()
+        print('可订货len：', len(can_order_mch_code_dict))
         for data in taizhang_goods:
-            if not data['mch_goods_code'] in can_order_mch_code_list:    # 不可订货即必须下架
+            if not data['mch_goods_code'] in can_order_mch_code_dict:    # 不可订货即必须下架
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,is_structure,is_qiuck_seller,is_relation,ranking
                 must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, None))
 
@@ -502,19 +489,19 @@ class DailyChangeGoods:
 
         # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
-            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_list:
+            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict:
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
         # 该店有该三级分类,并且可订货,并且本店本来是没有的
         for data in all_structure_goods_list:
-            if data[2] in category_03_list and str(data[4]) in can_order_mch_code_list and not str(data[4]) in taizhang_goods_mch_code_list:
+            if data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
                 data.extend([1, 1, 0])  # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
         # 该店没有的畅销品，并且可订货
         for data in all_quick_seller_list:
-            if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_list:
+            if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_dict:
                 data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
