@@ -39,18 +39,25 @@ def main_calculate(category3_to_category3_obj, category3_intimate_weight, catego
     :return: 总体后选列表
     """
 
+    # FIXME 做CategoryTree.one_category_combination_threshhold的限制
+    len_category3 = len(category3_to_category3_obj)
+    if len_category3 > 10 and len_category3 <= 20:
+        CategoryTree.one_category_combination_threshhold = 5
+    elif len_category3 > 20:
+        CategoryTree.one_category_combination_threshhold = 2
+
     # 1，初始化数据
     root_category_tree = init_category_tree(category3_to_category3_obj, category3_intimate_weight,
                                             category3_level_value)
 
-    print(root_category_tree)
+    # print(root_category_tree)
     # 2，计算level_value
     root_category_tree.calculate_level_value()
-    print(root_category_tree)
+    # print(root_category_tree)
 
     # 3, 输出组合
     root_category_tree.calculate_result()
-    print(root_category_tree)
+    # print(root_category_tree)
 
     return root_category_tree.get_all_simple_result()
 
