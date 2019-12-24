@@ -439,11 +439,12 @@ class DailyChangeGoods:
             else:    # 剩下的是可选下架的
                 if data['mch_goods_code'] in sales_goods_mch_code_dict.keys():    # 有销量的进行排序
                     # print('有销量即为不动的品')
-                    temp_optional_out_goods.append([None, data['goods_upc'],None, sales_goods_mch_code_dict[data['mch_goods_code']][0],data['mch_goods_code'], None, data['name'], 0, 0, 0])
+                    tem_list = [None, data['goods_upc'],None, sales_goods_mch_code_dict[data['mch_goods_code']][0],data['mch_goods_code'], None, data['name'], 0, 0, 0]
+                    if not tem_list in temp_optional_out_goods:
+                        temp_optional_out_goods.append(tem_list)
                 else:       # 剩下没销量的为可选下架品的第一优先级
                     optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, 10000))  # FIXME 分类code为空
 
-        temp_optional_out_goods = list(set(temp_optional_out_goods))
         optional_out_goods = list(set(optional_out_goods))
         temp_optional_out_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
         for index,goods in enumerate(temp_optional_out_goods):
