@@ -813,8 +813,8 @@ class DataRawGoods():
                 if self.single_face_min_disnums >0 :
                     min_disnums += shelf_ins.face_num * self.single_face_min_disnums
                 else:
-                    min_disnums += shelf_ins.face_num * get_single_face_min_disnums_col(self.storage_day,self.depth,shelf_ins)
-                max_disnums += shelf_ins.face_num * get_single_face_max_disnums_col(self.depth,shelf_ins)
+                    min_disnums += shelf_ins.face_num * get_single_face_min_disnums_col(self.storage_day,self.depth,shelf_ins,self.delivery_type,self.category1_id)
+                max_disnums += shelf_ins.face_num * get_single_face_max_disnums_col(self.depth,shelf_ins,self.delivery_type,self.category1_id)
                 new_shelf_inss.append(shelf_ins)
         self.face_num = face_num
         self.shelf_inss = new_shelf_inss
