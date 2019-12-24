@@ -467,7 +467,12 @@ class DailyChangeGoods:
 
         # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
-            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict:
+            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
+                print("类型",type(data[2]),type(category_03_list[0]))
+                print(data[2],category_03_list)
+
+                
+
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
@@ -476,6 +481,10 @@ class DailyChangeGoods:
             if data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
                 data.extend([1, 1, 0])  # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
+
+
+
+
 
         # 该店没有的畅销品，并且可订货
         for data in all_quick_seller_list:
