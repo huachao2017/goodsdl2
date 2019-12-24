@@ -172,27 +172,6 @@ class DailyChangeGoods:
         :param topn:
         :return:
         """
-        # template_shop_ids_list = self.template_shop_ids.split(',')
-        #
-        # all_goods = []  # 每个店的畅销品的去重汇总
-        # quick_seller_list_all = []  # 每个店的畅销品列表是其值
-        # for template_shop_id in template_shop_ids_list:
-        #     data = self.get_data(template_shop_id)
-        #     quick_seller_list = data[:int(len(data) * self.topn_ratio)]
-        #     quick_seller_list_all.append(quick_seller_list)
-        #     for d in quick_seller_list:
-        #         if not d in all_goods:
-        #             all_goods.append(d)
-        # goods_time_dict = {}  # 商品出现在各模板店畅销品列表的次数，k为goods，v为次数
-        # for goods in all_goods:
-        #     temp_num = 0
-        #     for quick_seller_list in quick_seller_list_all:
-        #         for quick_seller in quick_seller_list:
-        #             if goods[1] == quick_seller[1]:
-        #                 temp_num += 1
-        #     goods_time_dict[goods[1]] = temp_num
-        # print(goods_time_dict)
-        # return goods_time_dict
 
         self.third_category_list = self.get_third_category_list()
         print('self.third_category_list',len(self.third_category_list))
@@ -232,6 +211,8 @@ class DailyChangeGoods:
         quick_seller_list = []
         structure_goods_list = []
         for category, goods_list in category_dict.items():
+            if goods_list == []:
+                break
             goods_list.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
             # print('goods_list',goods_list)
 
