@@ -140,7 +140,7 @@ class DailyChangeGoods:
         :param mch_code:
         :return:
         """
-        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in ({})"
+        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in ({}) AND corp_id=2"
         self.cursor.execute(sql.format(",".join(mch_code_list)))
         all_data = self.cursor.fetchall()
         result = []
