@@ -47,7 +47,7 @@ def init_base_data(uc_shopid, batch_id):
 
     # 获取选品数据
     cursor_default.execute(
-        "select mch_goods_code, predict_sales_num, goods_role, ranking from goods_goodsselectionhistory where shopid={} and batch_id='{}'".format(
+        "select mch_goods_code, predict_sales_num, predict_sales_amount, goods_role, ranking from goods_goodsselectionhistory where shopid={} and batch_id='{}'".format(
             shopid, batch_id))
     all_selection_goods = cursor_default.fetchall()
 
@@ -89,7 +89,8 @@ def init_base_data(uc_shopid, batch_id):
                                                    is_suspension,
                                                    selection_goods[1],
                                                    selection_goods[2],
-                                                   selection_goods[3]
+                                                   selection_goods[3],
+                                                   selection_goods[4]
                                                    ))
 
     print('台账找不到选品表的商品共有:{}个！'.format(not_found_goods))
@@ -116,7 +117,7 @@ class BaseData:
 
 class GoodsData:
     def __init__(self, mch_code, goods_name, upc, tz_display_img, category1, category2, category3, category4,
-                 package_type, brand, width, height, depth, is_superimpose, is_suspension, psd, goods_role, ranking):
+                 package_type, brand, width, height, depth, is_superimpose, is_suspension, psd, psd_amount, goods_role, ranking):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
@@ -137,6 +138,7 @@ class GoodsData:
         if psd is None:
             psd = 0
         self.psd = psd  # 预测销量
+        self.psd_amount = psd_amount # 预测销售额
         self.face_num = 1  # 在某层陈列时填入
         self.add_face_num = 0  # 商品不足做扩面处理
         self.superimpose_num = 1  # 在商品初始化时填入

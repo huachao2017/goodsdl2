@@ -530,6 +530,10 @@ def get_taizhang(uc_shopid,shopid,mch_id,add_type=False):
     nowday_taizhangs = cursor.fetchall()  #计划执行的台账  台账保证一个店仅有一份 对订货可见
 
     if add_type:  # 如果是补货， 只获取正在执行中的台账
+        cursor.execute(
+            "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime ".format(
+                uc_shopid))
+        nowday_taizhangs = cursor.fetchall()  # 执行中的台账 （一个店只会有一份）
         return nowday_taizhangs,[],[]
 
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0 :
@@ -594,13 +598,23 @@ def get_single_face_min_disnums(drg_ins,shelf_ins):
         else:
             min_face_disnum = math.floor(shelf_ins.level_depth / drg_ins.depth)
         single_face_min_disnums = min(3,min_face_disnum)
+    single_face_max_disnums = get_single_face_max_disnums(drg_ins,shelf_ins)
+    if single_face_min_disnums >= single_face_max_disnums:
+        single_face_min_disnums = single_face_max_disnums
     return single_face_min_disnums
 
 def get_single_face_max_disnums(drg_ins,shelf_ins):
-    return max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
+    if drg_ins.delivery_type == 2:
+        single_max_disnums =  max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
+        if int(drg_ins.category1_id) == 4:  # 非食品
+            return min(10,single_max_disnums)
+        else:
+            return min(15,single_max_disnums)
+    else:
+        return max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
 
 
-def get_single_face_min_disnums_col(storage_day,depth,shelf_ins):
+def get_single_face_min_disnums_col(storage_day,depth,shelf_ins,delivery_type,category1_id):
     if storage_day < 15 :
         single_face_min_disnums = 1
     else:
@@ -609,10 +623,20 @@ def get_single_face_min_disnums_col(storage_day,depth,shelf_ins):
         else:
             min_face_disnum = math.floor(shelf_ins.level_depth / depth)
         single_face_min_disnums = min(3,min_face_disnum)
+    single_face_max_disnums = get_single_face_max_disnums_col(depth,shelf_ins,delivery_type,category1_id)
+    if single_face_min_disnums >= single_face_max_disnums:
+        single_face_min_disnums = single_face_max_disnums
     return single_face_min_disnums
 
-def get_single_face_max_disnums_col(depth,shelf_ins):
-    return max(1,math.floor(float(shelf_ins.level_depth) / depth))
+def get_single_face_max_disnums_col(depth,shelf_ins,delivery_type,category1_id):
+    if delivery_type == 2:
+        single_max_disnums =  max(1,math.floor(float(shelf_ins.level_depth) / depth))
+        if int(category1_id) == 4:  # 非食品
+            return min(10,single_max_disnums)
+        else:
+            return min(15,single_max_disnums)
+    else:
+        return max(1,math.floor(float(shelf_ins.level_depth) / depth))
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
@@ -793,8 +817,8 @@ class DataRawGoods():
                 if self.single_face_min_disnums >0 :
                     min_disnums += shelf_ins.face_num * self.single_face_min_disnums
                 else:
-                    min_disnums += shelf_ins.face_num * get_single_face_min_disnums_col(self.storage_day,self.depth,shelf_ins)
-                max_disnums += shelf_ins.face_num * get_single_face_max_disnums_col(self.depth,shelf_ins)
+                    min_disnums += shelf_ins.face_num * get_single_face_min_disnums_col(self.storage_day,self.depth,shelf_ins,self.delivery_type,self.category1_id)
+                max_disnums += shelf_ins.face_num * get_single_face_max_disnums_col(self.depth,shelf_ins,self.delivery_type,self.category1_id)
                 new_shelf_inss.append(shelf_ins)
         self.face_num = face_num
         self.shelf_inss = new_shelf_inss
