@@ -9,7 +9,7 @@ import traceback
 from goods import utils
 from set_config import config
 
-def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
+def get_shop_order_goods(shopid,add_type=False):
     """
     获取商店的所有货架及货架上的商品信息，该方法在订货V3时用
     :param shopid: fx系统的商店id
@@ -43,7 +43,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     (erp_resupply_id,) = cursor_erp.fetchone()  # 供货商id
     print("erp 供货商id" + str(erp_resupply_id))
     # 获取台账和前一天台账中的pin
-    taizhangs,last_tz_upcs,last_v_upcs = get_taizhang(uc_shopid,shopid,mch_id)
+    taizhangs,last_tz_upcs,last_v_upcs = get_taizhang(uc_shopid,shopid,mch_id,add_type=add_type)
     if taizhangs is None:
         print ("获取订货日台账失败 uc_shopid="+str(uc_shopid))
     shelf_inss = []
@@ -147,9 +147,8 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                             (delivery_type,) = cursor.fetchone()
                         except:
                             print ("该品 不订货，获取商品的可定  起订量  配送类型 失败 ！ erp_resupply_id={},upc={},mch_code={}".format(erp_resupply_id,upc,mch_code))
-                            continue
-
-
+                            if add_type == False:
+                                continue
                         # # 获取商品的最小陈列量  切换到sass 获取
                         # single_face_min_disnums = 0
                         # try:
@@ -507,7 +506,7 @@ def for_taizhang_upc(taizhangs,mch_id):
 
 
 
-def get_taizhang(uc_shopid,shopid,mch_id):
+def get_taizhang(uc_shopid,shopid,mch_id,add_type=False):
     """
     取订货日的台账 和 订货日前一天的台账所有的品
     :param uc_shopid:
@@ -529,6 +528,10 @@ def get_taizhang(uc_shopid,shopid,mch_id):
         "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY) ORDER BY td.start_datetime ".format(
             uc_shopid,get_goods_days))
     nowday_taizhangs = cursor.fetchall()  #计划执行的台账  台账保证一个店仅有一份 对订货可见
+
+    if add_type:  # 如果是补货， 只获取正在执行中的台账
+        return nowday_taizhangs,[],[]
+
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0 :
         cursor.execute(
             "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime ".format(
