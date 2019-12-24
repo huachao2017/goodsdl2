@@ -9,7 +9,7 @@ import traceback
 from goods import utils
 from set_config import config
 
-def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
+def get_shop_order_goods(shopid, add_type=False):
     """
     获取商店的所有货架及货架上的商品信息，该方法在订货V3时用
     :param shopid: fx系统的商店id

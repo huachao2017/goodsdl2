@@ -64,10 +64,10 @@ class DailyChangeGoods:
         if type(shop_ids) is list and len(shop_ids) > 0:       # 多个门店
             # print('list,third_category',shop_ids,third_category)
             shop_ids = ",".join(shop_ids)
-            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.third_cate_id={} group by g.upc order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.third_cate_id={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
         elif type(shop_ids) is str or type(shop_ids) is int:     # 单个门店
             # print('str',shop_ids,type(shop_ids))
-            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.third_cate_id={} group by g.upc order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.third_cate_id={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
         else:
             print('none', shop_ids,type(shop_ids))
             return []
@@ -140,7 +140,7 @@ class DailyChangeGoods:
         :param mch_code:
         :return:
         """
-        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in ({})"
+        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in ({}) AND corp_id=2"
         self.cursor.execute(sql.format(",".join(mch_code_list)))
         all_data = self.cursor.fetchall()
         result = []
@@ -322,8 +322,6 @@ class DailyChangeGoods:
             # 新品期的品
             new_goods = []   # TODO
 
-
-
             # select sum(p.amount),g.upc,g.corp_classify_code,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.corp_classify_code={} group by g.upc order by sum(p.amount) desc;"
             category_goods_tuple = self.get_third_category_data(category,self.shop_id)     # 获取该分类下有销量的数据
             # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,is_structure,is_qiuck_seller,is_relation,ranking
@@ -339,11 +337,11 @@ class DailyChangeGoods:
                     if str(goods[3]) in taizhang_goods_mch_code_list:
                         # print('yes0')
                         ab_quick_seller_list.append(str(goods[3]))   # 遇到边界多选策略,neighbor_goods_id
-                        temp_amount += goods[0]
-                        if temp_amount > float(amount) * self.ab_ratio:
-                        # if temp_amount > float(amount) * 1:
-                        #     print('不可能！！')
-                            break
+                    temp_amount += goods[0]
+                    if temp_amount > float(amount) * self.ab_ratio:
+                    # if temp_amount > float(amount) * 1:
+                    #     print('不可能！！')
+                        break
                         # ab_quick_seller_list.append(goods)  # 遇到边界少选策略,neighbor_goods_id
                 category_protect_goods_list.extend(ab_quick_seller_list)
             else:
@@ -405,7 +403,7 @@ class DailyChangeGoods:
         for s in sales_data:
             sales_goods_mch_code_dict[str(s[3])] = s
             have_sale_category_code.append(str(s[2]))
-        print("有销量的三级分类的code",len(have_sale_category_code),sorted(list(set(have_sale_category_code))))
+        print("有销量的三级分类的code",len(set(have_sale_category_code)),sorted(list(set(have_sale_category_code))))
         # print('sales_goods_mch_code_dict',sales_goods_mch_code_dict)
 
 
@@ -424,7 +422,7 @@ class DailyChangeGoods:
 
         print('本店已有三级分类', len(category_03_list),sorted(category_03_list))
         not_move_goods_mch_code_list = self.calculate_not_move_goods(category_03_list,taizhang_goods_mch_code_list)
-        print("本店保护品len",len(not_move_goods_mch_code_list),not_move_goods_mch_code_list)
+        print("本店保护品len",len(not_move_goods_mch_code_list),len(set(not_move_goods_mch_code_list)))
 
 
         # 1.4、遍历货架,得出下架品、不动品和可选下架品
@@ -441,10 +439,13 @@ class DailyChangeGoods:
             else:    # 剩下的是可选下架的
                 if data['mch_goods_code'] in sales_goods_mch_code_dict.keys():    # 有销量的进行排序
                     # print('有销量即为不动的品')
-                    temp_optional_out_goods.append([None, data['goods_upc'],None, sales_goods_mch_code_dict[data['mch_goods_code']][0],data['mch_goods_code'], None, data['name'], 0, 0, 0])
+                    tem_list = [None, data['goods_upc'],None, sales_goods_mch_code_dict[data['mch_goods_code']][0],data['mch_goods_code'], None, data['name'], 0, 0, 0]
+                    if not tem_list in temp_optional_out_goods:
+                        temp_optional_out_goods.append(tem_list)
                 else:       # 剩下没销量的为可选下架品的第一优先级
                     optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, 10000))  # FIXME 分类code为空
 
+        optional_out_goods = list(set(optional_out_goods))
         temp_optional_out_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
         for index,goods in enumerate(temp_optional_out_goods):
             goods.append(index+1)

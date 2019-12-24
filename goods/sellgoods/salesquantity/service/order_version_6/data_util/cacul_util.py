@@ -77,7 +77,7 @@ def get_goods_batch_order_data_warhouse(batch_id,goods_order_all):
 
 def get_order_data_all_warhouse(goods_order_all,order_data_dict):
     jsondata = []
-    print("门店计划订货数(没有进起订量),仓库总订货数,门店id,门店名称,商品id,upc,商品名称,"
+    print("店内目标库存,仓库总订货数,门店id,门店名称,商品id,upc,商品名称,"
           "一级分类,二级分类,三级分类,face数,陈列规格,"
           "模板店4周预估psd,模板店4周预估psd金额,配送单位,最小陈列数,"
           "最大陈列数,门店库存,仓库库存,配送类型,保质期,"
@@ -348,9 +348,9 @@ def get_order_all_data(result,sales_order_inss):
     return order_all_data
 
 
-def data_process(shop_id,shop_type):
+def data_process(shop_id,add_type=False):
     try:
-        result = get_shop_order_goods(shop_id, shop_type)
+        result = get_shop_order_goods(shop_id, add_type=add_type)
     except:
         traceback.print_exc()
         print("shop_id day generate order failed ,get_data error   " + str(shop_id))

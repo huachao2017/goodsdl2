@@ -9,7 +9,7 @@ import traceback
 from goods import utils
 from set_config import config
 
-def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
+def get_shop_order_goods(shopid,add_type=False):
     """
     获取商店的所有货架及货架上的商品信息，该方法在订货V3时用
     :param shopid: fx系统的商店id
@@ -43,7 +43,7 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
     (erp_resupply_id,) = cursor_erp.fetchone()  # 供货商id
     print("erp 供货商id" + str(erp_resupply_id))
     # 获取台账和前一天台账中的pin
-    taizhangs,last_tz_upcs,last_v_upcs = get_taizhang(uc_shopid,shopid,mch_id)
+    taizhangs,last_tz_upcs,last_v_upcs = get_taizhang(uc_shopid,shopid,mch_id,add_type=add_type)
     if taizhangs is None:
         print ("获取订货日台账失败 uc_shopid="+str(uc_shopid))
     shelf_inss = []
@@ -126,34 +126,29 @@ def get_shop_order_goods(shopid, erp_shop_type=0,batch_id=None):
                         # 获取商品属性
                         try:
                             cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,category1_id,category2_id,category_id,storage_day,package_type,display_goods_num from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,category1_id,category2_id,category_id,storage_day,package_type,display_goods_num,supplier_id,supplier_goods_code from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                                     mch_id, mch_code))
                             # FIXME width,height暂时翻转
                             # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
                             (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
-                             is_suspension,category1_id,category2_id,category_id,storage_day,package_type,single_face_min_disnums) = cursor.fetchone()
+                             is_suspension,category1_id,category2_id,category_id,storage_day,package_type,single_face_min_disnums,supplier_id,supplier_goods_code) = cursor.fetchone()
                         except:
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue
 
                         # 获取商品的 可定  起订量  配送类型
                         try:
-                            cursor.execute("select id from uc_supplier where supplier_code = '{}'".format(erp_resupply_id))
-                            (supplier_id,) = cursor.fetchone()
                             cursor.execute(
-                                "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and upc = '{}' and order_status = 1 ".format(supplier_id,mch_code,upc))
-
+                                "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and order_status = 1 ".format(supplier_id,supplier_goods_code))
                             (start_sum,order_status,delivery_type_str) = cursor.fetchone()
-
                             cursor.execute(
                                 "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
                                     delivery_type_str))
                             (delivery_type,) = cursor.fetchone()
                         except:
                             print ("该品 不订货，获取商品的可定  起订量  配送类型 失败 ！ erp_resupply_id={},upc={},mch_code={}".format(erp_resupply_id,upc,mch_code))
-                            continue
-
-
+                            if add_type == False:
+                                continue
                         # # 获取商品的最小陈列量  切换到sass 获取
                         # single_face_min_disnums = 0
                         # try:
@@ -511,7 +506,7 @@ def for_taizhang_upc(taizhangs,mch_id):
 
 
 
-def get_taizhang(uc_shopid,shopid,mch_id):
+def get_taizhang(uc_shopid,shopid,mch_id,add_type=False):
     """
     取订货日的台账 和 订货日前一天的台账所有的品
     :param uc_shopid:
@@ -533,6 +528,14 @@ def get_taizhang(uc_shopid,shopid,mch_id):
         "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =1 and td.approval_status=1 and st.shop_id = {} and DATE_FORMAT(td.start_datetime,'%Y-%m-%d') <= (curdate() + INTERVAL {} DAY) ORDER BY td.start_datetime ".format(
             uc_shopid,get_goods_days))
     nowday_taizhangs = cursor.fetchall()  #计划执行的台账  台账保证一个店仅有一份 对订货可见
+
+    if add_type:  # 如果是补货， 只获取正在执行中的台账
+        cursor.execute(
+            "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime ".format(
+                uc_shopid))
+        nowday_taizhangs = cursor.fetchall()  # 执行中的台账 （一个店只会有一份）
+        return nowday_taizhangs,[],[]
+
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0 :
         cursor.execute(
             "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime ".format(
@@ -595,13 +598,23 @@ def get_single_face_min_disnums(drg_ins,shelf_ins):
         else:
             min_face_disnum = math.floor(shelf_ins.level_depth / drg_ins.depth)
         single_face_min_disnums = min(3,min_face_disnum)
+    single_face_max_disnums = get_single_face_max_disnums(drg_ins,shelf_ins)
+    if single_face_min_disnums >= single_face_max_disnums:
+        single_face_min_disnums = single_face_max_disnums
     return single_face_min_disnums
 
 def get_single_face_max_disnums(drg_ins,shelf_ins):
-    return max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
+    if drg_ins.delivery_type == 2:
+        single_max_disnums =  max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
+        if int(drg_ins.category1_id) == 4:  # 非食品
+            return min(10,single_max_disnums)
+        else:
+            return min(15,single_max_disnums)
+    else:
+        return max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
 
 
-def get_single_face_min_disnums_col(storage_day,depth,shelf_ins):
+def get_single_face_min_disnums_col(storage_day,depth,shelf_ins,delivery_type,category1_id):
     if storage_day < 15 :
         single_face_min_disnums = 1
     else:
@@ -610,10 +623,20 @@ def get_single_face_min_disnums_col(storage_day,depth,shelf_ins):
         else:
             min_face_disnum = math.floor(shelf_ins.level_depth / depth)
         single_face_min_disnums = min(3,min_face_disnum)
+    single_face_max_disnums = get_single_face_max_disnums_col(depth,shelf_ins,delivery_type,category1_id)
+    if single_face_min_disnums >= single_face_max_disnums:
+        single_face_min_disnums = single_face_max_disnums
     return single_face_min_disnums
 
-def get_single_face_max_disnums_col(depth,shelf_ins):
-    return max(1,math.floor(float(shelf_ins.level_depth) / depth))
+def get_single_face_max_disnums_col(depth,shelf_ins,delivery_type,category1_id):
+    if delivery_type == 2:
+        single_max_disnums =  max(1,math.floor(float(shelf_ins.level_depth) / depth))
+        if int(category1_id) == 4:  # 非食品
+            return min(10,single_max_disnums)
+        else:
+            return min(15,single_max_disnums)
+    else:
+        return max(1,math.floor(float(shelf_ins.level_depth) / depth))
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
@@ -794,8 +817,8 @@ class DataRawGoods():
                 if self.single_face_min_disnums >0 :
                     min_disnums += shelf_ins.face_num * self.single_face_min_disnums
                 else:
-                    min_disnums += shelf_ins.face_num * get_single_face_min_disnums_col(self.storage_day,self.depth,shelf_ins)
-                max_disnums += shelf_ins.face_num * get_single_face_max_disnums_col(self.depth,shelf_ins)
+                    min_disnums += shelf_ins.face_num * get_single_face_min_disnums_col(self.storage_day,self.depth,shelf_ins,self.delivery_type,self.category1_id)
+                max_disnums += shelf_ins.face_num * get_single_face_max_disnums_col(self.depth,shelf_ins,self.delivery_type,self.category1_id)
                 new_shelf_inss.append(shelf_ins)
         self.face_num = face_num
         self.shelf_inss = new_shelf_inss
