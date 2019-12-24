@@ -29,11 +29,14 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     print("时间,门店id,门店名称,一级分类,二级分类,三级分类,四级分类,配送类型,商品编码,商品名称,商品upc,策略标签,商品角色,上品优先级排名,商品实际销售4周预期psd金额,商品实际销售4周预期psd,组内门店4周预期psd金额,组内门店4周预期psd")
 
 
-    select_sql = "select * from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
+    select_sql = "select * from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL"
+    select_sql_02 = "select mch_goods_code from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL"
     cursor_ai.execute(select_sql.format(uc_shopid,batch_id))
     all_data = cursor_ai.fetchall()
+    cursor_ai.execute(select_sql_02.format(uc_shopid, batch_id))
+    all_data_02 = cursor_ai.fetchall()
     conn_ai.close()
-
+    tem = ""
     for data in all_data[:]:
         close_old_connections()
         conn_ucenter = connections['ucenter']
@@ -60,7 +63,10 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             line_str += str(cursor_ucenter.fetchone()[0])   #门店名称
         except:
             line_str += str('None')  # 门店名称
+
         line_str += ","
+
+        tem = line_str
 
         class_type_sql = "select display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
         cursor_ucenter.execute(class_type_sql.format(data[10]))
@@ -192,6 +198,18 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         print(line_str)
         conn_ucenter.close()
         conn_dmstore.close()
+
+
+    tem_mch_list = [i[0] for i in all_data_02]
+    conn_dmstore = connections['dmstore']
+    cursor_dmstore = conn_dmstore.cursor()
+    cursor_dmstore.execute("SELECT DISTINCT upc ,name,neighbor_goods_id from goods where neighbor_goods_id in ({}) GROUP BY upc".format(",".join(tem_mch_list)))
+    d = cursor_dmstore.fetchall()
+    for i in d:
+        print("{},{},{},{},{},{},{},{},{}".format(tem,None,None,None,None,None,i[2],i[1],i[0]))
+
+
+
 
 def data():
     pass
