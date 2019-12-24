@@ -472,7 +472,6 @@ class DailyChangeGoods:
                 print(data[2],category_03_list)
 
 
-
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
@@ -551,7 +550,7 @@ class DailyChangeGoods:
 
         self.save_data(not_move_goods, 0,mch_code)
         self.save_data(must_out_goods, 2,mch_code)
-        self.save_data(optional_out_goods,4,mch_code)
+        # self.save_data(optional_out_goods,4,mch_code)
         self.save_data(must_up_goods, 1,mch_code)
         self.save_data(optional_up_goods, 3,mch_code)
 
@@ -565,7 +564,7 @@ class DailyChangeGoods:
         for mch in can_order_mch_code_dict:
             if not mch in all_data_mch:
                 optional_up_goods_order.append((None, None, None, None, mch, None, None, 0, 0, 0, 0))
-
+        optional_out_goods.extend(optional_up_goods_order)
         self.save_data(optional_up_goods_order, 3, mch_code)
 
 
