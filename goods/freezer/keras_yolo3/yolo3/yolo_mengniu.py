@@ -212,9 +212,9 @@ class YOLO(object):
             output_image_path = os.path.join(image_dir, 'visual_' + os.path.split(image_path)[-1])
             vis_util.visualize_boxes_and_labels_on_image_array(
                 image_np,
-                np.squeeze(draw_boxes),
-                np.squeeze(classes).astype(np.int32),
-                np.squeeze(scores),
+                np.array(draw_boxes),
+                np.array(classes).astype(np.int32),
+                np.array(scores),
                 self.category_index,
                 use_normalized_coordinates=True,
                 max_boxes_to_draw=None,
