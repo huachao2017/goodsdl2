@@ -152,9 +152,9 @@ def get_order_all_data(result,sales_order_inss):
     order_all_data = demjson.encode(jsondata)
     return order_all_data
 
-def data_process(shop_id,shop_type):
+def data_process(shop_id,add_type=False):
     try:
-        result = get_shop_order_goods(shop_id, shop_type)
+        result = get_shop_order_goods(shop_id,add_type=add_type)
     except:
         traceback.print_exc()
         print("shop_id day generate order failed ,get_data error   " + str(shop_id))

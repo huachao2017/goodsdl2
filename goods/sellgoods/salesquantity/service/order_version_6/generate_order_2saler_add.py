@@ -9,8 +9,8 @@ import time
 import datetime
 import demjson
 import math
-shop_type = config.shellgoods_params['shop_types'][1]  # 二批
-def generate(shop_id = None,order_type=None):
+# shop_type = config.shellgoods_params['shop_types'][1]  # 二批
+def generate(shop_id = None):
     try:
         print("二批向供货商非日配的首次订货,shop_id" + str(shop_id))
         if shop_id == None:
@@ -24,7 +24,7 @@ def generate(shop_id = None,order_type=None):
             gethuo_days = config.shellgoods_params['get_goods_days'][shop_id]
         else:
             gethuo_days = config.shellgoods_params['get_goods_days'][-8888]
-        result = cacul_util.data_process(shop_id,shop_type)
+        result = cacul_util.data_process(shop_id)
         print ("规则0 商品数："+str(len(result.keys())))
         goods_orders=[]
         for mch_code  in result:
