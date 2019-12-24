@@ -62,7 +62,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             line_str += str('None')  # 门店名称
         line_str += ","
 
-        class_type_sql = "select display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
+        class_type_sql = "select display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
         cursor_ucenter.execute(class_type_sql.format(data[10]))
         class_type_data = cursor_ucenter.fetchone()
 
@@ -98,8 +98,8 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
         delivery_type_dict = {1:'日配',2:'非日配','1':'日配','2':'非日配'}
         try:
-            print(data[21])
-            line_str += str(delivery_type_dict[data[21]])  # 配送类型
+            # print(data[21])
+            line_str += str(delivery_type_dict[data[4]])  # 配送类型
             line_str += ","
         except:
             line_str += str('None')
