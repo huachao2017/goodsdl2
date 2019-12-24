@@ -530,6 +530,10 @@ def get_taizhang(uc_shopid,shopid,mch_id,add_type=False):
     nowday_taizhangs = cursor.fetchall()  #计划执行的台账  台账保证一个店仅有一份 对订货可见
 
     if add_type:  # 如果是补货， 只获取正在执行中的台账
+        cursor.execute(
+            "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime ".format(
+                uc_shopid))
+        nowday_taizhangs = cursor.fetchall()  # 执行中的台账 （一个店只会有一份）
         return nowday_taizhangs,[],[]
 
     if nowday_taizhangs is None or len(nowday_taizhangs) == 0 :
