@@ -91,10 +91,30 @@ def many_sort(drg_ins1, drg_ins2):
             return 1
 
 def bingql_filter(drg_inss):
-    print ("")
+    V1 = 0 # 目标库存的总体积
+    V2 = 0 # 货架的总体积
+    shelf_id_dict={}
+    for drg_ins in drg_inss:
+        if drg_ins.category2_id == 101:
+            shelf_inss = drg_ins.shelf_inss
+            V1 += drg_ins.height * drg_ins.width * drg_ins.depth * drg_ins.order_sale
+            for shelf_ins in shelf_inss:
+                shelf_id_dict[shelf_ins.shelf_id] = shelf_ins
+    for shelf_id in shelf_id_dict:
+        shelf_ins = shelf_id_dict[shelf_id]
+        V2 += shelf_ins.shelf_length * shelf_ins.shelf_height * shelf_ins.shelf_depth
+    if V1 <= V2*0.8:
+        return True
+    else:
+        return False
 
 
-def rule_bingql(drg_inss):
+def rule_bingql(drg_inss,order_data_dict):
+    flag = False
+    flag = bingql_filter(drg_inss)
+    if flag:
+        return drg_inss
+
     bingql_drg_inss = []
     for drg_ins in drg_inss:
         if drg_ins.category2_id == 101:
