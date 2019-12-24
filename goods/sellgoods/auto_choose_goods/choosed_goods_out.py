@@ -63,9 +63,12 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         line_str += ","
 
         class_type_sql = "select display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
+        cursor_ucenter.execute(class_type_sql.format(data[10]))
+        class_type_data = cursor_ucenter.fetchone()
+
         # class_type_sql = "SELECT DISTINCT first_cate_id,second_cate_id,third_cate_id from goods WHERE neighbor_goods_id ={} AND corp_id=2"
-        cursor_dmstore.execute(class_type_sql.format(data[10]))
-        class_type_data = cursor_dmstore.fetchone()
+        # cursor_dmstore.execute(class_type_sql.format(data[10]))
+        # class_type_data = cursor_dmstore.fetchone()
         # print('分类',data[10],class_type_data)
         try:
             line_str += str(class_type_data[0])  # 一级分类
