@@ -471,7 +471,7 @@ class DailyChangeGoods:
                 print("类型",type(data[2]),type(category_03_list[0]))
                 print(data[2],category_03_list)
 
-                
+
 
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
@@ -622,9 +622,9 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 if __name__ == '__main__':
 
     f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598",'lishu_test_003',806)
-    # f.recommend_03()
+    f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
-    f.get_taizhang_goods()
+    # f.get_taizhang_goods()
 
 
 
