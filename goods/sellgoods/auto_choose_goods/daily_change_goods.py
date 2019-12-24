@@ -118,9 +118,6 @@ class DailyChangeGoods:
         """
         uc_conn = connections['ucenter']
         uc_cursor = uc_conn.cursor()
-        # 获取台账系统的uc_shopid
-        # uc_cursor.execute('select id from uc_shop where mch_shop_code = {}'.format(self.shop_id))
-        # self.uc_shopid = uc_cursor.fetchone()[0]
         # 获取当前的台账
         select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info,t.mch_id from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(self.uc_shopid)
         uc_cursor.execute(select_sql_02)
@@ -132,6 +129,8 @@ class DailyChangeGoods:
                     for goods in layer:
                         # goods_upc = goods['goods_upc']
                         taizhang_data_list.append(goods)
+        taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_data_list]))  # 去重
+        print('台账mch去重：',taizhang_goods_mch_code_list)
         return taizhang_data_list,all_data[0][5]
 
     def get_third_category(self,mch_code_list):
@@ -310,7 +309,6 @@ class DailyChangeGoods:
             print('pos店号是{},查询是否可订货和配送类型失败'.format(self.shop_id))
         return delivery_type_dict
 
-
     def calculate_not_move_goods(self,category_03_list,taizhang_goods_mch_code_list):
         """
         计算保护品列表
@@ -364,7 +362,6 @@ class DailyChangeGoods:
             shop_protect_goods_mch_code_list.extend(category_protect_goods_list)
         return shop_protect_goods_mch_code_list
 
-
     def profit_max(self,category,taizhang_goods_mch_code_list):
         """
         分类下毛利最大那个商品得mch_code
@@ -382,17 +379,13 @@ class DailyChangeGoods:
 
     def recommend_03(self):
 
-
         not_move_goods = []   # 没有变动的品
-
         must_up_goods = []  # 必须上架的品
         optional_up_goods = []  # 可选上架的品
         must_out_goods = []  # 必须下架的品
         optional_out_goods = []  # 可选下架的品
         temp_optional_out_goods = []  # 临时可选下架
-
         category_03_list = []   # 本店已有三级分类的code列表
-
 
 
         #   1.1、获取本店有销量的商品
@@ -474,7 +467,12 @@ class DailyChangeGoods:
 
         # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
-            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict:
+            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
+                print("类型",type(data[2]),type(category_03_list[0]))
+                print(data[2],category_03_list)
+
+
+
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
@@ -484,6 +482,10 @@ class DailyChangeGoods:
                 data.extend([1, 1, 0])  # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
+
+
+
+
         # 该店没有的畅销品，并且可订货
         for data in all_quick_seller_list:
             if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_dict:
@@ -492,19 +494,8 @@ class DailyChangeGoods:
 
 
 
-        # candidate_up_goods_list = structure_goods_list + quick_seller_list     #FIXME  怎么综合一下
-        # candidate_up_goods_list = list(set(candidate_up_goods_list))
-        # print('structure_goods_list',len(structure_goods_list))
-        # print('quick_seller_list',len(quick_seller_list))
-
-        # must_up_goods = candidate_up_goods_list[:must_up_goods_len]
-        # optional_up_goods = candidate_up_goods_list[must_up_goods_len:]
 
         # 非日配选出来
-        # delivery_type_sql = "select delivery_type from uc_merchant_goods where mch_goods_code='{}' and delivery_type is not NULL;"
-        # conn_ucenter = connections['ucenter']
-        # cursor_ucenter = conn_ucenter.cursor()
-
         temp_number = 0    # 上架品选到candidate_up_goods_list候选集的第几个啦
         for goods in candidate_up_goods_list:
 
@@ -516,24 +507,12 @@ class DailyChangeGoods:
                     if delivery_type == 2:
                         must_up_goods.append(goods)
                     else:
-                        print("怎么回事？")
+                        # print("怎么回事？")
                         optional_up_goods.append(goods)
             except:
                 print("怎么回事啊啊啊啊啊啊啊啊啊？")
                 optional_up_goods.append(goods)
 
-            # try:
-            #     delivery_type = cursor_ucenter.fetchone()[0]
-            #     if delivery_type == 2:
-            #         must_up_goods.append(goods)
-            #     else:
-            #         print("怎么回事？")
-            #         optional_up_goods.append(goods)
-            #         # send_message('pos店号为{}的店，获取mch_goods_code为{}的日配类型（delivery_type）异常：{}'.format(self.shop_id, goods[4],delivery_type), 1)
-            # except:
-            #     print("怎么回事222？")
-            #     optional_up_goods.append(goods)
-                # send_message('pos店号为{}的店，获取不到mch_goods_code为{}的日配类型（delivery_type）'.format(self.shop_id,goods[4]), 1)
             temp_number += 1
         optional_up_goods += candidate_up_goods_list[temp_number:]
 
@@ -575,6 +554,22 @@ class DailyChangeGoods:
         self.save_data(optional_out_goods,4,mch_code)
         self.save_data(must_up_goods, 1,mch_code)
         self.save_data(optional_up_goods, 3,mch_code)
+
+
+        # 把可订货的都存到可选上架
+        all_data = not_move_goods + optional_out_goods + must_up_goods + optional_up_goods
+        all_data_mch = []
+        optional_up_goods_order = []    # 在模板店没销量的可订货的
+        for data in all_data:
+            all_data_mch.append(str(data[4]))
+        for mch in can_order_mch_code_dict:
+            if not mch in all_data_mch:
+                optional_up_goods_order.append((None, None, None, None, mch, None, None, 0, 0, 0, 0))
+
+        self.save_data(optional_up_goods_order, 3, mch_code)
+
+
+
 
     def save_data(self,data,goods_role,mch_code):
         """
@@ -629,6 +624,7 @@ if __name__ == '__main__':
     f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598",'lishu_test_003',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
+    # f.get_taizhang_goods()
 
 
 

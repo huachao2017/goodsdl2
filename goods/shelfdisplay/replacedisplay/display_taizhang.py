@@ -13,12 +13,16 @@ import cv2
 import numpy as np
 from django.conf import settings
 
+from goods.shelfdisplay.replacedisplay.area_arrange import *
+
 
 class TaizhangDisplay:
     def __init__(self, tz_id):
         self.tz_id = tz_id
         self.shelf = None
-        self.candidate_shelfs = []
+        self.category3_list = None    # 三级分类列表
+        self.choose_goods_list = None # 筛选过三级分类选品列表
+        self.candidate_shelfs = None
         self.best_candidate_shelf = None
         self.image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang', str(self.tz_id))
         self.image_dir = os.path.join(settings.MEDIA_ROOT, self.image_relative_dir)
@@ -27,6 +31,11 @@ class TaizhangDisplay:
         if not Path(self.image_dir).exists():
             os.makedirs(self.image_dir)
 
+    def init_data(self, shelf, category3_list, choose_goods_list):
+        self.shelf = shelf
+        self.category3_list = category3_list
+        self.choose_goods_list = choose_goods_list
+
     def display(self):
         """
         陈列主算法
@@ -34,11 +43,17 @@ class TaizhangDisplay:
         """
         begin_time = time.time()
 
-        # 第一步
-        # TODO 计算候选货架
+        # 第一步 生成组合区域
+        area_list = born_areas(self)
 
-        # 第二步
-        # TODO 打分计算最佳货架
+        # 第二步 计算摆放区域
+        display_areas(area_list)
+
+        # 第四步 组合区域
+        self.candidate_shelfs = combine_area(area_list)
+
+        # 第四步 打分计算最佳货架
+        self.best_candidate_shelf = goods_replace_score(self.candidate_shelfs)
 
         end_time = time.time()
         self.display_calculate_time = int(end_time - begin_time)
@@ -95,17 +110,10 @@ class TaizhangDisplay:
         }
         json_ret["shelfs"].append(json_shelf)
         if shelf.best_candidate_shelf is not None:
-            index = -1
             for level in shelf.best_candidate_shelf.levels:
-                index += 1
-                if index == len(shelf.best_candidate_shelf.levels) - 1:
-                    # 最后一层殊处理
-                    level_height = shelf.height - level.start_height
-                else:
-                    level_height = shelf.best_candidate_shelf.levels[index + 1].start_height - level.start_height
                 json_level = {
                     "level_id": level.level_id,
-                    "height": level_height,
+                    "height": level.height,
                     "depth": level.depth,
                     "goods": []
                 }
@@ -133,7 +141,6 @@ class TaizhangDisplay:
 
                     json_goods["max_display_num"] = display_goods.get_one_face_max_display_num(level) * num
 
-                last_level = level
         return json_ret
 
     def to_image(self, image_dir):
@@ -149,9 +156,15 @@ class TaizhangDisplay:
         image_path = os.path.join(image_dir, image_name)
         image = np.ones((shelf.height, shelf.width, 3), dtype=np.int16)
         image = image * 255
-
+        last_level = None
+        level_height = 0
         for level in shelf.best_candidate_shelf.levels:
-            level_start_height = level.start_height
+            if last_level is None:
+                level_height += 30
+            else:
+                level_height += last_level.height
+            level_start_height = level_height
+            last_level = level
             for display_goods in level.display_goods_list:
                 picurl = '{}{}'.format(settings.UC_PIC_HOST, display_goods.goods_data.tz_display_img)
                 if picurl in picurl_to_goods_image:

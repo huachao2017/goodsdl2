@@ -53,11 +53,11 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
     for goods_info in display_goods_info:
         goods_array_dict[goods_info['shelfId']] = goods_info['layerArray']
 
+    category3_list = []
     for shelfId in shelf_dict.keys():
         shelf_array = shelf_dict[shelfId]
         goods_array = goods_array_dict[shelfId]
         shelf = Shelf(shelf_id, height, length, depth)
-        taizhang_display.shelf = shelf
         for i in range(len(shelf_array)):
             level = shelf_array[i]
             goods_level_array = goods_array[i]
@@ -72,7 +72,13 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
                     pass
                 else:
                     last_display_goods = level.add_display_goods(goods_data)
+                    if goods_data.category3 not in category3_list:
+                        category3_list.append(goods_data.category3)
                     level.add_display_goods(last_display_goods)
+
+        # FIXME 目前只支持一个货架
+        choose_goods_list = filter_goods_data(category3_list, base_data.goods_data_list)
+        taizhang_display.init_data(shelf, category3_list, choose_goods_list)
 
     return taizhang_display
 
@@ -81,3 +87,11 @@ def find_goods(mch_goods_code, goods_data_list):
         if goods_data.mch_code == mch_goods_code:
             return goods_data
     return None
+
+def filter_goods_data(category3_list, goods_data_list):
+    ret = []
+    for goods_data in goods_data_list:
+        if goods_data.category3 in category3_list:
+            ret.append(goods_data)
+
+    return ret
