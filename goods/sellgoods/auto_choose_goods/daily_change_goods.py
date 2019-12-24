@@ -17,7 +17,7 @@ class DailyChangeGoods:
     目前只是非日配的日常换品逻辑
     """
 
-    def __init__(self,shop_id,template_shop_ids,batch_id,uc_shopid,topn_ratio=0.6,days=2):
+    def __init__(self,shop_id,template_shop_ids,batch_id,uc_shopid,topn_ratio=0.6,days=28):
         self.category_goods_list = []    # 结构品
         self.template_shop_ids = template_shop_ids.split(',')
         self.shop_id = shop_id
