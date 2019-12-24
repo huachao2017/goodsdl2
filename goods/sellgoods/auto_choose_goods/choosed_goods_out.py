@@ -207,6 +207,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     d = cursor_dmstore.fetchall()
     for i in d:
         print("{},{},{},{},{},{},{},{},{}".format(tem,None,None,None,None,None,i[2],i[1],i[0]))
+    conn_dmstore.close()
 
 
 
