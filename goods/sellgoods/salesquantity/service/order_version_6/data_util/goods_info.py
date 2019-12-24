@@ -594,13 +594,23 @@ def get_single_face_min_disnums(drg_ins,shelf_ins):
         else:
             min_face_disnum = math.floor(shelf_ins.level_depth / drg_ins.depth)
         single_face_min_disnums = min(3,min_face_disnum)
+    single_face_max_disnums = get_single_face_max_disnums(drg_ins,shelf_ins)
+    if single_face_min_disnums >= single_face_max_disnums:
+        single_face_min_disnums = single_face_max_disnums
     return single_face_min_disnums
 
 def get_single_face_max_disnums(drg_ins,shelf_ins):
-    return max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
+    if drg_ins.delivery_type == 2:
+        single_max_disnums =  max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
+        if int(drg_ins.category1_id) == 4:  # 非食品
+            return min(10,single_max_disnums)
+        else:
+            return min(15,single_max_disnums)
+    else:
+        return max(1,math.floor(float(shelf_ins.level_depth) / drg_ins.depth))
 
 
-def get_single_face_min_disnums_col(storage_day,depth,shelf_ins):
+def get_single_face_min_disnums_col(storage_day,depth,shelf_ins,delivery_type,category1_id):
     if storage_day < 15 :
         single_face_min_disnums = 1
     else:
@@ -609,10 +619,20 @@ def get_single_face_min_disnums_col(storage_day,depth,shelf_ins):
         else:
             min_face_disnum = math.floor(shelf_ins.level_depth / depth)
         single_face_min_disnums = min(3,min_face_disnum)
+    single_face_max_disnums = get_single_face_max_disnums_col(depth,shelf_ins,delivery_type,category1_id)
+    if single_face_min_disnums >= single_face_max_disnums:
+        single_face_min_disnums = single_face_max_disnums
     return single_face_min_disnums
 
-def get_single_face_max_disnums_col(depth,shelf_ins):
-    return max(1,math.floor(float(shelf_ins.level_depth) / depth))
+def get_single_face_max_disnums_col(depth,shelf_ins,delivery_type,category1_id):
+    if delivery_type == 2:
+        single_max_disnums =  max(1,math.floor(float(shelf_ins.level_depth) / depth))
+        if int(category1_id) == 4:  # 非食品
+            return min(10,single_max_disnums)
+        else:
+            return min(15,single_max_disnums)
+    else:
+        return max(1,math.floor(float(shelf_ins.level_depth) / depth))
 
 class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
