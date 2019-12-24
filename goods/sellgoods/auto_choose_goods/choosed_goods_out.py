@@ -99,7 +99,8 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         delivery_type_dict = {1:'日配',2:'非日配','1':'日配','2':'非日配'}
         try:
             # print(data[21])
-            line_str += str(delivery_type_dict[data[4]])  # 配送类型
+            # line_str += str(delivery_type_dict[data[21]])  # 配送类型
+            line_str += str(delivery_type_dict[class_type_data[4]])  # 配送类型
             line_str += ","
         except:
             line_str += str('None')
