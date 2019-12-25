@@ -328,6 +328,7 @@ class DailyChangeGoods:
             cursor_ucenter.execute(
                 # "select supplier_goods_code,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(supplier_id))
                 # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
+                # 有尺寸数据
                 "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id = {} and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0".format(supplier_id))
             all_data = cursor_ucenter.fetchall()
             for data in all_data:
