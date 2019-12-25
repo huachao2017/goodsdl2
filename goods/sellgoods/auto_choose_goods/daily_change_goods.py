@@ -44,7 +44,8 @@ class DailyChangeGoods:
         now = datetime.datetime.now()
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
-        sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} group by g.upc order by sum(p.amount) desc;"
+        # 这个三级分类没用
+        sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} group by g.upc order by sum(p.amount) desc;"
         self.cursor.execute(sql.format(week_ago, now_date, shop_id))
         results = self.cursor.fetchall()
         return results
@@ -56,38 +57,64 @@ class DailyChangeGoods:
         :param shop_ids: 门店的ids
         :return:
         """
-        # print(shop_ids)
-
+        # 按照商品分类
         now = datetime.datetime.now()
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
         if type(shop_ids) is list and len(shop_ids) > 0:       # 多个门店
             # print('list,third_category',shop_ids,third_category)
             shop_ids = ",".join(shop_ids)
-            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.third_cate_id={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.saas_third_catid={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
         elif type(shop_ids) is str or type(shop_ids) is int:     # 单个门店
             # print('str',shop_ids,type(shop_ids))
-            sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.third_cate_id={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.saas_third_catid={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
         else:
             print('none', shop_ids,type(shop_ids))
             return []
+        # print('sql',sql.format(week_ago, now_date, shop_ids,third_category))
         self.cursor.execute(sql.format(week_ago, now_date, shop_ids,third_category))
         results = self.cursor.fetchall()
-        # cursor.close()
 
-        # print(results)
-        # print(len(results))
+        print(results)
+        print(len(results))
         return results
+
+        # 按照陈列分类
+
+
+        # # 按照陈列分类
+        # now = datetime.datetime.now()
+        # now_date = now.strftime('%Y-%m-%d %H:%M:%S')
+        # week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
+        # if type(shop_ids) is list and len(shop_ids) > 0:  # 多个门店
+        #     # print('list,third_category',shop_ids,third_category)
+        #     shop_ids = ",".join(shop_ids)
+        #     sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.third_cate_id={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
+        # elif type(shop_ids) is str or type(shop_ids) is int:  # 单个门店
+        #     # print('str',shop_ids,type(shop_ids))
+        #     sql = "select sum(p.amount),g.upc,g.third_cate_id,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.third_cate_id={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
+        # else:
+        #     print('none', shop_ids, type(shop_ids))
+        #     return []
+        # self.cursor.execute(sql.format(week_ago, now_date, shop_ids, third_category))
+        # results = self.cursor.fetchall()
+        # # cursor.close()
+        #
+        # # print(results)
+        # # print(len(results))
+        # return results
+
 
     def get_third_category_list(self):
         """
         获取一段取数周期内，所有模板店的有销量的品的所有三级分类的code的列表
         :return:
         """
+        # 按照商品分类
         now = datetime.datetime.now()
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
-        sql = "select distinct g.third_cate_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({});"
+        sql = "select distinct g.saas_third_catid from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({});"
         template_shop_ids = ",".join(self.template_shop_ids)
         self.cursor.execute(sql.format(week_ago, now_date, template_shop_ids))
         results = self.cursor.fetchall()
@@ -95,11 +122,31 @@ class DailyChangeGoods:
         results_list = []
         for i in results:
             try:
-                if type(i[0]) is int:
+                if type(i[0]) is str and i[0] != "":
                     results_list.append(i[0])
             except:
                 continue
         return results_list
+
+        # # 按照陈列分类
+        # now = datetime.datetime.now()
+        # now_date = now.strftime('%Y-%m-%d %H:%M:%S')
+        # week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
+        # sql = "select distinct g.corp_goods_id from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.corp_id=2;"
+        # template_shop_ids = ",".join(self.template_shop_ids)
+        # self.cursor.execute(sql.format(week_ago, now_date, template_shop_ids))
+        # results = self.cursor.fetchall()
+        # print('get_third_category_list', results)
+        # temp_list = []
+        # for i in results:
+        #     try:
+        #         temp_list.append(i[0])
+        #     except:
+        #         continue
+        #
+        # results_list = self.get_third_category(temp_list)
+        #
+        # return results_list
 
     def get_sale_goods(self):
         """
@@ -135,7 +182,7 @@ class DailyChangeGoods:
 
     def get_third_category(self,mch_code_list):
         """
-        获取本店三级分类的code的列表
+        获取三级分类的code的列表
         :param mch_code:
         :return:
         """
@@ -145,23 +192,19 @@ class DailyChangeGoods:
         result = []
         for data in all_data:
             if type(data[0]) is int:
-                if not data[0] is None:
+                if not data[0] is None and data[0] != "":
                     result.append(data[0])
         return result
 
-    def calculate_first_category_goods_count(self):
-        """
-        计算一级分类需要选品的预估数量
-        :return:
-        """
-        # 1、获取该店有哪些一级分类可售
-
-        # 2、获取每个一级分类分配的货架面积
-
-        # 3、计算每个一级分类下的平均商品面积
-
-        # 4、计算每个一级分类的预估选品数
-        pass
+        # sql = "SELECT DISTINCT(category_id) from uc_merchant_goods WHERE mch_goods_code in ({}) AND mch_id=2"
+        # self.cursor_ucenter.execute(sql.format(",".join(mch_code_list)))
+        # all_data = self.cursor_ucenter.fetchall()
+        # result = []
+        # for data in all_data:
+        #     if type(data[0]) is str:
+        #         if not data[0] is None and data[0] != "":
+        #             result.append(int(data[0]))
+        # return result
 
     def calculate_quick_seller(self):
         """
@@ -349,7 +392,7 @@ class DailyChangeGoods:
         :param category:
         :return:
         """
-        sql = "SELECT neighbor_goods_id,price-purchase_price as p from goods where third_cate_id={} ORDER BY p desc"
+        sql = "SELECT neighbor_goods_id,price-purchase_price as p from goods where saas_third_catid={} ORDER BY p desc"
         self.cursor.execute(sql.format(category))
         all_data = self.cursor.fetchall()
         for data in all_data:
@@ -450,7 +493,7 @@ class DailyChangeGoods:
         for data in all_structure_goods_list:
             if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
                 # print("类型",type(data[2]),type(category_03_list[0]))
-                print(data[2],category_03_list)
+                # print(data[2],category_03_list)
 
 
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
