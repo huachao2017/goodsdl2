@@ -74,10 +74,9 @@ class DailyChangeGoods:
         print('sql',sql.format(week_ago, now_date, shop_ids,third_category))
         self.cursor.execute(sql.format(week_ago, now_date, shop_ids,third_category))
         results = self.cursor.fetchall()
-        # cursor.close()
 
-        # print(results)
-        # print(len(results))
+        print(results)
+        print(len(results))
         return results
 
         # 按照陈列分类
