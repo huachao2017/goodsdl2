@@ -236,7 +236,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             i = data
             if len(data) > 1:
                 for d in data:
-                    if d[3] != 0:
+                    if d[3] != '0':
                         i = d
                         break
 
