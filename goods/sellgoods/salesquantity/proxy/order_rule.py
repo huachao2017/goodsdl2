@@ -119,7 +119,7 @@ def bingql_filter(drg_inss,order_data_dict):
 
 
 def rule_bingql(drg_inss,order_data_dict):
-    flag = bingql_filter(drg_inss)
+    flag = bingql_filter(drg_inss,order_data_dict)
     if flag:
         return drg_inss
     bingql_drg_inss = []

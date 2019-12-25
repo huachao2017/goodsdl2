@@ -64,10 +64,10 @@ class DailyChangeGoods:
         if type(shop_ids) is list and len(shop_ids) > 0:       # 多个门店
             # print('list,third_category',shop_ids,third_category)
             shop_ids = ",".join(shop_ids)
-            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.saas_third_catid={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.saas_third_catid='{}' group by g.neighbor_goods_id order by sum(p.amount) desc;"
         elif type(shop_ids) is str or type(shop_ids) is int:     # 单个门店
             # print('str',shop_ids,type(shop_ids))
-            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.saas_third_catid={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.saas_third_catid='{}' group by g.neighbor_goods_id order by sum(p.amount) desc;"
         else:
             print('none', shop_ids,type(shop_ids))
             return []
@@ -75,8 +75,8 @@ class DailyChangeGoods:
         self.cursor.execute(sql.format(week_ago, now_date, shop_ids,third_category))
         results = self.cursor.fetchall()
 
-        print(results)
-        print(len(results))
+        # print(results)
+        # print(len(results))
         return results
 
         # 按照陈列分类
@@ -186,15 +186,17 @@ class DailyChangeGoods:
         :param mch_code:
         :return:
         """
-        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in ({}) AND corp_id=2"
+        sql = "SELECT DISTINCT(saas_third_catid) from goods WHERE neighbor_goods_id in ({}) AND corp_id=2"
         self.cursor.execute(sql.format(",".join(mch_code_list)))
         all_data = self.cursor.fetchall()
         result = []
         for data in all_data:
-            if type(data[0]) is int:
+            if type(data[0]) is str:
                 if not data[0] is None and data[0] != "":
                     result.append(data[0])
         return result
+
+
 
         # sql = "SELECT DISTINCT(category_id) from uc_merchant_goods WHERE mch_goods_code in ({}) AND mch_id=2"
         # self.cursor_ucenter.execute(sql.format(",".join(mch_code_list)))
@@ -339,7 +341,7 @@ class DailyChangeGoods:
         :return:
         """
         shop_protect_goods_mch_code_list = []
-        for category in category_03_list:
+        for category in category_03_list[:]:
             category_protect_goods_list = []    # 保护品
             # 新品期的品
             new_goods = []   # TODO
