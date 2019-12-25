@@ -197,8 +197,8 @@ class DailyChangeGoods:
         # return result
 
         sql = "SELECT DISTINCT(display_third_cat_id) from uc_merchant_goods WHERE mch_goods_code in ({}) AND mch_id=2"
-        self.cursor.execute(sql.format(",".join(mch_code_list)))
-        all_data = self.cursor.fetchall()
+        self.cursor_ucenter.execute(sql.format(",".join(mch_code_list)))
+        all_data = self.cursor_ucenter.fetchall()
         result = []
         for data in all_data:
             if type(data[0]) is str:
