@@ -44,7 +44,16 @@ class TaizhangDisplay:
         begin_time = time.time()
 
         # 区域处理
-        area_manager = AreaManager(self)
+        raw_shelf = Shelf(self.shelf.shelf_id,
+                          self.shelf.height,
+                          self.shelf.width,
+                          self.shelf.depth)
+        levelid_to_displaygoods_list = {}
+        for level in self.shelf.levels:
+            levelid_to_displaygoods_list[level.level_id] = level.display_goods_list
+        area_manager = AreaManager(raw_shelf,
+                                   levelid_to_displaygoods_list,
+                                   self.choose_goods_list)
 
         self.candidate_shelfs = area_manager.calculate_candidate_shelf()
 
