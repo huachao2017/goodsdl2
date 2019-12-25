@@ -37,7 +37,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     all_data_02 = cursor_ai.fetchall()
     conn_ai.close()
     tem = ""
-    for data in all_data[:3]:
+    for data in all_data[:]:
         close_old_connections()
         conn_ucenter = connections['ucenter']
         cursor_ucenter = conn_ucenter.cursor()
