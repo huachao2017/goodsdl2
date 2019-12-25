@@ -38,6 +38,7 @@ def get_data(target,template_shop_id,days=128):
     # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
     conn = connections['dmstore']
     cursor = conn.cursor()
+    print(sql.format(week_ago,now_date,template_shop_id))
     cursor.execute(sql.format(week_ago,now_date,template_shop_id))
     results = cursor.fetchall()
     cursor.close()
@@ -272,7 +273,7 @@ def start_choose_goods(batch_id,uc_shopid,pos_shopid):
 
 
 if __name__ == '__main__':
-    start_choose_goods('a_001', 1204, None)
+    start_choose_goods('a_001', 806,1204)
 
 
 
