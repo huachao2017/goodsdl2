@@ -72,7 +72,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         cursor_ucenter.execute(class_type_sql.format(data[10]))
         class_type_data_all = cursor_ucenter.fetchall()
         try:
-            class_type_data = class_type_data_all()[0]
+            class_type_data = class_type_data_all[0]
             # print(i)
             if len(class_type_data_all) > 1:
                 for d in class_type_data_all:
