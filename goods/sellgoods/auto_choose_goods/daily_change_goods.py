@@ -64,10 +64,10 @@ class DailyChangeGoods:
         if type(shop_ids) is list and len(shop_ids) > 0:       # 多个门店
             # print('list,third_category',shop_ids,third_category)
             shop_ids = ",".join(shop_ids)
-            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.saas_third_catid={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.saas_third_catid='{}' group by g.neighbor_goods_id order by sum(p.amount) desc;"
         elif type(shop_ids) is str or type(shop_ids) is int:     # 单个门店
             # print('str',shop_ids,type(shop_ids))
-            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.saas_third_catid={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.saas_third_catid='{}' group by g.neighbor_goods_id order by sum(p.amount) desc;"
         else:
             print('none', shop_ids,type(shop_ids))
             return []
@@ -339,7 +339,7 @@ class DailyChangeGoods:
         :return:
         """
         shop_protect_goods_mch_code_list = []
-        for category in category_03_list:
+        for category in category_03_list[150:]:
             category_protect_goods_list = []    # 保护品
             # 新品期的品
             new_goods = []   # TODO
