@@ -235,6 +235,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             cursor_ucenter.execute(sql2.format(t))
             data = cursor_ucenter.fetchall()
             i = data
+            print(i)
             if len(data) > 1:
                 for d in data:
                     if d[3] != '0':
