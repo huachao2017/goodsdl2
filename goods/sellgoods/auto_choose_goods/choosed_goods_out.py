@@ -71,13 +71,15 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         class_type_sql = "select display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
         cursor_ucenter.execute(class_type_sql.format(data[10]))
         class_type_data_all = cursor_ucenter.fetchall()
-
-        class_type_data = class_type_data_all[0]
-        # print(i)
-        if len(class_type_data_all) > 1:
-            for d in class_type_data_all:
-                if d[0] != '0':
-                    class_type_data = d
+        try:
+            class_type_data = class_type_data_all()[0]
+            # print(i)
+            if len(class_type_data_all) > 1:
+                for d in class_type_data_all:
+                    if d[0] != '0':
+                        class_type_data = d
+        except:
+            class_type_data = None
 
         # class_type_sql = "SELECT DISTINCT first_cate_id,second_cate_id,third_cate_id from goods WHERE neighbor_goods_id ={} AND corp_id=2"
         # cursor_dmstore.execute(class_type_sql.format(data[10]))
