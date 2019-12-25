@@ -15,7 +15,7 @@ class AreaManager:
         self._first_born_areas()
         self._second_combine_areas()
         self._arrange_areas()
-        candidate_shelf_list = self._combine_area()
+        candidate_shelf_list = self._calculate_all_area_candidate()
         return candidate_shelf_list
 
     def _first_born_areas(self):
@@ -25,7 +25,6 @@ class AreaManager:
         """
         self.area_list = []
 
-        # 第一轮，先把三级分类分到区域
         area = Area()
         self.area_list.append(area)
         area_category3 = None
@@ -80,7 +79,7 @@ class AreaManager:
         for area in self.area_list:
             area.calculate_candidate(self.choose_goods_list)
 
-    def _combine_area(self):
+    def _calculate_all_area_candidate(self):
         """
         组合所有的area候选集，生成shelf对象
         返回一个candidate_shelf_list
@@ -310,4 +309,4 @@ if __name__ == '__main__':
         print(area)
 
     area_manager._arrange_areas()
-    candidate_shelf_list = area_manager._combine_area()
+    candidate_shelf_list = area_manager._calculate_all_area_candidate()
