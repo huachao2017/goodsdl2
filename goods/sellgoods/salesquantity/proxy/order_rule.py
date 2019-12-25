@@ -100,7 +100,7 @@ def bingql_filter(drg_inss,order_data_dict):
     shelf_id_dict={}
     for drg_ins in drg_inss:
         if drg_ins.category2_id == 101:
-            key = str(drg_ins.mch_code)+"_"+str(drg_ins.upc)
+            key = str(drg_ins.mch_code)+","+str(drg_ins.upc)
             if key in order_data_dict.keys():
                 order_sale = order_data_dict[key]
             else:
@@ -129,7 +129,7 @@ def rule_bingql(drg_inss,order_data_dict):
     bingql_drg_inss.sort(key=cmp_to_key(many_sort))
     # 不减品的 减少起订量
     for bingql_drg_ins in bingql_drg_inss:
-        key = str(bingql_drg_ins.mch_code) + "_" + str(bingql_drg_ins.upc)
+        key = str(bingql_drg_ins.mch_code) + "," + str(bingql_drg_ins.upc)
         if key in order_data_dict.keys():
             order_sale = order_data_dict[key]
         else:
@@ -142,7 +142,7 @@ def rule_bingql(drg_inss,order_data_dict):
                 return order_data_dict
     # 减品的减少起订量
     for bingql_drg_ins in bingql_drg_inss:
-        key = str(bingql_drg_ins.mch_code) + "_" + str(bingql_drg_ins.upc)
+        key = str(bingql_drg_ins.mch_code) + "," + str(bingql_drg_ins.upc)
         if key in order_data_dict.keys():
             order_sale = order_data_dict[key]
         else:
