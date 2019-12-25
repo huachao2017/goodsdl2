@@ -12,15 +12,16 @@ class AreaManager:
 
     def calculate_candidate_shelf(self):
 
-        self._born_areas()
+        self._first_born_areas()
+        self._second_combine_areas()
         self._arrange_areas()
         candidate_shelf_list = self._combine_area()
         return candidate_shelf_list
 
-    def _born_areas(self):
+    def _first_born_areas(self):
         """
         创建区域
-        按照三级分类对货架空间进行分区，如两个相邻的同二级分类下的三级分类商品平均高度差小于5cm，可分为同一区
+        按照三级分类对货架空间进行分区
         """
         self.area_list = []
 
@@ -39,16 +40,37 @@ class AreaManager:
                     if area_category3 == displaygoods.goods_data.category3:
                         one_displaygoods_list.append(displaygoods)
                     else:
-                        area.add_level_area(levelid, one_displaygoods_list)
+                        area.add_child_area_in_one_category3(levelid, one_displaygoods_list)
                         area_category3 = displaygoods.goods_data.category3
                         one_displaygoods_list = [displaygoods]
                         area = Area()
                         self.area_list.append(area)
 
-            area.add_level_area(levelid, one_displaygoods_list)
+            area.add_child_area_in_one_category3(levelid, one_displaygoods_list)
             one_displaygoods_list = []
 
-        # 第二轮，合并三级分类的区域
+    def _second_combine_areas(self):
+        """
+        如两个相邻的同二级分类下的三级分类商品平均高度差小于5cm，可分为同一区
+        :return:
+        """
+        last_area = None
+        last_area_height = -1
+        removed_area_list = []
+        for area in self.area_list:
+            avg_height = area.calculate_avg_height()
+            if last_area is not None:
+                if area.category2 == last_area.category2:
+                    if abs(last_area_height - avg_height) < 50:
+                        area.combine_area(last_area)
+                        removed_area_list.append(last_area)
+
+            last_area = area
+            last_area_height = avg_height
+
+        for removed_area in removed_area_list:
+            self.area_list.remove(removed_area)
+
 
     def _arrange_areas(self):
         """
@@ -71,11 +93,41 @@ class AreaManager:
 
 class Area:
     def __init__(self):
-        self.area_level_list = []
+        self.child_area_list = []
+        self.category2 = None
+        self.category3_list = []
         self.candidate_display_goods_list_list = []
 
-    def add_level_area(self, level_id, display_goods_list):
-        self.area_level_list.append(AreaLevel(level_id, display_goods_list))
+    def add_child_area_in_one_category3(self, level_id, display_goods_list):
+        category2 = display_goods_list[0].goods_data.category2
+        category3 = display_goods_list[0].goods_data.category3
+        if self.category2 is None:
+            self.category2 = category2
+        else:
+            if self.category2 != category2:
+                raise ValueError('one area category2 is not equal')
+
+        if category3 not in self.category3_list:
+            self.category3_list.append(category3)
+
+        self.child_area_list.append(ChildArea(level_id, display_goods_list))
+
+    def get_category2(self):
+        return self.category2
+
+    def calculate_avg_height(self):
+        total_height = 0
+        total_count = 0
+        for area_level in self.child_area_list:
+            for display_goods in area_level.display_goods_list:
+                total_count += 1
+                total_height += display_goods.goods_data.height * display_goods.superimpose_num
+
+        return int(total_height/total_count)
+
+    def combine_area(self, last_area):
+        self.child_area_list = last_area.child_area_list + self.child_area_list
+        self.category3_list = last_area.category3_list + self.category3_list
 
     def calculate_candidate(self, choose_goods_list, candidate_threshhold=5):
         """
@@ -93,18 +145,19 @@ class Area:
         pass
 
     def __str__(self):
-        ret = ''
-        for area_level in self.area_level_list:
+        ret = str(self.category3_list) + ':'
+        for area_level in self.child_area_list:
             ret += str(area_level)
         return ret
 
-class AreaLevel:
+class ChildArea:
     def __init__(self, level_id, display_goods_list):
         self.level_id = level_id
         self.display_goods_list = display_goods_list
+        self.category3 = display_goods_list[0].goods_data.category3
 
     def __str__(self):
-        ret = str(self.level_id) + ':['
+        ret = str(self.level_id) + '-' + str(self.category3) + ':['
         for display_goods in self.display_goods_list:
             ret += str(display_goods.goods_data)
             ret += ','
@@ -131,24 +184,24 @@ if __name__ == '__main__':
 
     raw_shelf = Shelf(1, 1800, 800, 300)
     levelid_to_displaygoods_list = {
-        0: [DisplayGoods(TestGoods('c2_1', 'c3_1', '1', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_1', '2', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_1', '3', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_1', '4', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_2', '5', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_2', '6', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '7', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '8', 100, 80, 0, 0))],
-        1: [DisplayGoods(TestGoods('c2_1', 'c3_3', '11', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '12', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '13', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '14', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '15', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '16', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '17', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '18', 100, 80, 0, 0))],
-        2: [DisplayGoods(TestGoods('c2_1', 'c3_3', '21', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '22', 100, 80, 0, 0)),
+        0: [DisplayGoods(TestGoods('c2_1', 'c3_1', '1', 200, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_1', '2', 200, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_1', '3', 200, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_1', '4', 200, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_2', '5', 200, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_2', '6', 200, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '7', 150, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '8', 150, 80, 0, 0))],
+        1: [DisplayGoods(TestGoods('c2_1', 'c3_3', '11', 150, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '12', 150, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '13', 150, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '14', 150, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '15', 150, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '16', 150, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '17', 150, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '18', 150, 80, 0, 0))],
+        2: [DisplayGoods(TestGoods('c2_1', 'c3_3', '21', 150, 80, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '22', 150, 80, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_4', '23', 100, 80, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_4', '24', 100, 80, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_4', '25', 100, 80, 0, 0)),
@@ -170,7 +223,7 @@ if __name__ == '__main__':
             DisplayGoods(TestGoods('c2_2', 'c3_7', '45', 100, 80, 0, 0)),
             DisplayGoods(TestGoods('c2_2', 'c3_7', '46', 100, 80, 0, 0)),
             DisplayGoods(TestGoods('c2_2', 'c3_7', '47', 100, 80, 0, 0)),
-            DisplayGoods(TestGoods('c2_2', 'c3_7', '48', 100, 80, 0, 0))],
+            DisplayGoods(TestGoods('c2_2', 'c3_8', '48', 100, 80, 0, 0))],
     }
 
     choose_goods_list = [
@@ -182,43 +235,79 @@ if __name__ == '__main__':
 
     area_manager = AreaManager(raw_shelf, levelid_to_displaygoods_list, choose_goods_list)
 
-    area_manager.calculate_candidate_shelf()
+    area_manager._first_born_areas()
 
-    assert len(area_manager.area_list[0].area_level_list)==1
-    assert area_manager.area_list[0].area_level_list[0].level_id==0
-    assert len(area_manager.area_list[0].area_level_list[0].display_goods_list)==4
+    assert len(area_manager.area_list) == 8
 
-    assert len(area_manager.area_list[1].area_level_list)==1
-    assert area_manager.area_list[1].area_level_list[0].level_id==0
-    assert len(area_manager.area_list[1].area_level_list[0].display_goods_list)==2
+    assert len(area_manager.area_list[0].child_area_list)==1
+    assert area_manager.area_list[0].child_area_list[0].level_id==0
+    assert len(area_manager.area_list[0].child_area_list[0].display_goods_list)==4
 
-    assert len(area_manager.area_list[2].area_level_list)==3
-    assert area_manager.area_list[2].area_level_list[0].level_id==0
-    assert len(area_manager.area_list[2].area_level_list[0].display_goods_list)==2
-    assert area_manager.area_list[2].area_level_list[1].level_id==1
-    assert len(area_manager.area_list[2].area_level_list[1].display_goods_list)==8
-    assert area_manager.area_list[2].area_level_list[2].level_id==2
-    assert len(area_manager.area_list[2].area_level_list[2].display_goods_list)==2
+    assert len(area_manager.area_list[1].child_area_list)==1
+    assert area_manager.area_list[1].child_area_list[0].level_id==0
+    assert len(area_manager.area_list[1].child_area_list[0].display_goods_list)==2
 
-    assert len(area_manager.area_list[3].area_level_list)==1
-    assert area_manager.area_list[3].area_level_list[0].level_id==2
-    assert len(area_manager.area_list[3].area_level_list[0].display_goods_list)==4
+    assert len(area_manager.area_list[2].child_area_list)==3
+    assert area_manager.area_list[2].child_area_list[0].level_id==0
+    assert len(area_manager.area_list[2].child_area_list[0].display_goods_list)==2
+    assert area_manager.area_list[2].child_area_list[1].level_id==1
+    assert len(area_manager.area_list[2].child_area_list[1].display_goods_list)==8
+    assert area_manager.area_list[2].child_area_list[2].level_id==2
+    assert len(area_manager.area_list[2].child_area_list[2].display_goods_list)==2
 
-    assert len(area_manager.area_list[4].area_level_list)==2
-    assert area_manager.area_list[4].area_level_list[0].level_id==2
-    assert len(area_manager.area_list[4].area_level_list[0].display_goods_list)==2
-    assert area_manager.area_list[4].area_level_list[1].level_id==3
-    assert len(area_manager.area_list[4].area_level_list[1].display_goods_list)==2
+    assert len(area_manager.area_list[3].child_area_list)==1
+    assert area_manager.area_list[3].child_area_list[0].level_id==2
+    assert len(area_manager.area_list[3].child_area_list[0].display_goods_list)==4
 
-    assert len(area_manager.area_list[5].area_level_list)==2
-    assert area_manager.area_list[5].area_level_list[0].level_id==3
-    assert len(area_manager.area_list[5].area_level_list[0].display_goods_list)==6
-    assert area_manager.area_list[5].area_level_list[1].level_id==4
-    assert len(area_manager.area_list[5].area_level_list[1].display_goods_list)==2
+    assert len(area_manager.area_list[4].child_area_list)==2
+    assert area_manager.area_list[4].child_area_list[0].level_id==2
+    assert len(area_manager.area_list[4].child_area_list[0].display_goods_list)==2
+    assert area_manager.area_list[4].child_area_list[1].level_id==3
+    assert len(area_manager.area_list[4].child_area_list[1].display_goods_list)==2
 
-    assert len(area_manager.area_list[6].area_level_list)==1
-    assert area_manager.area_list[6].area_level_list[0].level_id==4
-    assert len(area_manager.area_list[6].area_level_list[0].display_goods_list)==6
+    assert len(area_manager.area_list[5].child_area_list)==2
+    assert area_manager.area_list[5].child_area_list[0].level_id==3
+    assert len(area_manager.area_list[5].child_area_list[0].display_goods_list)==6
+    assert area_manager.area_list[5].child_area_list[1].level_id==4
+    assert len(area_manager.area_list[5].child_area_list[1].display_goods_list)==2
+
+    assert len(area_manager.area_list[6].child_area_list)==1
+    assert area_manager.area_list[6].child_area_list[0].level_id==4
+    assert len(area_manager.area_list[6].child_area_list[0].display_goods_list)==5
+
+    assert len(area_manager.area_list[7].child_area_list)==1
+    assert area_manager.area_list[7].child_area_list[0].level_id==4
+    assert len(area_manager.area_list[7].child_area_list[0].display_goods_list)==1
 
     for area in area_manager.area_list:
         print(area)
+
+    area_manager._second_combine_areas()
+    assert len(area_manager.area_list) == 4
+
+    assert len(area_manager.area_list[0].child_area_list)==2
+    assert len(area_manager.area_list[0].child_area_list[0].display_goods_list)==4
+    assert len(area_manager.area_list[0].child_area_list[1].display_goods_list)==2
+
+    assert len(area_manager.area_list[1].child_area_list)==3
+    assert len(area_manager.area_list[1].child_area_list[0].display_goods_list)==2
+    assert len(area_manager.area_list[1].child_area_list[1].display_goods_list)==8
+    assert len(area_manager.area_list[1].child_area_list[2].display_goods_list)==2
+
+    assert len(area_manager.area_list[2].child_area_list)==3
+    assert len(area_manager.area_list[2].child_area_list[0].display_goods_list)==4
+    assert len(area_manager.area_list[2].child_area_list[1].display_goods_list)==2
+    assert len(area_manager.area_list[2].child_area_list[2].display_goods_list)==2
+
+    assert len(area_manager.area_list[3].child_area_list)==4
+    assert len(area_manager.area_list[3].child_area_list[0].display_goods_list)==6
+    assert len(area_manager.area_list[3].child_area_list[1].display_goods_list)==2
+    assert len(area_manager.area_list[3].child_area_list[2].display_goods_list)==5
+    assert len(area_manager.area_list[3].child_area_list[3].display_goods_list)==1
+
+    print('\n')
+    for area in area_manager.area_list:
+        print(area)
+
+    area_manager._arrange_areas()
+    candidate_shelf_list = area_manager._combine_area()
