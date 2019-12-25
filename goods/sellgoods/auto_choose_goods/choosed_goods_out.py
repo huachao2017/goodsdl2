@@ -205,7 +205,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     tem_mch_list = [i[0] for i in all_data_02]
     conn_ucenter = connections['ucenter']
     cursor_ucenter = conn_ucenter.cursor()
-    cursor_ucenter.execute("SELECT DISTINCT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code in ({}) GROUP BY upc".format(",".join(tem_mch_list)))
+    cursor_ucenter.execute("SELECT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code in ({}) GROUP BY mch_goods_code".format(",".join(tem_mch_list)))
     d = cursor_ucenter.fetchall()
     for i in d[:]:
         delivery_type_dict = {1: '日配', 2: '非日配', '1': '日配', '2': '非日配'}
@@ -216,6 +216,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             delivery_str = str('None')
         print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem,i[3],i[4],i[5],i[6],delivery_str,i[0],i[2],i[1],None,'可选上架',0,None,None,None,None))
     conn_ucenter.close()
+
 
 
 

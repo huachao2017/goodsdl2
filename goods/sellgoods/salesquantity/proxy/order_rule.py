@@ -121,7 +121,7 @@ def bingql_filter(drg_inss,order_data_dict):
 def rule_bingql(drg_inss,order_data_dict):
     flag = bingql_filter(drg_inss,order_data_dict)
     if flag:
-        return drg_inss
+        return order_data_dict
     bingql_drg_inss = []
     for drg_ins in drg_inss:
         if drg_ins.category2_id == 101:
