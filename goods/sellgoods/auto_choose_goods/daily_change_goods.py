@@ -71,7 +71,7 @@ class DailyChangeGoods:
         else:
             print('none', shop_ids,type(shop_ids))
             return []
-        print('sql',sql.format(week_ago, now_date, shop_ids,third_category))
+        # print('sql',sql.format(week_ago, now_date, shop_ids,third_category))
         self.cursor.execute(sql.format(week_ago, now_date, shop_ids,third_category))
         results = self.cursor.fetchall()
 
@@ -186,25 +186,25 @@ class DailyChangeGoods:
         :param mch_code:
         :return:
         """
-        # sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in ({}) AND corp_id=2"
-        # self.cursor.execute(sql.format(",".join(mch_code_list)))
-        # all_data = self.cursor.fetchall()
-        # result = []
-        # for data in all_data:
-        #     if type(data[0]) is int:
-        #         if not data[0] is None:
-        #             result.append(data[0])
-        # return result
-
-        sql = "SELECT DISTINCT(display_third_cat_id) from uc_merchant_goods WHERE mch_goods_code in ({}) AND mch_id=2"
-        self.cursor_ucenter.execute(sql.format(",".join(mch_code_list)))
-        all_data = self.cursor_ucenter.fetchall()
+        sql = "SELECT DISTINCT(third_cate_id) from goods WHERE neighbor_goods_id in ({}) AND corp_id=2"
+        self.cursor.execute(sql.format(",".join(mch_code_list)))
+        all_data = self.cursor.fetchall()
         result = []
         for data in all_data:
-            if type(data[0]) is str:
+            if type(data[0]) is int:
                 if not data[0] is None and data[0] != "":
-                    result.append(int(data[0]))
+                    result.append(data[0])
         return result
+
+        # sql = "SELECT DISTINCT(category_id) from uc_merchant_goods WHERE mch_goods_code in ({}) AND mch_id=2"
+        # self.cursor_ucenter.execute(sql.format(",".join(mch_code_list)))
+        # all_data = self.cursor_ucenter.fetchall()
+        # result = []
+        # for data in all_data:
+        #     if type(data[0]) is str:
+        #         if not data[0] is None and data[0] != "":
+        #             result.append(int(data[0]))
+        # return result
 
     def calculate_quick_seller(self):
         """
@@ -493,7 +493,7 @@ class DailyChangeGoods:
         for data in all_structure_goods_list:
             if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
                 # print("类型",type(data[2]),type(category_03_list[0]))
-                print(data[2],category_03_list)
+                # print(data[2],category_03_list)
 
 
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
