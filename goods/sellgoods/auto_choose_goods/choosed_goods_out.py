@@ -248,7 +248,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     # print("订货0的len", len(d))
 
     for t in tem_mch_list[:3]:
-        try:
+        # try:
             cursor_ucenter.execute(sql2.format(t))
             data = cursor_ucenter.fetchall()
             i = data[0]
@@ -272,8 +272,8 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem, i[3], i[4], i[5], i[6], delivery_str, i[0],
                                                                            i[2], i[1], None, '可选上架', 0, None, None, None,
                                                                            None))
-        except:
-            continue
+        # except:
+        #     continue
     conn_ucenter.close()
 
 
