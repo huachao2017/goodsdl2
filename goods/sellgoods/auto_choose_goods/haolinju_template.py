@@ -270,6 +270,7 @@ def start_choose_goods(batch_id,uc_shopid,pos_shopid):
 
 
 
+
 if __name__ == '__main__':
     start_choose_goods('a_001', 1204, None)
 
