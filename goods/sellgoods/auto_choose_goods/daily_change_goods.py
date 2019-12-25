@@ -71,6 +71,7 @@ class DailyChangeGoods:
         else:
             print('none', shop_ids,type(shop_ids))
             return []
+        print('sql',sql)
         self.cursor.execute(sql.format(week_ago, now_date, shop_ids,third_category))
         results = self.cursor.fetchall()
         # cursor.close()
