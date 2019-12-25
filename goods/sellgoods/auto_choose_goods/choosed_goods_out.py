@@ -229,6 +229,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     # d = cursor_ucenter.fetchall()
     # print("订货0的mch的len", len(tem_mch_list))
     # print("订货0的len", len(d))
+
     for t in tem_mch_list[:]:
         try:
             cursor_ucenter.execute(sql2.format(t))
@@ -238,7 +239,6 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
                 for d in data:
                     if d[3] != '0':
                         i = d
-                        break
 
             delivery_type_dict = {1: '日配', 2: '非日配', '1': '日配', '2': '非日配'}
             delivery_str = ''
