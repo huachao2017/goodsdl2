@@ -232,7 +232,13 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     for t in tem_mch_list[:]:
         try:
             cursor_ucenter.execute(sql2.format(t))
-            i = cursor_ucenter.fetchone()
+            data = cursor_ucenter.fetchall()
+            i = data
+            if len(data) > 1:
+                for d in data:
+                    if d[3] != 0:
+                        i = d
+                        break
 
             delivery_type_dict = {1: '日配', 2: '非日配', '1': '日配', '2': '非日配'}
             delivery_str = ''
