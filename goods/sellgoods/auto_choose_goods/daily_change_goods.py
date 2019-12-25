@@ -191,7 +191,7 @@ class DailyChangeGoods:
         all_data = self.cursor.fetchall()
         result = []
         for data in all_data:
-            if type(data[0]) is int:
+            if type(data[0]) is str:
                 if not data[0] is None and data[0] != "":
                     result.append(data[0])
         return result
