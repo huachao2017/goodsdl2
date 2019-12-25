@@ -30,7 +30,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
 
     select_sql = "select * from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL"
-    select_sql_02 = "select mch_goods_code from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL"
+    select_sql_02 = "select mch_goods_code from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is NULL and goods_role=3"
     cursor_ai.execute(select_sql.format(uc_shopid,batch_id))
     all_data = cursor_ai.fetchall()
     cursor_ai.execute(select_sql_02.format(uc_shopid, batch_id))
