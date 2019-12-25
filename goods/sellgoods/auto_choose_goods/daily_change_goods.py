@@ -339,7 +339,7 @@ class DailyChangeGoods:
         :return:
         """
         shop_protect_goods_mch_code_list = []
-        for category in category_03_list[-5:]:
+        for category in category_03_list[:]:
             category_protect_goods_list = []    # 保护品
             # 新品期的品
             new_goods = []   # TODO
