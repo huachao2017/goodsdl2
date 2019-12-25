@@ -327,7 +327,8 @@ class DailyChangeGoods:
             (supplier_id,) = cursor_ucenter.fetchone()
             cursor_ucenter.execute(
                 # "select supplier_goods_code,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(supplier_id))
-                "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
+                # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
+                "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id = {} and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0".format(supplier_id))
             all_data = cursor_ucenter.fetchall()
             for data in all_data:
                 delivery_type_dict[data[0]] = data[1]
@@ -588,6 +589,20 @@ class DailyChangeGoods:
             if not mch in all_data_mch:
                 optional_up_goods_order.append((None, None, None, None, mch, None, None, 0, 0, 0, 0))
         optional_up_goods.extend(optional_up_goods_order)
+
+        # optional_up_goods_mch_list = []
+        # optional_up_goods_final = []
+        # for goods in optional_up_goods:
+        #     optional_up_goods_mch_list.append(goods[4])
+        # for goods in must_up_goods:
+        #     if goods[4] in optional_up_goods_mch_list:
+        #         optional_up_goods_mch_list.remove(goods[4])
+        # for goods in optional_up_goods:
+        #     if goods[4] in optional_up_goods_mch_list:
+                # optional_up_goods_final.append(goods)
+
+
+
         self.save_data(optional_up_goods, 3, mch_code)
 
 
