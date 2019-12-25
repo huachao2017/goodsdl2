@@ -207,6 +207,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     cursor_ucenter = conn_ucenter.cursor()
     cursor_ucenter.execute("SELECT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code in ({}) GROUP BY mch_goods_code".format(",".join(tem_mch_list)))
     d = cursor_ucenter.fetchall()
+    print("订货0的mch的len",len(tem_mch_list))
     print("订货0的len",len(d))
     for i in d[:]:
         delivery_type_dict = {1: '日配', 2: '非日配', '1': '日配', '2': '非日配'}
