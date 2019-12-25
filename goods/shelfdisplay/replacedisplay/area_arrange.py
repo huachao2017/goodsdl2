@@ -9,6 +9,7 @@ class AreaManager:
         self.levelid_to_displaygoods_list = levelid_to_displaygoods_list
         self.choose_goods_list = choose_goods_list
         self.area_list = None
+        self.levelid_to_remain_width = self._calculate_level_remain_width()
 
     def calculate_candidate_shelf(self):
 
@@ -18,6 +19,17 @@ class AreaManager:
         candidate_shelf_list = self._calculate_all_area_candidate()
         return candidate_shelf_list
 
+    def _calculate_level_remain_width(self):
+        levelid_to_remain_width = {}
+        for level_id in self.levelid_to_displaygoods_list:
+            goods_width = 0
+            for display_goods in self.levelid_to_displaygoods_list[level_id]:
+                goods_width += display_goods.goods_data.width * display_goods.face_num
+
+            levelid_to_remain_width[level_id] = self.raw_shelf.width - goods_width
+
+        return levelid_to_remain_width
+
     def _first_born_areas(self):
         """
         创建区域
@@ -25,7 +37,7 @@ class AreaManager:
         """
         self.area_list = []
 
-        area = Area()
+        area = Area(self)
         self.area_list.append(area)
         area_category3 = None
         one_displaygoods_list = []
@@ -46,7 +58,7 @@ class AreaManager:
                         area.add_child_area_in_one_category3(levelid, one_displaygoods_list)
                         area_category3 = displaygoods.goods_data.category3
                         one_displaygoods_list = [displaygoods]
-                        area = Area()
+                        area = Area(self)
                         self.area_list.append(area)
 
             area.add_child_area_in_one_category3(levelid, one_displaygoods_list)
@@ -74,6 +86,9 @@ class AreaManager:
         for removed_area in removed_area_list:
             self.area_list.remove(removed_area)
 
+    def _prepare_area_data(self):
+        for area in self.area_list:
+            area.prepare_data(self.choose_goods_list)
 
     def _arrange_areas(self):
         """
@@ -91,7 +106,7 @@ class AreaManager:
             threshhold = 2
 
         for area in self.area_list:
-            area.calculate_candidate(self.choose_goods_list, threshhold)
+            area.calculate_candidate(threshhold)
 
     def _calculate_all_area_candidate(self):
         """
@@ -105,10 +120,15 @@ class AreaManager:
 
 
 class Area:
-    def __init__(self):
+    def __init__(self, area_manager):
+        self.area_manager = area_manager
         self.child_area_list = []
         self.category2 = None
         self.category3_list = []
+
+        # 计算时变量
+        self.choose_goods_list = None
+        self.levelid_to_goods_width = {}
         self.candidate_display_goods_list_list = []
 
     def add_child_area_in_one_category3(self, level_id, display_goods_list):
@@ -142,21 +162,50 @@ class Area:
         self.child_area_list = last_area.child_area_list + self.child_area_list
         self.category3_list = last_area.category3_list + self.category3_list
 
-    def calculate_candidate(self, choose_goods_list, candidate_threshhold=5):
+
+    def prepare_data(self, choose_goods_list):
+        """
+        准备选品数据，每层商品宽度，上架商品可行的位置
+        :param choose_goods_list:
+        :return:
+        """
+        # 筛选choose_goods_list
+        choose_goods_list_in_area = []
+        for goods in choose_goods_list:
+            if goods.category3 in self.category3_list:
+                if goods.role in (0,2,4):
+                    # FIXME 下架商品必须在货架上
+                    pass
+                choose_goods_list_in_area.append(goods)
+        self.choose_goods_list = choose_goods_list_in_area
+
+        # 计算每一层的商品宽度
+        for child_area in self.child_area_list:
+            if child_area.level_id in self.levelid_to_goods_width:
+                self.levelid_to_goods_width[child_area.level_id] += child_area.get_goods_width()
+            else:
+                self.levelid_to_goods_width[child_area.level_id] = child_area.get_goods_width()
+
+        # 计算要上架的商品子区域
+        for choose_goods in self.choose_goods_list:
+            if choose_goods.goods_role == 1 or choose_goods.goods_role == 2:
+                for child_area in self.child_area_list:
+                    if child_area.category3 == choose_goods.category3:
+                        if choose_goods.goods_role == 1:
+                            child_area.up_goods_list.append(choose_goods)
+                        else:
+                            child_area.down_goods_list.append(choose_goods)
+
+
+    def calculate_candidate(self, candidate_threshhold=5):
         """
         同一分区内可能有一个或多个商品上架，也可能有0个或n个商品下架，优先挤扩面，扩面的销售产出按照psd金额/n递减计算；如需下架商品从分区内销售最差的商品开始选择
         :param candidate_threshhold:
         :return:
         """
 
-        # 筛选choose_goods_list
-        choose_goods_list_in_area = []
-        for goods in choose_goods_list:
-            if goods.category3 in self.category3_list:
-                choose_goods_list_in_area.append(goods)
-
-        # TODO 计算候选
-
+        # TODO 生成候选
+        pass
 
     def __str__(self):
         ret = str(self.category3_list) + ':'
@@ -167,15 +216,33 @@ class Area:
 class ChildArea:
     def __init__(self, level_id, display_goods_list):
         self.level_id = level_id
+        self.up_goods_list = []
+        self.down_goods_list = []
         self.display_goods_list = display_goods_list
         self.category3 = display_goods_list[0].goods_data.category3
+
+    def get_goods_width(self):
+        goods_width = 0
+        for display_goods in self.display_goods_list:
+            goods_width = display_goods.goods_data.width * display_goods.face_num
+        return goods_width
 
     def __str__(self):
         ret = str(self.level_id) + '-' + str(self.category3) + ':['
         for display_goods in self.display_goods_list:
             ret += str(display_goods.goods_data)
             ret += ','
-        ret += '], '
+        ret += '], {'
+
+        for goods in self.up_goods_list:
+            ret += '+'
+            ret += str(goods)
+            ret += ','
+        for goods in self.down_goods_list:
+            ret += '-'
+            ret += str(goods)
+            ret += ','
+        ret += '}; '
         return ret
 
 
@@ -323,5 +390,16 @@ if __name__ == '__main__':
     for area in area_manager.area_list:
         print(area)
 
+    area_manager._prepare_area_data()
+    assert len(area_manager.area_list[0].choose_goods_list)==4
+    assert len(area_manager.area_list[0].child_area_list[0].up_goods_list)==2
+    assert len(area_manager.area_list[0].child_area_list[0].down_goods_list)==2
+    assert len(area_manager.area_list[1].choose_goods_list)==0
+    assert len(area_manager.area_list[2].choose_goods_list)==0
+    assert len(area_manager.area_list[3].choose_goods_list)==0
+
+    print('\n')
+    for area in area_manager.area_list:
+        print(area)
     area_manager._arrange_areas()
     candidate_shelf_list = area_manager._calculate_all_area_candidate()
