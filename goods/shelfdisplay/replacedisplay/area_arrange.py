@@ -165,7 +165,7 @@ class Area:
 
     def prepare_data(self, choose_goods_list):
         """
-        准备选品数据，每层商品宽度，上架商品可行的位置
+        准备选品数据，每层商品宽度
         :param choose_goods_list:
         :return:
         """
@@ -173,7 +173,7 @@ class Area:
         choose_goods_list_in_area = []
         for goods in choose_goods_list:
             if goods.category3 in self.category3_list:
-                if goods.role in (0,2,4):
+                if goods.goods_role in (0,2,4):
                     # FIXME 下架商品必须在货架上
                     pass
                 choose_goods_list_in_area.append(goods)
@@ -186,25 +186,25 @@ class Area:
             else:
                 self.levelid_to_goods_width[child_area.level_id] = child_area.get_goods_width()
 
-        # 计算要上架的商品子区域
-        for choose_goods in self.choose_goods_list:
-            if choose_goods.goods_role == 1 or choose_goods.goods_role == 2:
-                for child_area in self.child_area_list:
-                    if child_area.category3 == choose_goods.category3:
-                        if choose_goods.goods_role == 1:
-                            child_area.up_goods_list.append(choose_goods)
-                        else:
-                            child_area.down_goods_list.append(choose_goods)
-
-
     def calculate_candidate(self, candidate_threshhold=5):
         """
         同一分区内可能有一个或多个商品上架，也可能有0个或n个商品下架，优先挤扩面，扩面的销售产出按照psd金额/n递减计算；如需下架商品从分区内销售最差的商品开始选择
         :param candidate_threshhold:
         :return:
         """
+        # 第一步：下架必下架品
+        for choose_goods in self.choose_goods_list:
+            if choose_goods.goods_role == 2:
+                for child_area in self.child_area_list:
+                    if child_area.category3 == choose_goods.category3:
+                        for display_goods in child_area.display_goods_list:
+                            if display_goods.goods_data.equal(choose_goods):
+                                child_area.down_goods_list.append(choose_goods)
 
-        # TODO 生成候选
+        # 第二步：上架必上品
+
+        # 第三步：挤排面
+
         pass
 
     def __str__(self):
@@ -216,9 +216,8 @@ class Area:
 class ChildArea:
     def __init__(self, level_id, display_goods_list):
         self.level_id = level_id
-        self.up_goods_list = []
-        self.down_goods_list = []
         self.display_goods_list = display_goods_list
+        self.down_goods_list = []
         self.category3 = display_goods_list[0].goods_data.category3
 
     def get_goods_width(self):
@@ -232,17 +231,8 @@ class ChildArea:
         for display_goods in self.display_goods_list:
             ret += str(display_goods.goods_data)
             ret += ','
-        ret += '], {'
+        ret += '], '
 
-        for goods in self.up_goods_list:
-            ret += '+'
-            ret += str(goods)
-            ret += ','
-        for goods in self.down_goods_list:
-            ret += '-'
-            ret += str(goods)
-            ret += ','
-        ret += '}; '
         return ret
 
 
@@ -255,6 +245,11 @@ class TestGoods:
         self.width = width
         self.goods_role = goods_role
         self.ranking = ranking
+
+    def equal(self, another_goods):
+        if another_goods is not None:
+            return self.goods_name == another_goods.goods_name
+        return False
 
     def __str__(self):
         return self.goods_name
@@ -392,8 +387,6 @@ if __name__ == '__main__':
 
     area_manager._prepare_area_data()
     assert len(area_manager.area_list[0].choose_goods_list)==4
-    assert len(area_manager.area_list[0].child_area_list[0].up_goods_list)==2
-    assert len(area_manager.area_list[0].child_area_list[0].down_goods_list)==2
     assert len(area_manager.area_list[1].choose_goods_list)==0
     assert len(area_manager.area_list[2].choose_goods_list)==0
     assert len(area_manager.area_list[3].choose_goods_list)==0
