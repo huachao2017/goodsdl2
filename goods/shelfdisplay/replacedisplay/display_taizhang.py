@@ -43,20 +43,28 @@ class TaizhangDisplay:
         """
         begin_time = time.time()
 
-        # 第一步 生成组合区域
-        area_list = born_areas(self)
+        # 区域处理
+        area_manager = AreaManager(self)
 
-        # 第二步 计算摆放区域
-        display_areas(area_list)
+        self.candidate_shelfs = area_manager.calculate_candidate_shelf()
 
-        # 第四步 组合区域
-        self.candidate_shelfs = combine_area(area_list)
-
-        # 第四步 打分计算最佳货架
-        self.best_candidate_shelf = goods_replace_score(self.candidate_shelfs)
+        # 打分计算最佳货架
+        self.best_candidate_shelf = self.goods_replace_score()
 
         end_time = time.time()
         self.display_calculate_time = int(end_time - begin_time)
+
+    def goods_replace_score(self):
+        """
+        所有商品移动步长，每一步移动做扣分
+        被挤下商品为可选下架品中预期psd金额较低商品，随金额变低做加分
+        :return: 分数最低的shelf
+        """
+
+        min_badcase_value = 100000
+        best_candidate_shelf = None
+        # TODO 需要实现
+        return best_candidate_shelf
 
     def to_json(self):
         """
