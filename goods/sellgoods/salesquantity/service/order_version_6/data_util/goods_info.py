@@ -29,8 +29,14 @@ def get_shop_order_goods(shopid,add_type=False):
     # 获取台账系统的uc_shopid
     cursor.execute('select id, shop_name , mch_id from uc_shop where mch_shop_code = {}'.format(shopid))
     (uc_shopid, shop_name,mch_id) = cursor.fetchone()
+    # 更新商品的上架时间
+    try:
+        utils.calculate_goods_up_datetime(uc_shopid)
+    except:
+        print ("更新上架时间失败 ....uc_shopid="+str(uc_shopid))
+        traceback.print_exc()
+    
     # 获取erp系统的erp_shopid
-
     cursor_dmstore.execute("select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
     (erp_shop_id,) = cursor_dmstore.fetchone() # 门店id
     print("erp 门店id" + str(erp_shop_id))
