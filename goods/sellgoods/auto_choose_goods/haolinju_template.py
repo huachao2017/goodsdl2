@@ -24,7 +24,7 @@ origin_choose = ((1284, '3598', '6921168558049', '050203', 9900, 2026210), (1284
 # +                   "group by T2.t1_create_date,T2.t1_shop_id,T3.upc "
 # upc_data_sql.format()
 
-def get_data(target,template_shop_id,days=128):
+def get_data(target,template_shop_id,days=528):
     """
     :param target: 选品店的id
     :param template_shop_id: 模板店的id
@@ -38,7 +38,7 @@ def get_data(target,template_shop_id,days=128):
     # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
     conn = connections['dmstore']
     cursor = conn.cursor()
-    print(sql.format(week_ago,now_date,template_shop_id))
+    # print(sql.format(week_ago,now_date,template_shop_id))
     cursor.execute(sql.format(week_ago,now_date,template_shop_id))
     results = cursor.fetchall()
     cursor.close()
