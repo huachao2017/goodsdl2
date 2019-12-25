@@ -214,7 +214,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             delivery_str = delivery_type_dict[i[7]]  # 配送类型
         except:
             delivery_str = str('None')
-        print("{},{},{},{},{},{},{},{},{}".format(tem,i[3],i[4],i[5],i[6],delivery_str,i[2],i[1],i[0]))
+        print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem,i[3],i[4],i[5],i[6],delivery_str,i[0],i[2],i[1],None,'可选上架',None,None,None,None,None))
     conn_ucenter.close()
 
 
