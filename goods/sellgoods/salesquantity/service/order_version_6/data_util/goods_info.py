@@ -35,7 +35,6 @@ def get_shop_order_goods(shopid,add_type=False):
     except:
         print ("更新上架时间失败 ....uc_shopid="+str(uc_shopid))
         traceback.print_exc()
-    
     # 获取erp系统的erp_shopid
     cursor_dmstore.execute("select erp_shop_id from erp_shop_related where shop_id = {} and erp_shop_type = 0".format(shopid))
     (erp_shop_id,) = cursor_dmstore.fetchone() # 门店id
