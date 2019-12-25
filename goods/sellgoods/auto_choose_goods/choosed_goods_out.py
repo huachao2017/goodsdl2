@@ -226,7 +226,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     cursor_ucenter = conn_ucenter.cursor()
 
     sql2 = "SELECT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code ={}"
-    d = cursor_ucenter.fetchall()
+    # d = cursor_ucenter.fetchall()
     # print("订货0的mch的len", len(tem_mch_list))
     # print("订货0的len", len(d))
     for t in tem_mch_list[:]:
