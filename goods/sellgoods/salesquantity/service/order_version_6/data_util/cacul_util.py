@@ -1,10 +1,7 @@
 from goods.sellgoods.commonbean.goods_ai_sales_order import SalesOrder
 from goods.sellgoods.salesquantity.service.order_version_6.data_util.goods_info import get_shop_order_goods
-from goods.sellgoods.salesquantity.local_util.config_table_util import ConfigTableUtil
-from goods.sellgoods.salesquantity.bean import goods_config_disnums,goods_config_safedays
 from goods.sellgoods.salesquantity.bean import taskflow
 from goods.sellgoods.salesquantity.proxy import order_rule
-from goods.sellgoods.salesquantity.local_util import order_nums_util
 import math
 import demjson
 import time
@@ -67,6 +64,15 @@ def get_goods_batch_order_data_warhouse(batch_id,goods_order_all):
     :return:
     """
     order_data,order_data_dict = get_order_data_warhouse(goods_order_all)
+    # 加入冰淇淋的 空间限制规则：
+    try:
+        print ("冰淇淋空间限制前 订货品个数 = "+str(len(list(demjson.decode(order_data)))))
+        order_data_dict = order_rule.rule_bingql(drg_inss=goods_order_all,order_data_dict=order_data_dict)
+        order_data = update_order_data(order_data_dict,order_data)
+        print("冰淇淋空间限制后 订货品个数 = " + str(len(list(demjson.decode(order_data)))))
+    except:
+        print ("冰淇淋空间限制 规则 error , check ....")
+        traceback.print_exc()
     order_data_all = get_order_data_all_warhouse(goods_order_all,order_data_dict)
     create_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     update_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
@@ -253,6 +259,23 @@ def get_order_data_warhouse(goods_order_all):
             jsondata.append(order_data_dict)
     order_data = demjson.encode(jsondata)
     return order_data,new_data_dict
+
+
+def update_order_data(new_data_dict,order_data):
+    order_data_dict = list(demjson.decode(order_data))
+    order_data_new = []
+    for key in new_data_dict:
+        mch_goods_code = str(key).split("_")[0]
+        upc = str(key).split("_")[1]
+        order_sale = new_data_dict[key]
+        for v_dict in order_data_dict:
+            if order_sale>0 and int(v_dict['mch_goods_code']) == int(mch_goods_code) and str(v_dict['upc']) == str(upc):
+                v_dict['order_sale'] = order_sale
+                order_data_new.append(v_dict)
+    order_data_new = demjson.encode(order_data_new)
+    return order_data_new
+
+
 
 
 
