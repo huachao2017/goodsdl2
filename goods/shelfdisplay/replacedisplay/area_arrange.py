@@ -29,7 +29,11 @@ class AreaManager:
         self.area_list.append(area)
         area_category3 = None
         one_displaygoods_list = []
-        for levelid in self.levelid_to_displaygoods_list.keys():
+
+        # 确保从底层开始计算
+        sorted_levelids = list(self.levelid_to_displaygoods_list.keys())
+        sorted_levelids.sort()
+        for levelid in sorted_levelids:
             displaygoods_list = self.levelid_to_displaygoods_list[levelid]
             for displaygoods in displaygoods_list:
                 if area_category3 is None:
@@ -76,8 +80,18 @@ class AreaManager:
         计算每个area的候选集
         :return:
         """
+        len_area_list = len(self.area_list)
+        if len_area_list <= 2:
+            threshhold = 10
+        elif len_area_list <= 5:
+            threshhold = 5
+        elif len_area_list <= 8:
+            threshhold = 3
+        else:
+            threshhold = 2
+
         for area in self.area_list:
-            area.calculate_candidate(self.choose_goods_list)
+            area.calculate_candidate(self.choose_goods_list, threshhold)
 
     def _calculate_all_area_candidate(self):
         """
@@ -135,13 +149,14 @@ class Area:
         :return:
         """
 
-        # TODO 计算包含的category3_list
-
-        # TODO 筛选choose_goods_list
+        # 筛选choose_goods_list
+        choose_goods_list_in_area = []
+        for goods in choose_goods_list:
+            if goods.category3 in self.category3_list:
+                choose_goods_list_in_area.append(goods)
 
         # TODO 计算候选
 
-        pass
 
     def __str__(self):
         ret = str(self.category3_list) + ':'
