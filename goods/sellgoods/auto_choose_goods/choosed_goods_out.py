@@ -26,14 +26,17 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     cursor_ai = conn_ai.cursor()
     # conn_dmstore = connections['dmstore']
     # cursor_dmstore = conn_dmstore.cursor()
-    print("时间,门店id,门店名称,一级分类,二级分类,三级分类,配送类型,商品编码,商品名称,商品upc,策略标签,商品角色,上品优先级排名,商品实际销售4周预期psd金额,商品实际销售4周预期psd,组内门店4周预期psd金额,组内门店4周预期psd")
+    print("时间,门店id,门店名称,一级分类,二级分类,三级分类,四级分类,配送类型,商品编码,商品名称,商品upc,策略标签,商品角色,上品优先级排名,商品实际销售4周预期psd金额,商品实际销售4周预期psd,组内门店4周预期psd金额,组内门店4周预期psd")
 
 
-    select_sql = "select * from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
+    select_sql = "select * from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL"
+    select_sql_02 = "select mch_goods_code from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL"
     cursor_ai.execute(select_sql.format(uc_shopid,batch_id))
     all_data = cursor_ai.fetchall()
+    cursor_ai.execute(select_sql_02.format(uc_shopid, batch_id))
+    all_data_02 = cursor_ai.fetchall()
     conn_ai.close()
-
+    tem = ""
     for data in all_data[:]:
         close_old_connections()
         conn_ucenter = connections['ucenter']
@@ -60,12 +63,18 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             line_str += str(cursor_ucenter.fetchone()[0])   #门店名称
         except:
             line_str += str('None')  # 门店名称
+        tem = line_str
         line_str += ","
 
-        # class_type_sql = "select category1_id,category2_id,category_id,delivery_type from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
-        class_type_sql = "SELECT DISTINCT first_cate_id,second_cate_id,third_cate_id from goods WHERE neighbor_goods_id ={} AND corp_id=2"
-        cursor_dmstore.execute(class_type_sql.format(data[10]))
-        class_type_data = cursor_dmstore.fetchone()
+
+
+        class_type_sql = "select display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
+        cursor_ucenter.execute(class_type_sql.format(data[10]))
+        class_type_data = cursor_ucenter.fetchone()
+
+        # class_type_sql = "SELECT DISTINCT first_cate_id,second_cate_id,third_cate_id from goods WHERE neighbor_goods_id ={} AND corp_id=2"
+        # cursor_dmstore.execute(class_type_sql.format(data[10]))
+        # class_type_data = cursor_dmstore.fetchone()
         # print('分类',data[10],class_type_data)
         try:
             line_str += str(class_type_data[0])  # 一级分类
@@ -86,9 +95,18 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             line_str += str('None')
             line_str += ","
 
+        try:
+            line_str += str(class_type_data[3])  # 四级分类
+            line_str += ","
+        except:
+            line_str += str('None')
+            line_str += ","
+
         delivery_type_dict = {1:'日配',2:'非日配','1':'日配','2':'非日配'}
         try:
-            line_str += str(delivery_type_dict[data[21]])  # 配送类型
+            # print(data[21])
+            # line_str += str(delivery_type_dict[data[21]])  # 配送类型
+            line_str += str(delivery_type_dict[class_type_data[4]])  # 配送类型
             line_str += ","
         except:
             line_str += str('None')
@@ -180,6 +198,27 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         print(line_str)
         conn_ucenter.close()
         conn_dmstore.close()
+
+
+
+
+    tem_mch_list = [i[0] for i in all_data_02]
+    conn_ucenter = connections['ucenter']
+    cursor_ucenter = conn_ucenter.cursor()
+    cursor_ucenter.execute("SELECT DISTINCT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code in ({}) GROUP BY upc".format(",".join(tem_mch_list)))
+    d = cursor_ucenter.fetchall()
+    for i in d[:]:
+        delivery_type_dict = {1: '日配', 2: '非日配', '1': '日配', '2': '非日配'}
+        delivery_str = ''
+        try:
+            delivery_str = delivery_type_dict[i[7]]  # 配送类型
+        except:
+            delivery_str = str('None')
+        print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem,i[3],i[4],i[5],i[6],delivery_str,i[0],i[2],i[1],None,'可选上架',0,None,None,None,None))
+    conn_ucenter.close()
+
+
+
 
 def data():
     pass

@@ -3,8 +3,8 @@ import pymysql
 import datetime
 import os,django,time,math,sys
 from goods.utils import SendEmail
-# from goods.sellgoods.auto_choose_goods.haolinju_template import start_choose_goods
-from goods.sellgoods.auto_choose_goods.daily_change_goods import start_choose_goods
+from goods.sellgoods.auto_choose_goods.haolinju_template import *
+from goods.sellgoods.auto_choose_goods.daily_change_goods import DailyChangeGoods
 
 
 import main.import_django_settings
@@ -13,6 +13,47 @@ from goods.models import AllWorkFlowBatch
 
 from django.db import connections
 from django.db import close_old_connections
+
+
+def get_taizhang_goods(uc_shop_id):
+    """
+    获取当前台账的商品列表
+    :return:
+    """
+    uc_conn = connections['ucenter']
+    uc_cursor = uc_conn.cursor()
+    # 获取当前的台账
+    select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info,t.mch_id from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(uc_shop_id)
+    uc_cursor.execute(select_sql_02)
+    all_data = uc_cursor.fetchall()
+    if all_data:
+        return 1   # 非首次
+    else:
+        return 0   # 首次
+
+
+
+
+
+def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
+    flag = get_taizhang_goods(uc_shop_id)
+    if flag == 0:   # 首次
+        print("首次选品")
+        a = get_data(pos_shopid, '88,3156,3238')
+        print("uc_shopid,pos_shopid", uc_shop_id, pos_shopid)
+        # a = storage_day_choose(a)
+        # c = choose_goods(a)
+        # c = check_order(c)
+        save_data(a, batch_id, uc_shop_id)
+    elif flag == 1:   # 非首次
+        print("汰换选品")
+        # f = DailyChangeGoods(pos_shopid, "88,3156,3238",batch_id,uc_shop_id)
+        f = DailyChangeGoods(pos_shopid, "1284,3955,3779,1925,4076,1924,3598",batch_id,uc_shop_id)
+        f.recommend_03()
+    else:
+        raise Exception("获取台账失败！")
+
+
 
 # if __name__ == '__main__':
 #     # conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)

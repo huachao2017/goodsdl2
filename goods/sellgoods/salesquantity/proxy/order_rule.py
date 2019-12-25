@@ -1,71 +1,13 @@
 import  math
 from goods.sellgoods.salesquantity.bean import taskflow
 from set_config import config
-"""
-    起订量及上限下限规则
-    param:sales_order_ins 订货对象
-    param:isfir 是否首次下单
-    return 订单对象
-"""
-def rule_start_sum(sales_order_inss):
-    for sales_order_ins in sales_order_inss :
-        # 订货第一目标为达到上限
-        if sales_order_ins.stock - sales_order_ins.predict_sale <= sales_order_ins.start_max:  #  28
-            sales_order_ins.order_sale = sales_order_ins.start_max - (sales_order_ins.stock - sales_order_ins.predict_sale)
-
-        # 如果订货量<起定量且库存+预计销量>=下限就不定
-        if sales_order_ins.order_sale < sales_order_ins.start_sum and sales_order_ins.stock + sales_order_ins.predict_sale >= sales_order_ins.start_min:
-            sales_order_ins.order_sale = 0
-        else:
-            # 订货数必须满足起订量的要求
-            if sales_order_ins.order_sale != sales_order_ins.start_sum:
-                if sales_order_ins.order_sale > sales_order_ins.start_sum:  # 28 > 24   #
-                    # 订货量大于起订量，那么只能定倍数，如订货量为5，起订量为3，那么有两个选择：3和6
-                    min_order_sale = math.floor(float((sales_order_ins.order_sale/sales_order_ins.start_sum))) * sales_order_ins.start_sum
-                    max_order_sale = math.ceil(float((sales_order_ins.order_sale/sales_order_ins.start_sum))) * sales_order_ins.start_sum
-
-                else:
-                    # 订货量小于等于起订量，有两个选择：0或者起订量
-                    min_order_sale = 0
-                    max_order_sale = sales_order_ins.start_sum
-
-                if max_order_sale+sales_order_ins.stock > sales_order_ins.start_max:
-                    # 如果上面的选择大于上限，则需二次判断
-                    if min_order_sale+sales_order_ins.stock < sales_order_ins.start_min:
-                        # 如果下面的选择小于下限，曾优先用超出的上限
-                        sales_order_ins.order_sale = max_order_sale
-                    else:
-                        # 如果下面的选择大于等于下限，则可选择下面的选择
-                        sales_order_ins.order_sale = min_order_sale
-                else:
-                    # 没有上面的选择小于等于上限，则选择上面的选择
-                    sales_order_ins.order_sale = max_order_sale
-    return sales_order_inss
-
-
-
-"""
-    首次下单规则
-    param:sales_order_ins 订货对象
-    return 订单对象
-"""
-def rule_isAndNotFir(sales_order_ins):
-    if sales_order_ins.predict_sale != None and sales_order_ins.predict_sale > 0 :  # 优先保证订货空间能容纳订货量
-        if sales_order_ins.max_stock - sales_order_ins.stock > sales_order_ins.predict_sale:  # 剩余空间大于销量 订销量
-            sales_order_ins.order_sale = sales_order_ins.predict_sale
-        else:
-            if sales_order_ins.max_stock - sales_order_ins.stock  > 0: # 剩余空间小于销量 订剩余空间
-                sales_order_ins.order_sale = sales_order_ins.max_stock - sales_order_ins.stock
-    else:
-        if sales_order_ins.max_stock - sales_order_ins.stock > 0:
-            sales_order_ins.predict_sale = 0
-            sales_order_ins.order_sale = sales_order_ins.max_stock - sales_order_ins.stock
-    if sales_order_ins.order_sale <= 0 :
-        return None
-    return sales_order_ins
-
 
 def rule_filter_order_sale(sales_order_inss):
+    """
+    过滤 订货商品<=0 的规则
+    :param sales_order_inss:
+    :return:
+    """
     sales_order_inss_new = []
     for sales_order_ins in sales_order_inss:
         if sales_order_ins.order_sale > 0 :
@@ -73,6 +15,12 @@ def rule_filter_order_sale(sales_order_inss):
     return sales_order_inss_new
 
 def rule_start_num2(order_sale,start_sum):
+    """
+    起订量规则
+    :param order_sale:
+    :param start_sum:
+    :return:
+    """
     if start_sum is None or start_sum == 0 :
         return 0
     if order_sale <= start_sum:
@@ -83,6 +31,12 @@ def rule_start_num2(order_sale,start_sum):
     return order_sale
 
 def rule_start_price(sales_order_inss,dmshop_id):
+    """
+    订货价规则， 配置到店 ， 该规则已废弃
+    :param sales_order_inss:
+    :param dmshop_id:
+    :return:
+    """
     sum_price = 0
     for sales_order_ins in sales_order_inss:
         sum_price += sales_order_ins.order_sale * sales_order_ins.purchase_price
@@ -119,3 +73,56 @@ def rule_daydelivery_type(sales_order_inss):
         return sales_order_inss_new
     else:
         return sales_order_inss
+
+
+
+from functools import cmp_to_key
+def many_sort(drg_ins1, drg_ins2):
+    if int(drg_ins1.psd_nums_4) > int(drg_ins2.psd_nums_4):
+        return 1
+    elif int(drg_ins1.psd_nums_4) < int(drg_ins2.psd_nums_4):
+        return -1
+    else:
+        V1 = drg_ins1.depth *  drg_ins1.width * drg_ins1.height
+        V2 = drg_ins2.depth *  drg_ins2.width * drg_ins2.height
+        if V1 > V2:
+            return -1
+        else:
+            return 1
+
+def bingql_filter(drg_inss):
+    V1 = 0 # 目标库存的总体积
+    V2 = 0 # 货架的总体积
+    shelf_id_dict={}
+    for drg_ins in drg_inss:
+        if drg_ins.category2_id == 101:
+            shelf_inss = drg_ins.shelf_inss
+            V1 += drg_ins.height * drg_ins.width * drg_ins.depth * drg_ins.order_sale
+            for shelf_ins in shelf_inss:
+                shelf_id_dict[shelf_ins.shelf_id] = shelf_ins
+    for shelf_id in shelf_id_dict:
+        shelf_ins = shelf_id_dict[shelf_id]
+        V2 += shelf_ins.shelf_length * shelf_ins.shelf_height * shelf_ins.shelf_depth
+    if V1 <= V2*0.8:
+        return True
+    else:
+        return False
+
+
+def rule_bingql(drg_inss,order_data_dict):
+    flag = False
+    flag = bingql_filter(drg_inss)
+    if flag:
+        return drg_inss
+
+    bingql_drg_inss = []
+    for drg_ins in drg_inss:
+        if drg_ins.category2_id == 101:
+            bingql_drg_inss.append(drg_ins)
+    bingql_drg_inss.sort(key=cmp_to_key(many_sort))
+
+    for bingql_drg_ins in bingql_drg_inss:
+        print ("")
+
+
+

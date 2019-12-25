@@ -18,7 +18,7 @@ select_goods_batch_order = "select id,batch_order_id order_data from goods_batch
 update_goods_batch_order = "update goods_batch_order set order_data = '{}',update_time='{}',order_all_data='{}' where id = {}"
 sql_uc_shop = "select mch_shop_code from uc_shop where id = {}"
 
-sql_dmshop = "SELECT is_authorized_shop_id FROM ms_relation WHERE authorized_shop_id = {}"
+sql_dmshop = "SELECT is_authorized_shop_id FROM ms_relation WHERE authorized_shop_id = {} and status =1"
 
 sql_dmstore_shop = "select shop_id from erp_shop_related where erp_shop_id = {} and erp_shop_type = 0"
 # 订货单
@@ -140,7 +140,7 @@ def add_order_process():
                     cursor_ai.connection.commit()
                     # 把订单结果和批次结果 通知给摩售
                     shop_type = config.shellgoods_params['shop_types'][0]  # 门店
-                    if 'test' not in batch_id:
+                    if 'test' not in batch_id and len(sales_order_inss) > 0:
                         erp_interface.order_commit(dmstore_shopid,shop_type,sales_order_inss,batch_id=batch_id)
             except Exception as e:
                 cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, 0,

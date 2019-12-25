@@ -177,9 +177,9 @@ def detect(yolov3,image):
         classes, scores, boxes = proxy.single_filter(single_iou, single_min_score, classes,scores,boxes)
 
     # data solving
-    boxes = np.squeeze(boxes)
-    classes = np.squeeze(classes).astype(np.int32)
-    scores = np.squeeze(scores)
+    boxes = np.array(boxes)
+    classes = np.array(classes)
+    scores = np.array(scores)
 
     time2 = time.time()
     output_image_path = ''
