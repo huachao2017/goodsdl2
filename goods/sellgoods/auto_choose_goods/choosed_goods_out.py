@@ -259,7 +259,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
                         i = d
 
             delivery_type_sql = "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = 1 and order_status = 1 AND supplier_goods_code={}"
-            cursor_ucenter.execute(delivery_type_sql.format(data[10]))
+            cursor_ucenter.execute(delivery_type_sql.format(t))
             delivery_type_dict = {1: '日配', 2: '非日配', '1': '日配', '2': '非日配'}
             delivery_str = ''
             try:
