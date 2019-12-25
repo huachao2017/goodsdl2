@@ -123,7 +123,7 @@ class DailyChangeGoods:
         results_list = []
         for i in results:
             try:
-                if type(i[0]) is str:
+                if type(i[0]) is str and i[0] != "":
                     results_list.append(i[0])
             except:
                 continue
@@ -203,7 +203,7 @@ class DailyChangeGoods:
         result = []
         for data in all_data:
             if type(data[0]) is str:
-                if not data[0] is None:
+                if not data[0] is None and data[0] != "":
                     result.append(int(data[0]))
         return result
 
