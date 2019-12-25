@@ -64,10 +64,10 @@ class DailyChangeGoods:
         if type(shop_ids) is list and len(shop_ids) > 0:       # 多个门店
             # print('list,third_category',shop_ids,third_category)
             shop_ids = ",".join(shop_ids)
-            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.third_cate_id={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name,COUNT(DISTINCT p.shop_id) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.saas_third_catid={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
         elif type(shop_ids) is str or type(shop_ids) is int:     # 单个门店
             # print('str',shop_ids,type(shop_ids))
-            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.third_cate_id={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
+            sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} and g.saas_third_catid={} group by g.neighbor_goods_id order by sum(p.amount) desc;"
         else:
             print('none', shop_ids,type(shop_ids))
             return []
@@ -392,7 +392,7 @@ class DailyChangeGoods:
         :param category:
         :return:
         """
-        sql = "SELECT neighbor_goods_id,price-purchase_price as p from goods where third_cate_id={} ORDER BY p desc"
+        sql = "SELECT neighbor_goods_id,price-purchase_price as p from goods where saas_third_catid={} ORDER BY p desc"
         self.cursor.execute(sql.format(category))
         all_data = self.cursor.fetchall()
         for data in all_data:
