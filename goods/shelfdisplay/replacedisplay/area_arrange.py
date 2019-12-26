@@ -294,16 +294,17 @@ class Area:
 
         second_reduce_face_display_goods_list = []
         for reduce_face_display_goods in reduce_face_display_goods_list:
-            reduce_width = reduce_face_display_goods.goods_data.width
+            reduce_width += reduce_face_display_goods.goods_data.width
             self.display_goods_to_reduce_face_num[reduce_face_display_goods] = 1
             if reduce_face_display_goods.face_num > 2:
                 second_reduce_face_display_goods_list.append(reduce_face_display_goods)
             if reduce_width > need_width:
                 break
 
+        # 最多减两轮face
         if reduce_width < need_width:
             for reduce_face_display_goods in second_reduce_face_display_goods_list:
-                reduce_width = reduce_face_display_goods.goods_data.width
+                reduce_width += reduce_face_display_goods.goods_data.width
                 self.display_goods_to_reduce_face_num[reduce_face_display_goods] += 1
                 if reduce_width > need_width:
                     break
@@ -320,7 +321,19 @@ class Area:
 
         reduce_width = 0
 
-        # TODO
+        candidate_down_display_goods_list = []
+        for child_area in self.child_area_list:
+            for display_goods in child_area.display_goods_list:
+                # 必须下架的商品要排除
+                if display_goods not in self.down_display_goods_list:
+                    candidate_down_display_goods_list.append(display_goods)
+
+        candidate_down_display_goods_list.sort(key=lambda x: x.goods_data.psd_amount)
+        for down_display_goods in candidate_down_display_goods_list:
+            reduce_width += down_display_goods.goods_data.width
+            self.second_down_display_goods_list.append(down_display_goods)
+            if reduce_width > need_width:
+                break
 
         return reduce_width
 
@@ -424,7 +437,7 @@ if __name__ == '__main__':
     choose_goods_list = [
         TestGoods('c2_1', 'c3_1', '101', 100, 80, 20, 1, 0),  # 上架
         TestGoods('c2_1', 'c3_1', '102', 100, 80, 20, 1, 0),  # 上架
-        TestGoods('c2_1', 'c3_1', '103', 100, 80, 20, 1, 0),  # 上架
+        TestGoods('c2_1', 'c3_1', '103', 100, 160, 20, 1, 0),  # 上架
         TestGoods('c2_1', 'c3_1', '4', 100, 40, 7, 2, 0),  # 下架
         TestGoods('c2_1', 'c3_2', '5', 100, 40, 6, 2, 0),  # 下架
     ]
@@ -524,6 +537,9 @@ if __name__ == '__main__':
     assert len(area_manager.area_list[0].display_goods_to_reduce_face_num) == 2
     assert area_manager.area_list[0].display_goods_to_reduce_face_num[levelid_to_displaygoods_list[0][1]] == 1
     assert area_manager.area_list[0].display_goods_to_reduce_face_num[levelid_to_displaygoods_list[0][5]] == 2
+    assert len(area_manager.area_list[0].second_down_display_goods_list) == 2
+    assert area_manager.area_list[0].second_down_display_goods_list[0] == levelid_to_displaygoods_list[0][5]
+    assert area_manager.area_list[0].second_down_display_goods_list[1] == levelid_to_displaygoods_list[0][2]
 
 
     print('\n')
