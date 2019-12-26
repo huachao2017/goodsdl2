@@ -95,13 +95,13 @@ def generate(shop_id = None):
                         one_day_psd = float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)
                     loss_oneday_nums =  drg_ins.loss_avg * one_day_psd / (1- drg_ins.loss_avg)
                     fudong_nums = 0
-                    #  浮动量 这块去掉
-                    if loss_oneday_nums > 1 and drg_ins.loss_avg_profit_amount >0:
-                        fudong_nums = -1
-                    if loss_oneday_nums <= 0 and drg_ins.loss_avg_profit_amount >0:
-                        fudong_nums = 1
-                    if drg_ins.loss_avg_profit_amount <=0:
-                        fudong_nums = 0-drg_ins.loss_avg_nums
+                    # #  浮动量 这块去掉
+                    # if loss_oneday_nums > 1 and drg_ins.loss_avg_profit_amount >0:
+                    #     fudong_nums = -1
+                    # if loss_oneday_nums <= 0 and drg_ins.loss_avg_profit_amount >0:
+                    #     fudong_nums = 1
+                    # if drg_ins.loss_avg_profit_amount <=0:
+                    #     fudong_nums = 0-drg_ins.loss_avg_nums
                     safe_day = 0
                     if drg_ins.storage_day < 2:
                         safe_day = drg_ins.storage_day
