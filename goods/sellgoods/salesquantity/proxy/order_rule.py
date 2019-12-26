@@ -99,7 +99,7 @@ def bingql_filter(drg_inss,order_data_dict):
     V2 = 0 # 货架的总体积
     shelf_id_dict={}
     for drg_ins in drg_inss:
-        if drg_ins.category2_id == 101:
+        if drg_ins.category2_id == 124:
             key = str(drg_ins.mch_code)+","+str(drg_ins.upc)
             if key in order_data_dict.keys():
                 order_sale = order_data_dict[key]
@@ -124,7 +124,7 @@ def rule_bingql(drg_inss,order_data_dict):
         return order_data_dict
     bingql_drg_inss = []
     for drg_ins in drg_inss:
-        if drg_ins.category2_id == 101:
+        if drg_ins.category2_id == 124:
             bingql_drg_inss.append(drg_ins)
     bingql_drg_inss.sort(key=cmp_to_key(many_sort))
     # 不减品的 减少起订量

@@ -2,6 +2,8 @@
 区域求解，在一个区域内将必须上架和必须下架的商品处理完毕，并获的候选解
 """
 
+from goods.shelfdisplay.replacedisplay.display_object import Shelf, DisplayGoods
+
 
 class AreaManager:
     def __init__(self, raw_shelf, levelid_to_displaygoods_list, choose_goods_list):
@@ -125,6 +127,7 @@ class AreaManager:
 
 
 class Area:
+
     def __init__(self, area_manager):
         self.area_manager = area_manager
         self.child_area_list = []
@@ -137,6 +140,8 @@ class Area:
         self.down_display_goods_list = []
         self.levelid_to_goods_width = {}
         self.levelid_to_remain_width = {}
+        self.total_width = 0
+        self.width_tolerance = 0
 
         # 动态计算数据
         self.display_goods_to_reduce_face_num = {}
@@ -179,6 +184,13 @@ class Area:
     def prepare_base_data(self, choose_goods_list):
         """
         准备选品数据，每层商品宽度，下架必下架品存储到child_area里，上架必上品存储到area里
+        self.choose_goods_list = None
+        self.up_choose_goods_list = []
+        self.down_display_goods_list = []
+        self.levelid_to_goods_width = {}
+        self.levelid_to_remain_width = {}
+        self.total_width = 0
+        self.width_tolerance = 0
         :param choose_goods_list:
         :return:
         """
@@ -192,20 +204,25 @@ class Area:
                 choose_goods_list_in_area.append(goods)
         self.choose_goods_list = choose_goods_list_in_area
 
+
         # 计算每一层的商品宽度self.levelid_to_goods_width
         for child_area in self.child_area_list:
+            goods_width = child_area.get_goods_width()
+            self.total_width += goods_width
             if child_area.level_id in self.levelid_to_goods_width:
-                self.levelid_to_goods_width[child_area.level_id] += child_area.get_goods_width()
+                self.levelid_to_goods_width[child_area.level_id] += goods_width
             else:
-                self.levelid_to_goods_width[child_area.level_id] = child_area.get_goods_width()
+                self.levelid_to_goods_width[child_area.level_id] = goods_width
 
-        # 计算每一层的可用容差self.levelid_to_remain_width
+        # 计算每一层的可用剩余self.levelid_to_remain_width
         for level_id in self.levelid_to_goods_width.keys():
             goods_width = self.levelid_to_goods_width[level_id]
             # FIXME 这里有个问题,无法知晓该层是否被该区域完全占据，如果是整层占据应该不需要分享
             # 分享货架剩余空间
             self.levelid_to_remain_width[level_id] = int(
                 self.area_manager.levelid_to_remain_width[level_id] * goods_width / self.area_manager.raw_shelf.width)
+            self.total_width += self.levelid_to_remain_width[level_id]
+        self.width_tolerance = int(self.total_width/20)
 
         # 计算下架必下架品
         for choose_goods in self.choose_goods_list:
@@ -247,7 +264,7 @@ class Area:
         for down_display_goods in self.down_display_goods_list:
             down_total_width += down_display_goods.goods_data.width * down_display_goods.face_num
 
-        need_width = up_total_width - down_total_width - remain_total_width
+        need_width = up_total_width - down_total_width - remain_total_width + self.width_tolerance
 
         # 第三步：如需要：挤排面
         if need_width > 0:
@@ -265,12 +282,41 @@ class Area:
     def calculate_candidate(self, candidate_threshold=5):
         """
         对所有确定好的上下架商品进行最优排列
+        # 基础计算数据
+        self.choose_goods_list = None
+        self.up_choose_goods_list = []
+        self.down_display_goods_list = []
+        self.levelid_to_goods_width = {}
+        self.levelid_to_remain_width = {}
+
+        # 动态计算数据
+        self.display_goods_to_reduce_face_num = {}
+        self.second_down_display_goods_list = []
         :param candidate_threshold:
         :return:
         """
 
-        # TODO 需要实现
-        pass
+        # 重组现在所有的display_goods,并生成新的拷贝
+        new_display_goods_list = []
+        for child_area in self.child_area_list:
+            for display_goods in child_area.display_goods_list:
+                if display_goods not in self.down_display_goods_list and display_goods not in self.second_down_display_goods_list:
+                    if display_goods in self.display_goods_to_reduce_face_num:
+                        new_display_goods = DisplayGoods(display_goods.goods_data,
+                                                         face_num=display_goods.face_num-self.display_goods_to_reduce_face_num[display_goods],
+                                                         superimpose_num=display_goods.superimpose_num)
+                        new_display_goods_list.append(new_display_goods)
+
+        # TODO 需要继续实现
+        # # 计算width段
+        # width_list = []
+        # for level_id in self.levelid_to_goods_width:
+        #     width_list.append(self.levelid_to_goods_width[level_id] + self.levelid_to_remain_width[level_id])
+        #
+        # ret_display_goods_list = []
+        # for width in width_list:
+        #     for
+
 
     def _reduce_face_num(self, need_width):
         """
@@ -388,8 +434,6 @@ class TestGoods:
 
 
 if __name__ == '__main__':
-    from goods.shelfdisplay.replacedisplay.display_taizhang import Shelf, DisplayGoods
-
     raw_shelf = Shelf(1, 1800, 600, 300)
     levelid_to_displaygoods_list = {
         0: [DisplayGoods(TestGoods('c2_1', 'c3_1', '1', 200, 80, 10, 0, 0)),
