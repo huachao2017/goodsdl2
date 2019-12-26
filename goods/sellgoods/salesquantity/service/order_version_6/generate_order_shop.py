@@ -19,9 +19,13 @@ def generate(shop_id = None):
         print ("规则0 商品数："+str(len(result.keys())))
         for mch_code  in result:
             drg_ins = result[mch_code]
-            if (max(0,drg_ins.stock) < drg_ins.max_disnums and drg_ins.category_id in yinliao_cat_ids)  or (max(0,drg_ins.stock) <= drg_ins.min_disnums and drg_ins.category_id not in yinliao_cat_ids):
-                order_sale = min(drg_ins.max_disnums-max(0,drg_ins.stock),max(0,drg_ins.supply_stock))
-                order_sale = order_sale - drg_ins.add_sub_count
+            if (drg_ins.delivery_type==2 and max(0,drg_ins.stock) < drg_ins.max_disnums and drg_ins.category_id in yinliao_cat_ids)  or (drg_ins.delivery_type==2 and max(0,drg_ins.stock) <= drg_ins.min_disnums and drg_ins.category_id not in yinliao_cat_ids) or (drg_ins.delivery_type==1 and drg_ins.supply_stock > 0 ):
+                # 非日配
+                if drg_ins.delivery_type == 2:
+                    order_sale = min(drg_ins.max_disnums-max(0,drg_ins.stock),max(0,drg_ins.supply_stock))
+                else:
+                    order_sale = drg_ins.supply_stock
+                order_sale = order_sale
                 if order_sale <= 0:
                     continue
                 sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id,shop_type)
