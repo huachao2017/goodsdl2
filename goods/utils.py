@@ -128,6 +128,7 @@ def calculate_goods_up_datetime(uc_shopid):
             delete_data_list.append(upc)
     print('delete_data_list:',delete_data_list)
     if delete_data_list:
+        print('delete_sql',delete_sql.format(uc_shopid,tuple(delete_data_list)))
         cursor_ai.execute(delete_sql.format(uc_shopid,tuple(delete_data_list)))
         conn_ai.commit()
     print("下架商品删除成功")
@@ -519,7 +520,7 @@ def data_exception_alarm(shopid):
 
 
 if __name__ == '__main__':
-    # calculate_goods_up_datetime(806)
+    calculate_goods_up_datetime(806)
 
     # calculate_goods_up_datetime_first(806)
 
@@ -527,5 +528,5 @@ if __name__ == '__main__':
 
     # check_order()
 
-    data_exception_alarm(1284)
+    # data_exception_alarm(1284)
 
