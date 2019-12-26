@@ -15,6 +15,8 @@ class AreaManager:
 
         self._first_born_areas()
         self._second_combine_areas()
+        self._prepare_area_base_data()
+        self._prepare_area_calculate_data()
         self._arrange_areas()
         candidate_shelf_list = self._calculate_all_area_candidate()
         return candidate_shelf_list
@@ -86,9 +88,13 @@ class AreaManager:
         for removed_area in removed_area_list:
             self.area_list.remove(removed_area)
 
-    def _prepare_area_data(self):
+    def _prepare_area_base_data(self):
         for area in self.area_list:
-            area.prepare_data(self.choose_goods_list)
+            area.prepare_base_data(self.choose_goods_list)
+
+    def _prepare_area_calculate_data(self):
+        for area in self.area_list:
+            area.prepare_calculate_data()
 
     def _arrange_areas(self):
         """
@@ -126,9 +132,18 @@ class Area:
         self.category2 = None
         self.category3_list = []
 
-        # 计算时变量
+        # 基础计算数据
         self.choose_goods_list = None
+        self.up_choose_goods_list = []
         self.levelid_to_goods_width = {}
+        self.levelid_to_remain_width = {}
+
+        # 动态计算数据
+        self.display_goods_to_reduce_face_num = {}
+        self.down_display_goods_list = []
+        self.second_down_display_goods_list = []
+
+        # 结果数据
         self.candidate_display_goods_list_list = []
 
     def add_child_area_in_one_category3(self, level_id, display_goods_list):
@@ -163,9 +178,9 @@ class Area:
         self.category3_list = last_area.category3_list + self.category3_list
 
 
-    def prepare_data(self, choose_goods_list):
+    def prepare_base_data(self, choose_goods_list):
         """
-        准备选品数据，每层商品宽度
+        准备选品数据，每层商品宽度，下架必下架品存储到child_area里，上架必上品存储到area里
         :param choose_goods_list:
         :return:
         """
@@ -179,33 +194,109 @@ class Area:
                 choose_goods_list_in_area.append(goods)
         self.choose_goods_list = choose_goods_list_in_area
 
-        # 计算每一层的商品宽度
+        # 计算每一层的商品宽度self.levelid_to_goods_width
         for child_area in self.child_area_list:
             if child_area.level_id in self.levelid_to_goods_width:
                 self.levelid_to_goods_width[child_area.level_id] += child_area.get_goods_width()
             else:
                 self.levelid_to_goods_width[child_area.level_id] = child_area.get_goods_width()
 
-    def calculate_candidate(self, candidate_threshhold=5):
-        """
-        同一分区内可能有一个或多个商品上架，也可能有0个或n个商品下架，优先挤扩面，扩面的销售产出按照psd金额/n递减计算；如需下架商品从分区内销售最差的商品开始选择
-        :param candidate_threshhold:
-        :return:
-        """
-        # 第一步：下架必下架品
+        # 计算每一层的可用容差self.levelid_to_remain_width
+        for level_id in self.levelid_to_goods_width.keys():
+            goods_width = self.levelid_to_goods_width[level_id]
+            # FIXME 这里有个问题,无法知晓该层是否被该区域完全占据，如果是整层占据应该不需要分享
+            # 分享货架剩余空间
+            self.levelid_to_remain_width[level_id] = int(self.area_manager.levelid_to_remain_width[level_id] * goods_width/self.area_manager.raw_shelf.width)
+
+        # 计算下架必下架品
         for choose_goods in self.choose_goods_list:
             if choose_goods.goods_role == 2:
                 for child_area in self.child_area_list:
                     if child_area.category3 == choose_goods.category3:
                         for display_goods in child_area.display_goods_list:
                             if display_goods.goods_data.equal(choose_goods):
-                                child_area.down_goods_list.append(choose_goods)
+                                child_area.down_display_goods_list.append(display_goods)
+                                self.down_display_goods_list.append(display_goods)
 
-        # 第二步：上架必上品
+        # 计算上架必上品
+        for choose_goods in self.choose_goods_list:
+            if choose_goods.goods_role == 1:
+                self.up_choose_goods_list.append(choose_goods)
 
-        # 第三步：挤排面
 
-        pass
+    def prepare_calculate_data(self):
+        """
+        同一分区内可能有一个或多个商品上架，也可能有0个或n个商品下架，优先挤扩面，扩面的销售产出按照psd金额/n递减计算；如需下架商品从分区内销售最差的商品开始选择
+        self.display_goods_to_reduce_face_num = {}
+        self.down_display_goods_list = []
+        self.second_down_display_goods_list = []
+        :param choose_goods_list:
+        :return:
+        """
+        # 第一大步：根据总宽控制进行选品或挤扩面或下品 # TODO 没考虑可选上架
+        # 第一步：计算原已用总宽和剩余总宽
+        used_total_width = 0
+        remain_total_width = 0
+        for level_id in self.levelid_to_goods_width.keys():
+            used_total_width += self.levelid_to_goods_width[level_id]
+            remain_total_width += self.levelid_to_remain_width[level_id]
+
+        # 第二步：计算上下架后每层商品总宽度
+        up_total_width = 0
+        for up_choose_goods in self.up_choose_goods_list:
+            up_total_width += up_choose_goods.width
+
+        down_total_width = 0
+        for down_display_goods in self.down_display_goods_list:
+            down_total_width += down_display_goods.goods_data.width * down_display_goods.face_num
+
+        need_width = up_total_width - down_total_width - remain_total_width
+
+        # 第三步：如需要：挤排面
+        if need_width > 0:
+            reduce_width = self._reduce_face_num(need_width)
+
+            need_width = need_width - reduce_width
+            # 第四步：如需要：下架商品
+            if need_width > 0:
+                reduce_width = self._down_other_goods(need_width)
+
+    def calculate_candidate(self, candidate_threshhold=5):
+        """
+
+        :param candidate_threshhold:
+        :return:
+        """
+
+
+        # 第二大步：进行排列
+
+
+    def _reduce_face_num(self, need_width):
+        """
+        返回挤掉商品对应排面的map
+        :param need_width:
+        :return:
+        """
+        # 操作self.display_goods_to_reduce_face_num
+        reduce_width = 0
+
+        # TODO
+        return reduce_width
+
+    def _down_other_goods(self, need_width):
+        """
+        返回进一步需要下架的商品
+        :param need_width:
+        :return:
+        """
+
+        # 操作self.second_down_display_goods_list
+        reduce_width = 0
+
+        # TODO
+
+        return reduce_width
 
     def __str__(self):
         ret = str(self.category3_list) + ':'
@@ -217,7 +308,7 @@ class ChildArea:
     def __init__(self, level_id, display_goods_list):
         self.level_id = level_id
         self.display_goods_list = display_goods_list
-        self.down_goods_list = []
+        self.down_display_goods_list = []
         self.category3 = display_goods_list[0].goods_data.category3
 
     def get_goods_width(self):
@@ -355,8 +446,8 @@ if __name__ == '__main__':
     assert area_manager.area_list[7].child_area_list[0].level_id==4
     assert len(area_manager.area_list[7].child_area_list[0].display_goods_list)==1
 
-    for area in area_manager.area_list:
-        print(area)
+    # for area in area_manager.area_list:
+    #     print(area)
 
     area_manager._second_combine_areas()
     assert len(area_manager.area_list) == 4
@@ -381,15 +472,17 @@ if __name__ == '__main__':
     assert len(area_manager.area_list[3].child_area_list[2].display_goods_list)==5
     assert len(area_manager.area_list[3].child_area_list[3].display_goods_list)==1
 
-    print('\n')
+    # print('\n')
     for area in area_manager.area_list:
         print(area)
 
-    area_manager._prepare_area_data()
+    area_manager._prepare_area_base_data()
     assert len(area_manager.area_list[0].choose_goods_list)==4
     assert len(area_manager.area_list[1].choose_goods_list)==0
     assert len(area_manager.area_list[2].choose_goods_list)==0
     assert len(area_manager.area_list[3].choose_goods_list)==0
+
+    area_manager._prepare_area_calculate_data()
 
     print('\n')
     for area in area_manager.area_list:
