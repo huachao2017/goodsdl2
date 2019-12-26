@@ -85,7 +85,7 @@ def calculate_goods_up_datetime(uc_shopid):
     select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(uc_shopid)
     insert_sql = "insert into goods_up_shelf_datetime(upc,shopid,name,up_shelf_date,is_new_goods,taizhang_batch_no) values (%s,{},%s,%s,1,%s)"
     select_sql_03 = "select upc,taizhang_batch_no from goods_up_shelf_datetime where shopid={}"
-    delete_sql = "delete from goods_up_shelf_datetime where shopid={} and upc in {}"
+    delete_sql = "delete from goods_up_shelf_datetime where shopid={} and upc in ({})"
 
     cursor.execute(select_sql_02)
     all_data = cursor.fetchall()
@@ -129,7 +129,7 @@ def calculate_goods_up_datetime(uc_shopid):
     print('delete_data_list:',delete_data_list)
     if delete_data_list:
         print('delete_sql',delete_sql.format(uc_shopid,tuple(delete_data_list)))
-        cursor_ai.execute(delete_sql.format(uc_shopid,tuple(delete_data_list)))
+        cursor_ai.execute(delete_sql.format(uc_shopid,",".join(delete_data_list)))
         conn_ai.commit()
     print("下架商品删除成功")
 
