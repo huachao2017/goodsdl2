@@ -202,7 +202,7 @@ class DailyChangeGoods:
                 # try:
                     # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name
                     # temp_list = [','.join(self.template_shop_ids), data[1], data[2], data[0]/(upc_time[data[1]]*self.days), data[3],data[0]/(upc_time[data[1]]*self.days*data[4]), data[5]]
-                    temp_list = [','.join(self.template_shop_ids), data[1], data[2], data[0]/(data[6]*self.days), data[3],data[0]/(data[6]*self.days*data[4]), data[5]]
+                    temp_list = [','.join(self.template_shop_ids), data[1], third_category, data[0]/(data[6]*self.days), data[3],data[0]/(data[6]*self.days*data[4]), data[5]]
 
                     third_category_quick_seller_list.append(temp_list)
                 # except:
@@ -347,7 +347,7 @@ class DailyChangeGoods:
         must_out_goods = []  # 必须下架的品
         optional_out_goods = []  # 可选下架的品
         temp_optional_out_goods = []  # 临时可选下架
-        category_03_list = []   # 本店已有三级分类的code列表
+        third_category_mch_dict = []   # 本店已有三级分类
 
 
         # 0、列表可订货
@@ -410,9 +410,21 @@ class DailyChangeGoods:
             goods.append(index+1)
             optional_out_goods.append(tuple(goods))
 
+        not_move_goods = list(set(not_move_goods))
+        must_out_goods = list(set(must_out_goods))
+        optional_out_goods = list(set(optional_out_goods))
+
+        print('保护品',len(not_move_goods))
+        print('必须下架',len(must_out_goods))
+        print('可选下架',len(optional_out_goods))
+
+        self.save_data(not_move_goods, 0, mch_code)
+        self.save_data(must_out_goods, 2, mch_code)
+        self.save_data(optional_out_goods, 4, mch_code)
+
 
         # 2、计算新增品
-        must_up_goods_len = math.ceil(all_goods_len * 0.03)
+        must_up_goods_len = math.ceil(all_goods_len * 0.1)
         all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
 
 
@@ -433,9 +445,8 @@ class DailyChangeGoods:
 
         # 该店没有该三级分类的结构品列表，并且可订货
         for data in all_structure_goods_list:
-            if not data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
-                # print("类型",type(data[2]),type(category_03_list[0]))
-                # print(data[2],category_03_list)
+            if not data[2] in third_category_mch_dict and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
+                # print(data[2],third_category_mch_dict)
 
 
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
@@ -443,9 +454,9 @@ class DailyChangeGoods:
 
         # 该店有该三级分类,并且可订货,并且本店本来是没有的
         for data in all_structure_goods_list:
-            if data[2] in category_03_list and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
+            if data[2] in third_category_mch_dict and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
                 print('???')
-                data.extend([1, 1, 0])  # is_structure,is_qiuck_seller,is_relation
+                data.extend([0, 1, 0])  # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
         # 该店没有的畅销品，并且可订货
@@ -459,23 +470,23 @@ class DailyChangeGoods:
 
         # 非日配选出来
         temp_number = 0    # 上架品选到candidate_up_goods_list候选集的第几个啦
-        for goods in candidate_up_goods_list:
-
-            if len(must_up_goods) == must_up_goods_len:
-                break
-            try:
-                if str(goods[4]) in can_order_mch_code_dict:
-                    delivery_type = can_order_mch_code_dict[str(goods[4])]
-                    if delivery_type == 2:
-                        must_up_goods.append(goods)
-                    else:
-                        # print("怎么回事？")
-                        optional_up_goods.append(goods)
-            except:
-                print("怎么回事啊啊啊啊啊啊啊啊啊？")
-                optional_up_goods.append(goods)
-
-            temp_number += 1
+        # for goods in candidate_up_goods_list:
+        #
+        #     if len(must_up_goods) == must_up_goods_len:
+        #         break
+        #     try:
+        #         if str(goods[4]) in can_order_mch_code_dict:
+        #             delivery_type = can_order_mch_code_dict[str(goods[4])]
+        #             if delivery_type == 2:
+        #                 must_up_goods.append(goods)
+        #             else:
+        #                 # print("怎么回事？")
+        #                 optional_up_goods.append(goods)
+        #     except:
+        #         print("怎么回事啊啊啊啊啊啊啊啊啊？")
+        #         optional_up_goods.append(goods)
+        #
+        #     temp_number += 1
         optional_up_goods += candidate_up_goods_list[temp_number:]
 
 
@@ -503,17 +514,17 @@ class DailyChangeGoods:
 
         # 3、保存至数据库
 
-        not_move_goods = list(set(not_move_goods))
-        must_out_goods = list(set(must_out_goods))
-        optional_out_goods = list(set(optional_out_goods))
-
-        print(len(not_move_goods))
-        print(len(must_out_goods))
-        print(len(optional_out_goods))
-
-        self.save_data(not_move_goods, 0,mch_code)
-        self.save_data(must_out_goods, 2,mch_code)
-        self.save_data(optional_out_goods,4,mch_code)
+        # not_move_goods = list(set(not_move_goods))
+        # must_out_goods = list(set(must_out_goods))
+        # optional_out_goods = list(set(optional_out_goods))
+        #
+        # print(len(not_move_goods))
+        # print(len(must_out_goods))
+        # print(len(optional_out_goods))
+        #
+        # self.save_data(not_move_goods, 0,mch_code)
+        # self.save_data(must_out_goods, 2,mch_code)
+        # self.save_data(optional_out_goods,4,mch_code)
         self.save_data(must_up_goods, 1,mch_code)
         # self.save_data(optional_up_goods, 3,mch_code)
 
@@ -530,10 +541,7 @@ class DailyChangeGoods:
         optional_up_goods.extend(optional_up_goods_order)
 
 
-
-
         self.save_data(optional_up_goods, 3, mch_code)
-
 
 
 
