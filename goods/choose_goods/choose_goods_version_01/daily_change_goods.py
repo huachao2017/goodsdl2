@@ -197,20 +197,21 @@ class DailyChangeGoods:
             if not all_shop_data:    # 说明这个分类下的品都没有销量
                 continue
 
-            third_category_quick_seller_list = list()
+            third_category_has_psd_list = list()
             for data in all_shop_data:     # psd金额除以商店数
                 # try:
                     # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name
                     # temp_list = [','.join(self.template_shop_ids), data[1], data[2], data[0]/(upc_time[data[1]]*self.days), data[3],data[0]/(upc_time[data[1]]*self.days*data[4]), data[5]]
                     temp_list = [','.join(self.template_shop_ids), data[1], third_category, data[0]/(data[6]*self.days), data[3],data[0]/(data[6]*self.days*data[4]), data[5]]
 
-                    third_category_quick_seller_list.append(temp_list)
+                    third_category_has_psd_list.append(temp_list)
                 # except:
                 #     print('11111')
-            category_dict[third_category] = third_category_quick_seller_list
+            category_dict[third_category] = third_category_has_psd_list
 
         quick_seller_list = []
         structure_goods_list = []
+        other_goods_list = []     # 有销量，但非结构非畅销
         for category, goods_list in category_dict.items():
             if goods_list == []:
                 break
@@ -234,9 +235,14 @@ class DailyChangeGoods:
                 if index != 0:          # 现在结构品是从三级分类top1选的，这是为了不重复
                     quick_seller_list.append(goods)   # 遇到边界少选策略
 
+            for goods in goods_list:
+                if goods not in structure_goods_list and goods not in quick_seller_list:
+                    other_goods_list.append(goods)
+
         structure_goods_list.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
         quick_seller_list.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
-        return structure_goods_list, quick_seller_list
+        other_goods_list.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
+        return structure_goods_list, quick_seller_list,other_goods_list
 
     def get_can_order_dict(self):
         """
@@ -425,7 +431,9 @@ class DailyChangeGoods:
 
         # 2、计算新增品
         must_up_goods_len = math.ceil(all_goods_len * 0.1)
-        all_structure_goods_list, all_quick_seller_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
+        all_structure_goods_list, all_quick_seller_list,other_goods_list = self.calculate_quick_seller()  # 获取同组门店的结构品和畅销品
+        print("模板店有销量的结构品len",all_structure_goods_list)
+        print("模板店畅销品len",all_quick_seller_list)
 
 
         if self.debug:
@@ -447,10 +455,10 @@ class DailyChangeGoods:
         for data in all_structure_goods_list:
             if not data[2] in third_category_mch_dict and str(data[4]) in can_order_mch_code_dict and not str(data[4]) in taizhang_goods_mch_code_list:
                 # print(data[2],third_category_mch_dict)
-
-
                 data.extend([1,1,0])       # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
+
+        print("本店没有分类的结构品len",candidate_up_goods_list)
 
         # 该店有该三级分类,并且可订货,并且本店本来是没有的
         for data in all_structure_goods_list:
@@ -463,6 +471,12 @@ class DailyChangeGoods:
         for data in all_quick_seller_list:
             if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_dict:
                 data.extend([0, 1, 0])      # is_structure,is_qiuck_seller,is_relation
+                candidate_up_goods_list.append(data)
+
+        # 非结构非畅销，有销量的，该店没有的品，并且可订货
+        for data in other_goods_list:
+            if not str(data[4]) in taizhang_goods_mch_code_list and str(data[4]) in can_order_mch_code_dict:
+                data.extend([0, 0, 0])  # is_structure,is_qiuck_seller,is_relation
                 candidate_up_goods_list.append(data)
 
 
@@ -595,7 +609,7 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598",'lishu_test_005',806)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598",'lishu_test_006',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
