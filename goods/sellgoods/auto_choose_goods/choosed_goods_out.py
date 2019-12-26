@@ -30,7 +30,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
 
     select_sql = "select * from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL"
-    select_sql_02 = "select mch_goods_code from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL"
+    select_sql_02 = "select mch_goods_code from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is NULL and goods_role=3"
     cursor_ai.execute(select_sql.format(uc_shopid,batch_id))
     all_data = cursor_ai.fetchall()
     cursor_ai.execute(select_sql_02.format(uc_shopid, batch_id))
@@ -68,9 +68,18 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
 
 
-        class_type_sql = "select display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
+        class_type_sql = "select display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code={} and width > 0"
         cursor_ucenter.execute(class_type_sql.format(data[10]))
-        class_type_data = cursor_ucenter.fetchone()
+        class_type_data_all = cursor_ucenter.fetchall()
+        try:
+            class_type_data = class_type_data_all[0]
+            # print(i)
+            if len(class_type_data_all) > 1:
+                for d in class_type_data_all:
+                    if d[0] != '0':
+                        class_type_data = d
+        except:
+            class_type_data = None
 
         # class_type_sql = "SELECT DISTINCT first_cate_id,second_cate_id,third_cate_id from goods WHERE neighbor_goods_id ={} AND corp_id=2"
         # cursor_dmstore.execute(class_type_sql.format(data[10]))
@@ -102,11 +111,15 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             line_str += str('None')
             line_str += ","
 
+        delivery_type_sql = "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = 1 and order_status = 1 AND supplier_goods_code={}"
+        cursor_ucenter.execute(delivery_type_sql.format(data[10]))
+
         delivery_type_dict = {1:'日配',2:'非日配','1':'日配','2':'非日配'}
         try:
+            delivery = cursor_ucenter.fetchone()[1]
             # print(data[21])
             # line_str += str(delivery_type_dict[data[21]])  # 配送类型
-            line_str += str(delivery_type_dict[class_type_data[4]])  # 配送类型
+            line_str += str(delivery_type_dict[delivery])  # 配送类型
             line_str += ","
         except:
             line_str += str('None')
@@ -202,19 +215,65 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
 
 
+    # tem_mch_list = [i[0] for i in all_data_02]
+    # conn_ucenter = connections['ucenter']
+    # cursor_ucenter = conn_ucenter.cursor()
+    # cursor_ucenter.execute("SELECT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code in ({}) GROUP BY mch_goods_code".format(",".join(tem_mch_list)))
+    # sql2 = "SELECT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code ={}"
+    # d = cursor_ucenter.fetchall()
+    # print("订货0的mch的len",len(tem_mch_list))
+    # print("订货0的len",len(d))
+    # for i in d[:]:
+    #
+    #     delivery_type_dict = {1: '日配', 2: '非日配', '1': '日配', '2': '非日配'}
+    #     delivery_str = ''
+    #     try:
+    #         delivery_str = delivery_type_dict[i[7]]  # 配送类型
+    #     except:
+    #         delivery_str = str('None')
+    #     print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem,i[3],i[4],i[5],i[6],delivery_str,i[0],i[2],i[1],None,'可选上架',0,None,None,None,None))
+    # conn_ucenter.close()
+
+
+
+
+
     tem_mch_list = [i[0] for i in all_data_02]
     conn_ucenter = connections['ucenter']
     cursor_ucenter = conn_ucenter.cursor()
-    cursor_ucenter.execute("SELECT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code in ({}) GROUP BY mch_goods_code".format(",".join(tem_mch_list)))
-    d = cursor_ucenter.fetchall()
-    for i in d[:]:
-        delivery_type_dict = {1: '日配', 2: '非日配', '1': '日配', '2': '非日配'}
-        delivery_str = ''
+
+    sql2 = "SELECT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code ={}"
+    # d = cursor_ucenter.fetchall()
+    # print("订货0的mch的len", len(tem_mch_list))
+    # print("订货0的len", len(d))
+
+    for t in tem_mch_list[:]:
         try:
-            delivery_str = delivery_type_dict[i[7]]  # 配送类型
+            cursor_ucenter.execute(sql2.format(t))
+            data = cursor_ucenter.fetchall()
+            i = data[0]
+            # print(i)
+            if len(data) > 1:
+                for d in data:
+                    if d[3] != '0':
+                        i = d
+
+            delivery_type_sql = "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = 1 and order_status = 1 AND supplier_goods_code={}"
+            cursor_ucenter.execute(delivery_type_sql.format(t))
+            delivery_type_dict = {1: '日配', 2: '非日配', '1': '日配', '2': '非日配'}
+            delivery_str = ''
+            try:
+                delivery = cursor_ucenter.fetchone()[1]
+                delivery_str = str(delivery_type_dict[delivery])  # 配送类型
+            except:
+                delivery_str = str('None')
+
+
+            print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem, i[3], i[4], i[5], i[6], delivery_str, i[0],
+                                                                           i[2], i[1], None, '可选上架', 0, None, None, None,
+                                                                           None))
         except:
-            delivery_str = str('None')
-        print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem,i[3],i[4],i[5],i[6],delivery_str,i[0],i[2],i[1],None,'可选上架',0,None,None,None,None))
+            continue
     conn_ucenter.close()
 
 

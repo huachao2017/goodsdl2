@@ -265,8 +265,8 @@ def update_order_data(new_data_dict,order_data):
     order_data_dict = list(demjson.decode(order_data))
     order_data_new = []
     for key in new_data_dict:
-        mch_goods_code = str(key).split("_")[0]
-        upc = str(key).split("_")[1]
+        mch_goods_code = str(key).split(",")[0]
+        upc = str(key).split(",")[1]
         order_sale = new_data_dict[key]
         for v_dict in order_data_dict:
             if order_sale>0 and int(v_dict['mch_goods_code']) == int(mch_goods_code) and str(v_dict['upc']) == str(upc):
