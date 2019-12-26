@@ -277,10 +277,10 @@ class Level:
 
 
 class DisplayGoods:
-    def __init__(self, goods_data):
+    def __init__(self, goods_data, face_num = 1, superimpose_num = 1):
         self.goods_data = goods_data
-        self.face_num = 1
-        self.superimpose_num = 1
+        self.face_num = face_num
+        self.superimpose_num = superimpose_num
 
     def add_face_num(self):
         self.face_num += 1
