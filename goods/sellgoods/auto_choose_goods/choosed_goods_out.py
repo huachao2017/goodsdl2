@@ -68,7 +68,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
 
 
-        class_type_sql = "select display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods a where mch_goods_code={} and delivery_type is not Null"
+        class_type_sql = "select display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code={} and width > 0"
         cursor_ucenter.execute(class_type_sql.format(data[10]))
         class_type_data_all = cursor_ucenter.fetchall()
         try:
