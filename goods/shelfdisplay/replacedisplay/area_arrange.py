@@ -260,7 +260,7 @@ class Area:
 
             if need_width > reduce_width:
                 print('出现无法解决的区域：')
-                print(area)
+                print(self)
 
     def calculate_candidate(self, candidate_threshold=5):
         """
@@ -285,8 +285,10 @@ class Area:
         reduce_face_display_goods_list = []
         for child_area in self.child_area_list:
             for display_goods in child_area.display_goods_list:
-                if display_goods.face_num > 1:
-                    reduce_face_display_goods_list.append(display_goods)
+                # 必须下架的商品要排除
+                if display_goods not in self.down_display_goods_list:
+                    if display_goods.face_num > 1:
+                        reduce_face_display_goods_list.append(display_goods)
 
         reduce_face_display_goods_list.sort(key=lambda x: x.goods_data.psd_amount / x.face_num)
 
@@ -310,12 +312,12 @@ class Area:
 
     def _down_other_goods(self, need_width):
         """
+        # 操作self.second_down_display_goods_list
         返回进一步需要下架的商品
         :param need_width:
         :return:
         """
 
-        # 操作self.second_down_display_goods_list
         reduce_width = 0
 
         # TODO
@@ -379,10 +381,10 @@ if __name__ == '__main__':
     levelid_to_displaygoods_list = {
         0: [DisplayGoods(TestGoods('c2_1', 'c3_1', '1', 200, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_1', '2', 200, 80, 9, 0, 0), face_num=2),
-            DisplayGoods(TestGoods('c2_1', 'c3_1', '3', 200, 40, 8, 0, 0), face_num=3),
+            DisplayGoods(TestGoods('c2_1', 'c3_1', '3', 200, 40, 8, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_1', '4', 200, 40, 7, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_2', '5', 200, 40, 6, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_2', '6', 200, 40, 5, 0, 0)),
+            DisplayGoods(TestGoods('c2_1', 'c3_2', '5', 200, 20, 6, 0, 0), face_num=2),
+            DisplayGoods(TestGoods('c2_1', 'c3_2', '6', 200, 40, 5, 0, 0), face_num=3),
             DisplayGoods(TestGoods('c2_1', 'c3_3', '7', 150, 40, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_3', '8', 150, 40, 10, 0, 0))],
         1: [DisplayGoods(TestGoods('c2_1', 'c3_3', '11', 150, 80, 10, 0, 0)),
@@ -392,7 +394,7 @@ if __name__ == '__main__':
             DisplayGoods(TestGoods('c2_1', 'c3_3', '15', 150, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_3', '16', 150, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_3', '17', 150, 80, 10, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_3', '18', 150, 80, 10, 0, 0))],
+            DisplayGoods(TestGoods('c2_1', 'c3_3', '18', 150, 40, 10, 0, 0))],
         2: [DisplayGoods(TestGoods('c2_1', 'c3_3', '21', 150, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_3', '22', 150, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_4', '23', 100, 80, 10, 0, 0)),
@@ -400,7 +402,7 @@ if __name__ == '__main__':
             DisplayGoods(TestGoods('c2_1', 'c3_4', '25', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_4', '26', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_5', '27', 100, 80, 10, 0, 0)),
-            DisplayGoods(TestGoods('c2_1', 'c3_5', '28', 100, 80, 10, 0, 0))],
+            DisplayGoods(TestGoods('c2_1', 'c3_5', '28', 100, 40, 10, 0, 0))],
         3: [DisplayGoods(TestGoods('c2_1', 'c3_5', '31', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_5', '32', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_2', 'c3_6', '33', 100, 80, 10, 0, 0)),
@@ -408,7 +410,7 @@ if __name__ == '__main__':
             DisplayGoods(TestGoods('c2_2', 'c3_6', '35', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_2', 'c3_6', '36', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_2', 'c3_6', '37', 100, 80, 10, 0, 0)),
-            DisplayGoods(TestGoods('c2_2', 'c3_6', '38', 100, 80, 10, 0, 0))],
+            DisplayGoods(TestGoods('c2_2', 'c3_6', '38', 100, 40, 10, 0, 0))],
         4: [DisplayGoods(TestGoods('c2_2', 'c3_6', '41', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_2', 'c3_6', '42', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_2', 'c3_7', '43', 100, 80, 10, 0, 0)),
@@ -416,7 +418,7 @@ if __name__ == '__main__':
             DisplayGoods(TestGoods('c2_2', 'c3_7', '45', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_2', 'c3_7', '46', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_2', 'c3_7', '47', 100, 80, 10, 0, 0)),
-            DisplayGoods(TestGoods('c2_2', 'c3_8', '48', 100, 80, 10, 0, 0))],
+            DisplayGoods(TestGoods('c2_2', 'c3_8', '48', 100, 40, 10, 0, 0))],
     }
 
     choose_goods_list = [
@@ -521,7 +523,7 @@ if __name__ == '__main__':
     area_manager._prepare_area_calculate_data()
     assert len(area_manager.area_list[0].display_goods_to_reduce_face_num) == 2
     assert area_manager.area_list[0].display_goods_to_reduce_face_num[levelid_to_displaygoods_list[0][1]] == 1
-    assert area_manager.area_list[0].display_goods_to_reduce_face_num[levelid_to_displaygoods_list[0][2]] == 2
+    assert area_manager.area_list[0].display_goods_to_reduce_face_num[levelid_to_displaygoods_list[0][5]] == 2
 
 
     print('\n')
