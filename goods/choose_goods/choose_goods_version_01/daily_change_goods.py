@@ -350,6 +350,11 @@ class DailyChangeGoods:
         category_03_list = []   # 本店已有三级分类的code列表
 
 
+        # 0、列表可订货
+        can_order_mch_code_dict = self.get_can_order_dict()
+        print('可订货len：', len(can_order_mch_code_dict))
+
+
         #   1.1、获取本店有销量的商品
         sales_data = self.get_shop_sales_data(self.shop_id)
         sales_goods_mch_code_dict = {}
@@ -365,8 +370,8 @@ class DailyChangeGoods:
         #   1.2、获取当前台账的商品
         taizhang_goods,mch_code = self.get_taizhang_goods()  # 获取当前台账的商品
         taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_goods]))    # 去重
-        print('去重台账goods',len(taizhang_goods_mch_code_list))
         all_goods_len = len(taizhang_goods_mch_code_list)
+        print('去重台账goods', all_goods_len)
 
 
         # 1.3 获取本店的保护品，即不动的品
@@ -381,8 +386,7 @@ class DailyChangeGoods:
 
 
         # 1.4、遍历货架,得出下架品、不动品和可选下架品
-        can_order_mch_code_dict = self.get_can_order_dict()
-        print('可订货len：', len(can_order_mch_code_dict))
+
         for data in taizhang_goods:
             if not data['mch_goods_code'] in can_order_mch_code_dict:    # 不可订货即必须下架
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,is_structure,is_qiuck_seller,is_relation,ranking
