@@ -29,7 +29,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     print("时间,门店id,门店名称,一级分类,二级分类,三级分类,四级分类,配送类型,商品编码,商品名称,商品upc,策略标签,商品角色,上品优先级排名,商品实际销售4周预期psd金额,商品实际销售4周预期psd,组内门店4周预期psd金额,组内门店4周预期psd")
 
 
-    select_sql = "select * from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL and goods_role in (1,3,0,2,4)"
+    select_sql = "select * from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL and goods_role in (1,2,4,0,3)"
     select_sql_02 = "select mch_goods_code from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is NULL and goods_role=3"
     cursor_ai.execute(select_sql.format(uc_shopid,batch_id))
     all_data = cursor_ai.fetchall()
@@ -216,28 +216,6 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         print(line_str)
         conn_ucenter.close()
         conn_dmstore.close()
-
-
-
-
-    # tem_mch_list = [i[0] for i in all_data_02]
-    # conn_ucenter = connections['ucenter']
-    # cursor_ucenter = conn_ucenter.cursor()
-    # cursor_ucenter.execute("SELECT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code in ({}) GROUP BY mch_goods_code".format(",".join(tem_mch_list)))
-    # sql2 = "SELECT mch_goods_code,upc ,goods_name,display_first_cat_id,display_second_cat_id,display_third_cat_id,display_fourth_cat_id,delivery_type from uc_merchant_goods where mch_goods_code ={}"
-    # d = cursor_ucenter.fetchall()
-    # print("订货0的mch的len",len(tem_mch_list))
-    # print("订货0的len",len(d))
-    # for i in d[:]:
-    #
-    #     delivery_type_dict = {1: '日配', 2: '非日配', '1': '日配', '2': '非日配'}
-    #     delivery_str = ''
-    #     try:
-    #         delivery_str = delivery_type_dict[i[7]]  # 配送类型
-    #     except:
-    #         delivery_str = str('None')
-    #     print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem,i[3],i[4],i[5],i[6],delivery_str,i[0],i[2],i[1],None,'可选上架',0,None,None,None,None))
-    # conn_ucenter.close()
 
 
 
