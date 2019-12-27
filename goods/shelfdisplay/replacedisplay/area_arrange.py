@@ -103,14 +103,11 @@ class AreaManager:
         :return:
         """
         len_area_list = len(self.area_list)
-        if len_area_list <= 2:
-            threshold = 10
-        elif len_area_list <= 5:
-            threshold = 5
-        elif len_area_list <= 8:
-            threshold = 3
+        len_area_list_to_threshold = {1:100,2:50,3:20,4:10,5:6,6:4,7:3,8:3,9:3,10:2,100:2}
+        if len_area_list in len_area_list_to_threshold:
+            threshold = len_area_list_to_threshold[len_area_list]
         else:
-            threshold = 2
+            threshold = len_area_list_to_threshold[100]
 
         for area in self.area_list:
             area.calculate_candidate(threshold)
@@ -307,16 +304,37 @@ class Area:
                                                          superimpose_num=display_goods.superimpose_num)
                         new_display_goods_list.append(new_display_goods)
 
-        # TODO 需要继续实现
-        # # 计算width段
-        # width_list = []
-        # for level_id in self.levelid_to_goods_width:
-        #     width_list.append(self.levelid_to_goods_width[level_id] + self.levelid_to_remain_width[level_id])
-        #
-        # ret_display_goods_list = []
-        # for width in width_list:
-        #     for
 
+        # 先计算首个插入的位置
+        up_choose_goods_to_insert_position = {}
+        for up_choose_goods in self.up_choose_goods_list:
+            for i in range(len(new_display_goods_list)-1, 0 , -1):
+                if new_display_goods_list[i].goods_data.category3 == up_choose_goods.category3:
+                    up_choose_goods_to_insert_position[up_choose_goods] = [i+1]
+
+        # 逐步往后挪动插入位置
+        candidate_cnt = 1
+        step = 1
+        while candidate_cnt < candidate_threshold:
+            for up_choose_goods in up_choose_goods_to_insert_position.keys():
+                insert_position = up_choose_goods_to_insert_position[up_choose_goods] - 1
+
+                next_position = insert_position-step
+                if next_position >= 0:
+                    if new_display_goods_list[insert_position-step].goods_data.category3 == up_choose_goods.category3:
+                        up_choose_goods_to_insert_position[up_choose_goods].append(next_position+1)
+
+                        candidate_cnt = self._calculate_candidate_cnt(up_choose_goods_to_insert_position)
+                        if candidate_cnt >= candidate_threshold:
+                            break
+
+        # TODO 取出所有解的集合
+
+    def _calculate_candidate_cnt(self, candidate_list_dict):
+        ret = 1
+        for candidate_list in candidate_list_dict.keys():
+            ret *= len(candidate_list)
+        return ret
 
     def _reduce_face_num(self, need_width):
         """

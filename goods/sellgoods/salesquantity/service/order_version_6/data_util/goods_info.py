@@ -858,6 +858,10 @@ class DataRawGoods():
         else:
             self.add_sub_count = add_sub_count
 
+        #  巧克力类品 当成非日配 处理
+        if self.category2_id == 104:
+            self.delivery_type = 2
+
 
 class Shelf:
     taizhang_id = None
