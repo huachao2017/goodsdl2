@@ -176,7 +176,6 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         # now_date = now.strftime('%Y-%m-%d %H:%M:%S')
 
         now_date = data[12].strftime('%Y-%m-%d %H:%M:%S')
-        now = time.mktime(time.strptime(now_date, '%Y-%m-%d %H:%M:%S'))
 
         week_ago = (data[12] - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
         #商品实际销售4周预期psd,商品实际销售4周预期psd金额,组内门店4周预期psd	组内门店4周预期psd金额	全店4周预期psd	全店4周预期psd金额
