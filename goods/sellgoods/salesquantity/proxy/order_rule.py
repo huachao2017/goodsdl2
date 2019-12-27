@@ -116,7 +116,7 @@ def bingql_filter(drg_inss,order_data_dict):
                 shelf_id_dict[str(shelf_ins.shelf_id) +"," +str(shelf_ins.goods_level_id)] = shelf_ins
     for shelf_level_id in shelf_id_dict:
         shelf_ins = shelf_id_dict[shelf_level_id]
-        V2 += shelf_ins.level_length * shelf_ins.level_height * shelf_ins.level_depth
+        V2 += shelf_ins.level_width * shelf_ins.level_height * shelf_ins.level_depth
     if V1 <= V2*0.8:
         return True
     else:
