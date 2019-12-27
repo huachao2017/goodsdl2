@@ -6,7 +6,7 @@
 import decimal
 import json
 from  decimal import Decimal
-import datetime,pymysql
+import datetime,pymysql,time
 import os,django,math,copy
 from goods.third_tools.dingtalk import send_message
 
@@ -172,13 +172,17 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             line_str += str('None')  # 上品优先级排名
         line_str += ","
 
-        now = datetime.datetime.now()
-        now_date = now.strftime('%Y-%m-%d %H:%M:%S')
-        week_ago = (now - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
+        # now = datetime.datetime.now()
+        # now_date = now.strftime('%Y-%m-%d %H:%M:%S')
+
+        now_date = data[12].strftime('%Y-%m-%d %H:%M:%S')
+
+        week_ago = (data[12] - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
         #商品实际销售4周预期psd,商品实际销售4周预期psd金额,组内门店4周预期psd	组内门店4周预期psd金额	全店4周预期psd	全店4周预期psd金额
         psd_sql = "select sum(p.amount),g.first_cate_id,g.second_cate_id,g.third_cate_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id ={} and g.neighbor_goods_id={};"
         # close_old_connections()
         cursor_dmstore.execute(psd_sql.format(week_ago,now_date,data[1],data[10]))
+        # print(psd_sql.format(week_ago,now_date,data[1],data[10]))
         psd_data = cursor_dmstore.fetchone()
         # print('psd_data',psd_data)
         if psd_data[0]:
@@ -201,7 +205,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         psd_data_shops = cursor_dmstore.fetchone()
         # print('psd_data_shops',psd_data_shops)
         if psd_data_shops[0]:
-            line_str += str(psd_data_shops[0] / days)  # psd金额,同组
+            line_str += str(psd_data_shops[0] / (days * psd_data_shops[1]))  # psd金额,同组
             line_str += ","
             try:
                 line_str += str(psd_data_shops[0] / (days * psd_data_shops[1] * psd_data_shops[2]))  # psd,同组

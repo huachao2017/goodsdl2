@@ -11,7 +11,7 @@ import itertools
 import math
 from functools import reduce
 
-from goods.shelfdisplay.firstdisplay import single_algorithm
+from goods.shelfdisplay.normal_algorithm import dict_arrange
 
 
 def shelf_arrange(shelf):
@@ -443,7 +443,7 @@ class CategoryTree:
                         index_to_simple_result_list[index] = [one_tree.category]
                         index += 1
                 # try:
-                list_index_to_simple_result = single_algorithm.dict_arrange(index_to_simple_result_list)
+                list_index_to_simple_result = dict_arrange(index_to_simple_result_list)
                 # except:
                 #     print(1)
                 if self.parent is None:

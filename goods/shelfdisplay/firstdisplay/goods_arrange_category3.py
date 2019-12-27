@@ -7,7 +7,7 @@
 """
 import math
 
-from goods.shelfdisplay.firstdisplay import single_algorithm
+from goods.shelfdisplay.normal_algorithm import dict_arrange
 
 
 def goods_arrange(goods_list):
@@ -199,7 +199,7 @@ class GoodsTree:
                     else:
                         index_to_simple_result_list[index] = [one_tree.goods]
                         index += 1
-                list_index_to_simple_result = single_algorithm.dict_arrange(index_to_simple_result_list)
+                list_index_to_simple_result = dict_arrange(index_to_simple_result_list)
                 if self.parent is None:
                     max_length = len(list_index_to_simple_result)
                     if max_length > self.all_goods_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样

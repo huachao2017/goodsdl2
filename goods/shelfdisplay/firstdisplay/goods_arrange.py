@@ -13,6 +13,7 @@ spu：四级分类、品牌、规格（包装）、尺寸（只选宽和高）�
 import math
 
 import goods.shelfdisplay.firstdisplay.goods_arrange_category3
+from goods.shelfdisplay.normal_algorithm import dict_arrange
 from goods.shelfdisplay.firstdisplay import display_taizhang, single_algorithm
 
 
@@ -95,7 +96,7 @@ def create_candidate_shelf_list(shelf, categoryid_list, categoryid_to_arrange_go
         step_size = 1
     j = -1
     candidate_shelf_list = []
-    list_categoryid_to_arrange_goods_list = single_algorithm.dict_arrange(categoryid_to_arrange_goods_list_list)
+    list_categoryid_to_arrange_goods_list = dict_arrange(categoryid_to_arrange_goods_list_list)
     for categoryid_to_arrange_goods_list in list_categoryid_to_arrange_goods_list:
         j += 1
         if j % step_size == 0:
