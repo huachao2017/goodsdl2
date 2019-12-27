@@ -23,7 +23,6 @@ class TaizhangDisplay:
         self.shelf = None
         self.category3_list = None    # 三级分类列表
         self.choose_goods_list = None # 筛选过三级分类选品列表
-        self.candidate_shelfs = None
         self.best_candidate_shelf = None
         self.image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'taizhang', str(self.tz_id))
         self.image_dir = os.path.join(settings.MEDIA_ROOT, self.image_relative_dir)
@@ -45,36 +44,18 @@ class TaizhangDisplay:
         begin_time = time.time()
 
         # 区域处理
-        raw_shelf = Shelf(self.shelf.shelf_id,
-                          self.shelf.height,
-                          self.shelf.width,
-                          self.shelf.depth)
         levelid_to_displaygoods_list = {}
         for level in self.shelf.levels:
             levelid_to_displaygoods_list[level.level_id] = level.display_goods_list
-        area_manager = AreaManager(raw_shelf,
+        area_manager = AreaManager(self.shelf,
                                    levelid_to_displaygoods_list,
                                    self.choose_goods_list)
 
-        self.candidate_shelfs = area_manager.calculate_candidate_shelf()
-
-        # 打分计算最佳货架
-        self.best_candidate_shelf = self.goods_replace_score()
+        self.best_candidate_shelf = area_manager.calculate_candidate_shelf()
 
         end_time = time.time()
         self.display_calculate_time = int(end_time - begin_time)
 
-    def goods_replace_score(self):
-        """
-        所有商品移动步长，每一步移动做扣分
-        被挤下商品为可选下架品中预期psd金额较低商品，随金额变低做加分
-        :return: 分数最低的shelf
-        """
-
-        min_badcase_value = 100000
-        best_candidate_shelf = None
-        # TODO 需要实现
-        return best_candidate_shelf
 
     def to_json(self):
         """
