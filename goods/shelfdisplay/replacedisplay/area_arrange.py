@@ -2,7 +2,7 @@
 区域求解，在一个区域内将必须上架和必须下架的商品处理完毕，并获的候选解
 """
 from goods.shelfdisplay.normal_algorithm import dict_arrange
-from goods.shelfdisplay.replacedisplay.display_object import Shelf, DisplayGoods
+from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
 
 
 class AreaManager:
@@ -35,7 +35,7 @@ class AreaManager:
         self._prepare_area_base_data()
         self._prepare_area_calculate_data()
         self._arrange_areas()
-        return self._calculate_all_area_candidate()
+        return self._generate_all_area_candidate()
 
     def _calculate_level_remain_width(self):
         levelid_to_remain_width = {}
@@ -130,19 +130,23 @@ class AreaManager:
         for area in self.area_list:
             area.calculate_candidate(self.candidate_step, self.threshold)
 
-    def _calculate_all_area_candidate(self):
+    def _generate_all_area_candidate(self):
         """
         组合所有的area候选集，生成shelf对象
         返回一个candidate_shelf_list
         :return:
         """
-        # TODO 需要实现
+
+        # TODO 组合所有area里面的candidate_display_goods_list_list
+        for area in self.area_list:
+            a = area.candidate_display_goods_list_list
+
+        shelf = Shelf(self.raw_shelf.shelf_id, self.raw_shelf.height, self.raw_shelf.width, self.raw_shelf.depth)
         candidate_shelf_list = []
         return candidate_shelf_list
 
 
 class Area:
-
     def __init__(self, area_manager):
         self.area_manager = area_manager
         self.child_area_list = []
@@ -219,7 +223,6 @@ class Area:
                 choose_goods_list_in_area.append(goods)
         self.choose_goods_list = choose_goods_list_in_area
 
-
         # 计算每一层的商品宽度self.levelid_to_goods_width
         for child_area in self.child_area_list:
             goods_width = child_area.get_goods_width()
@@ -237,7 +240,7 @@ class Area:
             self.levelid_to_remain_width[level_id] = int(
                 self.area_manager.levelid_to_remain_width[level_id] * goods_width / self.area_manager.raw_shelf.width)
             self.total_width += self.levelid_to_remain_width[level_id]
-        self.width_tolerance = int(self.total_width/20)
+        self.width_tolerance = int(self.total_width / 20)
 
         # 计算下架必下架品
         for choose_goods in self.choose_goods_list:
@@ -319,18 +322,24 @@ class Area:
                 if display_goods not in self.down_display_goods_list and display_goods not in self.second_down_display_goods_list:
                     if display_goods in self.display_goods_to_reduce_face_num:
                         new_display_goods = DisplayGoods(display_goods.goods_data,
-                                                         face_num=display_goods.face_num-self.display_goods_to_reduce_face_num[display_goods],
+                                                         face_num=display_goods.face_num -
+                                                                  self.display_goods_to_reduce_face_num[display_goods],
                                                          superimpose_num=display_goods.superimpose_num)
                         new_display_goods_list.append(new_display_goods)
 
+        if len(self.up_choose_goods_list)>0:
+            self._generate_up_choose_goods_candidate(new_display_goods_list, candidate_step, candidate_threshold)
+        else:
+            self.candidate_display_goods_list_list.append(new_display_goods_list)
 
+
+    def _generate_up_choose_goods_candidate(self, new_display_goods_list, candidate_step, candidate_threshold):
         # 先计算首个插入的位置
         up_choose_goods_to_insert_position = {}
         for up_choose_goods in self.up_choose_goods_list:
-            for i in range(len(new_display_goods_list)-1, -1, -1):
+            for i in range(len(new_display_goods_list) - 1, -1, -1):
                 if new_display_goods_list[i].goods_data.category3 == up_choose_goods.category3:
-                    up_choose_goods_to_insert_position[up_choose_goods] = [i+1]
-
+                    up_choose_goods_to_insert_position[up_choose_goods] = [i + 1]
         up_choose_goods_to_end = {}
         for up_choose_goods in self.up_choose_goods_list:
             up_choose_goods_to_end[up_choose_goods] = False
@@ -341,8 +350,9 @@ class Area:
                 if not up_choose_goods_to_end[up_choose_goods]:
                     insert_position = up_choose_goods_to_insert_position[up_choose_goods][-1]
 
-                    next_position = insert_position-candidate_step
-                    if next_position >= 0 and new_display_goods_list[next_position-1].goods_data.category3 == up_choose_goods.category3:
+                    next_position = insert_position - candidate_step
+                    if next_position >= 0 and new_display_goods_list[
+                                next_position - 1].goods_data.category3 == up_choose_goods.category3:
                         up_choose_goods_to_insert_position[up_choose_goods].append(next_position)
 
                         candidate_cnt = self._calculate_candidate_cnt(up_choose_goods_to_insert_position)
@@ -360,19 +370,17 @@ class Area:
                 break
 
         # FIXME 同一个三级分类的上架多个品，出现的候选解要变化
-
         # 取出所有解的集合
         up_choose_goods_to_candidate_list = dict_arrange(up_choose_goods_to_insert_position)
         for up_choose_goods_to_candidate in up_choose_goods_to_candidate_list:
             candidate_display_goods_list = new_display_goods_list.copy()
             insert_candidate_list = list(up_choose_goods_to_candidate.items())
-            insert_candidate_list.sort(key=lambda x:x[1], reverse=True)
+            insert_candidate_list.sort(key=lambda x: x[1], reverse=True)
             for insert_candidate in insert_candidate_list:
                 # FIXME 暂时没有处理上架商品的face_num 和 superimpose_num
-                candidate_display_goods_list.insert(insert_candidate[1],DisplayGoods(insert_candidate[0]))
+                candidate_display_goods_list.insert(insert_candidate[1], DisplayGoods(insert_candidate[0]))
 
             self.candidate_display_goods_list_list.append(candidate_display_goods_list)
-
 
     def _calculate_candidate_cnt(self, key_to_candidate_list):
         ret = 1
@@ -635,9 +643,9 @@ if __name__ == '__main__':
     assert len(area_manager.area_list[0].child_area_list[0].down_display_goods_list) == 1
     assert len(area_manager.area_list[0].child_area_list[1].down_display_goods_list) == 1
     assert area_manager.area_list[0].levelid_to_goods_width[0] == 480
-    assert area_manager.area_list[0].levelid_to_remain_width[0] == int(480/600*40)
+    assert area_manager.area_list[0].levelid_to_remain_width[0] == int(480 / 600 * 40)
     assert area_manager.area_list[1].levelid_to_goods_width[0] == 80
-    assert area_manager.area_list[1].levelid_to_remain_width[0] == int(80/600*40)
+    assert area_manager.area_list[1].levelid_to_remain_width[0] == int(80 / 600 * 40)
 
     area_manager._prepare_area_calculate_data()
     assert len(area_manager.area_list[0].display_goods_to_reduce_face_num) == 2
@@ -647,7 +655,6 @@ if __name__ == '__main__':
     assert area_manager.area_list[0].second_down_display_goods_list[0] == levelid_to_displaygoods_list[0][5]
     assert area_manager.area_list[0].second_down_display_goods_list[1] == levelid_to_displaygoods_list[0][2]
 
-
     print('\n')
     for area in area_manager.area_list:
         print(area)
@@ -655,5 +662,8 @@ if __name__ == '__main__':
 
     assert area_manager.threshold == 100
     assert len(area_manager.area_list[0].candidate_display_goods_list_list) == 8
+    assert len(area_manager.area_list[1].candidate_display_goods_list_list) == 1
+    assert len(area_manager.area_list[2].candidate_display_goods_list_list) == 1
+    assert len(area_manager.area_list[3].candidate_display_goods_list_list) == 1
 
-    candidate_shelf_list = area_manager._calculate_all_area_candidate()
+    candidate_shelf_list = area_manager._generate_all_area_candidate()
