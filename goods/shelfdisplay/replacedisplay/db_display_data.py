@@ -3,7 +3,8 @@ import json
 from django.db import connections
 
 from goods.shelfdisplay.db_data import Category3
-from goods.shelfdisplay.replacedisplay.display_taizhang import TaizhangDisplay, Shelf, Level, DisplayGoods
+from goods.shelfdisplay.replacedisplay.display_taizhang import TaizhangDisplay
+from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
 
 
 def init_display_data(uc_shopid, tz_id, old_display_id, base_data):

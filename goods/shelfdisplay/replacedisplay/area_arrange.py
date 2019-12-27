@@ -4,7 +4,7 @@
 
 from itertools import product
 from goods.shelfdisplay.normal_algorithm import dict_arrange
-from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods, NoneDisplayGoods
+from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
 
 
 class AreaManager:
