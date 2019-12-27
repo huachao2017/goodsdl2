@@ -6,12 +6,27 @@ from goods.shelfdisplay.replacedisplay.display_object import Shelf, DisplayGoods
 
 
 class AreaManager:
+    len_area_list_to_threshold = {
+        1: 100,
+        2: 50,
+        3: 20,
+        4: 8,
+        5: 6,
+        6: 4,
+        7: 3,
+        8: 3,
+        9: 3,
+        10: 2,
+        100: 2}
+
     def __init__(self, raw_shelf, levelid_to_displaygoods_list, choose_goods_list):
         self.raw_shelf = raw_shelf
         self.levelid_to_displaygoods_list = levelid_to_displaygoods_list
         self.choose_goods_list = choose_goods_list
         self.area_list = None
         self.levelid_to_remain_width = self._calculate_level_remain_width()
+        self.threshold = self.len_area_list_to_threshold[100]
+        self.candidate_step = 1
 
     def calculate_candidate_shelf(self):
 
@@ -102,15 +117,18 @@ class AreaManager:
         计算每个area的候选集
         :return:
         """
-        len_area_list = len(self.area_list)
-        len_area_list_to_threshold = {1:100,2:50,3:20,4:10,5:6,6:4,7:3,8:3,9:3,10:2,100:2}
-        if len_area_list in len_area_list_to_threshold:
-            threshold = len_area_list_to_threshold[len_area_list]
+        len_area_list = 0
+        for area in self.area_list:
+            if len(area.up_choose_goods_list) > 0:
+                len_area_list += 1
+
+        if len_area_list in self.len_area_list_to_threshold:
+            self.threshold = self.len_area_list_to_threshold[len_area_list]
         else:
-            threshold = len_area_list_to_threshold[100]
+            self.threshold = self.len_area_list_to_threshold[100]
 
         for area in self.area_list:
-            area.calculate_candidate(threshold)
+            area.calculate_candidate(self.candidate_step, self.threshold)
 
     def _calculate_all_area_candidate(self):
         """
@@ -276,7 +294,7 @@ class Area:
                 print('出现无法解决的区域：')
                 print(self)
 
-    def calculate_candidate(self, candidate_threshold=5):
+    def calculate_candidate(self, candidate_step=1, candidate_threshold=5):
         """
         对所有确定好的上下架商品进行最优排列
         # 基础计算数据
@@ -289,6 +307,7 @@ class Area:
         # 动态计算数据
         self.display_goods_to_reduce_face_num = {}
         self.second_down_display_goods_list = []
+        :param candidate_step:
         :param candidate_threshold:
         :return:
         """
@@ -308,25 +327,39 @@ class Area:
         # 先计算首个插入的位置
         up_choose_goods_to_insert_position = {}
         for up_choose_goods in self.up_choose_goods_list:
-            for i in range(len(new_display_goods_list)-1, 0 , -1):
+            for i in range(len(new_display_goods_list)-1, -1, -1):
                 if new_display_goods_list[i].goods_data.category3 == up_choose_goods.category3:
                     up_choose_goods_to_insert_position[up_choose_goods] = [i+1]
 
+        up_choose_goods_to_end = {}
+        for up_choose_goods in self.up_choose_goods_list:
+            up_choose_goods_to_end[up_choose_goods] = False
         # 逐步往后挪动插入位置
         candidate_cnt = 1
-        step = 1
         while candidate_cnt < candidate_threshold:
             for up_choose_goods in up_choose_goods_to_insert_position.keys():
-                insert_position = up_choose_goods_to_insert_position[up_choose_goods] - 1
+                if not up_choose_goods_to_end[up_choose_goods]:
+                    insert_position = up_choose_goods_to_insert_position[up_choose_goods][-1]
 
-                next_position = insert_position-step
-                if next_position >= 0:
-                    if new_display_goods_list[insert_position-step].goods_data.category3 == up_choose_goods.category3:
-                        up_choose_goods_to_insert_position[up_choose_goods].append(next_position+1)
+                    next_position = insert_position-candidate_step
+                    if next_position >= 0 and new_display_goods_list[next_position-1].goods_data.category3 == up_choose_goods.category3:
+                        up_choose_goods_to_insert_position[up_choose_goods].append(next_position)
 
                         candidate_cnt = self._calculate_candidate_cnt(up_choose_goods_to_insert_position)
                         if candidate_cnt >= candidate_threshold:
                             break
+                    else:
+                        up_choose_goods_to_end[up_choose_goods] = True
+
+            # 判断是否已经没有解
+            is_end = True
+            for up_choose_goods in self.up_choose_goods_list:
+                if not up_choose_goods_to_end[up_choose_goods]:
+                    is_end = False
+            if is_end:
+                break
+
+        # FIXME 同一个三级分类的上架多个品，出现的候选解要变化
 
         # 取出所有解的集合
         up_choose_goods_to_candidate_list = dict_arrange(up_choose_goods_to_insert_position)
@@ -341,10 +374,10 @@ class Area:
             self.candidate_display_goods_list_list.append(candidate_display_goods_list)
 
 
-    def _calculate_candidate_cnt(self, candidate_list_dict):
+    def _calculate_candidate_cnt(self, key_to_candidate_list):
         ret = 1
-        for candidate_list in candidate_list_dict.keys():
-            ret *= len(candidate_list)
+        for key in key_to_candidate_list.keys():
+            ret *= len(key_to_candidate_list[key])
         return ret
 
     def _reduce_face_num(self, need_width):
@@ -619,4 +652,8 @@ if __name__ == '__main__':
     for area in area_manager.area_list:
         print(area)
     area_manager._arrange_areas()
+
+    assert area_manager.threshold == 100
+    assert len(area_manager.area_list[0].candidate_display_goods_list_list) == 8
+
     candidate_shelf_list = area_manager._calculate_all_area_candidate()
