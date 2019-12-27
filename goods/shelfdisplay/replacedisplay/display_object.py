@@ -9,6 +9,14 @@ class Shelf:
     def add_level(self, level):
         self.levels.append(level)
 
+    def copy_raw(self):
+        shelf = Shelf(self.shelf_id, self.height, self.width, self.depth)
+        for level in self.levels:
+            copy_level = Level(shelf, level.level_id, level.height, level.depth)
+            shelf.levels.append(copy_level)
+
+        return shelf
+
 class Level:
     def __init__(self, shelf, level_id, height, depth):
         self.shelf = shelf  # 货架
@@ -17,10 +25,8 @@ class Level:
         self.depth = depth
         self.display_goods_list = []
 
-    def add_display_goods(self, goods_data):
-        display_goods = DisplayGoods(goods_data)
+    def add_display_goods(self, display_goods):
         self.display_goods_list.append(display_goods)
-        return display_goods
 
     def __str__(self):
         ret = str(self.level_id)

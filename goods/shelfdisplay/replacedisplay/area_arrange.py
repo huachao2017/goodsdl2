@@ -1,6 +1,8 @@
 """
 区域求解，在一个区域内将必须上架和必须下架的商品处理完毕，并获的候选解
 """
+
+from itertools import product
 from goods.shelfdisplay.normal_algorithm import dict_arrange
 from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
 
@@ -137,12 +139,31 @@ class AreaManager:
         :return:
         """
 
-        # TODO 组合所有area里面的candidate_display_goods_list_list
-        for area in self.area_list:
-            a = area.candidate_display_goods_list_list
+        # 组合所有area里面的candidate_display_goods_list_list
 
-        shelf = Shelf(self.raw_shelf.shelf_id, self.raw_shelf.height, self.raw_shelf.width, self.raw_shelf.depth)
+        total_list = []
+        for area in self.area_list:
+            total_list.append(area.candidate_display_goods_list_list)
+
         candidate_shelf_list = []
+        for one_candidate_list in product(*total_list):
+            candidate_shelf = self.raw_shelf.copy_raw()
+            candidate_shelf_list.append(candidate_shelf)
+            cur_level_index = 0
+            cur_goods_width = 0
+            for one_candidate in one_candidate_list:
+                for display_goods in one_candidate:
+                    goods_width = display_goods.goods_data.width * display_goods.face_num
+                    cur_level = candidate_shelf.levels[cur_level_index]
+                    if cur_goods_width + goods_width > candidate_shelf.width + 10:  # 加10的容差
+                        cur_level_index += 1
+                        cur_level = candidate_shelf.levels[cur_level_index]
+                        cur_level.add_display_goods(display_goods)
+                        cur_goods_width = goods_width
+                    else:
+                        cur_level.add_display_goods(display_goods)
+                        cur_goods_width += goods_width
+
         return candidate_shelf_list
 
 
@@ -327,11 +348,10 @@ class Area:
                                                          superimpose_num=display_goods.superimpose_num)
                         new_display_goods_list.append(new_display_goods)
 
-        if len(self.up_choose_goods_list)>0:
+        if len(self.up_choose_goods_list) > 0:
             self._generate_up_choose_goods_candidate(new_display_goods_list, candidate_step, candidate_threshold)
         else:
             self.candidate_display_goods_list_list.append(new_display_goods_list)
-
 
     def _generate_up_choose_goods_candidate(self, new_display_goods_list, candidate_step, candidate_threshold):
         # 先计算首个插入的位置
@@ -505,6 +525,11 @@ class TestGoods:
 
 if __name__ == '__main__':
     raw_shelf = Shelf(1, 1800, 600, 300)
+    raw_shelf.levels.append(Level(raw_shelf, 0, 360, 300))
+    raw_shelf.levels.append(Level(raw_shelf, 1, 360, 300))
+    raw_shelf.levels.append(Level(raw_shelf, 2, 360, 300))
+    raw_shelf.levels.append(Level(raw_shelf, 3, 360, 300))
+    raw_shelf.levels.append(Level(raw_shelf, 4, 360, 300))
     levelid_to_displaygoods_list = {
         0: [DisplayGoods(TestGoods('c2_1', 'c3_1', '1', 200, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_1', '2', 200, 80, 9, 0, 0), face_num=2),

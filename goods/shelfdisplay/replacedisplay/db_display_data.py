@@ -71,7 +71,7 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
                     # TODO 需要把扩面和叠放反算出来
                     pass
                 else:
-                    last_display_goods = level.add_display_goods(goods_data)
+                    last_display_goods = DisplayGoods(goods_data)
                     if goods_data.category3 not in category3_list:
                         category3_list.append(goods_data.category3)
                     level.add_display_goods(last_display_goods)
