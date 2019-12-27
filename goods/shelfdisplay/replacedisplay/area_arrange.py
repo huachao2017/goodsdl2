@@ -53,6 +53,7 @@ class AreaManager:
         i = 0
         step = max(1, int(len(candidate_shelf_list) / 10))
         for candidate_shelf in candidate_shelf_list:
+            i += 1
             badcase_value = 0
             level_index = -1
             for old_level in self.shelf.levels:
@@ -75,18 +76,17 @@ class AreaManager:
     def _calculate_score(self, old_display_goods, start_width, candidate_level):
         if old_display_goods in self.down_display_goods_list:
             return 0
-        end_width = start_width + old_display_goods.goods_data.width * old_display_goods.face_num
         candidate_start_width = 0
         for display_goods in candidate_level.display_goods_list:
             if display_goods.goods_data.equal(old_display_goods.goods_data):
                 if abs(start_width - candidate_start_width) < 10:
                     return 0
                 elif abs(start_width - candidate_start_width) < old_display_goods.goods_data.width * old_display_goods.face_num:
-                    return 1
+                    return 0.1
                 else:
-                    return 2
+                    return 1
             candidate_start_width += display_goods.goods_data.width * display_goods.face_num
-        return 2
+        return 1
 
     def _calculate_level_remain_width(self):
         levelid_to_remain_width = {}
@@ -353,7 +353,9 @@ class Area:
         for down_display_goods in self.down_display_goods_list:
             down_total_width += down_display_goods.goods_data.width * down_display_goods.face_num
 
-        need_width = up_total_width - down_total_width - remain_total_width + self.width_tolerance
+        need_width = up_total_width - down_total_width - remain_total_width
+        if up_total_width > 0:
+            need_width += self.width_tolerance
 
         # 第三步：如需要：挤排面
         if need_width > 0:
@@ -499,7 +501,7 @@ class Area:
 
     def _down_other_goods(self, need_width):
         """
-        # 操作self.second_down_display_goods_list
+        # 操作self.second_down_display_goods_list 和 self.area_manager.down_display_goods_list
         返回进一步需要下架的商品
         :param need_width:
         :return:
@@ -623,6 +625,12 @@ if __name__ == '__main__':
             DisplayGoods(TestGoods('c2_2', 'c3_7', '47', 100, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_2', 'c3_8', '48', 100, 40, 10, 0, 0))],
     }
+    shelf.levels[0].display_goods_list = levelid_to_displaygoods_list[0]
+    shelf.levels[1].display_goods_list = levelid_to_displaygoods_list[1]
+    shelf.levels[2].display_goods_list = levelid_to_displaygoods_list[2]
+    shelf.levels[3].display_goods_list = levelid_to_displaygoods_list[3]
+    shelf.levels[4].display_goods_list = levelid_to_displaygoods_list[4]
+
 
     choose_goods_list = [
         TestGoods('c2_1', 'c3_1', '101', 100, 80, 20, 1, 0),  # 上架
@@ -716,6 +724,7 @@ if __name__ == '__main__':
 
     assert len(area_manager.area_list[0].up_choose_goods_list) == 3
     assert len(area_manager.area_list[0].down_display_goods_list) == 2
+    assert len(area_manager.down_display_goods_list) == 2
     assert len(area_manager.area_list[0].child_area_list[0].down_display_goods_list) == 1
     assert len(area_manager.area_list[0].child_area_list[1].down_display_goods_list) == 1
     assert area_manager.area_list[0].levelid_to_goods_width[0] == 480
@@ -730,6 +739,7 @@ if __name__ == '__main__':
     assert len(area_manager.area_list[0].second_down_display_goods_list) == 2
     assert area_manager.area_list[0].second_down_display_goods_list[0] == levelid_to_displaygoods_list[0][5]
     assert area_manager.area_list[0].second_down_display_goods_list[1] == levelid_to_displaygoods_list[0][2]
+    assert len(area_manager.down_display_goods_list) == 4
 
     print('\n')
     for area in area_manager.area_list:
