@@ -29,6 +29,7 @@ class AreaManager:
         self.levelid_to_remain_width = self._calculate_level_remain_width()
         self.threshold = self.len_area_list_to_threshold[100]
         self.candidate_step = 1
+        self.down_display_goods_list = []
 
     def calculate_candidate_shelf(self):
 
@@ -53,10 +54,14 @@ class AreaManager:
         step = max(1, int(len(candidate_shelf_list) / 10))
         for candidate_shelf in candidate_shelf_list:
             badcase_value = 0
-            for level_index in range(len(candidate_shelf.levels)):
-                candidate_level = candidate_shelf.levels[level_index]
-                level = self.shelf.levels[level_index]
-                # TODO 判断陈列品的移动
+            level_index = -1
+            for old_level in self.shelf.levels:
+                level_index += 1
+                start_width = 0
+                for old_display_goods in old_level.display_goods_list:
+                    badcase_value += self._calculate_score(old_display_goods, start_width,
+                                                           candidate_shelf.levels[level_index])
+                    start_width += old_display_goods.goods_data.width * old_display_goods.face_num
 
             if i % step == 0:
                 print('计算第{}个候选解,共{}层,value={}：'.format(i, len(candidate_shelf.levels), badcase_value))
@@ -66,6 +71,23 @@ class AreaManager:
         print(min_badcase_value)
 
         return best_candidate_shelf
+
+    def _calculate_score(self, old_display_goods, start_width, candidate_level):
+        if old_display_goods in self.down_display_goods_list:
+            return 0
+        end_width = start_width + old_display_goods.goods_data.width * old_display_goods.face_num
+        candidate_start_width = 0
+        for display_goods in candidate_level.display_goods_list:
+            if display_goods.goods_data.equal(old_display_goods.goods_data):
+                if abs(start_width - candidate_start_width) < 10:
+                    return 0
+                elif abs(start_width - candidate_start_width) < old_display_goods.goods_data.width * old_display_goods.face_num:
+                    return 1
+                else:
+                    return 2
+            candidate_start_width += display_goods.goods_data.width * display_goods.face_num
+        return 2
+
     def _calculate_level_remain_width(self):
         levelid_to_remain_width = {}
         for level_id in self.levelid_to_displaygoods_list:
@@ -299,6 +321,7 @@ class Area:
                             if display_goods.goods_data.equal(choose_goods):
                                 child_area.down_display_goods_list.append(display_goods)
                                 self.down_display_goods_list.append(display_goods)
+                                self.area_manager.down_display_goods_list.append(display_goods)
 
         # 计算上架必上品
         for choose_goods in self.choose_goods_list:
@@ -495,6 +518,7 @@ class Area:
         for down_display_goods in candidate_down_display_goods_list:
             reduce_width += down_display_goods.goods_data.width
             self.second_down_display_goods_list.append(down_display_goods)
+            self.area_manager.down_display_goods_list.append(down_display_goods)
             if reduce_width > need_width:
                 break
 
