@@ -326,7 +326,8 @@ class DailyChangeGoods:
             elif goods[-1] == 1:   # 畅销品
                 goods.append(goods[3]*100)
             else:
-                raise Exception("必上品列表出现异常数据！")
+                # raise Exception("必上品列表出现异常数据！")
+                print("必上品列表出现异常数据！")
         return must_up_goods
 
 
@@ -507,7 +508,7 @@ class DailyChangeGoods:
                 if str(goods[4]) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(goods[4])]
                     if delivery_type == 2:
-                        if goods[-2] is not None:    # 目前，畅销品和结构品都为必上品
+                        if goods[-1] is not None:    # 目前，畅销品和结构品都为必上品
                             must_up_goods.append(goods)
                     else:
                         # print("怎么回事？")
