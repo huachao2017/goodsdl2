@@ -108,10 +108,10 @@ def bingql_filter(drg_inss,order_data_dict):
             shelf_inss = drg_ins.shelf_inss
             V1 += drg_ins.height * drg_ins.width * drg_ins.depth * math.ceil(order_sale+drg_ins.sub_count - config.shellgoods_params['save_goods_days'][drg_ins.dmstoreshop_id] * float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
             for shelf_ins in shelf_inss:
-                shelf_id_dict[shelf_ins.shelf_id] = shelf_ins
-    for shelf_id in shelf_id_dict:
-        shelf_ins = shelf_id_dict[shelf_id]
-        V2 += shelf_ins.shelf_length * shelf_ins.shelf_height * shelf_ins.shelf_depth
+                shelf_id_dict[str(shelf_ins.shelf_id) +"," +str(shelf_ins.goods_level_id)] = shelf_ins
+    for shelf_level_id in shelf_id_dict:
+        shelf_ins = shelf_id_dict[shelf_level_id]
+        V2 += shelf_ins.level_length * shelf_ins.level_height * shelf_ins.level_depth
     if V1 <= V2*0.8:
         return True
     else:

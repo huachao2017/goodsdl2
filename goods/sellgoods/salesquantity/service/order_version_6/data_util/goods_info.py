@@ -90,6 +90,8 @@ def get_shop_order_goods(shopid,add_type=False):
                 level = level_array[i]
                 goods_level_array = goods_array[i]
                 level_depth = round(float(level['depth']))
+                level_width = round(float(level['width']))
+                level_height = round(float(level['height']))
                 for goods in goods_level_array:
                     mch_code = goods['mch_goods_code']
                     height = goods['p_height']
@@ -105,6 +107,8 @@ def get_shop_order_goods(shopid,add_type=False):
                     shelf_ins.mch_code = mch_code
                     shelf_ins.goods_level_id = i
                     shelf_ins.level_depth = level_depth
+                    shelf_ins.level_width = level_width
+                    shelf_ins.level_height = level_height
                     shelf_ins.face_num = 1
                     shelf_inss.append(shelf_ins)
                     if mch_code in ret:
@@ -782,17 +786,37 @@ class DataRawGoods():
             self.supply_stock = float(supply_stock)  #小仓库库存
         self.delivery_type = delivery_type
         self.category1_id = category1_id  # 台账分类
-        self.category2_id = category2_id
+        try:
+            if category1_id is None or category1_id == '':
+                self.category1_id = 0
+            else:
+                self.category1_id = int(category1_id)
+        except:
+            self.category1_id = 0
+
+        try:
+            if category2_id is None or category2_id == '':
+                self.category2_id = 0
+            else:
+                self.category2_id = int(category2_id)
+        except:
+            self.category2_id = 0
+
+        try:
+            if category_id is None or category_id == '':
+                self.category_id = 0
+            else:
+                self.category_id = int(category_id)
+        except:
+            self.category_id = 0
+
         if delivery_type is None:
             self.delivery_type = 2
         else:
             self.delivery_type = delivery_type
         if self.delivery_type != 1: # 保证配送类型 为日配与非日配
             self.delivery_type = 2
-        if category_id is None:
-            self.category_id = 0
-        else:
-            self.category_id = category_id
+
         if max_scale is None:
             self.max_scale = 1
         else:
@@ -870,6 +894,8 @@ class Shelf:
     mch_code = None
     goods_level_id = None
     level_depth = 0
+    level_width = 0
+    level_height = 0
     face_num = 0
     shelf_length = None
     shelf_height = None

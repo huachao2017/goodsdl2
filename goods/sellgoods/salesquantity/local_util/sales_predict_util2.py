@@ -8,7 +8,7 @@ erp = config.erp
 
 from goods.sellgoods.salesquantity.bean import goods_ai_weather,ai_sales_old,sales_old_tmp
 class SalesPredict:
-    def generate_data(self,all_data=False):
+    def generate_data(self):
         sql1 = "select T3.shop_id,T3.goods_id,T3.num,shop.owned_city,T3.create_date,goods.upc,T3.week_date,if(T3.week_date in (1,2,3,4,5),0,1) as week_type,goods.`name`,goods.price,goods.first_cate_id,goods.second_cate_id,goods.third_cate_id from ( " \
                "SELECT T2.shop_id,T2.goods_id,SUM(T2.number) as num,T2.create_date,DAYOFWEEK(DATE_FORMAT(from_unixtime(unix_timestamp(DATE_FORMAT(T2.create_date ,'%Y-%m-%d'))-24*3600),'%Y-%m-%d')) as week_date from " \
                "(select T1.shop_id,T1.goods_id,T1.number,DATE_FORMAT(T1.create_time,'%Y-%m-%d') as create_date from ( " \
@@ -19,38 +19,8 @@ class SalesPredict:
                ") T2 GROUP BY T2.shop_id,T2.goods_id,T2.create_date " \
                ") T3 LEFT JOIN shop on T3.shop_id = shop.id LEFT JOIN goods on goods.id = T3.goods_id where T3.shop_id is not NUlL and goods.upc is not NULL "
 
-        if all_data:
-            end_time2 = '2019-03-04'
-            for i in range(1,70):
-                week_days1 = self.get_date(i)
-                week_days2 = self.get_date(11+i)
-                if end_time2 in week_days1:
-                    return
-                else:
-                    results = self.get_weeks_results(sql1,week_days1)
-                    salesold_inss = self.get_data_week(results, week_days1)
-                    try:
-                        sales2_save.write_file(salesold_inss,week_days1[0])
-                    except:
-                        pass
-                    try:
-                        sales2_save.save_db(salesold_inss)
-                    except:
-                        pass
 
-        else:
-            week_days1 = self.get_date(1)
-            week_days2 = self.get_date(4)
-            results = self.get_weeks_results(sql1,week_days1)
-            salesold_inss = self.get_data_week(results,week_days1)
-            try:
-                sales2_save.write_file(salesold_inss,week_days1[0])
-            except:
-                pass
-            try:
-                sales2_save.save_db(salesold_inss)
-            except:
-                pass
+
 
 
 
