@@ -692,3 +692,5 @@ if __name__ == '__main__':
     assert len(area_manager.area_list[3].candidate_display_goods_list_list) == 1
 
     candidate_shelf_list = area_manager._generate_all_area_candidate()
+
+    assert len(candidate_shelf_list) == 8
