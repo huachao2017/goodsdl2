@@ -1,7 +1,7 @@
 """
 区域求解，在一个区域内将必须上架和必须下架的商品处理完毕，并获的候选解
 """
-
+from goods.shelfdisplay.normal_algorithm import dict_arrange
 from goods.shelfdisplay.replacedisplay.display_object import Shelf, DisplayGoods
 
 
@@ -328,7 +328,18 @@ class Area:
                         if candidate_cnt >= candidate_threshold:
                             break
 
-        # TODO 取出所有解的集合
+        # 取出所有解的集合
+        up_choose_goods_to_candidate_list = dict_arrange(up_choose_goods_to_insert_position)
+        for up_choose_goods_to_candidate in up_choose_goods_to_candidate_list:
+            candidate_display_goods_list = new_display_goods_list.copy()
+            insert_candidate_list = list(up_choose_goods_to_candidate.items())
+            insert_candidate_list.sort(key=lambda x:x[1], reverse=True)
+            for insert_candidate in insert_candidate_list:
+                # FIXME 暂时没有处理上架商品的face_num 和 superimpose_num
+                candidate_display_goods_list.insert(insert_candidate[1],DisplayGoods(insert_candidate[0]))
+
+            self.candidate_display_goods_list_list.append(candidate_display_goods_list)
+
 
     def _calculate_candidate_cnt(self, candidate_list_dict):
         ret = 1
