@@ -182,7 +182,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         psd_sql = "select sum(p.amount),g.first_cate_id,g.second_cate_id,g.third_cate_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id ={} and g.neighbor_goods_id={};"
         # close_old_connections()
         cursor_dmstore.execute(psd_sql.format(week_ago,now_date,data[1],data[10]))
-        print(psd_sql.format(week_ago,now_date,data[1],data[10]))
+        # print(psd_sql.format(week_ago,now_date,data[1],data[10]))
         psd_data = cursor_dmstore.fetchone()
         # print('psd_data',psd_data)
         if psd_data[0]:
