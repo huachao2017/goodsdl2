@@ -175,7 +175,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         # now = datetime.datetime.now()
         # now_date = now.strftime('%Y-%m-%d %H:%M:%S')
 
-        now_date = str(data[12])
+        now_date = data[12].strftime('%Y-%m-%d %H:%M:%S')
         now = time.mktime(time.strptime(now_date, '%Y-%m-%d %H:%M:%S'))
 
         week_ago = (now - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
