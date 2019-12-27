@@ -56,12 +56,6 @@ class DisplayGoods:
         self.face_num = face_num
         self.superimpose_num = superimpose_num
 
-    def add_face_num(self):
-        self.face_num += 1
-
-    def add_superimpose_num(self):
-        self.superimpose_num += 1
-
     def get_display_info(self, level):
         """
         :return:GoodsDisplayInfo列表
