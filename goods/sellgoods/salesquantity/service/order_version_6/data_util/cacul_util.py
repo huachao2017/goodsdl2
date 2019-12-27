@@ -136,7 +136,8 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
         shelf_data = []
         for shelf_ins in drg_ins.shelf_inss:
             shelf_data.append({"tz_id": shelf_ins.taizhang_id, "shelf_id": shelf_ins.shelf_id,
-                               "face_num": shelf_ins.face_num,"level_depth":shelf_ins.level_depth})
+                               "face_num": shelf_ins.face_num,"level_depth":shelf_ins.level_depth,"level_id":shelf_ins.goods_level_id,
+                               "level_width":shelf_ins.level_width,"level_height":shelf_ins.level_height})
         mch_goods_dict['shelf_data'] = shelf_data
         mch_goods_dict['depth'] = drg_ins.depth
         mch_goods_dict['height'] = drg_ins.height
