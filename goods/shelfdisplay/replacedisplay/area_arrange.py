@@ -21,8 +21,8 @@ class AreaManager:
         10: 2,
         100: 2}
 
-    def __init__(self, raw_shelf, levelid_to_displaygoods_list, choose_goods_list):
-        self.raw_shelf = raw_shelf
+    def __init__(self, shelf, levelid_to_displaygoods_list, choose_goods_list):
+        self.shelf = shelf
         self.levelid_to_displaygoods_list = levelid_to_displaygoods_list
         self.choose_goods_list = choose_goods_list
         self.area_list = None
@@ -37,8 +37,35 @@ class AreaManager:
         self._prepare_area_base_data()
         self._prepare_area_calculate_data()
         self._arrange_areas()
-        return self._generate_all_area_candidate()
+        candidate_shelf_list = self._generate_all_area_candidate()
+        return self.calculate_best_candidate_shelf(candidate_shelf_list)
 
+    def calculate_best_candidate_shelf(self, candidate_shelf_list):
+        """
+        所有商品移动步长，每一步移动做扣分
+        暂不做，被挤下商品为可选下架品中预期psd金额较低商品，随金额变低做加分
+        :return: 分数最低的shelf
+        """
+
+        min_badcase_value = 100000
+        best_candidate_shelf = None
+        i = 0
+        step = max(1, int(len(candidate_shelf_list) / 10))
+        for candidate_shelf in candidate_shelf_list:
+            badcase_value = 0
+            for level_index in range(len(candidate_shelf.levels)):
+                candidate_level = candidate_shelf.levels[level_index]
+                level = self.shelf.levels[level_index]
+                # TODO 判断陈列品的移动
+
+            if i % step == 0:
+                print('计算第{}个候选解,共{}层,value={}：'.format(i, len(candidate_shelf.levels), badcase_value))
+            if badcase_value < min_badcase_value:
+                min_badcase_value = badcase_value
+                best_candidate_shelf = candidate_shelf
+        print(min_badcase_value)
+
+        return best_candidate_shelf
     def _calculate_level_remain_width(self):
         levelid_to_remain_width = {}
         for level_id in self.levelid_to_displaygoods_list:
@@ -46,7 +73,7 @@ class AreaManager:
             for display_goods in self.levelid_to_displaygoods_list[level_id]:
                 goods_width += display_goods.goods_data.width * display_goods.face_num
 
-            levelid_to_remain_width[level_id] = self.raw_shelf.width - goods_width
+            levelid_to_remain_width[level_id] = self.shelf.width - goods_width
 
         return levelid_to_remain_width
 
@@ -147,7 +174,7 @@ class AreaManager:
 
         candidate_shelf_list = []
         for one_candidate_list in product(*total_list):
-            candidate_shelf = self.raw_shelf.copy_raw()
+            candidate_shelf = self.shelf.copy_raw()
             candidate_shelf_list.append(candidate_shelf)
             cur_level_index = 0
             cur_goods_width = 0
@@ -259,7 +286,7 @@ class Area:
             # FIXME 这里有个问题,无法知晓该层是否被该区域完全占据，如果是整层占据应该不需要分享
             # 分享货架剩余空间
             self.levelid_to_remain_width[level_id] = int(
-                self.area_manager.levelid_to_remain_width[level_id] * goods_width / self.area_manager.raw_shelf.width)
+                self.area_manager.levelid_to_remain_width[level_id] * goods_width / self.area_manager.shelf.width)
             self.total_width += self.levelid_to_remain_width[level_id]
         self.width_tolerance = int(self.total_width / 20)
 
@@ -524,12 +551,12 @@ class TestGoods:
 
 
 if __name__ == '__main__':
-    raw_shelf = Shelf(1, 1800, 600, 300)
-    raw_shelf.levels.append(Level(raw_shelf, 0, 360, 300))
-    raw_shelf.levels.append(Level(raw_shelf, 1, 360, 300))
-    raw_shelf.levels.append(Level(raw_shelf, 2, 360, 300))
-    raw_shelf.levels.append(Level(raw_shelf, 3, 360, 300))
-    raw_shelf.levels.append(Level(raw_shelf, 4, 360, 300))
+    shelf = Shelf(1, 1800, 600, 300)
+    shelf.levels.append(Level(shelf, 0, 360, 300))
+    shelf.levels.append(Level(shelf, 1, 360, 300))
+    shelf.levels.append(Level(shelf, 2, 360, 300))
+    shelf.levels.append(Level(shelf, 3, 360, 300))
+    shelf.levels.append(Level(shelf, 4, 360, 300))
     levelid_to_displaygoods_list = {
         0: [DisplayGoods(TestGoods('c2_1', 'c3_1', '1', 200, 80, 10, 0, 0)),
             DisplayGoods(TestGoods('c2_1', 'c3_1', '2', 200, 80, 9, 0, 0), face_num=2),
@@ -581,7 +608,7 @@ if __name__ == '__main__':
         TestGoods('c2_1', 'c3_2', '5', 100, 40, 6, 2, 0),  # 下架
     ]
 
-    area_manager = AreaManager(raw_shelf, levelid_to_displaygoods_list, choose_goods_list)
+    area_manager = AreaManager(shelf, levelid_to_displaygoods_list, choose_goods_list)
 
     area_manager._first_born_areas()
 
@@ -694,3 +721,5 @@ if __name__ == '__main__':
     candidate_shelf_list = area_manager._generate_all_area_candidate()
 
     assert len(candidate_shelf_list) == 8
+
+    best_candidate_shelf = area_manager.calculate_best_candidate_shelf(candidate_shelf_list)
