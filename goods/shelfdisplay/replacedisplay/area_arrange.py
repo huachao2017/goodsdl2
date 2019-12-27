@@ -4,7 +4,7 @@
 
 from itertools import product
 from goods.shelfdisplay.normal_algorithm import dict_arrange
-from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
+from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods, NoneDisplayGoods
 
 
 class AreaManager:
@@ -394,15 +394,18 @@ class Area:
             for display_goods in child_area.display_goods_list:
                 if display_goods not in self.down_display_goods_list and display_goods not in self.second_down_display_goods_list:
                     if display_goods in self.display_goods_to_reduce_face_num:
-                        new_display_goods = DisplayGoods(display_goods.goods_data,
-                                                         face_num=display_goods.face_num -
-                                                                  self.display_goods_to_reduce_face_num[display_goods],
-                                                         superimpose_num=display_goods.superimpose_num)
-                        new_display_goods_list.append(new_display_goods)
+                        face_num = display_goods.face_num -self.display_goods_to_reduce_face_num[display_goods]
+                    else:
+                        face_num = display_goods.face_num
+                    new_display_goods = DisplayGoods(display_goods.goods_data,
+                                                     face_num=face_num,
+                                                     superimpose_num=display_goods.superimpose_num)
+                    new_display_goods_list.append(new_display_goods)
 
         if len(self.up_choose_goods_list) > 0:
             self._generate_up_choose_goods_candidate(new_display_goods_list, candidate_step, candidate_threshold)
         else:
+            # TODO 做候选上架处理
             self.candidate_display_goods_list_list.append(new_display_goods_list)
 
     def _generate_up_choose_goods_candidate(self, new_display_goods_list, candidate_step, candidate_threshold):
@@ -757,3 +760,4 @@ if __name__ == '__main__':
     assert len(candidate_shelf_list) == 8
 
     best_candidate_shelf = area_manager.calculate_best_candidate_shelf(candidate_shelf_list)
+    print(best_candidate_shelf)

@@ -17,6 +17,20 @@ class Shelf:
 
         return shelf
 
+    def __str__(self):
+        ret = ''
+        for level in self.levels:
+            ret += str(level.level_id)
+            ret += ':'
+            for display_goods in level.display_goods_list:
+                for i in range(display_goods.face_num):
+                    ret += display_goods.goods_data.goods_name
+                    ret += ','
+
+            ret += '\n'
+
+        return ret
+
 class Level:
     def __init__(self, shelf, level_id, height, depth):
         self.shelf = shelf  # 货架
@@ -35,7 +49,6 @@ class Level:
         ret += ','
         ret += str(self.depth)
         return ret
-
 
 class DisplayGoods:
     def __init__(self, goods_data, face_num = 1, superimpose_num = 1):
