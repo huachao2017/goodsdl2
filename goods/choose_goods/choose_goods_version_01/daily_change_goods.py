@@ -613,6 +613,7 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
     # f = DailyChangeGoods(pos_shopid, "88,3156,3238",batch_id,uc_shop_id)
     f = DailyChangeGoods(pos_shopid, "1284,3955,3779,1925,4076,1924,3598",batch_id,uc_shop_id)
     f.recommend_03()
+    
 
 if __name__ == '__main__':
 
