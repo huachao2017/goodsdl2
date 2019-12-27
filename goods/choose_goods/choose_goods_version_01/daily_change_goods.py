@@ -326,7 +326,8 @@ class DailyChangeGoods:
             elif goods[-1] == 1:   # 畅销品
                 goods.append(goods[3]*100)
             else:
-                raise Exception("必上品列表出现异常数据！")
+                # raise Exception("必上品列表出现异常数据！")
+                print("必上品列表出现异常数据！")
         return must_up_goods
 
 
@@ -370,7 +371,7 @@ class DailyChangeGoods:
 
         print('本店已有三级分类', len(self.third_category_mch_dict), self.third_category_mch_dict)
 
-        self.calculate_this_shop_old_goods_data(taizhang_goods,mch_code,sales_goods_mch_code_dict)   #得出下架品、不动品和可选下架品
+        not_move_goods, optional_out_goods = self.calculate_this_shop_old_goods_data(taizhang_goods,mch_code,sales_goods_mch_code_dict)   #得出下架品、不动品和可选下架品
 
         self.calculate_this_shop_new_goods_data(mch_code,not_move_goods,optional_out_goods)
 
@@ -431,6 +432,8 @@ class DailyChangeGoods:
         self.save_data(not_move_goods, 0, mch_code)
         self.save_data(must_out_goods, 2, mch_code)
         self.save_data(optional_out_goods, 4, mch_code)
+
+        return not_move_goods,optional_out_goods
 
     def calculate_this_shop_new_goods_data(self,mch_code,not_move_goods,optional_out_goods):
 
@@ -507,7 +510,7 @@ class DailyChangeGoods:
                 if str(goods[4]) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(goods[4])]
                     if delivery_type == 2:
-                        if goods[-2] is not None:    # 目前，畅销品和结构品都为必上品
+                        if goods[-1] is not None:    # 目前，畅销品和结构品都为必上品
                             must_up_goods.append(goods)
                     else:
                         # print("怎么回事？")
@@ -612,6 +615,7 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
     # f = DailyChangeGoods(pos_shopid, "88,3156,3238",batch_id,uc_shop_id)
     f = DailyChangeGoods(pos_shopid, "1284,3955,3779,1925,4076,1924,3598",batch_id,uc_shop_id)
     f.recommend_03()
+
 
 if __name__ == '__main__':
 
