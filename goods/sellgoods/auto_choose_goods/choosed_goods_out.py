@@ -172,10 +172,12 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             line_str += str('None')  # 上品优先级排名
         line_str += ","
 
-        now = datetime.datetime.now()
-        now_date = data[12]
-        now = time.mktime(time.strptime(now_date, '%Y-%m-%d %H:%M:%S'))
+        # now = datetime.datetime.now()
         # now_date = now.strftime('%Y-%m-%d %H:%M:%S')
+
+        now_date = str(data[12])
+        now = time.mktime(time.strptime(now_date, '%Y-%m-%d %H:%M:%S'))
+
         week_ago = (now - datetime.timedelta(days=days)).strftime('%Y-%m-%d %H:%M:%S')
         #商品实际销售4周预期psd,商品实际销售4周预期psd金额,组内门店4周预期psd	组内门店4周预期psd金额	全店4周预期psd	全店4周预期psd金额
         psd_sql = "select sum(p.amount),g.first_cate_id,g.second_cate_id,g.third_cate_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id ={} and g.neighbor_goods_id={};"
