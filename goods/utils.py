@@ -520,7 +520,7 @@ def data_exception_alarm(shopid):
 
 
 if __name__ == '__main__':
-    calculate_goods_up_datetime(806)
+    # calculate_goods_up_datetime(806)
 
     # calculate_goods_up_datetime_first(806)
 
@@ -528,5 +528,5 @@ if __name__ == '__main__':
 
     # check_order()
 
-    # data_exception_alarm(1284)
+    data_exception_alarm(1284)
 
