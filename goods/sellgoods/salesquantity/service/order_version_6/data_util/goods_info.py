@@ -893,7 +893,7 @@ class DataRawGoods():
         #  巧克力类品 当成非日配 处理
         if self.category2_id == 104:
             self.delivery_type = 2
-
+        self.fudong_nums = 0
 
 class Shelf:
     taizhang_id = None

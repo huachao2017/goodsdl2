@@ -130,6 +130,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
         mch_goods_dict['loss_avg_profit_amount'] = drg_ins.loss_avg_profit_amount
         mch_goods_dict['loss_avg_nums'] = drg_ins.loss_avg_nums
         mch_goods_dict['loss_avg_amount'] = drg_ins.loss_avg_amount
+        mch_goods_dict['fudong_nums'] = drg_ins.fudong_nums
         mch_goods_dict['week_1_5_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)
         mch_goods_dict['week_6_7_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)
         mch_goods_dict['single_face_min_disnums'] = drg_ins.single_face_min_disnums
@@ -146,7 +147,8 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
         print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
-              "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s"
+              "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
+              "%s"
               % (str(drg_ins.order_sale),str(warhouse_order_sale),
                  str(drg_ins.ucshop_id), str(drg_ins.shop_name), str(drg_ins.mch_code),
                  str(drg_ins.upc), str(drg_ins.goods_name),
@@ -159,7 +161,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
                  str(math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)),
                  str(drg_ins.max_scale), str(float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),
                  str(float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)), str(drg_ins.upc_status_type),
-                 str(drg_ins.loss_avg), str(drg_ins.loss_avg_profit_amount), str(drg_ins.loss_avg_nums),str(drg_ins.loss_avg_amount),
+                 str(drg_ins.loss_avg), str(drg_ins.loss_avg_profit_amount), str(drg_ins.loss_avg_nums),str(drg_ins.loss_avg_amount),str(drg_ins.fudong_nums),
                  str(float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)),
                  str(float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)),
                  str(float(drg_ins.psd_nums_2)), str(float(drg_ins.psd_nums_2_cls)),str(drg_ins.single_face_min_disnums),str(drg_ins.add_sub_count)))

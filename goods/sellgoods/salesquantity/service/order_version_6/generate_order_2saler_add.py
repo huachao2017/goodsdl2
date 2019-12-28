@@ -109,6 +109,7 @@ def generate(shop_id = None):
                     days = int((time2 - time1) / (24 * 60 * 60))
                     if days <=7:
                         fudong_nums = 0
+                    drg_ins.fudong_nums = fudong_nums
                     safe_day = 0
                     if drg_ins.storage_day < 2:
                         safe_day = drg_ins.storage_day
