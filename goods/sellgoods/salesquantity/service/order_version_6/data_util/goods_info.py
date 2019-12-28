@@ -273,8 +273,8 @@ def get_shop_order_goods(shopid,add_type=False):
                                         create_date =  str(results_los[2])
                                         if create_date == start_date1:
                                             sale_falg = False
-                                            date_los_sale["sale_nums"] = sale_nums
-                                            date_los_sale["sale_amounts"] = sale_amounts
+                                            date_los_sale["sale_nums"] = float(sale_nums)
+                                            date_los_sale["sale_amounts"] = float(sale_amounts)
                                 if sale_falg:
                                     date_los_sale["sale_nums"] = 0
                                     date_los_sale["sale_amounts"] = 0
@@ -286,8 +286,8 @@ def get_shop_order_goods(shopid,add_type=False):
                                         create_date = str(results_sale[2])
                                         if create_date == start_date1:
                                             los_falg = False
-                                            date_los_sale["los_nums"] = los_nums
-                                            date_los_sale["los_amount"] = los_amount
+                                            date_los_sale["los_nums"] = float(los_nums)
+                                            date_los_sale["los_amount"] = float(los_amount)
                                 if los_falg:
                                     date_los_sale["los_nums"] = 0
                                     date_los_sale["los_amount"] = 0
