@@ -81,7 +81,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             # print(i)
             if len(class_type_data_all) > 1:
                 for d in class_type_data_all:
-                    if d[0] != '0':
+                    if d[0] != '0' and d[0] != '':
                         class_type_data = d
         except:
             class_type_data = None
@@ -259,7 +259,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             # print(i)
             if len(data) > 1:
                 for d in data:
-                    if d[3] != '0':
+                    if d[3] != '0' and d[3] != '':
                         i = d
 
             delivery_type_sql = "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = 1 and order_status = 1 AND supplier_goods_code={}"
