@@ -230,7 +230,7 @@ def get_shop_order_goods(shopid,add_type=False):
                             cursor_dmstore.execute(
                                 "select id,stock,price,purchase_price FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
                                     upc, shopid))
-                            (shop_goods_id,upc_stock,price,purchase_price) = cursor_dmstore.fetchone()
+                            (shop_goods_id,upc_stock,price1,purchase_price1) = cursor_dmstore.fetchone()
                             end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
                             start_date = str(
                                 (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
@@ -266,21 +266,21 @@ def get_shop_order_goods(shopid,add_type=False):
                                     (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                                         days=i)).strftime("%Y-%m-%d"))
                                 date_los_sale = {}
-                                if price is None:
+                                if price1 is None:
                                     date_los_sale["price"] = 0
                                 else:
-                                    date_los_sale["price"] = price
-                                if purchase_price is None:
+                                    date_los_sale["price"] = price1
+                                if purchase_price1 is None:
                                     date_los_sale["purchase_price"] = 0
                                 else:
-                                    date_los_sale["purchase_price"] = purchase_price
+                                    purchase_price1["purchase_price"] = purchase_price1
                                 date_los_sale["create_date"] = start_date1
                                 sale_falg = True
                                 if results_loss is not None and len(results_loss) > 0:
                                     for results_los in results_loss:
                                         sale_nums = results_los[0]
                                         sale_amounts = results_los[1]
-                                        create_date =  results_los[2]
+                                        create_date =  str(results_los[2])
                                         if create_date == start_date1:
                                             sale_falg = False
                                             date_los_sale["sale_nums"] = sale_nums
@@ -293,7 +293,7 @@ def get_shop_order_goods(shopid,add_type=False):
                                     for results_sale in results_sales:
                                         los_amount = results_sale[0]
                                         los_nums = results_sale[1]
-                                        create_date = results_sale[2]
+                                        create_date = str(results_sale[2])
                                         if create_date == start_date1:
                                             los_falg = False
                                             date_los_sale["los_nums"] = los_nums
