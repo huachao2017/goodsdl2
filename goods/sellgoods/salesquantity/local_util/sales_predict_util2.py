@@ -19,7 +19,19 @@ class SalesPredict:
                ") T2 GROUP BY T2.shop_id,T2.goods_id,T2.create_date " \
                ") T3 LEFT JOIN shop on T3.shop_id = shop.id LEFT JOIN goods on goods.id = T3.goods_id where T3.shop_id is not NUlL and goods.upc is not NULL "
 
+        mysql_ins = mysql_util.MysqlUtil(ai)
+        sql3 = "select distinct(weather_type) from goods_ai_weather"
+        results1 = mysql_ins.selectAll(sql3)
 
+        sql4 = "select distinct(winddirect) from goods_ai_weather"
+        results2 = mysql_ins.selectAll(sql4)
+
+        sql5 = "select day,type from goods_ai_holiday"
+        results3 = mysql_ins.selectAll(sql5)
+
+        sql2 = "select * from goods_ai_weather where create_date >= '{0}' and create_date <= '{1}' order by create_date asc "
+        # sql2 = sql2.format(week_days1[0], week_days1[-1])
+        results4 = mysql_ins.selectAll(sql2)
 
 
 
