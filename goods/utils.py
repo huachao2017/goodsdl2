@@ -378,6 +378,7 @@ def data_exception_alarm(shopid):
                     if mch_code in ret:
                         print("该商品已查询过")
                     elif mch_code != "2027047":
+                        print('haha')
                         continue
                     else:
                         ret.append(mch_code)
