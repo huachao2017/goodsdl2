@@ -266,28 +266,28 @@ def get_shop_order_goods(shopid,add_type=False):
                                     date_los_sale["purchase_price"] = purchase_price1
                                 date_los_sale["create_date"] = start_date1
                                 sale_falg = True
-                                if results_loss is not None and len(results_loss) > 0:
-                                    for results_los in results_loss:
-                                        sale_nums = results_los[0]
-                                        sale_amounts = results_los[1]
-                                        create_date =  str(results_los[2])
+                                if results_sales is not None and len(results_sales) > 0:
+                                    for results_sale in results_sales:
+                                        sale_nums = results_sale[0]
+                                        sale_amounts = results_sale[1]
+                                        create_date =  str(results_sale[2])
                                         if create_date == start_date1:
                                             sale_falg = False
-                                            date_los_sale["sale_nums"] = sale_nums
-                                            date_los_sale["sale_amounts"] = sale_amounts
+                                            date_los_sale["sale_nums"] = float(sale_nums)
+                                            date_los_sale["sale_amounts"] = float(sale_amounts)
                                 if sale_falg:
                                     date_los_sale["sale_nums"] = 0
                                     date_los_sale["sale_amounts"] = 0
                                 los_falg = True
-                                if results_sales is not None and len(results_sales) > 0:
-                                    for results_sale in results_sales:
-                                        los_amount = results_sale[0]
-                                        los_nums = results_sale[1]
-                                        create_date = str(results_sale[2])
+                                if results_loss is not None and len(results_loss) > 0:
+                                    for results_los in results_loss:
+                                        los_amount = results_los[0]
+                                        los_nums = results_los[1]
+                                        create_date = str(results_los[2])
                                         if create_date == start_date1:
                                             los_falg = False
-                                            date_los_sale["los_nums"] = los_nums
-                                            date_los_sale["los_amount"] = los_amount
+                                            date_los_sale["los_nums"] = float(los_nums)
+                                            date_los_sale["los_amount"] = float(los_amount)
                                 if los_falg:
                                     date_los_sale["los_nums"] = 0
                                     date_los_sale["los_amount"] = 0
