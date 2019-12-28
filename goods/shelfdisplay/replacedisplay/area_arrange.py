@@ -328,6 +328,10 @@ class Area:
             if choose_goods.goods_role == 1:
                 self.up_choose_goods_list.append(choose_goods)
 
+        # 上架品由低到高排序，这样保证在上架商品在一起时，会出现由高到低插入
+        self.up_choose_goods_list.sort(key=lambda x: x.height)
+
+
     def prepare_calculate_data(self):
         """
         同一分区内可能有一个或多个商品上架，也可能有0个或n个商品下架，优先挤扩面，扩面的销售产出按照psd金额/n递减计算；如需下架商品从分区内销售最差的商品开始选择
@@ -415,6 +419,8 @@ class Area:
             for i in range(len(new_display_goods_list) - 1, -1, -1):
                 if new_display_goods_list[i].goods_data.category3 == up_choose_goods.category3:
                     up_choose_goods_to_insert_position[up_choose_goods] = [i + 1]
+                    break
+
         up_choose_goods_to_end = {}
         for up_choose_goods in self.up_choose_goods_list:
             up_choose_goods_to_end[up_choose_goods] = False
