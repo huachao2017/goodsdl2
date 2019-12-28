@@ -249,6 +249,7 @@ class DailyChangeGoods:
         cursor_ucenter = conn_ucenter.cursor()
         delivery_type_dict = {}    # 店内码是key，配送类型是value
         try:
+            print("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
             cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
             (supplier_id,) = cursor_ucenter.fetchone()
             self.supplier_id = supplier_id
