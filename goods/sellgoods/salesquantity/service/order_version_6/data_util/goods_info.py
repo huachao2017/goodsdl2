@@ -147,8 +147,7 @@ def get_shop_order_goods(shopid,add_type=False):
 
                         # 获取商品的 可定  起订量  配送类型
                         start_sum = 0
-                        delivery_type_str = 1
-                        order_status = 1
+                        delivery_type = 1
                         try:
                             cursor.execute(
                                 "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and order_status = 1 ".format(supplier_id,supplier_goods_code))
