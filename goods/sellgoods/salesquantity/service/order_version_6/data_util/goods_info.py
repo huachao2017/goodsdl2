@@ -236,34 +236,24 @@ def get_shop_order_goods(shopid,add_type=False):
                                 (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                                     days=-7)).strftime("%Y-%m-%d"))
                             # 计算销量  销售额
-                            try:
-                                cursor_dmstore.execute(
-                                    "SELECT sum(number) AS nums,sum(amount) as amounts,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date FROM payment_detail " \
-                                    "WHERE shop_id = {} AND shop_goods_id = {} AND number > 0 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
-                                    "SELECT DISTINCT(payment.id) FROM payment WHERE payment.status = 10 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' " \
-                                    " ) GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(shopid,shop_goods_id,start_date,end_date,start_date,end_date))
-                                results_sales = cursor_dmstore.fetchall()
-                            except:
-                                print ("品 获取销量失败 ， upc="+str(upc))
-                                results_sales = None
-                                traceback.print_exc()
-                                pass
-                            try:
-                                cursor_dmstore.execute(
-                                    "SELECT sum(handle_amount) as h_amount,sum(handle_number) as h_number,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date   FROM shop_goods_loss_record  where shop_id = {} AND shop_goods_id = {} and create_time >= '{} 00:00:00'  and create_time < '{} 00:00:00' GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(
-                                        shopid, shop_goods_id, start_date, end_date, start_date, end_date))
-                                results_loss = cursor_dmstore.fetchall()
-                            except:
-                                print("品 获取损失量失败 ， upc=" + str(upc))
-                                results_loss = None
-                                traceback.print_exc()
-                                pass
+                            cursor_dmstore.execute(
+                                "SELECT sum(number) AS nums,sum(amount) as amounts,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date FROM payment_detail " \
+                                "WHERE shop_id = {} AND shop_goods_id = {} AND number > 0 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
+                                "SELECT DISTINCT(payment.id) FROM payment WHERE payment.status = 10 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' " \
+                                " ) GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(shopid,shop_goods_id,start_date,end_date,start_date,end_date))
+                            results_sales = cursor_dmstore.fetchall()
+
+                            cursor_dmstore.execute(
+                                "SELECT sum(handle_amount) as h_amount,sum(handle_number) as h_number,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date   FROM shop_goods_loss_record  where shop_id = {} AND shop_goods_id = {} and create_time >= '{} 00:00:00'  and create_time < '{} 00:00:00' GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(
+                                    shopid, shop_goods_id, start_date, end_date))
+                            results_loss = cursor_dmstore.fetchall()
+
 
                             # 初始化日期字典
                             date_loss=[]
                             for i in range(7):
                                 start_date1 = str(
-                                    (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
+                                    (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
                                         days=i)).strftime("%Y-%m-%d"))
                                 date_los_sale = {}
                                 if price1 is None:
@@ -273,7 +263,7 @@ def get_shop_order_goods(shopid,add_type=False):
                                 if purchase_price1 is None:
                                     date_los_sale["purchase_price"] = 0
                                 else:
-                                    purchase_price1["purchase_price"] = purchase_price1
+                                    date_los_sale["purchase_price"] = purchase_price1
                                 date_los_sale["create_date"] = start_date1
                                 sale_falg = True
                                 if results_loss is not None and len(results_loss) > 0:
@@ -302,7 +292,7 @@ def get_shop_order_goods(shopid,add_type=False):
                                     date_los_sale["los_nums"] = 0
                                     date_los_sale["los_amount"] = 0
                                 date_loss.append(date_los_sale)
-
+                            print ("date_loss "+str(date_loss))
                             for date_los_sale in date_loss:
                                 if date_los_sale["los_nums"]+date_los_sale["sale_nums"] != 0:
                                     day_loss_avg = date_los_sale["los_nums"] / (date_los_sale["los_nums"]+date_los_sale["sale_nums"])
@@ -325,6 +315,7 @@ def get_shop_order_goods(shopid,add_type=False):
                             loss_avg_profit_amount = float(loss_avg_profit_amount / 7)
                             loss_avg_nums = float(loss_avg_nums / 7)
                         except:
+                            traceback.print_exc()
                             print ("计算损失 失败 ， upc="+str(upc))
                         try:
                             # 获取小仓库库存
