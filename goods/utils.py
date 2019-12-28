@@ -373,10 +373,12 @@ def data_exception_alarm(shopid):
                 for goods in goods_level_array:
                     mch_code = goods['mch_goods_code']
 
-                    time.sleep(5)
+                    # time.sleep(5)
 
                     if mch_code in ret:
                         print("该商品已查询过")
+                    elif mch_code != "2027047" or mch_code != 2027047:
+                        continue
                     else:
                         ret.append(mch_code)
                         # 从台账获取商品属性
@@ -460,7 +462,7 @@ def data_exception_alarm(shopid):
                         # 获取商品的 可定  起订量  配送类型
 
                         if erp_resupply_id is not None:
-                            try:
+                            # try:
                                 cursor.execute(
                                     "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and order_status = 1 ".format(
                                         supplier_id, supplier_goods_code))
@@ -477,10 +479,10 @@ def data_exception_alarm(shopid):
                                 if delivery_type is None or delivery_type not in (1,2,'1','2'):
                                     send_message('{}(uc店号:{},mch_code:{},upc:{})—>>商品配送类型数据异常:{}'.format(goods_name, uc_shopid,mch_code, upc, delivery_type),3)
 
-                            except:
-                                send_message(
-                                    '{}(uc店号:{},mch_code:{},upc:{})—>>获取商品的是否可定、起订量、配送类型数据失败'.format(goods_name, uc_shopid,
-                                                                                         mch_code, upc), 3)
+                            # except:
+                            #     send_message(
+                            #         '{}(uc店号:{},mch_code:{},upc:{})—>>获取商品的是否可定、起订量、配送类型数据失败'.format(goods_name, uc_shopid,
+                            #                                                              mch_code, upc), 3)
 
 
                         # 获取小仓库库存
