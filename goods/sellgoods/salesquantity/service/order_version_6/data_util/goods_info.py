@@ -263,7 +263,7 @@ def get_shop_order_goods(shopid,add_type=False):
                                 if purchase_price1 is None:
                                     date_los_sale["purchase_price"] = 0
                                 else:
-                                    purchase_price1["purchase_price"] = purchase_price1
+                                    date_los_sale["purchase_price"] = purchase_price1
                                 date_los_sale["create_date"] = start_date1
                                 sale_falg = True
                                 if results_loss is not None and len(results_loss) > 0:
