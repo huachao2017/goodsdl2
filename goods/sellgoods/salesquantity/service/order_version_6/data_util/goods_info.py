@@ -146,6 +146,8 @@ def get_shop_order_goods(shopid,add_type=False):
                             continue
 
                         # 获取商品的 可定  起订量  配送类型
+                        start_sum = 0
+                        delivery_type = 1
                         try:
                             cursor.execute(
                                 "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and order_status = 1 ".format(supplier_id,supplier_goods_code))
@@ -266,7 +268,13 @@ def get_shop_order_goods(shopid,add_type=False):
                                         if upc_loss_purchase_price is not None and upc_sale_amounts is not None and upc_sale_nums is not None and upc_handle_nums is not None:
                                             loss_avg_profit_amount += (upc_sale_amounts - upc_handle_amounts - upc_handle_nums * upc_loss_purchase_price) / upc_sale_amounts
                                     else:
-                                        loss_avg_amount += 0-upc_handle_amounts
+                                        loss_avg_profit_amount += 0
+                                     # 计算废弃后毛利额
+                                    if upc_sale_amounts is not None and upc_loss_purchase_price is not None and upc_sale_nums is not None and upc_handle_nums is not None:
+                                        loss_avg_amount += upc_sale_amounts - upc_handle_amounts - upc_handle_nums * upc_loss_purchase_price
+                                    else:
+                                        loss_avg_amount = 0
+
                                 loss_avg = float(loss_avg / 7)
                                 loss_avg_amount = float(loss_avg_amount /7)
                                 loss_avg_profit_amount = float(loss_avg_profit_amount /7)

@@ -3,7 +3,8 @@ import json
 from django.db import connections
 
 from goods.shelfdisplay.db_data import Category3
-from goods.shelfdisplay.replacedisplay.display_taizhang import TaizhangDisplay, Shelf, Level, DisplayGoods
+from goods.shelfdisplay.replacedisplay.display_taizhang import TaizhangDisplay
+from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
 
 
 def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
@@ -64,17 +65,29 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
             # floor_type 1：普通陈列 2：挂层
             level = Level(shelf, i, round(float(level['height'])), round(float(level['depth'])))
             shelf.add_level(level)
-            last_display_goods = None
+
+            goods_data_to_left_top = {}
             for goods_info in goods_level_array:
                 goods_data = find_goods(goods_info['mch_goods_code'], base_data.goods_data_list)
-                if last_display_goods is not None and goods_data.equal(last_display_goods.goods_data):
-                    # TODO 需要把扩面和叠放反算出来
-                    pass
+                if goods_data in goods_data_to_left_top:
+                    goods_data_to_left_top[goods_data].append((goods_info['left'], goods_info['top']))
                 else:
-                    last_display_goods = DisplayGoods(goods_data)
-                    if goods_data.category3 not in category3_list:
-                        category3_list.append(goods_data.category3)
-                    level.add_display_goods(last_display_goods)
+                    goods_data_to_left_top[goods_data] = [(goods_info['left'], goods_info['top'])]
+
+            for goods_data in goods_data_to_left_top.keys():
+                left_list = []
+                top_list = []
+                for left_top in goods_data_to_left_top[goods_data]:
+                    left = int(left_top[0])
+                    top = int(left_top[1])
+                    if left not in left_list:
+                        left_list.append(left)
+                    if top not in top_list:
+                        top_list.append(top)
+                display_goods = DisplayGoods(goods_data,face_num=len(left_list),superimpose_num=len(top_list))
+                level.add_display_goods(display_goods)
+                if goods_data.category3 not in category3_list:
+                    category3_list.append(goods_data.category3)
 
         # FIXME 目前只支持一个货架
         choose_goods_list = filter_goods_data(category3_list, base_data.goods_data_list)

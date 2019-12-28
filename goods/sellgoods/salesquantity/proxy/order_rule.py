@@ -129,7 +129,7 @@ def rule_bingql(drg_inss,order_data_dict):
         return order_data_dict
     bingql_drg_inss = []
     for drg_ins in drg_inss:
-        if drg_ins.category2_id == 124:
+        if drg_ins.category2_id == 124 and drg_ins.upc_status_type == 2:
             bingql_drg_inss.append(drg_ins)
     bingql_drg_inss.sort(key=cmp_to_key(many_sort))
     # 不减品的 减少起订量
