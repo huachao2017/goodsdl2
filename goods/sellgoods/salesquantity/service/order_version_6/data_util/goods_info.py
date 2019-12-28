@@ -245,7 +245,7 @@ def get_shop_order_goods(shopid,add_type=False):
 
                             cursor_dmstore.execute(
                                 "SELECT sum(handle_amount) as h_amount,sum(handle_number) as h_number,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date   FROM shop_goods_loss_record  where shop_id = {} AND shop_goods_id = {} and create_time >= '{} 00:00:00'  and create_time < '{} 00:00:00' GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(
-                                    shopid, shop_goods_id, start_date, end_date, start_date, end_date))
+                                    shopid, shop_goods_id, start_date, end_date))
                             results_loss = cursor_dmstore.fetchall()
 
 
