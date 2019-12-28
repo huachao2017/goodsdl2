@@ -96,12 +96,20 @@ def generate(shop_id = None):
                     loss_oneday_nums =  drg_ins.loss_avg * one_day_psd / (1- drg_ins.loss_avg)
                     fudong_nums = 0
                     # #  浮动量 这块去掉
-                    # if loss_oneday_nums > 1 and drg_ins.loss_avg_profit_amount >0:
-                    #     fudong_nums = -1
-                    # if loss_oneday_nums <= 0 and drg_ins.loss_avg_profit_amount >0:
-                    #     fudong_nums = 1
-                    # if drg_ins.loss_avg_profit_amount <=0:
-                    #     fudong_nums = 0-drg_ins.loss_avg_nums
+                    if drg_ins.loss_avg_amount <=0:
+                        fudong_nums = 0-drg_ins.loss_avg_nums
+                    else:
+                        if loss_oneday_nums > 1:
+                            fudong_nums = -1
+                        if loss_oneday_nums <= 0:
+                            fudong_nums = 1
+                    end_date1 = str(time.strftime('%Y-%m-%d', time.localtime()))
+                    time1 = time.mktime(time.strptime(drg_ins.up_shelf_date, '%Y-%m-%d'))
+                    time2 = time.mktime(time.strptime(end_date1, '%Y-%m-%d'))
+                    days = int((time2 - time1) / (24 * 60 * 60))
+                    if days <=7:
+                        fudong_nums = 0
+                    drg_ins.fudong_nums = fudong_nums
                     safe_day = 0
                     if drg_ins.storage_day < 2:
                         safe_day = drg_ins.storage_day

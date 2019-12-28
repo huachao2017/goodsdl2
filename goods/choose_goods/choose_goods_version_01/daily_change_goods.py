@@ -216,20 +216,40 @@ class DailyChangeGoods:
         获取可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
         :return:
         """
-        sql = "SELECT erp_shop_id from erp_shop_related WHERE shop_id='{}' and erp_shop_type=2"
-        self.cursor.execute(sql.format(self.shop_id))
+        # sql = "SELECT erp_shop_id from erp_shop_related WHERE shop_id='{}' and erp_shop_type=2"
+        # self.cursor.execute(sql.format(self.shop_id))
+        # try:
+        #     erp_shop_id = self.cursor.fetchone()[0]
+        # except:
+        #     print('erp_shop_id获取失败！')
+        #     return []
+
+        self.cursor.execute("SELECT erp_shop_id from erp_shop_related WHERE shop_id ={} AND erp_shop_type=0;".format(self.shop_id))
         try:
             erp_shop_id = self.cursor.fetchone()[0]
         except:
             print('erp_shop_id获取失败！')
             return []
+        try:
+            ms_conn = connections["erp"]
+            ms_cursor = ms_conn.cursor()
+            ms_cursor.execute("SELECT authorized_shop_id FROM ms_relation WHERE is_authorized_shop_id IN (SELECT authorized_shop_id FROM	ms_relation WHERE is_authorized_shop_id = {} AND STATUS = 1) AND STATUS = 1".format(erp_shop_id))
+            all_data = ms_cursor.fetchall()
+            supplier_code = []
+            for data in all_data:
+                supplier_code.append(str(data[0]))
+        except:
+            print('supplier_code获取失败！')
+            return []
+
+
 
         # 获取商品的 可定 配送类型
         conn_ucenter = connections['ucenter']
         cursor_ucenter = conn_ucenter.cursor()
         delivery_type_dict = {}    # 店内码是key，配送类型是value
         try:
-            cursor_ucenter.execute("select id from uc_supplier where supplier_code = '{}'".format(erp_shop_id))
+            cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
             (supplier_id,) = cursor_ucenter.fetchone()
             self.supplier_id = supplier_id
             cursor_ucenter.execute(
@@ -623,6 +643,7 @@ if __name__ == '__main__':
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
+    # print(len(f.get_can_order_dict()))
 
 
 
