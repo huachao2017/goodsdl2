@@ -263,7 +263,7 @@ def get_shop_order_goods(shopid,add_type=False):
                             date_loss=[]
                             for i in range(7):
                                 start_date1 = str(
-                                    (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
+                                    (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
                                         days=i)).strftime("%Y-%m-%d"))
                                 date_los_sale = {}
                                 if price1 is None:
