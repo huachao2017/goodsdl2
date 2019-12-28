@@ -1,25 +1,8 @@
 import unittest
-from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
+
 from goods.shelfdisplay.replacedisplay.area_arrange import AreaManager
-
-class TestGoods:
-    def __init__(self, category2, category3, goods_name, height, width, psd_amount, goods_role, ranking):
-        self.category2 = category2
-        self.category3 = category3
-        self.goods_name = goods_name
-        self.height = height
-        self.width = width
-        self.psd_amount = psd_amount
-        self.goods_role = goods_role
-        self.ranking = ranking
-
-    def equal(self, another_goods):
-        if another_goods is not None:
-            return self.goods_name == another_goods.goods_name
-        return False
-
-    def __str__(self):
-        return self.goods_name
+from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
+from goods.shelfdisplay.replacedisplay.test.temporary_object import TestGoods
 
 
 class Test1(unittest.TestCase):
@@ -105,79 +88,7 @@ class Test1(unittest.TestCase):
         area_manager = AreaManager(self.shelf, self.levelid_to_displaygoods_list, choose_goods_list)
 
         area_manager._first_born_areas()
-
-        self.assertEqual(len(area_manager.area_list), 8)
-
-        self.assertEqual(len(area_manager.area_list[0].child_area_list), 1)
-        self.assertEqual(area_manager.area_list[0].child_area_list[0].level_id, 0)
-        self.assertEqual(len(area_manager.area_list[0].child_area_list[0].display_goods_list), 4)
-
-        self.assertEqual(len(area_manager.area_list[1].child_area_list), 1)
-        self.assertEqual(area_manager.area_list[1].child_area_list[0].level_id, 0)
-        self.assertEqual(len(area_manager.area_list[1].child_area_list[0].display_goods_list), 2)
-
-        self.assertEqual(len(area_manager.area_list[2].child_area_list), 3)
-        self.assertEqual(area_manager.area_list[2].child_area_list[0].level_id, 0)
-        self.assertEqual(len(area_manager.area_list[2].child_area_list[0].display_goods_list), 2)
-        self.assertEqual(area_manager.area_list[2].child_area_list[1].level_id, 1)
-        self.assertEqual(len(area_manager.area_list[2].child_area_list[1].display_goods_list), 8)
-        self.assertEqual(area_manager.area_list[2].child_area_list[2].level_id, 2)
-        self.assertEqual(len(area_manager.area_list[2].child_area_list[2].display_goods_list), 2)
-
-        self.assertEqual(len(area_manager.area_list[3].child_area_list), 1)
-        self.assertEqual(area_manager.area_list[3].child_area_list[0].level_id, 2)
-        self.assertEqual(len(area_manager.area_list[3].child_area_list[0].display_goods_list), 4)
-
-        self.assertEqual(len(area_manager.area_list[4].child_area_list), 2)
-        self.assertEqual(area_manager.area_list[4].child_area_list[0].level_id, 2)
-        self.assertEqual(len(area_manager.area_list[4].child_area_list[0].display_goods_list), 2)
-        self.assertEqual(area_manager.area_list[4].child_area_list[1].level_id, 3)
-        self.assertEqual(len(area_manager.area_list[4].child_area_list[1].display_goods_list), 2)
-
-        self.assertEqual(len(area_manager.area_list[5].child_area_list), 2)
-        self.assertEqual(area_manager.area_list[5].child_area_list[0].level_id, 3)
-        self.assertEqual(len(area_manager.area_list[5].child_area_list[0].display_goods_list), 6)
-        self.assertEqual(area_manager.area_list[5].child_area_list[1].level_id, 4)
-        self.assertEqual(len(area_manager.area_list[5].child_area_list[1].display_goods_list), 2)
-
-        self.assertEqual(len(area_manager.area_list[6].child_area_list), 1)
-        self.assertEqual(area_manager.area_list[6].child_area_list[0].level_id, 4)
-        self.assertEqual(len(area_manager.area_list[6].child_area_list[0].display_goods_list), 5)
-
-        self.assertEqual(len(area_manager.area_list[7].child_area_list), 1)
-        self.assertEqual(area_manager.area_list[7].child_area_list[0].level_id, 4)
-        self.assertEqual(len(area_manager.area_list[7].child_area_list[0].display_goods_list), 1)
-
-        # for area in area_manager.area_list:
-        #     print(area)
-
         area_manager._second_combine_areas()
-        self.assertEqual(len(area_manager.area_list), 4)
-
-        self.assertEqual(len(area_manager.area_list[0].child_area_list), 2)
-        self.assertEqual(len(area_manager.area_list[0].child_area_list[0].display_goods_list), 4)
-        self.assertEqual(len(area_manager.area_list[0].child_area_list[1].display_goods_list), 2)
-
-        self.assertEqual(len(area_manager.area_list[1].child_area_list), 3)
-        self.assertEqual(len(area_manager.area_list[1].child_area_list[0].display_goods_list), 2)
-        self.assertEqual(len(area_manager.area_list[1].child_area_list[1].display_goods_list), 8)
-        self.assertEqual(len(area_manager.area_list[1].child_area_list[2].display_goods_list), 2)
-
-        self.assertEqual(len(area_manager.area_list[2].child_area_list), 3)
-        self.assertEqual(len(area_manager.area_list[2].child_area_list[0].display_goods_list), 4)
-        self.assertEqual(len(area_manager.area_list[2].child_area_list[1].display_goods_list), 2)
-        self.assertEqual(len(area_manager.area_list[2].child_area_list[2].display_goods_list), 2)
-
-        self.assertEqual(len(area_manager.area_list[3].child_area_list), 4)
-        self.assertEqual(len(area_manager.area_list[3].child_area_list[0].display_goods_list), 6)
-        self.assertEqual(len(area_manager.area_list[3].child_area_list[1].display_goods_list), 2)
-        self.assertEqual(len(area_manager.area_list[3].child_area_list[2].display_goods_list), 5)
-        self.assertEqual(len(area_manager.area_list[3].child_area_list[3].display_goods_list), 1)
-
-        # print('\n')
-        for area in area_manager.area_list:
-            print(area)
-
         area_manager._prepare_area_base_data()
         self.assertEqual(len(area_manager.area_list[0].choose_goods_list), 5)
         self.assertEqual(len(area_manager.area_list[1].choose_goods_list), 0)
@@ -206,21 +117,8 @@ class Test1(unittest.TestCase):
         print('\n')
         for area in area_manager.area_list:
             print(area)
-        area_manager._arrange_areas()
-
-        self.assertEqual(area_manager.threshold, 100)
-        self.assertEqual(len(area_manager.area_list[0].candidate_display_goods_list_list), 8)
-        self.assertEqual(len(area_manager.area_list[1].candidate_display_goods_list_list), 1)
-        self.assertEqual(len(area_manager.area_list[2].candidate_display_goods_list_list), 1)
-        self.assertEqual(len(area_manager.area_list[3].candidate_display_goods_list_list), 1)
-
-        candidate_shelf_list = area_manager._generate_all_area_candidate()
-
-        self.assertEqual(len(candidate_shelf_list), 8)
-
-        best_candidate_shelf = area_manager.calculate_best_candidate_shelf(candidate_shelf_list)
-        print(best_candidate_shelf)
 
 
-if __name__ == '__main__':
-    unittest.main()#运行所有的测试用例
+
+# if __name__ == '__main__':
+#     unittest.main()#运行所有的测试用例
