@@ -415,6 +415,8 @@ class Area:
             for i in range(len(new_display_goods_list) - 1, -1, -1):
                 if new_display_goods_list[i].goods_data.category3 == up_choose_goods.category3:
                     up_choose_goods_to_insert_position[up_choose_goods] = [i + 1]
+                    break
+
         up_choose_goods_to_end = {}
         for up_choose_goods in self.up_choose_goods_list:
             up_choose_goods_to_end[up_choose_goods] = False

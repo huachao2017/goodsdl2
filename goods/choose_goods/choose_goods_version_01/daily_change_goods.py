@@ -640,10 +640,10 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 if __name__ == '__main__':
 
     f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598",'lishu_test_008',806)
-    # f.recommend_03()
+    f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
-    print(len(f.get_can_order_dict()))
+    # print(len(f.get_can_order_dict()))
 
 
 
