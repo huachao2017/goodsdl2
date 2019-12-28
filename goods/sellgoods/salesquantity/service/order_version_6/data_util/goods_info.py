@@ -302,7 +302,7 @@ def get_shop_order_goods(shopid,add_type=False):
                                     date_los_sale["los_nums"] = 0
                                     date_los_sale["los_amount"] = 0
                                 date_loss.append(date_los_sale)
-
+                            print ("date_loss "+str(date_loss))
                             for date_los_sale in date_loss:
                                 if date_los_sale["los_nums"]+date_los_sale["sale_nums"] != 0:
                                     day_loss_avg = date_los_sale["los_nums"] / (date_los_sale["los_nums"]+date_los_sale["sale_nums"])
