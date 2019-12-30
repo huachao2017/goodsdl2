@@ -15,7 +15,7 @@ yolov3_params={
 
 #########################################YOLOV3-mengniu##################################################################
 mengniu_yolov3_params={
-    'good_model_path' :'/home/ai/model/mengniu/ep4741-loss37.220-val_loss39.538.h5',
+    'good_model_path' :'/home/ai/model/mengniu/ep3053-loss39.789-val_loss42.951.h5',
     'anchors_path' :'./goods/freezer/keras_yolo3/model_data/mengniu_yolo_anchors.txt',
     'classes_path' : './goods/freezer/keras_yolo3/model_data/mengniu_voc_classes.txt',
     'label_path':'./goods/freezer/keras_yolo3/model_data/mengniu_label_map.pbtxt',
@@ -67,16 +67,16 @@ baidu_ai_instance1={
 shellgoods_params={
     "spark_context":"spark://10.10.11.14:7077",
     "online_model_name":"decision_tree",
-    "test_data_save_path":"/home/ai/data/predict_test/test3.txt",
+    "test_data_save_path":"/data/ai/data/predict_test/test3.txt",
     "regressor_model_path" : {
-        "linear": "/home/ai/model/regressor/LinearRegressionModel",
-        "decision_tree": "/home/ai/model/regressor/DecisionTreeRegressionModel",
-        "gb_tree": "/home/ai/model/regressor/GBTRegressionModel",
-        "random_forest": "/home/ai/model/regressor/RandomForestRegressionModel",
-        "keras_regress":"/home/ai/model/regressor/keras_regress/"
+        "linear": "/data/ai/model/regressor/LinearRegressionModel",
+        "decision_tree": "/data/ai/model/regressor/DecisionTreeRegressionModel",
+        "gb_tree": "/data/ai/model/regressor/GBTRegressionModel",
+        "random_forest": "/data/ai/model/regressor/RandomForestRegressionModel",
+        "keras_regress":"/data/ai/model/regressor/keras_regress/"
     },
     'sales2_old_traindata':'/data/ai/data/keras_sales2_data/',
-    'keras_day_sales_model_1':'/home/ai/model/regressor/keras_regress/2019-11-26_1.h5',
+    'keras_day_sales_model_1':'/data/ai/model/regressor/keras_regress/2019-11-26_1.h5',
     # 销量预测
     'predict_shop_ids':'(3598,1284)',
     "predict_ext_days":7,
