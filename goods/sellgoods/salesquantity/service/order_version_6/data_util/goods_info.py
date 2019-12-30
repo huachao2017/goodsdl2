@@ -228,83 +228,95 @@ def get_shop_order_goods(shopid,add_type=False):
                         loss_avg_amount = 0 # 7天平均废弃额
                         try:
                             cursor_dmstore.execute(
-                                "select id,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                "select id,stock,price,purchase_price FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
                                     upc, shopid))
-                            (shop_goods_id,upc_stock) = cursor_dmstore.fetchone()
-
-                            sql_loss = "select  T.nums,T.amounts,T.create_date,T2.handle_amount,T2.handle_number,T2.price,T2.purchase_price from (SELECT shop_goods_id as t1_shop_goods_id,T1.handle_amount,T1.handle_number,T1.price,T1.purchase_price,DATE_FORMAT(T1.create_time,'%Y-%m-%d') as t1_create_date  FROM shop_goods_loss_record T1 where shop_id = {} AND shop_goods_id = {} and create_time >= '{} 00:00:00'  and create_time < '{} 00:00:00') T2 LEFT JOIN ( "\
-                                            "SELECT shop_goods_id ,sum(number) AS nums,sum(amount) as amounts,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date FROM payment_detail "\
-	                                            "WHERE shop_id = {} AND shop_goods_id = {} AND number > 0 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( "\
-			                                        "SELECT DISTINCT(payment.id) FROM payment WHERE payment.status = 10 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' "\
-		                                            " )" \
-                                            "GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d') "\
-                                            ") T  on T.shop_goods_id = T2.t1_shop_goods_id and T.create_date = T2.t1_create_date "
+                            (shop_goods_id,upc_stock,price1,purchase_price1) = cursor_dmstore.fetchone()
                             end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
                             start_date = str(
                                 (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                                     days=-7)).strftime("%Y-%m-%d"))
-                            sql_loss = sql_loss.format(shopid,shop_goods_id,start_date,end_date,shopid,shop_goods_id,start_date,end_date,start_date,end_date)
-                            cursor_dmstore.execute(sql_loss)
-                            loss_results = cursor_dmstore.fetchall()
-                            if loss_results is not None and len(loss_results) > 0:
-                                for loss_result in loss_results:
-                                    loss_avg_one_day = 0
-                                    upc_sale_nums = loss_result[0]
-                                    upc_sale_amounts = loss_result[1]
-                                    upc_sale_create_date = loss_result[2]
-                                    upc_handle_amounts = loss_result[3]
-                                    upc_handle_nums = loss_result[4]
-                                    upc_loss_price = loss_result[5]
-                                    upc_loss_purchase_price = loss_result[6]
-                                    if upc_handle_nums is not None:
-                                        loss_avg_nums+=upc_handle_nums
-                                    if upc_handle_amounts is not None and upc_sale_nums is not None:
-                                        loss_avg_one_day = float(upc_handle_amounts / (upc_handle_amounts+upc_sale_nums))
-                                    elif upc_handle_amounts is not None and upc_sale_nums is None:
-                                        loss_avg_one_day =  float(upc_handle_amounts / (upc_handle_amounts))
-                                    loss_avg += loss_avg_one_day
-                                    # 计算废弃后毛利率
-                                    if upc_sale_amounts is not None and upc_sale_amounts != 0 :
-                                        if upc_loss_purchase_price is not None and upc_sale_amounts is not None and upc_sale_nums is not None and upc_handle_nums is not None:
-                                            loss_avg_profit_amount += (upc_sale_amounts - upc_handle_amounts - upc_handle_nums * upc_loss_purchase_price) / upc_sale_amounts
-                                    else:
-                                        loss_avg_profit_amount += 0
-                                     # 计算废弃后毛利额
-                                    if upc_sale_amounts is not None and upc_loss_purchase_price is not None and upc_sale_nums is not None and upc_handle_nums is not None:
-                                        loss_avg_amount += upc_sale_amounts - upc_handle_amounts - upc_handle_nums * upc_loss_purchase_price
-                                    else:
-                                        loss_avg_amount = 0
+                            # 计算销量  销售额
+                            cursor_dmstore.execute(
+                                "SELECT sum(number) AS nums,sum(amount) as amounts,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date FROM payment_detail " \
+                                "WHERE shop_id = {} AND shop_goods_id = {} AND number > 0 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
+                                "SELECT DISTINCT(payment.id) FROM payment WHERE payment.status = 10 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' " \
+                                " ) GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(shopid,shop_goods_id,start_date,end_date,start_date,end_date))
+                            results_sales = cursor_dmstore.fetchall()
 
-                                loss_avg = float(loss_avg / 7)
-                                loss_avg_amount = float(loss_avg_amount /7)
-                                loss_avg_profit_amount = float(loss_avg_profit_amount /7)
-                                loss_avg_nums = float(loss_avg_nums /7)
-                        except Exception as e :
-                            print ("dmstore 废弃率 计算失败 {}-{}-{}".format(shopid, upc,goods_name))
+                            cursor_dmstore.execute(
+                                "SELECT sum(handle_amount) as h_amount,sum(handle_number) as h_number,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date   FROM shop_goods_loss_record  where shop_id = {} AND shop_goods_id = {} and create_time >= '{} 00:00:00'  and create_time < '{} 00:00:00' GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(
+                                    shopid, shop_goods_id, start_date, end_date))
+                            results_loss = cursor_dmstore.fetchall()
+
+
+                            # 初始化日期字典
+                            date_loss=[]
+                            for i in range(7):
+                                start_date1 = str(
+                                    (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
+                                        days=i)).strftime("%Y-%m-%d"))
+                                date_los_sale = {}
+                                if price1 is None:
+                                    date_los_sale["price"] = 0
+                                else:
+                                    date_los_sale["price"] = price1
+                                if purchase_price1 is None:
+                                    date_los_sale["purchase_price"] = 0
+                                else:
+                                    date_los_sale["purchase_price"] = purchase_price1
+                                date_los_sale["create_date"] = start_date1
+                                sale_falg = True
+                                if results_sales is not None and len(results_sales) > 0:
+                                    for results_sale in results_sales:
+                                        sale_nums = results_sale[0]
+                                        sale_amounts = results_sale[1]
+                                        create_date =  str(results_sale[2])
+                                        if create_date == start_date1:
+                                            sale_falg = False
+                                            date_los_sale["sale_nums"] = float(sale_nums)
+                                            date_los_sale["sale_amounts"] = float(sale_amounts)
+                                if sale_falg:
+                                    date_los_sale["sale_nums"] = 0
+                                    date_los_sale["sale_amounts"] = 0
+                                los_falg = True
+                                if results_loss is not None and len(results_loss) > 0:
+                                    for results_los in results_loss:
+                                        los_amount = results_los[0]
+                                        los_nums = results_los[1]
+                                        create_date = str(results_los[2])
+                                        if create_date == start_date1:
+                                            los_falg = False
+                                            date_los_sale["los_nums"] = float(los_nums)
+                                            date_los_sale["los_amount"] = float(los_amount)
+                                if los_falg:
+                                    date_los_sale["los_nums"] = 0
+                                    date_los_sale["los_amount"] = 0
+                                date_loss.append(date_los_sale)
+                            print ("date_loss "+str(date_loss))
+                            for date_los_sale in date_loss:
+                                if date_los_sale["los_nums"]+date_los_sale["sale_nums"] != 0:
+                                    day_loss_avg = date_los_sale["los_nums"] / (date_los_sale["los_nums"]+date_los_sale["sale_nums"])
+                                else:
+                                    day_loss_avg = 0
+                                loss_avg+=day_loss_avg
+
+                                if date_los_sale["sale_nums"] == 0:
+                                    day_loss_avg_profit_amount = 0
+                                else:
+                                    day_loss_avg_profit_amount = (date_los_sale["sale_amounts"]-date_los_sale["los_amount"]-date_los_sale["sale_nums"]*date_los_sale["purchase_price"]) /date_los_sale["sale_amounts"]
+
+                                loss_avg_profit_amount += day_loss_avg_profit_amount
+
+                                day_loss_avg_amount = date_los_sale["sale_amounts"]-date_los_sale["los_amount"]-date_los_sale["sale_nums"]*date_los_sale["purchase_price"]
+                                loss_avg_amount += day_loss_avg_amount
+                                loss_avg_nums +=  date_los_sale["los_nums"]
+                            loss_avg = float(loss_avg / 7)
+                            loss_avg_amount = float(loss_avg_amount / 7)
+                            loss_avg_profit_amount = float(loss_avg_profit_amount / 7)
+                            loss_avg_nums = float(loss_avg_nums / 7)
+                        except:
                             traceback.print_exc()
-                            loss_avg = 0
-                            loss_avg_profit_amount = 0
-                            loss_avg_amount = 0
-                            loss_avg_nums = 0
-                        # if erp_resupply_id is not None:
-                        #     try:
-                        #         # 获取起订量
-                        #         # "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id in (select sku_id from ls_sku where model_id = '{0}' and ls_sku.prod_id in (select ls_prod.prod_id from ls_prod where ls_prod.shop_id = {1} ))"
-                        #         cursor_erp.execute(
-                        #             "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}' and s.party_code = '{}'".format(
-                        #                 erp_resupply_id, upc,mch_code))
-                        #         (sku_id,) = cursor_erp.fetchone()
-                        #         cursor_erp.execute(
-                        #             "select start_sum,multiple from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
-                        #                 sku_id))
-                        #         (start_sum, multiple) = cursor_erp.fetchone()
-                        #     except:
-                        #         print('Erp找不到商品:{}-{}！'.format(upc, erp_resupply_id))
-                        #         start_sum = 0
-                        #         multiple = 0
-                        # else:
-                        #     start_sum = 0
-                        #     multiple = 0
+                            print ("计算损失 失败 ， upc="+str(upc))
                         try:
                             # 获取小仓库库存
                             cursor_erp.execute(
@@ -320,14 +332,17 @@ def get_shop_order_goods(shopid,add_type=False):
                             supply_stock = 0
 
                         #获取在途补货单数
-                        try:
-                            sql_add_shop = "SELECT sum(item.sub_item_count) FROM ls_sub_item item LEFT JOIN ls_sku sku ON item.sku_id=sku.sku_id WHERE sub_number IN ( " \
-	                                            "SELECT sub_number FROM ls_sub WHERE buyer_shop_id IN ( SELECT is_authorized_shop_id FROM ms_relation WHERE authorized_shop_id = {}) AND status = 50 " \
-                                                " ) and  sku.model_id='{}'"
-                            (add_sub_count,) = cursor_erp.fetchone()
-                        except:
-                            print ("ErpSupply 获取在途补货单数 找不到商品{}-{}".format(erp_supply_id,upc))
-                            add_sub_count = 0
+                        add_sub_count = 0 #一仓一店， 该配置可以为0
+                        # try:
+                        #     sql_add_shop = "SELECT sum(item.sub_item_count) FROM ls_sub_item item LEFT JOIN ls_sku sku ON item.sku_id=sku.sku_id WHERE sub_number IN ( " \
+	                     #                        "SELECT sub_number FROM ls_sub WHERE buyer_shop_id IN ( SELECT is_authorized_shop_id FROM ms_relation WHERE authorized_shop_id = {}) AND status = 50 " \
+                        #                         " ) and  sku.model_id='{}'"
+                        #     sql_add_shop = sql_add_shop.format(upc)
+                        #     cursor_erp.execute(sql_add_shop)
+                        #     (add_sub_count,) = cursor_erp.fetchone()
+                        # except:
+                        #     print ("ErpSupply 获取在途补货单数 找不到商品{}-{}".format(erp_supply_id,upc))
+                        #     add_sub_count = 0
                         # 获取在途订单数
                         try:
                             cursor_erp.execute(
