@@ -74,7 +74,7 @@ class DataProcess():
             # "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id = {} and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0".format(supplier_id))
         all_data = cursor_ucenter.fetchall()
         for data in all_data:
-            delivery_type_dict[data[0]] = data[1]
+            # delivery_type_dict[data[0]] = data[1]
             can_order_list.append(data[0])
         # except:
         #     print('pos店号是{},查询是否可订货和配送类型失败'.format(self.pos_shop_id))
