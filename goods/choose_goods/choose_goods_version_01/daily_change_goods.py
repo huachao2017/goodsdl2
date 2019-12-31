@@ -96,7 +96,8 @@ class DailyChangeGoods:
         :return:
         """
         all_third_category_mch_dict = {}
-        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id = {} and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code is not NULL and c.mch_goods_code !='' GROUP BY c.display_third_cat_id"
+        # 注意：and c.display_third_cat_id>0 类型是字符串
+        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id = {} and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code is not NULL and c.mch_goods_code !='' and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
         try:
             self.cursor_ucenter.execute(sql.format(self.supplier_id))
             all_data = self.cursor_ucenter.fetchall()
@@ -135,7 +136,8 @@ class DailyChangeGoods:
         :return:
         """
         third_category_mch_dict = {}
-        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id = {} and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code in ({}) GROUP BY c.display_third_cat_id"
+        # 注意：and c.display_third_cat_id>0 类型是字符串
+        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id = {} and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code in ({}) and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
         try:
             self.cursor_ucenter.execute(sql.format(self.supplier_id,",".join(mch_code_list)))
             all_data = self.cursor_ucenter.fetchall()
