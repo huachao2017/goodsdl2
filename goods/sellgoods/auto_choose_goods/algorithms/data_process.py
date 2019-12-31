@@ -61,23 +61,23 @@ class DataProcess():
         cursor_ucenter = conn_ucenter.cursor()
         delivery_type_dict = {}    # 店内码是key，配送类型是value
         can_order_list = []   #可订货列表
-        try:
-            cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
-            all_supplier_id_data = cursor_ucenter.fetchall()
-            for supplier_data in all_supplier_id_data:
-                self.supplier_id_list.append(str(supplier_data[0]))
+        # try:
+        cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
+        all_supplier_id_data = cursor_ucenter.fetchall()
+        for supplier_data in all_supplier_id_data:
+            self.supplier_id_list.append(str(supplier_data[0]))
 
-            cursor_ucenter.execute(
-                "select supplier_goods_code from uc_supplier_goods where supplier_id in ({}) and order_status = 1 ".format(','.join(self.supplier_id_list)))
-                # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
-                # 有尺寸数据
-                # "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id = {} and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0".format(supplier_id))
-            all_data = cursor_ucenter.fetchall()
-            for data in all_data:
-                delivery_type_dict[data[0]] = data[1]
-                can_order_list.append(data[0])
-        except:
-            print('pos店号是{},查询是否可订货和配送类型失败'.format(self.pos_shop_id))
+        cursor_ucenter.execute(
+            "select supplier_goods_code from uc_supplier_goods where supplier_id in ({}) and order_status = 1 ".format(','.join(self.supplier_id_list)))
+            # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
+            # 有尺寸数据
+            # "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id = {} and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0".format(supplier_id))
+        all_data = cursor_ucenter.fetchall()
+        for data in all_data:
+            delivery_type_dict[data[0]] = data[1]
+            can_order_list.append(data[0])
+        # except:
+        #     print('pos店号是{},查询是否可订货和配送类型失败'.format(self.pos_shop_id))
         return can_order_list,delivery_type_dict
 
 if __name__ == '__main__':
