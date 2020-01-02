@@ -139,6 +139,8 @@ class GoodsData:
         if psd is None:
             psd = 0
         self.psd = psd  # 预测销量
+        if psd_amount is None:
+            psd_amount = 0
         self.psd_amount = psd_amount # 预测销售额
         self.face_num = 1  # 在某层陈列时填入
         self.add_face_num = 0  # 商品不足做扩面处理
