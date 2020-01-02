@@ -46,7 +46,7 @@ def generate_workflow_displays(uc_shopid, batch_id):
         # 获取上次陈列
         try:
             cursor.execute(
-                "select id from sf_taizhang_display where taizhang_id={} and status in (1,2) and approval_status=1 order by start_datetime desc limit 1".format(
+                "select id from sf_taizhang_display where taizhang_id={} and status in (1,2,3) and approval_status=1 order by start_datetime desc limit 1".format(
                     one_tz_id[0]))
             (old_display_id,) = cursor.fetchone()
             generate_displays(uc_shopid, one_tz_id[0], batch_id, old_display_id)
@@ -75,7 +75,11 @@ def generate_displays(uc_shopid, tz_id, batch_id, old_display_id = None):
     :return: taizhang_display对象，如果为None则说明生成失败
     """
 
-    print("begin generate_displays:{},{},{}".format(uc_shopid, tz_id, batch_id))
+    if old_display_id is None:
+        print("begin generate_first_displays:{},{},{}".format(uc_shopid, tz_id, batch_id))
+    else:
+        print("begin generate_replace_displays:{},{},{},{}".format(uc_shopid, tz_id, batch_id, old_display_id))
+
     close_old_connections()
 
     # 初始化基础数据
