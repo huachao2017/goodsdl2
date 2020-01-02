@@ -43,6 +43,8 @@ class TaizhangDisplay:
         """
         begin_time = time.time()
 
+        print(self.shelf)
+
         # 区域处理
         levelid_to_displaygoods_list = {}
         for level in self.shelf.levels:

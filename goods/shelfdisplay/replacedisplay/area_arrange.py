@@ -111,7 +111,6 @@ class AreaManager:
         area_category3 = None
         one_display_goods_list = []
 
-        print(self.levelid_to_displaygoods_list)
         # 确保从底层开始计算
         sorted_level_ids = list(self.levelid_to_displaygoods_list.keys())
         sorted_level_ids.sort()
