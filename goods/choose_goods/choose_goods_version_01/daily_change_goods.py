@@ -366,7 +366,7 @@ class DailyChangeGoods:
         must_up_mch_goods_list = [str(goods[4]) for goods in must_up_goods]
         optional_up_mch_goods_dict = {}
         for goods in optional_up_goods:
-            print(goods)
+            # print(goods)
             optional_up_mch_goods_dict[str(goods[4])] = goods
 
 
@@ -374,7 +374,6 @@ class DailyChangeGoods:
         rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
 
         for mch_goods, score in rank_list:
-            # mch_goods, score = rank_tuple
             if mch_goods not in self.taizhang_goods_mch_code_list and mch_goods not in must_up_mch_goods_list:
                 if str(mch_goods) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(mch_goods)]
@@ -390,7 +389,7 @@ class DailyChangeGoods:
                         temp_data.apeend(score)
                         must_up_goods.append(optional_up_mch_goods_dict[mch_goods])
                     else:
-                        print("123456789")
+                        # print("123456789")
                         sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}'"
                         self.cursor_ucenter.execute(sql.format(mch_goods))
                         try:
@@ -701,8 +700,8 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
-    f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
+    # f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
