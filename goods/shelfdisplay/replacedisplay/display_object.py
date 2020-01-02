@@ -67,7 +67,7 @@ class DisplayGoods:
         for display_goods in display_goods_list:
             if self.goods_data.equal(display_goods.goods_data):
                 break
-            init_left += display_goods.get_width()
+            init_left += display_goods.goods_data.width * display_goods.face_num
         for i in range(self.face_num + self.goods_data.superimpose_num):
             for j in range(self.superimpose_num):
                 col = i
