@@ -363,18 +363,18 @@ class DailyChangeGoods:
         print("must_up_goods长度",len(must_up_goods))
         print("optional_up_goods长度",len(optional_up_goods))
         # candidate_mch_goods_list = [goods[4] for goods in candidate_up_goods_list]
-        must_up_mch_goods_list = [goods[4] for goods in must_up_goods]
+        must_up_mch_goods_list = [str(goods[4]) for goods in must_up_goods]
         optional_up_mch_goods_dict = {}
         for goods in optional_up_goods:
             print(goods)
-            optional_up_mch_goods_dict[goods[4]] = goods
+            optional_up_mch_goods_dict[str(goods[4])] = goods
 
 
         itemCF = ItemBasedCF(self.shop_id,70,50)   # 协同过滤
         rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
 
-        for rank_tuple in rank_list:
-            mch_goods, score = rank_tuple
+        for mch_goods, score in rank_list:
+            # mch_goods, score = rank_tuple
             if mch_goods not in self.taizhang_goods_mch_code_list and mch_goods not in must_up_mch_goods_list:
                 if str(mch_goods) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(mch_goods)]
@@ -383,12 +383,14 @@ class DailyChangeGoods:
 
                     must_up_mch_goods_list.append(mch_goods)
                     if mch_goods in optional_up_mch_goods_dict:
+                        print("不可能！")
                         temp_data = optional_up_mch_goods_dict[mch_goods]
                         temp_data[-1] = 2
                         temp_data[-2] = 1
                         temp_data.apeend(score)
                         must_up_goods.append(optional_up_mch_goods_dict[mch_goods])
                     else:
+                        print("123456789")
                         sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}'"
                         self.cursor_ucenter.execute(sql.format(mch_goods))
                         try:
