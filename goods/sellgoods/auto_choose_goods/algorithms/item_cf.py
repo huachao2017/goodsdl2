@@ -143,7 +143,7 @@ class ItemBasedCF():
     def recommend_02(self):
         shop_sales_data = self.get_shop_sales_data(self.pos_shop_id)
         for data in shop_sales_data:
-            self.shop_psd_number_dict[data[3]] = data[6]
+            self.shop_psd_number_dict[str(data[3])] = data[6]
 
         K = self.n_sim_goods
         N = self.n_rec_goods
