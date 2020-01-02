@@ -17,7 +17,7 @@ from operator import itemgetter
 
 class ItemBasedCF():
     # 初始化参数
-    def __init__(self,pos_shop_id):
+    def __init__(self,pos_shop_id,n_sim_goods,n_rec_goods):
 
         self.pos_shop_id = pos_shop_id
         self.days = 28
@@ -25,9 +25,9 @@ class ItemBasedCF():
         self.can_order_mch_list = []
         self.dmstore_cursor = connections['dmstore'].cursor()
 
-        # 找到相似的20个商品，为门店推荐10个商品
-        self.n_sim_goods = 70
-        self.n_rec_goods = 50
+        # 找到相似的多少个商品，为门店推荐多少个商品
+        self.n_sim_goods = n_sim_goods
+        self.n_rec_goods = n_rec_goods
 
         # 将数据集划分为训练集和测试集
         self.trainSet = {}
