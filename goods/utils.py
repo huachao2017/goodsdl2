@@ -114,7 +114,7 @@ def calculate_goods_up_datetime(uc_shopid):
                     if not goods_upc in history_upc_dict:      # 如果不在历史里，则作为新的插入
                         insert_data_list.append((goods_upc,goods_name,goods_up_shelf_datetime,data[2]))
                     else:
-                        if data[2] != history_upc_dict[goods_upc]:     # 如果批次不相等，则是新的台账，品也相同，所以is_new_goods置为0
+                        if data[2] != history_upc_dict[goods_upc]:     # 如果批次不相等，则是新的台账，然后品也相同，所以is_new_goods置为0
                             cursor_ai.execute("update goods_up_shelf_datetime set is_new_goods=0 where shopid={} and upc='{}'".format(uc_shopid,goods_upc))
 
     print('insert_data_list:',insert_data_list)
@@ -193,7 +193,7 @@ def select_psd_data(upc,shop_id,time_range):
     :param time_range: 取数周期
     :return: psd,psd金额
     """
-    template_dict = {1284:3598,'1284':3598}  # 临时解决方案，先写死
+    template_dict = {1284:3598,'1284':3598, 4598:4598,'4598':4598}  # 临时解决方案，先写死
     template_shop_id = template_dict[shop_id]
     now = datetime.datetime.now()
     now_date = now.strftime('%Y-%m-%d %H:%M:%S')
