@@ -93,7 +93,7 @@ def day_order_process():
                                                        data[0]))  # 更新到“结束计算”和耗时多少
                 cursor_ai.connection.commit()
                 # if 'test' not in batch_id:
-                #     msg = "error ,e=" + str(e)
+                #     msg = "error ,e={}".format(e)
                 #     sass_interface.order_commit(batch_id, msg=msg)
     conn.close()
     conn_erp.close()
@@ -155,7 +155,7 @@ def add_order_process():
                                                        data[0]))  # 更新到“结束计算”和耗时多少
                 cursor_ai.connection.commit()
                 # if 'test' not in batch_id:
-                #     msg = "error ,e=" + str(e)
+                #     msg = "error ,e={}" .format(e)
                 #     sass_interface.order_commit(batch_id, msg=msg)
                 print ("data is error!" +str(data))
                 traceback.print_exc()
