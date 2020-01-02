@@ -264,5 +264,6 @@ if __name__ == '__main__':
     itemCF = ItemBasedCF(1284)
     # itemCF.get_dataset(rating_file)
     a = itemCF.recommend_02()
+    print(type(a))
     print(a)
     # itemCF.evaluate()
