@@ -148,11 +148,17 @@ class ItemBasedCF():
         K = self.n_sim_goods
         N = self.n_rec_goods
         rank = {}
+        ttt = 0
         for goods,rating in self.shop_psd_number_dict.items():
-            for related_goods, w in sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]:
-                t = rank.get(related_goods, 0)
-                t += w * float(rating)
-                rank[related_goods] = t
+            try:    # 该商店可能有的品在大集合里没有
+                for related_goods, w in sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]:
+                    t = rank.get(related_goods, 0)
+                    t += w * float(rating)
+                    rank[related_goods] = t
+            except:
+                ttt += 1
+                print(ttt)
+                continue
 
         return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
 
