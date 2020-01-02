@@ -36,9 +36,8 @@ def generate_workflow_displays(uc_shopid, batch_id):
     except:
         traceback.print_exc()
         print('获取台账失败：{}！'.format(uc_shopid))
-        raise ValueError('taizhang error:{}'.format(uc_shopid))
-    finally:
         cursor.close()
+        raise ValueError('taizhang error:{}'.format(uc_shopid))
 
     # 计算陈列
     taizhang_display_list = []
@@ -53,6 +52,8 @@ def generate_workflow_displays(uc_shopid, batch_id):
         except Exception as e:
             traceback.print_exc()
             generate_displays(uc_shopid, one_tz_id[0], batch_id)
+
+    cursor.close()
 
     # 通知台账系统
     # url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
