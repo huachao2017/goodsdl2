@@ -5,14 +5,18 @@
 
 陈列需要批次是因为依赖于选品，选品目前是通过店号和批次去获取
 """
-from goods.shelfdisplay.replacedisplay import db_display_data
-from goods.shelfdisplay import db_data
-from goods.models import ShelfDisplayDebug
 import json
-import traceback
 import os
+import traceback
+
 from django.db import connections
 from django.db import close_old_connections
+
+from goods.models import ShelfDisplayDebug
+from goods.shelfdisplay import db_data
+from goods.shelfdisplay.firstdisplay import db_display_data as first_db_display_data
+from goods.shelfdisplay.replacedisplay import db_display_data as replace_db_display_data
+
 
 def generate_workflow_displays(uc_shopid, batch_id):
     """
@@ -24,8 +28,9 @@ def generate_workflow_displays(uc_shopid, batch_id):
     cursor = connections['ucenter'].cursor()
     # 获取台账
     try:
+        # FIXME 只获取有指定三级分类的台账
         cursor.execute(
-            "select t.id, t.shelf_id from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(
+            "select t.id, t.shelf_id from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.third_cate_ids != ''".format(
                 uc_shopid))
         taizhangs = cursor.fetchall()
     except:
@@ -35,7 +40,6 @@ def generate_workflow_displays(uc_shopid, batch_id):
     finally:
         cursor.close()
 
-    cursor = connections['ucenter'].cursor()
     # 计算陈列
     taizhang_display_list = []
     for one_tz_id in taizhangs:
@@ -45,26 +49,33 @@ def generate_workflow_displays(uc_shopid, batch_id):
                 "select id from sf_taizhang_display where taizhang_id={} and status in (1,2) and approval_status=1 order by start_datetime desc limit 1".format(
                     one_tz_id[0]))
             (old_display_id,) = cursor.fetchone()
+            generate_displays(uc_shopid, one_tz_id[0], batch_id, old_display_id)
         except:
-            traceback.print_exc()
-            print('获取台账陈列失败：{},{}！'.format(uc_shopid, one_tz_id[0]))
-            raise ValueError('taizhang error:{},{}'.format(uc_shopid, one_tz_id[0]))
+            generate_displays(uc_shopid, one_tz_id[0], batch_id)
 
-        generate_replace_displays(uc_shopid, one_tz_id[0], old_display_id, batch_id)
+    # 通知台账系统
+    # url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
+    # headers = {
+    #     "Accept": "application/json",
+    #     "Content-Type": "application/json"
+    # }
+    # for taizhang_display in taizhang_display_list:
+    #     json_info = json.dumps(taizhang_display.to_json())
+    #     data = bytes(json_info, 'utf8')
+    #     resp = requests.post(url=url, data=data, headers=headers)
+    #     print('通知台账系统：'.format(resp))
 
-    cursor.close()
 
 
-def generate_replace_displays(uc_shopid, tz_id, old_display_id, batch_id):
+def generate_displays(uc_shopid, tz_id, batch_id, old_display_id = None):
     """
-    根据上次陈列自动汰换陈列一个批次流程的指定台账
+    自动陈列一个批次流程的指定台账
     :param uc_shopid: ucentor的shopid
     :param tz_id: 台账id
-    :param old_display_id: 上次陈列id
     :return: taizhang_display对象，如果为None则说明生成失败
     """
 
-    print("begin generate_displays:{},{},{},{}".format(uc_shopid, tz_id, old_display_id, batch_id))
+    print("begin generate_displays:{},{},{}".format(uc_shopid, tz_id, batch_id))
     close_old_connections()
 
     # 初始化基础数据
@@ -78,8 +89,11 @@ def generate_replace_displays(uc_shopid, tz_id, old_display_id, batch_id):
     )
 
     try:
-        # 初始化台账数据 TODO
-        taizhang_display = db_display_data.init_display_data(uc_shopid, tz_id, old_display_id, base_data)
+        # 初始化台账数据
+        if old_display_id is None:
+            taizhang_display = first_db_display_data.init_display_data(uc_shopid, tz_id, base_data)
+        else:
+            taizhang_display = replace_db_display_data.init_display_data(uc_shopid, tz_id, old_display_id, base_data)
         taizhang_display.display()
         # 打印陈列图
         try:

@@ -1,10 +1,10 @@
 import time
 import traceback
-import main.import_django_settings
+
+from django.db import close_old_connections
 
 from goods.models import AllWorkFlowBatch
-from goods.shelfdisplay.firstdisplay.generate_shelf_display import generate_workflow_displays
-from django.db import close_old_connections
+from goods.shelfdisplay.generate_shelf_display import generate_workflow_displays
 
 # class Logger(object):
 #     def __init__(self, filename="Default.log"):
