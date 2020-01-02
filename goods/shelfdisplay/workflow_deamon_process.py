@@ -1,5 +1,6 @@
 import time
 import traceback
+import main.import_django_settings
 
 from django.db import close_old_connections
 
