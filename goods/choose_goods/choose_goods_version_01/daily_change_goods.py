@@ -8,6 +8,7 @@ from  decimal import Decimal
 import datetime,pymysql
 import os,django,math,copy
 from goods.third_tools.dingtalk import send_message
+from goods.choose_goods.choose_goods_version_01.item_cf import ItemBasedCF
 
 import main.import_django_settings
 from django.db import connections
@@ -57,7 +58,7 @@ class DailyChangeGoods:
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
         # 这个三级分类没用
-        sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} group by g.upc order by sum(p.amount) desc;"
+        sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name,sum(p.number) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} group by g.upc order by sum(p.amount) desc;"
         self.cursor.execute(sql.format(week_ago, now_date, shop_id))
         results = self.cursor.fetchall()
         return results
@@ -258,7 +259,7 @@ class DailyChangeGoods:
                 # "select supplier_goods_code,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(supplier_id))
                 # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
                 # 有尺寸数据
-                "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id = {} and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0".format(supplier_id))
+                "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id = {} and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.display_third_cat_id > 0".format(supplier_id))
             all_data = cursor_ucenter.fetchall()
             for data in all_data:
                 delivery_type_dict[data[0]] = data[1]
@@ -352,6 +353,49 @@ class DailyChangeGoods:
                 print("必上品列表出现异常数据！")
         return must_up_goods
 
+    def calculate_relation_goods(self,must_up_goods,optional_up_goods):
+        print("must_up_goods长度",len(must_up_goods))
+        print("optional_up_goods长度",len(optional_up_goods))
+        # candidate_mch_goods_list = [goods[4] for goods in candidate_up_goods_list]
+        must_up_mch_goods_list = [goods[4] for goods in must_up_goods]
+        optional_up_mch_goods_dict = [goods[4] for goods in optional_up_goods]
+        for goods in optional_up_goods:
+            optional_up_mch_goods_dict[goods[4]] = goods
+
+
+        itemCF = ItemBasedCF(self.shop_id)
+        rank = itemCF.recommend_02()
+        for mch_goods,score in rank.items():
+            if mch_goods not in self.taizhang_goods_mch_code_list and mch_goods not in must_up_mch_goods_list:
+                if str(mch_goods) in self.can_order_mch_code_dict:   #  非日配的挑出来
+                    delivery_type = self.can_order_mch_code_dict[str(mch_goods)]
+                    if delivery_type != 2:
+                        continue
+
+                must_up_mch_goods_list.append(mch_goods)
+                if mch_goods in optional_up_mch_goods_dict:
+                    temp_data = optional_up_mch_goods_dict[mch_goods]
+                    temp_data[-1] = 2
+                    temp_data[-2] = 1
+                    temp_data.apeend(score)
+                    must_up_goods.append(optional_up_mch_goods_dict[mch_goods])
+                else:
+                    sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}'"
+                    self.cursor_ucenter.execute(sql.format(mch_goods))
+                    try:
+                        d = self.cursor_ucenter.fetchone()
+                        must_up_goods.append([','.join(self.template_shop_ids), d[0], None, None, mch_goods, None, d[1], 0, 0, 1, 2, score])
+                    except:
+                        print("mch为{}的商品获取upc和name失败".format(mch_goods))
+
+        optional_up_goods = []
+        for mch in optional_up_mch_goods_dict:
+            if not mch in must_up_mch_goods_list:
+                optional_up_goods.append(optional_up_mch_goods_dict[mch])
+
+        print("must_up_goods长度", len(must_up_goods))
+        print("optional_up_goods长度", len(optional_up_goods))
+        return must_up_goods,optional_up_goods
 
 
     def recommend_03(self):
@@ -512,6 +556,8 @@ class DailyChangeGoods:
                 data.extend([0, 1, 0, 1])      # is_structure,is_qiuck_seller,is_relation,which_strategy,delivery_type
                 candidate_up_goods_list.append(data)
 
+        # candidate_up_goods_list = self.calculate_relation_goods(candidate_up_goods_list)
+
         # 非结构非畅销，有销量的，该店没有的品，并且可订货
         for data in other_goods_list:
             if not str(data[4]) in self.taizhang_goods_mch_code_list and str(data[4]) in self.can_order_mch_code_dict:
@@ -555,6 +601,9 @@ class DailyChangeGoods:
 
         must_up_goods = self.must_up_add_ranking(must_up_goods)     # 添加ranking的值
 
+        # 添加必上的关联品
+        must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
+
         optional_up_goods.sort(key=lambda x: x[3], reverse=False)  # 基于psd金额排序
         for index,goods in enumerate(optional_up_goods):    # 添加ranking的值
             goods.append(index+1)
@@ -587,7 +636,6 @@ class DailyChangeGoods:
 
 
         self.save_data(optional_up_goods, 3, mch_code)
-
 
 
     def save_data(self,data,goods_role,mch_code):
@@ -641,7 +689,7 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_008',806)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
     # f = DailyChangeGoods(1284, "1284,4076,3598,223,4004",'lishu_test_009',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
