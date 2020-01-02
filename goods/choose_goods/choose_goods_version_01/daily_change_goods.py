@@ -612,7 +612,7 @@ class DailyChangeGoods:
         must_up_goods = self.must_up_add_ranking(must_up_goods)     # 添加ranking的值
 
         # 添加必上的关联品
-        must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
+        # must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
 
         optional_up_goods.sort(key=lambda x: x[3], reverse=False)  # 基于psd金额排序
         for index,goods in enumerate(optional_up_goods):    # 添加ranking的值
@@ -700,7 +700,7 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 if __name__ == '__main__':
 
     # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
-    f = DailyChangeGoods(1284, "1284,4076,223,4004",'lishu_test_010',806)
+    f = DailyChangeGoods(1284, "1284,4076,223,4004",'lishu_test_011',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
