@@ -118,7 +118,7 @@ class ItemBasedCF():
 
 
         print(self.goods_sim_matrix)
-        print(self.goods_sim_matrix['6901028075022'])
+        # print(self.goods_sim_matrix['6901028075022'])
 
 
     # 针对目标用户U，找到K个相似的商品，并推荐其N个商品
