@@ -2,11 +2,10 @@ import sys
 import argparse
 import main.import_django_settings
 
-from goods.shelfdisplay.firstdisplay.generate_shelf_display import generate_displays
 import argparse
 import sys
 
-from goods.shelfdisplay.firstdisplay.generate_shelf_display import generate_displays
+from goods.shelfdisplay.firstdisplay.generate_shelf_display import generate_first_displays
 
 
 def parse_arguments(argv):
@@ -23,7 +22,7 @@ if __name__ == "__main__":
     args = parse_arguments(sys.argv[1:])
     # taizhang = generate_displays(806, 1187)
 
-    taizhang = generate_displays(args.shopid, args.tzid, args.batchid)
+    taizhang = generate_first_displays(args.shopid, args.tzid, args.batchid)
 
 
     # category_area_ratio: 分类陈列面积比例表
