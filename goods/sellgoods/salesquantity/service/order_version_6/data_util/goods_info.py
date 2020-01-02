@@ -135,12 +135,14 @@ def get_shop_order_goods(shopid,add_type=False):
                         # 获取商品属性
                         try:
                             cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,display_first_cat_id,display_second_cat_id,display_third_cat_id,storage_day,package_type,display_goods_num,supplier_id,supplier_goods_code from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,display_first_cat_id,display_second_cat_id,display_third_cat_id,storage_day,package_type,display_goods_num,supplier_id,supplier_goods_code,goods_status from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                                     mch_id, mch_code))
                             # FIXME width,height暂时翻转
                             # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
                             (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
-                             is_suspension,category1_id,category2_id,category_id,storage_day,package_type,single_face_min_disnums,supplier_id,supplier_goods_code) = cursor.fetchone()
+                             is_suspension,category1_id,category2_id,category_id,storage_day,package_type,single_face_min_disnums,supplier_id,supplier_goods_code,goods_status) = cursor.fetchone()
+                            if add_type == False and goods_status is not None and goods_status != 1:
+                                continue
                         except:
                             print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
                             continue

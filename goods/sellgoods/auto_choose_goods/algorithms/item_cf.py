@@ -24,9 +24,10 @@ class ItemBasedCF():
         self.supplier_id_list = []  # 供应商id，可以多个
         self.can_order_mch_list = []
         self.dmstore_cursor = connections['dmstore'].cursor()
-        # 找到相似的20部商品，为目标用户推荐10部商品
-        self.n_sim_goods = 20
-        self.n_rec_goods = 10
+
+        # 找到相似的20个商品，为门店推荐10个商品
+        self.n_sim_goods = 50
+        self.n_rec_goods = 30
 
         # 将数据集划分为训练集和测试集
         self.trainSet = {}
@@ -36,6 +37,8 @@ class ItemBasedCF():
         self.goods_sim_matrix = {}
         self.goods_popular = {}
         self.goods_count = 0
+
+        self.shop_psd_number_dict = {}     # 本店销售量的字典
 
         print('Similar goods number = %d' % self.n_sim_goods)
         print('Recommneded goods number = %d' % self.n_rec_goods)
@@ -117,7 +120,7 @@ class ItemBasedCF():
         print('Calculate goods similarity matrix success!')
 
 
-        print(self.goods_sim_matrix)
+        # print(self.goods_sim_matrix)
         # print(self.goods_sim_matrix['6901028075022'])
 
 
@@ -135,6 +138,30 @@ class ItemBasedCF():
                 rank.setdefault(related_goods, 0)
                 rank[related_goods] += w * float(rating)
         return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
+
+    # 针对门店销量排名，进行推荐
+    def recommend_02(self):
+        shop_sales_data = self.get_shop_sales_data(self.pos_shop_id)
+        for data in shop_sales_data:
+            self.shop_psd_number_dict[str(data[3])] = data[6]
+
+        K = self.n_sim_goods
+        N = self.n_rec_goods
+        rank = {}
+        ttt = 0
+        for goods,rating in self.shop_psd_number_dict.items():
+            try:    # 该商店可能有的品在大集合里没有
+                for related_goods, w in sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]:
+                    t = rank.get(related_goods, 0)
+                    t += w * float(rating)
+                    rank[related_goods] = t
+            except:
+                ttt += 1
+                print(ttt)
+                continue
+
+        return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
+
 
 
     # 产生推荐并通过准确率、召回率和覆盖率进行评估
@@ -199,10 +226,10 @@ class ItemBasedCF():
                 self.supplier_id_list.append(str(supplier_data[0]))
 
             cursor_ucenter.execute(
-                "select supplier_goods_code from uc_supplier_goods where supplier_id in ({}) and order_status = 1 ".format(','.join(self.supplier_id_list)))
+                # "select supplier_goods_code from uc_supplier_goods where supplier_id in ({}) and order_status = 1 ".format(','.join(self.supplier_id_list)))
                 # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
                 # 有尺寸数据
-                # "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id = {} and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0".format(supplier_id))
+                "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id in ({}) and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0".format(','.join(self.supplier_id_list)))
             all_data = cursor_ucenter.fetchall()
             for data in all_data:
                 # delivery_type_dict[data[0]] = data[1]
@@ -211,6 +238,21 @@ class ItemBasedCF():
             print('pos店号是{},查询是否可订货和配送类型失败'.format(self.pos_shop_id))
         return can_order_list[:],delivery_type_dict
 
+    def get_shop_sales_data(self, shop_id):
+        """
+        获取该店有销量的商品的psd金额的排序列表
+        :param shop_id:
+        :return:
+        """
+        now = datetime.datetime.now()
+        now_date = now.strftime('%Y-%m-%d %H:%M:%S')
+        week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
+        # 这个三级分类没用
+        sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name,sum(p.number) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} group by g.upc order by sum(p.amount) desc;"
+        self.dmstore_cursor.execute(sql.format(week_ago, now_date, shop_id))
+        results = self.dmstore_cursor.fetchall()
+        return results
+
 
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
@@ -218,4 +260,6 @@ if __name__ == '__main__':
     # itemCF.get_dataset(rating_file)
     itemCF.get_data()
     itemCF.calc_goods_sim()
+    a = itemCF.recommend_02()
+    print(a)
     # itemCF.evaluate()

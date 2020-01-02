@@ -110,6 +110,8 @@ shellgoods_params={
     #     1284:50000
     # },
     "ms_add_url":"http://erp.aicvs.cn/automaticOrdering/addShopBuy?erpShopId={}&erpShopType={}&batchId={}",
+    "sass_order_url":"https://ao.aicvs.cn/api/goods/aiNotice?sign=c8b78f1851b58e700decf423d647de1a&batch_no={}&error_msg={}",
+
     # 自动陈列
     'shelf_display':[(1284,True)],
     "shelf_display_maxitems":20, # 排列单个货架最大循环次数

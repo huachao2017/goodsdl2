@@ -6,6 +6,7 @@ import time
 from goods.sellgoods.salesquantity.bean import taskflow
 from goods.sellgoods.salesquantity.service.order_version_6 import generate_order_2saler_add,generate_order_shop
 from goods.sellgoods.salesquantity.service.order_version_6.data_util import cacul_util
+from goods.sellgoods.salesquantity.local_util import sass_interface
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from set_config import config
 import datetime
@@ -33,12 +34,12 @@ def day_order_process():
     # 获取日常订单
     cursor_ai.execute(sql_workflow.format(taskflow.day_order_type))
     first_flow_data = cursor_ai.fetchall()
-    if first_flow_data is not None:
+    if first_flow_data is not None and len(first_flow_data) > 0 :
         for data in first_flow_data:
+            id = data[0]
+            batch_id = data[1]
+            erp_warehouse_id = data[3]
             try:
-                id = data[0]
-                batch_id = data[1]
-                erp_warehouse_id = data[3]
                 cursor_erp.execute(sql_dmshop.format(int(erp_warehouse_id)))
                 erp_shopids = cursor_erp.fetchall()
                 if erp_shopids is not None and len(erp_shopids) > 0 :
@@ -83,12 +84,17 @@ def day_order_process():
                     cursor_ai.execute(
                         update_sql_02.format(taskflow.cal_status_end, int(time.time() - start_time), data[0]))
                     cursor_ai.connection.commit()
+                    # if 'test' not in batch_id:
+                    #     sass_interface.order_commit(batch_id,msg='')
             except Exception as e:
                 print ("data is error data="+str(data))
                 traceback.print_exc()
                 cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, 0,
                                                        data[0]))  # 更新到“结束计算”和耗时多少
                 cursor_ai.connection.commit()
+                # if 'test' not in batch_id:
+                #     msg = "error ,e=" + str(e)
+                #     sass_interface.order_commit(batch_id, msg=msg)
     conn.close()
     conn_erp.close()
     conn_dmstore.close()
@@ -104,11 +110,11 @@ def add_order_process():
     cursor_ai.execute(sql_workflow.format(taskflow.add_order_type))
     add_flow_data = cursor_ai.fetchall()
     if add_flow_data is not None:
-        for data in add_flow_data:
+        for data in add_flow_data and len(add_flow_data) > 0:
+            id = data[0]
+            batch_id = data[1]
+            uc_shop_id = data[2]
             try:
-                id = data[0]
-                batch_id = data[1]
-                uc_shop_id = data[2]
                 ucenter_cursor.execute(sql_uc_shop.format(int(uc_shop_id)))
                 (dmstore_shopid,) = ucenter_cursor.fetchone()
                 cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
@@ -142,10 +148,15 @@ def add_order_process():
                     shop_type = config.shellgoods_params['shop_types'][0]  # 门店
                     if 'test' not in batch_id and len(sales_order_inss) > 0:
                         erp_interface.order_commit(dmstore_shopid,shop_type,sales_order_inss,batch_id=batch_id)
+                    # if 'test' not in batch_id:
+                    #     sass_interface.order_commit(batch_id,msg='')
             except Exception as e:
                 cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, 0,
                                                        data[0]))  # 更新到“结束计算”和耗时多少
                 cursor_ai.connection.commit()
+                # if 'test' not in batch_id:
+                #     msg = "error ,e=" + str(e)
+                #     sass_interface.order_commit(batch_id, msg=msg)
                 print ("data is error!" +str(data))
                 traceback.print_exc()
     conn.close()
