@@ -214,7 +214,7 @@ class ItemBasedCF():
 
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
-    itemCF = ItemBasedCF()
+    itemCF = ItemBasedCF(1284)
     # itemCF.get_dataset(rating_file)
     itemCF.get_data()
     itemCF.calc_goods_sim()
