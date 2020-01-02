@@ -24,9 +24,10 @@ class ItemBasedCF():
         self.supplier_id_list = []  # 供应商id，可以多个
         self.can_order_mch_list = []
         self.dmstore_cursor = connections['dmstore'].cursor()
-        # 找到相似的20部商品，为目标用户推荐10部商品
-        self.n_sim_goods = 20
-        self.n_rec_goods = 10
+
+        # 找到相似的20个商品，为门店推荐10个商品
+        self.n_sim_goods = 50
+        self.n_rec_goods = 30
 
         # 将数据集划分为训练集和测试集
         self.trainSet = {}
@@ -36,6 +37,8 @@ class ItemBasedCF():
         self.goods_sim_matrix = {}
         self.goods_popular = {}
         self.goods_count = 0
+
+        self.shop_psd_number_dict = {}     # 本店销售量的字典
 
         print('Similar goods number = %d' % self.n_sim_goods)
         print('Recommneded goods number = %d' % self.n_rec_goods)
@@ -117,7 +120,7 @@ class ItemBasedCF():
         print('Calculate goods similarity matrix success!')
 
 
-        print(self.goods_sim_matrix)
+        # print(self.goods_sim_matrix)
         # print(self.goods_sim_matrix['6901028075022'])
 
 
@@ -135,6 +138,21 @@ class ItemBasedCF():
                 rank.setdefault(related_goods, 0)
                 rank[related_goods] += w * float(rating)
         return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
+
+    # 针对门店销量排名，进行推荐
+    def recommend_02(self):
+
+        K = self.n_sim_goods
+        N = self.n_rec_goods
+        rank = {}
+        for goods,rating in self.shop_psd_number_dict.items():
+            for related_goods, w in sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]:
+                t = rank.get(related_goods, 0)
+                t += w * float(rating)
+                rank[related_goods] = t
+
+        return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
+
 
 
     # 产生推荐并通过准确率、召回率和覆盖率进行评估
@@ -218,4 +236,6 @@ if __name__ == '__main__':
     # itemCF.get_dataset(rating_file)
     itemCF.get_data()
     itemCF.calc_goods_sim()
+    a = itemCF.recommend_02()
+    print(a)
     # itemCF.evaluate()
