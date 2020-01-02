@@ -371,9 +371,10 @@ class DailyChangeGoods:
 
 
         itemCF = ItemBasedCF(self.shop_id,70,50)   # 协同过滤
-        rank = itemCF.recommend_02()   #字典形式，key为mch，value为总的关联分值
+        rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
 
-        for mch_goods,score in rank.items():
+        for rank_tuple in rank_list:
+            mch_goods, score = rank_tuple
             if mch_goods not in self.taizhang_goods_mch_code_list and mch_goods not in must_up_mch_goods_list:
                 if str(mch_goods) in self.can_order_mch_code_dict:   #  把非日配的挑出来
                     delivery_type = self.can_order_mch_code_dict[str(mch_goods)]
@@ -396,6 +397,7 @@ class DailyChangeGoods:
                     except:
                         print("mch为{}的商品获取upc和name失败".format(mch_goods))
 
+        # 把可选上架里转移到必上的品，给导过来
         optional_up_goods = []
         for mch in optional_up_mch_goods_dict:
             if not mch in must_up_mch_goods_list:
