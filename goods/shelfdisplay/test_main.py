@@ -1,5 +1,6 @@
 import argparse
 import sys
+import main.import_django_settings
 
 from goods.shelfdisplay.generate_shelf_display import generate_displays
 
@@ -9,11 +10,11 @@ def parse_arguments(argv):
 
     parser.add_argument('--shopid', type=int, help='ucenter shop id', default=806)
     parser.add_argument('--tzid', type=int,
-                        help='taizhang id', default=1203)
+                        help='taizhang id', default=1199)
     parser.add_argument('--batchid', type=str,
-                        help='batch id', default='TEST_20191127064522')
+                        help='batch id', default='TEST_20200102143453')
     parser.add_argument('--old_display_id', type=int,
-                        help='old display id', default=None)
+                        help='old display id', default=1144)
     return parser.parse_args(argv)
 
 if __name__ == "__main__":
