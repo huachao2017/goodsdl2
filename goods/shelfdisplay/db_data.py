@@ -93,7 +93,8 @@ def init_base_data(uc_shopid, batch_id):
                                                    selection_goods[4]
                                                    ))
 
-    print('台账找不到选品表的商品共有:{}个！'.format(not_found_goods))
+    print('找不到选品表的商品共有:{}个！'.format(not_found_goods))
+    print('找到选品表的商品共有:{}个！'.format(len(base_data.goods_data_list)))
     cursor.close()
     cursor_default.close()
 

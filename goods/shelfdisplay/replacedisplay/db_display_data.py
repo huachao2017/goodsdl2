@@ -27,7 +27,7 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
     try:
         cursor.execute(
             "select t.id, t.shelf_id, t.shelf_count from sf_taizhang t where t.id = {}".format(tz_id))
-        (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
+        (taizhang_id, shelf_id, count) = cursor.fetchone()
     except:
         print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
         cursor.close()

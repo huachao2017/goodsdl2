@@ -43,6 +43,8 @@ class TaizhangDisplay:
         """
         begin_time = time.time()
 
+        print(self.shelf)
+
         # 区域处理
         levelid_to_displaygoods_list = {}
         for level in self.shelf.levels:
@@ -108,8 +110,8 @@ class TaizhangDisplay:
             "levels": []
         }
         json_ret["shelfs"].append(json_shelf)
-        if shelf.best_candidate_shelf is not None:
-            for level in shelf.best_candidate_shelf.levels:
+        if shelf is not None:
+            for level in shelf.levels:
                 json_level = {
                     "level_id": level.level_id,
                     "height": level.height,
@@ -117,7 +119,7 @@ class TaizhangDisplay:
                     "goods": []
                 }
                 json_shelf["levels"].append(json_level)
-                for display_goods in level.get_left_right_display_goods_list():
+                for display_goods in level.display_goods_list:
                     json_goods = {
                         "mch_good_code": display_goods.goods_data.mch_code,
                         "upc": display_goods.goods_data.upc,
@@ -157,7 +159,7 @@ class TaizhangDisplay:
         image = image * 255
         last_level = None
         level_height = 0
-        for level in shelf.best_candidate_shelf.levels:
+        for level in shelf.levels:
             if last_level is None:
                 level_height += 30
             else:

@@ -67,8 +67,8 @@ class DisplayGoods:
         for display_goods in display_goods_list:
             if self.goods_data.equal(display_goods.goods_data):
                 break
-            init_left += display_goods.get_width()
-        for i in range(self.face_num + self.goods_data.superimpose_num):
+            init_left += display_goods.goods_data.width * display_goods.face_num
+        for i in range(self.face_num):
             for j in range(self.superimpose_num):
                 col = i
                 row = j
@@ -78,6 +78,12 @@ class DisplayGoods:
 
         return display_goods_info
 
+    def get_one_face_max_display_num(self, level):
+        max_one_face = int(level.depth / self.goods_data.depth)
+        if max_one_face <= 0:
+            print('商品深度越界：{}，{}'.format(self.goods_data.depth, level.depth))
+            max_one_face = 1
+        return max_one_face
 
 class DisplayOneGoodsInfo:
     def __init__(self, col, row, top, left):
