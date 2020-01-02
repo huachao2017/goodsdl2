@@ -2,14 +2,28 @@
 
 # 基于项目的协同过滤推荐算法实现
 import random
+import decimal
+import json
+from  decimal import Decimal
+import datetime,pymysql
+import os,django,math,copy
+from goods.third_tools.dingtalk import send_message
 
+import main.import_django_settings
+from django.db import connections
 import math
 from operator import itemgetter
 
 
 class ItemBasedCF():
     # 初始化参数
-    def __init__(self):
+    def __init__(self,pos_shop_id):
+
+        self.pos_shop_id = pos_shop_id
+        self.days = 28
+        self.supplier_id_list = []  # 供应商id，可以多个
+        self.can_order_mch_list = []
+        self.dmstore_cursor = connections['dmstore'].cursor()
         # 找到相似的20部商品，为目标用户推荐10部商品
         self.n_sim_goods = 20
         self.n_rec_goods = 10
@@ -26,6 +40,20 @@ class ItemBasedCF():
         print('Similar goods number = %d' % self.n_sim_goods)
         print('Recommneded goods number = %d' % self.n_rec_goods)
 
+    # 读取数据库得到"订单-商品"数据
+    def get_data(self):
+        can_order_mch_list, _ = self.get_can_order_dict()
+        now = datetime.datetime.now()
+        now_date = now.strftime('%Y-%m-%d %H:%M:%S')
+        week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
+        sql = "select p.payment_id,GROUP_CONCAT(g.neighbor_goods_id) n from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and g.neighbor_goods_id in ({}) GROUP BY p.payment_id having COUNT(g.neighbor_goods_id) >1"
+        self.dmstore_cursor.execute(sql.format(week_ago, now_date,','.join(can_order_mch_list)))
+        all_data = self.dmstore_cursor.fetchall()
+        print(len(all_data))
+        for data in all_data:
+            for goods in data[1].split(","):
+                self.trainSet.setdefault(data[0], {})
+                self.trainSet[data[0]][goods] = 1
 
     # 读文件得到“用户-商品”数据
     def get_dataset(self, filename, pivot=0.9999999):
@@ -135,10 +163,59 @@ class ItemBasedCF():
         coverage = len(all_rec_goods) / (1.0 * self.goods_count)
         print('precisioin=%.4f\trecall=%.4f\tcoverage=%.4f' % (precision, recall, coverage))
 
+    def get_can_order_dict(self):
+        """
+        获取可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
+        :return:
+        """
+        self.dmstore_cursor.execute("SELECT erp_shop_id from erp_shop_related WHERE shop_id ={} AND erp_shop_type=0;".format(self.pos_shop_id))
+        try:
+            erp_shop_id = self.dmstore_cursor.fetchone()[0]
+        except:
+            print('erp_shop_id获取失败！')
+            return []
+        try:
+            ms_conn = connections["erp"]
+            ms_cursor = ms_conn.cursor()
+            ms_cursor.execute("SELECT authorized_shop_id FROM ms_relation WHERE is_authorized_shop_id IN (SELECT authorized_shop_id FROM	ms_relation WHERE is_authorized_shop_id = {} AND STATUS = 1) AND STATUS = 1".format(erp_shop_id))
+            all_data = ms_cursor.fetchall()
+            supplier_code = []
+            for data in all_data:
+                supplier_code.append(str(data[0]))
+        except:
+            print('supplier_code获取失败！')
+            return []
+
+
+        # 获取商品的 可定 配送类型
+        conn_ucenter = connections['ucenter']
+        cursor_ucenter = conn_ucenter.cursor()
+        delivery_type_dict = {}    # 店内码是key，配送类型是value
+        can_order_list = []   #可订货列表
+        try:
+            cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
+            all_supplier_id_data = cursor_ucenter.fetchall()
+            for supplier_data in all_supplier_id_data:
+                self.supplier_id_list.append(str(supplier_data[0]))
+
+            cursor_ucenter.execute(
+                "select supplier_goods_code from uc_supplier_goods where supplier_id in ({}) and order_status = 1 ".format(','.join(self.supplier_id_list)))
+                # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
+                # 有尺寸数据
+                # "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id = {} and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0".format(supplier_id))
+            all_data = cursor_ucenter.fetchall()
+            for data in all_data:
+                # delivery_type_dict[data[0]] = data[1]
+                can_order_list.append(data[0])
+        except:
+            print('pos店号是{},查询是否可订货和配送类型失败'.format(self.pos_shop_id))
+        return can_order_list[:10],delivery_type_dict
+
 
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
     itemCF = ItemBasedCF()
-    itemCF.get_dataset(rating_file)
+    # itemCF.get_dataset(rating_file)
+    itemCF.get_data()
     itemCF.calc_goods_sim()
     # itemCF.evaluate()
