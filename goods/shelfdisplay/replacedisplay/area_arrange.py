@@ -132,6 +132,7 @@ class AreaManager:
 
             area.add_child_area_in_one_category3(level_id, one_display_goods_list)
             one_display_goods_list = []
+            area_category3 = None
 
     def _second_combine_areas(self):
         """
