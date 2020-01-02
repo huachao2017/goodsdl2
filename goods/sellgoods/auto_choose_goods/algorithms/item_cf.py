@@ -141,6 +141,9 @@ class ItemBasedCF():
 
     # 针对门店销量排名，进行推荐
     def recommend_02(self):
+        shop_sales_data = self.get_shop_sales_data(self.pos_shop_id)
+        for data in shop_sales_data:
+            self.shop_psd_number_dict[data[3]] = data[6]
 
         K = self.n_sim_goods
         N = self.n_rec_goods
@@ -228,6 +231,21 @@ class ItemBasedCF():
         except:
             print('pos店号是{},查询是否可订货和配送类型失败'.format(self.pos_shop_id))
         return can_order_list[:],delivery_type_dict
+
+    def get_shop_sales_data(self, shop_id):
+        """
+        获取该店有销量的商品的psd金额的排序列表
+        :param shop_id:
+        :return:
+        """
+        now = datetime.datetime.now()
+        now_date = now.strftime('%Y-%m-%d %H:%M:%S')
+        week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
+        # 这个三级分类没用
+        sql = "select sum(p.amount),g.upc,g.saas_third_catid,g.neighbor_goods_id,g.price,p.name,sum(p.number) from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id = {} group by g.upc order by sum(p.amount) desc;"
+        self.dmstore_cursor.execute(sql.format(week_ago, now_date, shop_id))
+        results = self.dmstore_cursor.fetchall()
+        return results
 
 
 if __name__ == '__main__':
