@@ -376,26 +376,26 @@ class DailyChangeGoods:
         for rank_tuple in rank_list:
             mch_goods, score = rank_tuple
             if mch_goods not in self.taizhang_goods_mch_code_list and mch_goods not in must_up_mch_goods_list:
-                if str(mch_goods) in self.can_order_mch_code_dict:   #  把非日配的挑出来
+                if str(mch_goods) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(mch_goods)]
-                    if delivery_type != 2:
+                    if delivery_type != 2:     # 把非日配的挑出来
                         continue
 
-                must_up_mch_goods_list.append(mch_goods)
-                if mch_goods in optional_up_mch_goods_dict:
-                    temp_data = optional_up_mch_goods_dict[mch_goods]
-                    temp_data[-1] = 2
-                    temp_data[-2] = 1
-                    temp_data.apeend(score)
-                    must_up_goods.append(optional_up_mch_goods_dict[mch_goods])
-                else:
-                    sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}'"
-                    self.cursor_ucenter.execute(sql.format(mch_goods))
-                    try:
-                        d = self.cursor_ucenter.fetchone()
-                        must_up_goods.append([','.join(self.template_shop_ids), d[0], None, None, mch_goods, None, d[1], 0, 0, 1, 2, score])
-                    except:
-                        print("mch为{}的商品获取upc和name失败".format(mch_goods))
+                    must_up_mch_goods_list.append(mch_goods)
+                    if mch_goods in optional_up_mch_goods_dict:
+                        temp_data = optional_up_mch_goods_dict[mch_goods]
+                        temp_data[-1] = 2
+                        temp_data[-2] = 1
+                        temp_data.apeend(score)
+                        must_up_goods.append(optional_up_mch_goods_dict[mch_goods])
+                    else:
+                        sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}'"
+                        self.cursor_ucenter.execute(sql.format(mch_goods))
+                        try:
+                            d = self.cursor_ucenter.fetchone()
+                            must_up_goods.append([','.join(self.template_shop_ids), d[0], None, None, mch_goods, None, d[1], 0, 0, 1, 2, score])
+                        except:
+                            print("mch为{}的商品获取upc和name失败".format(mch_goods))
 
         # 把可选上架里转移到必上的品，给导过来
         optional_up_goods = []
@@ -612,7 +612,7 @@ class DailyChangeGoods:
         must_up_goods = self.must_up_add_ranking(must_up_goods)     # 添加ranking的值
 
         # 添加必上的关联品
-        # must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
+        must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
 
         optional_up_goods.sort(key=lambda x: x[3], reverse=False)  # 基于psd金额排序
         for index,goods in enumerate(optional_up_goods):    # 添加ranking的值
@@ -700,7 +700,7 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 if __name__ == '__main__':
 
     # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
-    f = DailyChangeGoods(1284, "1284,4076,223,4004",'lishu_test_011',806)
+    f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
