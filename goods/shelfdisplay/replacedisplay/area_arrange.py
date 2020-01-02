@@ -421,6 +421,11 @@ class Area:
                     up_choose_goods_to_insert_position[up_choose_goods] = [i + 1]
                     break
 
+            # 防止同类商品全部下架
+            if up_choose_goods not in up_choose_goods_to_insert_position:
+                up_choose_goods_to_insert_position[up_choose_goods] = [len(new_display_goods_list)]
+
+
         up_choose_goods_to_end = {}
         for up_choose_goods in self.up_choose_goods_list:
             up_choose_goods_to_end[up_choose_goods] = False
