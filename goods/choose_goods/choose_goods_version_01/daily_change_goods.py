@@ -390,7 +390,7 @@ class DailyChangeGoods:
                         must_up_goods.append(optional_up_mch_goods_dict[mch_goods])
                     else:
                         # print("123456789")
-                        sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}'"
+                        sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}' and upc > 0"
                         self.cursor_ucenter.execute(sql.format(mch_goods))
                         try:
                             d = self.cursor_ucenter.fetchone()
