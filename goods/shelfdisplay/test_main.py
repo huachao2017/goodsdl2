@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from goods.shelfdisplay.generate_shelf_display import generate_first_displays
+from goods.shelfdisplay.generate_shelf_display import generate_displays
 
 
 def parse_arguments(argv):
@@ -12,13 +12,15 @@ def parse_arguments(argv):
                         help='taizhang id', default=1203)
     parser.add_argument('--batchid', type=str,
                         help='batch id', default='TEST_20191127064522')
+    parser.add_argument('--old_display_id', type=int,
+                        help='old display id', default=None)
     return parser.parse_args(argv)
 
 if __name__ == "__main__":
     args = parse_arguments(sys.argv[1:])
     # taizhang = generate_displays(806, 1187)
 
-    taizhang = generate_first_displays(args.shopid, args.tzid, args.batchid)
+    taizhang = generate_displays(args.shopid, args.tzid, args.batchid, args.old_display_id)
 
 
     # category_area_ratio: 分类陈列面积比例表

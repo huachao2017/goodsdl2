@@ -15,6 +15,7 @@ from django.db import close_old_connections
 from goods.models import ShelfDisplayDebug
 from goods.shelfdisplay import db_data
 from goods.shelfdisplay.firstdisplay import db_display_data as first_db_display_data
+from goods.shelfdisplay.replacedisplay import db_display_data as replace_db_display_data
 
 
 def generate_workflow_displays(uc_shopid, batch_id):
@@ -42,7 +43,15 @@ def generate_workflow_displays(uc_shopid, batch_id):
     # 计算陈列
     taizhang_display_list = []
     for one_tz_id in taizhangs:
-        generate_first_displays(uc_shopid, one_tz_id[0], batch_id)
+        # 获取上次陈列
+        try:
+            cursor.execute(
+                "select id from sf_taizhang_display where taizhang_id={} and status in (1,2) and approval_status=1 order by start_datetime desc limit 1".format(
+                    one_tz_id[0]))
+            (old_display_id,) = cursor.fetchone()
+            generate_displays(uc_shopid, one_tz_id[0], batch_id, old_display_id)
+        except:
+            generate_displays(uc_shopid, one_tz_id[0], batch_id)
 
     # 通知台账系统
     # url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
@@ -58,7 +67,7 @@ def generate_workflow_displays(uc_shopid, batch_id):
 
 
 
-def generate_first_displays(uc_shopid, tz_id, batch_id):
+def generate_displays(uc_shopid, tz_id, batch_id, old_display_id = None):
     """
     自动陈列一个批次流程的指定台账
     :param uc_shopid: ucentor的shopid
@@ -81,7 +90,10 @@ def generate_first_displays(uc_shopid, tz_id, batch_id):
 
     try:
         # 初始化台账数据
-        taizhang_display = first_db_display_data.init_display_data(uc_shopid, tz_id, base_data)
+        if old_display_id is None:
+            taizhang_display = first_db_display_data.init_display_data(uc_shopid, tz_id, base_data)
+        else:
+            taizhang_display = replace_db_display_data.init_display_data(uc_shopid, tz_id, old_display_id, base_data)
         taizhang_display.display()
         # 打印陈列图
         try:
