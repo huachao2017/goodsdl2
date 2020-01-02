@@ -209,7 +209,7 @@ class ItemBasedCF():
                 can_order_list.append(data[0])
         except:
             print('pos店号是{},查询是否可订货和配送类型失败'.format(self.pos_shop_id))
-        return can_order_list[:10],delivery_type_dict
+        return can_order_list[:],delivery_type_dict
 
 
 if __name__ == '__main__':
