@@ -22,6 +22,7 @@ if __name__ == "__main__":
     # taizhang = generate_displays(806, 1187)
 
     taizhang = generate_displays(args.shopid, args.tzid, args.batchid, args.old_display_id)
+    print(taizhang.best_candidate_shelf)
 
 
     # category_area_ratio: 分类陈列面积比例表
