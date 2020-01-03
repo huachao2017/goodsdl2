@@ -12,6 +12,7 @@ from goods.choose_goods.choose_goods_version_01.item_cf import ItemBasedCF
 
 import main.import_django_settings
 from django.db import connections
+from django.db import close_old_connections
 
 class DailyChangeGoods:
     """
@@ -45,8 +46,13 @@ class DailyChangeGoods:
 
         # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
         # self.cursor = conn.cursor()
+        close_old_connections()
         self.cursor = connections['dmstore'].cursor()
         self.cursor_ucenter = connections['ucenter'].cursor()
+
+    def __del__(self):
+        self.cursor.close()
+        self.cursor_ucenter.close()
 
     def get_shop_sales_data(self, shop_id):
         """
@@ -113,22 +119,26 @@ class DailyChangeGoods:
         获取当前台账的商品列表
         :return:
         """
-        uc_conn = connections['ucenter']
-        uc_cursor = uc_conn.cursor()
+        # uc_conn = connections['ucenter']
+        # self.cursor_ucenter = uc_conn.cursor()
         # 获取当前的台账
         select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info,t.mch_id from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(self.uc_shopid)
-        uc_cursor.execute(select_sql_02)
-        all_data = uc_cursor.fetchall()
-        taizhang_data_list = []
-        for data in all_data:
-            for goods_info in json.loads(data[4]):
-                for layer in goods_info['layerArray']:
-                    for goods in layer:
-                        # goods_upc = goods['goods_upc']
-                        taizhang_data_list.append(goods)
-        self.taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_data_list]))  # 去重
-        print('台账mch去重：',self.taizhang_goods_mch_code_list)
-        return taizhang_data_list,all_data[0][5]
+        try:
+            self.cursor_ucenter.execute(select_sql_02)
+            all_data = self.cursor_ucenter.fetchall()
+            taizhang_data_list = []
+            for data in all_data:
+                for goods_info in json.loads(data[4]):
+                    for layer in goods_info['layerArray']:
+                        for goods in layer:
+                            # goods_upc = goods['goods_upc']
+                            taizhang_data_list.append(goods)
+            self.taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_data_list]))  # 去重
+            print('台账mch去重：', self.taizhang_goods_mch_code_list)
+            return taizhang_data_list, all_data[0][5]
+        except Exception as e:
+            print('pos店号是{},查询该店台账报错,{}'.format(self.shop_id, e))
+            return [],None
 
     def get_third_category_mch_dict(self, mch_code_list):
         """
@@ -140,15 +150,14 @@ class DailyChangeGoods:
         # 注意：and c.display_third_cat_id>0 类型是字符串
         sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id in ({}) and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code in ({}) and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
         try:
-            print("sql语句：",self.supplier_id_list)
-
-            print(sql.format(','.join(self.supplier_id_list),",".join(mch_code_list)))
+            # print(sql.format(','.join(self.supplier_id_list),",".join(mch_code_list)))
             self.cursor_ucenter.execute(sql.format(','.join(self.supplier_id_list),",".join(mch_code_list)))
             all_data = self.cursor_ucenter.fetchall()
             for data in all_data:
                 third_category_mch_dict[data[0]] = data[1]
             return third_category_mch_dict
-        except:
+        except Exception as e:
+            print('pos店号是{},查询该店三级分类报错,{}'.format(self.shop_id, e))
             return dict()
 
 
@@ -244,24 +253,24 @@ class DailyChangeGoods:
 
 
         # 获取商品的 可定 配送类型
-        conn_ucenter = connections['ucenter']
-        cursor_ucenter = conn_ucenter.cursor()
+        # conn_ucenter = connections['ucenter']
+        # cursor_ucenter = conn_ucenter.cursor()
         delivery_type_dict = {}    # 店内码是key，配送类型是value
         try:
             # cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
             # (supplier_id,) = cursor_ucenter.fetchone()
             # self.supplier_id = supplier_id
 
-            cursor_ucenter.execute("SELECT supplier_id from uc_warehouse_supplier_shop WHERE warehouse_id={}".format(erp_shop_id))
-            all_supplier_id_data = cursor_ucenter.fetchall()
+            self.cursor_ucenter.execute("SELECT supplier_id from uc_warehouse_supplier_shop WHERE warehouse_id={}".format(erp_shop_id))
+            all_supplier_id_data = self.cursor_ucenter.fetchall()
             for supplier_data in all_supplier_id_data:
                 self.supplier_id_list.append(str(supplier_data[0]))
-            cursor_ucenter.execute(
+            self.cursor_ucenter.execute(
                 # "select supplier_goods_code,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(supplier_id))
                 # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
                 # 有尺寸数据
                 "select DISTINCT a.supplier_goods_code,b.delivery_attr,c.display_second_cat_id from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id in ({}) and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.display_third_cat_id > 0".format(','.join(self.supplier_id_list)))
-            all_data = cursor_ucenter.fetchall()
+            all_data = self.cursor_ucenter.fetchall()
             for data in all_data:
                 if data[2] == "104":    #  巧克力分类 ,按照非日配逻辑来处理
                     delivery_type_dict[data[0]] = 2
@@ -269,7 +278,7 @@ class DailyChangeGoods:
                 delivery_type_dict[data[0]] = data[1]
         except Exception as e:
             print('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
-        conn_ucenter.close()
+        # conn_ucenter.close()
         return delivery_type_dict
 
     def calculate_not_move_goods(self):
@@ -705,8 +714,8 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
-    f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
+    # f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
