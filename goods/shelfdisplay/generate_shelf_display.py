@@ -50,7 +50,7 @@ def generate_workflow_displays(uc_shopid, batch_id):
                     one_tz_id[0]))
             (old_display_id,) = cursor.fetchone()
         except Exception as e:
-            # traceback.print_exc()
+            traceback.print_exc()
             print("没有找到已有陈列:{}".format(one_tz_id[0]))
         finally:
             cursor.close()
