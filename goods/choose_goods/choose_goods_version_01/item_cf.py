@@ -200,32 +200,44 @@ class ItemBasedCF():
         获取可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
         :return:
         """
-        self.dmstore_cursor.execute("SELECT erp_shop_id from erp_shop_related WHERE shop_id ={} AND erp_shop_type=0;".format(self.pos_shop_id))
-        try:
-            erp_shop_id = self.dmstore_cursor.fetchone()[0]
-        except:
-            print('erp_shop_id获取失败！')
-            return []
-        try:
-            ms_conn = connections["erp"]
-            ms_cursor = ms_conn.cursor()
-            ms_cursor.execute("SELECT authorized_shop_id FROM ms_relation WHERE is_authorized_shop_id IN (SELECT authorized_shop_id FROM	ms_relation WHERE is_authorized_shop_id = {} AND STATUS = 1) AND STATUS = 1".format(erp_shop_id))
-            all_data = ms_cursor.fetchall()
-            supplier_code = []
-            for data in all_data:
-                supplier_code.append(str(data[0]))
-        except:
-            print('supplier_code获取失败！')
-            return []
+        # self.dmstore_cursor.execute("SELECT erp_shop_id from erp_shop_related WHERE shop_id ={} AND erp_shop_type=0;".format(self.pos_shop_id))
+        # try:
+        #     erp_shop_id = self.dmstore_cursor.fetchone()[0]
+        #     print("erp_shop_id",erp_shop_id)
+        # except:
+        #     print('erp_shop_id获取失败！')
+        #     return []
+        # try:
+        #     ms_conn = connections["erp"]
+        #     ms_cursor = ms_conn.cursor()
+        #     ms_cursor.execute("SELECT authorized_shop_id FROM ms_relation WHERE is_authorized_shop_id IN (SELECT authorized_shop_id FROM	ms_relation WHERE is_authorized_shop_id = {} AND STATUS = 1) AND STATUS = 1".format(erp_shop_id))
+        #     all_data = ms_cursor.fetchall()
+        #     supplier_code = []
+        #     for data in all_data:
+        #         supplier_code.append(str(data[0]))
+        # except:
+        #     print('supplier_code获取失败！')
+        #     return []
 
 
         # 获取商品的 可定 配送类型
+
+        self.dmstore_cursor.execute(
+            "SELECT erp_shop_id from erp_shop_related WHERE shop_id ={} AND erp_shop_type=1;".format(self.pos_shop_id))
+        try:
+            erp_shop_id = self.dmstore_cursor.fetchone()[0]
+            print("erp_shop_id", erp_shop_id)
+        except:
+            print('erp_shop_id获取失败！')
+            return []
+
         conn_ucenter = connections['ucenter']
         cursor_ucenter = conn_ucenter.cursor()
         delivery_type_dict = {}    # 店内码是key，配送类型是value
         can_order_list = []   #可订货列表
         try:
-            cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
+            # cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
+            cursor_ucenter.execute("SELECT supplier_id from uc_warehouse_supplier_shop WHERE warehouse_id={}".format(erp_shop_id))
             all_supplier_id_data = cursor_ucenter.fetchall()
             for supplier_data in all_supplier_id_data:
                 self.supplier_id_list.append(str(supplier_data[0]))
@@ -261,9 +273,10 @@ class ItemBasedCF():
 
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
-    itemCF = ItemBasedCF(1284,70,50)
+    itemCF = ItemBasedCF(4598,70,50)
     # itemCF.get_dataset(rating_file)
-    a = itemCF.recommend_02()
+    # a = itemCF.recommend_02()
+    a = itemCF.get_can_order_dict()
     print(type(a))
     print(a)
     # itemCF.evaluate()
