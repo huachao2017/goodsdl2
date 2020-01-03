@@ -141,7 +141,7 @@ class DailyChangeGoods:
         sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id in ({}) and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code in ({}) and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
         try:
             print("sql语句：",self.supplier_id_list)
-            
+
             print(sql.format(','.join(self.supplier_id_list),",".join(mch_code_list)))
             self.cursor_ucenter.execute(sql.format(','.join(self.supplier_id_list),",".join(mch_code_list)))
             all_data = self.cursor_ucenter.fetchall()
@@ -267,8 +267,8 @@ class DailyChangeGoods:
                     delivery_type_dict[data[0]] = 2
                     continue
                 delivery_type_dict[data[0]] = data[1]
-        except:
-            print('pos店号是{},查询是否可订货和配送类型失败'.format(self.shop_id))
+        except Exception as e:
+            print('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
         conn_ucenter.close()
         return delivery_type_dict
 
