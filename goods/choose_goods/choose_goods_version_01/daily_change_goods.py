@@ -115,12 +115,12 @@ class DailyChangeGoods:
         获取当前台账的商品列表
         :return:
         """
-        uc_conn = connections['ucenter']
-        uc_cursor = uc_conn.cursor()
+        # uc_conn = connections['ucenter']
+        # self.cursor_ucenter = uc_conn.cursor()
         # 获取当前的台账
         select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info,t.mch_id from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(self.uc_shopid)
-        uc_cursor.execute(select_sql_02)
-        all_data = uc_cursor.fetchall()
+        self.cursor_ucenter.execute(select_sql_02)
+        all_data = self.cursor_ucenter.fetchall()
         taizhang_data_list = []
         for data in all_data:
             for goods_info in json.loads(data[4]):
