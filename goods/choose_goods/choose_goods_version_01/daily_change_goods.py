@@ -389,7 +389,7 @@ class DailyChangeGoods:
         print(self.can_order_mch_code_dict)
         print(self.taizhang_goods_mch_code_list)
         print(must_up_mch_goods_list)
-        itemCF = ItemBasedCF(self.shop_id,70,150)   # 协同过滤
+        itemCF = ItemBasedCF(self.shop_id,770,1150)   # 协同过滤
         rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
 
         for mch_goods, score in rank_list:
@@ -410,7 +410,7 @@ class DailyChangeGoods:
                         # temp_data.apeend(score)
                         must_up_goods.append(optional_up_mch_goods_dict[mch_goods])
                     else:
-                        # print("123456789")
+                        print("123456789")
                         sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}' and upc > 0"
                         self.cursor_ucenter.execute(sql.format(mch_goods))
                         try:
