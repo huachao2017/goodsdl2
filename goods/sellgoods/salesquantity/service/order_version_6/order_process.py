@@ -109,7 +109,7 @@ def add_order_process():
     # 获取日常订单
     cursor_ai.execute(sql_workflow.format(taskflow.add_order_type))
     add_flow_data = cursor_ai.fetchall()
-    if add_flow_data is not None and (add_flow_data) > 0:
+    if add_flow_data is not None and len(add_flow_data) > 0:
         for data in add_flow_data:
             id = data[0]
             batch_id = data[1]
