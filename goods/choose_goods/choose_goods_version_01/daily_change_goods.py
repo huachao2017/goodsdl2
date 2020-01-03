@@ -29,7 +29,7 @@ class DailyChangeGoods:
         self.days = days     # 取数周期
         self.all_third_category_mch_dict = []      # 三级分类的列表
         self.first_category_goods_count_dict = {}     # 一级分类选品预估的数量
-        self.supplier_id_list = None     # 供应商id
+        self.supplier_id_list = []     # 供应商id
         self.debug = True
         self.can_order_mch_code_dict = {}    # 可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
         self.all_goods_len = 0    # 本店台账已有len
