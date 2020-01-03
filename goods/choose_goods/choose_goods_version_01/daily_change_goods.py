@@ -645,7 +645,7 @@ class DailyChangeGoods:
 
 
         # 添加必上的关联品
-        # must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
+        must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
 
         must_up_goods = self.must_up_add_ranking(must_up_goods)  # 添加ranking的值
 
@@ -711,7 +711,7 @@ class DailyChangeGoods:
             print("删掉{}该批次之前的数据".format(self.batch_id))
         print('开始入库')
         # print(insert_sql_02)
-        print(tuple_data[:5])
+        print(tuple_data[:])
         cursor.executemany(insert_sql_02.format(self.shop_id,mch_code,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
         conn.commit()
         conn.close()
