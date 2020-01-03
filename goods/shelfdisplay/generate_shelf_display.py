@@ -48,13 +48,13 @@ def generate_workflow_displays(uc_shopid, batch_id):
                 "select id from sf_taizhang_display where taizhang_id={} and status in (1,2,3) and approval_status=1 order by start_datetime desc limit 1".format(
                     one_tz_id[0]))
             (old_display_id,) = cursor.fetchone()
-            generate_displays(uc_shopid, one_tz_id[0], batch_id, old_display_id)
             cursor.close()
         except Exception as e:
             # traceback.print_exc()
             cursor.close()
             generate_displays(uc_shopid, one_tz_id[0], batch_id)
-
+        else:
+            generate_displays(uc_shopid, one_tz_id[0], batch_id, old_display_id)
 
     # 通知台账系统
     # url = "https://autodisplay:xianlife2018@taizhang.aicvs.cn/api/autoDisplay"
