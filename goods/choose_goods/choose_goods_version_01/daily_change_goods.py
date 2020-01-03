@@ -148,7 +148,8 @@ class DailyChangeGoods:
             for data in all_data:
                 third_category_mch_dict[data[0]] = data[1]
             return third_category_mch_dict
-        except:
+        except Exception as e:
+            print('pos店号是{},查询该店三级分类报错,{}'.format(self.shop_id, e))
             return dict()
 
 
