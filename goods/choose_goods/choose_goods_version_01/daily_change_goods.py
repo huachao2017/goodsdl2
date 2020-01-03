@@ -50,6 +50,10 @@ class DailyChangeGoods:
         self.cursor = connections['dmstore'].cursor()
         self.cursor_ucenter = connections['ucenter'].cursor()
 
+    def __del__(self):
+        self.cursor.close()
+        self.cursor_ucenter.close()
+
     def get_shop_sales_data(self, shop_id):
         """
         获取该店有销量的商品的psd金额的排序列表
@@ -119,18 +123,22 @@ class DailyChangeGoods:
         # self.cursor_ucenter = uc_conn.cursor()
         # 获取当前的台账
         select_sql_02 = "select t.id, t.shelf_id, td.batch_no,td.display_shelf_info, td.display_goods_info,t.mch_id from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status=2 and td.approval_status=1 and st.shop_id = {}".format(self.uc_shopid)
-        self.cursor_ucenter.execute(select_sql_02)
-        all_data = self.cursor_ucenter.fetchall()
-        taizhang_data_list = []
-        for data in all_data:
-            for goods_info in json.loads(data[4]):
-                for layer in goods_info['layerArray']:
-                    for goods in layer:
-                        # goods_upc = goods['goods_upc']
-                        taizhang_data_list.append(goods)
-        self.taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_data_list]))  # 去重
-        print('台账mch去重：',self.taizhang_goods_mch_code_list)
-        return taizhang_data_list,all_data[0][5]
+        try:
+            self.cursor_ucenter.execute(select_sql_02)
+            all_data = self.cursor_ucenter.fetchall()
+            taizhang_data_list = []
+            for data in all_data:
+                for goods_info in json.loads(data[4]):
+                    for layer in goods_info['layerArray']:
+                        for goods in layer:
+                            # goods_upc = goods['goods_upc']
+                            taizhang_data_list.append(goods)
+            self.taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_data_list]))  # 去重
+            print('台账mch去重：', self.taizhang_goods_mch_code_list)
+            return taizhang_data_list, all_data[0][5]
+        except Exception as e:
+            print('pos店号是{},查询该店台账报错,{}'.format(self.shop_id, e))
+            return [],None
 
     def get_third_category_mch_dict(self, mch_code_list):
         """
