@@ -8,6 +8,20 @@ from goods.shelfdisplay.replacedisplay.test.temporary_object import TestGoods
 class Test1(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        pass
+
+    @classmethod
+    def tearDownClass(cls):
+        pass
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_bottom_level(self):
+
         shelf = Shelf(1, 1800, 600, 300)
         shelf.levels.append(Level(shelf, 0, 360, 300))
         shelf.levels.append(Level(shelf, 1, 360, 300))
@@ -61,22 +75,6 @@ class Test1(unittest.TestCase):
         shelf.levels[2].display_goods_list = levelid_to_displaygoods_list[2]
         shelf.levels[3].display_goods_list = levelid_to_displaygoods_list[3]
         shelf.levels[4].display_goods_list = levelid_to_displaygoods_list[4]
-
-        cls.shelf = shelf
-        cls.levelid_to_displaygoods_list = levelid_to_displaygoods_list
-
-    @classmethod
-    def tearDownClass(cls):
-        pass
-
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-    def test_bottom_level(self):
-
         choose_goods_list = [
             TestGoods('c2_1', 'c3_1', '101', 100, 80, 20, 1, 0),  # 上架
             TestGoods('c2_1', 'c3_1', '102', 100, 80, 20, 1, 0),  # 上架
@@ -85,7 +83,7 @@ class Test1(unittest.TestCase):
             TestGoods('c2_1', 'c3_2', '5', 100, 40, 6, 2, 0),  # 下架
         ]
 
-        area_manager = AreaManager(self.shelf, self.levelid_to_displaygoods_list, choose_goods_list)
+        area_manager = AreaManager(shelf, levelid_to_displaygoods_list, choose_goods_list)
 
         area_manager._first_born_areas()
 
@@ -161,5 +159,47 @@ class Test1(unittest.TestCase):
         for area in area_manager.area_list:
             print(area)
 
-# if __name__ == '__main__':
+    def test_special_level(self):
+
+        shelf = Shelf(1, 1800, 600, 300)
+        shelf.levels.append(Level(shelf, 0, 360, 300))
+        shelf.levels.append(Level(shelf, 1, 360, 300))
+        shelf.levels.append(Level(shelf, 2, 360, 300))
+        levelid_to_displaygoods_list = {
+            0: [DisplayGoods(TestGoods('c2_1', 'c3_1', '1', 200, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_2', '2', 200, 80, 9, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '3', 200, 40, 8, 0, 0))],
+            1: [DisplayGoods(TestGoods('c2_2', 'c3_4', '4', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_3', 'c3_5', '5', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_4', 'c3_6', '6', 150, 80, 10, 0, 0))],
+            2: [DisplayGoods(TestGoods('c2_4', 'c3_7', '7', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_5', 'c3_8', '8', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_6', 'c3_9', '9', 100, 80, 10, 0, 0))],
+        }
+        shelf.levels[0].display_goods_list = levelid_to_displaygoods_list[0]
+        shelf.levels[1].display_goods_list = levelid_to_displaygoods_list[1]
+        shelf.levels[2].display_goods_list = levelid_to_displaygoods_list[2]
+        choose_goods_list = [
+            TestGoods('c2_1', 'c3_1', '101', 100, 80, 20, 1, 0),  # 上架
+        ]
+
+        area_manager = AreaManager(shelf, levelid_to_displaygoods_list, choose_goods_list)
+
+        area_manager._first_born_areas()
+
+        self.assertEqual(len(area_manager.area_list), 9)
+
+
+        for area in area_manager.area_list:
+            print(area)
+
+        area_manager._second_combine_areas()
+        self.assertEqual(len(area_manager.area_list), 6)
+
+
+        # print('\n')
+        for area in area_manager.area_list:
+            print(area)
+
+                    # if __name__ == '__main__':
 #     unittest.main()#运行所有的测试用例

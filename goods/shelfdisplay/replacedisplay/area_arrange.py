@@ -109,8 +109,7 @@ class AreaManager:
         """
         self.area_list = []
 
-        area = Area(self)
-        self.area_list.append(area)
+        area = None
         area_category3 = None
         one_display_goods_list = []
 
@@ -119,23 +118,32 @@ class AreaManager:
         sorted_level_ids.sort()
         for level_id in sorted_level_ids:
             display_goods_list = self.levelid_to_displaygoods_list[level_id]
-            for display_goods in display_goods_list:
-                if area_category3 is None:
-                    area_category3 = display_goods.goods_data.category3
-                    one_display_goods_list.append(display_goods)
-                else:
-                    if area_category3 == display_goods.goods_data.category3:
+            if len(display_goods_list) > 0:
+                if area_category3 != display_goods_list[0].goods_data.category3:
+                    # 开始一个新的area
+                    area = Area(self)
+                    self.area_list.append(area)
+                    area_category3 = None
+
+                for display_goods in display_goods_list:
+                    if area_category3 is None:
+                        area_category3 = display_goods.goods_data.category3
                         one_display_goods_list.append(display_goods)
                     else:
-                        area.add_child_area_in_one_category3(level_id, one_display_goods_list)
-                        area_category3 = display_goods.goods_data.category3
-                        one_display_goods_list = [display_goods]
-                        area = Area(self)
-                        self.area_list.append(area)
+                        if area_category3 == display_goods.goods_data.category3:
+                            one_display_goods_list.append(display_goods)
+                        else:
+                            # 结束上一个child_area, 开始一个新的child_area
+                            area.add_child_area_in_one_category3(level_id, one_display_goods_list)
+                            one_display_goods_list = [display_goods]
+                            area_category3 = display_goods.goods_data.category3
+                            # 开始一个新的area
+                            area = Area(self)
+                            self.area_list.append(area)
 
-            area.add_child_area_in_one_category3(level_id, one_display_goods_list)
-            one_display_goods_list = []
-            area_category3 = None
+                # 结束上一个child_area, 开始一个新的child_area
+                area.add_child_area_in_one_category3(level_id, one_display_goods_list)
+                one_display_goods_list = []
 
     def _second_combine_areas(self):
         """
