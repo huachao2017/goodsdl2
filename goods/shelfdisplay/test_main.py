@@ -27,10 +27,10 @@ if __name__ == "__main__":
         "select id from sf_taizhang_display where taizhang_id={} and status in (1,2,3) and approval_status=1 order by start_datetime desc limit 1".format(
             args.tzid))
     (old_display_id,) = cursor.fetchone()
+    cursor.close()
     taizhang = generate_displays(args.shopid, args.tzid, args.batchid, old_display_id)
     print(taizhang.best_candidate_shelf)
 
-    cursor.close()
 
 
     # category_area_ratio: 分类陈列面积比例表

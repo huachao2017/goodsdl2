@@ -149,7 +149,7 @@ class TaizhangDisplay:
         now = datetime.datetime.now()
         for shelf in self.shelfs:
             index += 1
-            image_name = '{}_{}.jpg'.format(index, now.strftime('%Y%m%d%H%M%S'))
+            image_name = 'new_{}_{}.jpg'.format(index, now.strftime('%Y%m%d%H%M%S'))
             image_path = os.path.join(image_dir, image_name)
             image = np.ones((shelf.height, shelf.width, 3), dtype=np.int16)
             image = image * 255

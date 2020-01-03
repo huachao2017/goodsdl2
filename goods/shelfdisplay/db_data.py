@@ -47,7 +47,7 @@ def init_base_data(uc_shopid, batch_id):
 
     # 获取选品数据（去除选品删除数据）
     cursor_default.execute(
-        "select mch_goods_code, predict_sales_num, predict_sales_amount, goods_role, ranking from goods_goodsselectionhistory where shopid={} and batch_id='{}' and goods_role != 5".format(
+        "select mch_goods_code, predict_sales_num, predict_sales_amount, goods_role, ranking from goods_goodsselectionhistory where shopid={} and batch_id='{}'".format(
             shopid, batch_id))
     all_selection_goods = cursor_default.fetchall()
 
@@ -57,6 +57,9 @@ def init_base_data(uc_shopid, batch_id):
     for selection_goods in all_selection_goods:
         # 获取商品属性
         mch_goods_code = selection_goods[0]
+        goods_role = selection_goods[3]
+        if goods_role == 5:
+            goods_role = 2
         # 做商品去重
         if mch_goods_code in mch_goods_code_list:
             continue
@@ -93,7 +96,7 @@ def init_base_data(uc_shopid, batch_id):
                                                    is_suspension,
                                                    selection_goods[1],
                                                    selection_goods[2],
-                                                   selection_goods[3],
+                                                   goods_role,
                                                    selection_goods[4]
                                                    ))
 

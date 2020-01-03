@@ -153,7 +153,7 @@ class TaizhangDisplay:
         image_name = None
         now = datetime.datetime.now()
         shelf = self.best_candidate_shelf
-        image_name = '1_{}.jpg'.format(now.strftime('%Y%m%d%H%M%S'))
+        image_name = 'new_{}.jpg'.format(now.strftime('%Y%m%d%H%M%S'))
         image_path = os.path.join(image_dir, image_name)
         image = np.ones((shelf.height, shelf.width, 3), dtype=np.int16)
         image = image * 255
@@ -235,7 +235,7 @@ class TaizhangDisplay:
         image_name = None
         now = datetime.datetime.now()
         shelf = self.shelf
-        image_name = '1_{}.jpg'.format(now.strftime('%Y%m%d%H%M%S'))
+        image_name = 'old_{}.jpg'.format(now.strftime('%Y%m%d%H%M%S'))
         image_path = os.path.join(image_dir, image_name)
         image = np.ones((shelf.height, shelf.width, 3), dtype=np.int16)
         image = image * 255
