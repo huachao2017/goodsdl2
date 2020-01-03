@@ -273,7 +273,7 @@ class ItemBasedCF():
 
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
-    itemCF = ItemBasedCF(1284,70,50)
+    itemCF = ItemBasedCF(4598,70,50)
     # itemCF.get_dataset(rating_file)
     # a = itemCF.recommend_02()
     a = itemCF.get_can_order_dict()
