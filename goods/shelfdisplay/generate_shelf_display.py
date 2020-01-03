@@ -105,6 +105,10 @@ def generate_displays(uc_shopid, tz_id, batch_id, old_display_id = None):
         try:
             image_name = taizhang_display.to_image(taizhang_display.image_dir)
             shelf_display_debug_model.display_source = os.path.join(taizhang_display.image_relative_dir, image_name)
+
+            image_old_name = taizhang_display.to_old_image(taizhang_display.image_dir)
+            if image_old_name is not None:
+                shelf_display_debug_model.old_display_source = os.path.join(taizhang_display.image_relative_dir, image_old_name)
         except Exception as e:
             print('陈列图生成错误：{}'.format(e))
             traceback.print_exc()

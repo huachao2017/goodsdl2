@@ -1,6 +1,8 @@
 import argparse
 import sys
 import main.import_django_settings
+from django.db import connections
+from django.db import close_old_connections
 
 from goods.shelfdisplay.generate_shelf_display import generate_displays
 
@@ -12,17 +14,23 @@ def parse_arguments(argv):
     parser.add_argument('--tzid', type=int,
                         help='taizhang id', default=1199)
     parser.add_argument('--batchid', type=str,
-                        help='batch id', default='TEST_20200102143453')
-    parser.add_argument('--old_display_id', type=int,
-                        help='old display id', default=1144)
+                        help='batch id', default='TEST_20200102172630')
     return parser.parse_args(argv)
 
 if __name__ == "__main__":
     args = parse_arguments(sys.argv[1:])
     # taizhang = generate_displays(806, 1187)
 
-    taizhang = generate_displays(args.shopid, args.tzid, args.batchid, args.old_display_id)
+
+    cursor = connections['ucenter'].cursor()
+    cursor.execute(
+        "select id from sf_taizhang_display where taizhang_id={} and status in (1,2,3) and approval_status=1 order by start_datetime desc limit 1".format(
+            args.tzid))
+    (old_display_id,) = cursor.fetchone()
+    taizhang = generate_displays(args.shopid, args.tzid, args.batchid, old_display_id)
     print(taizhang.best_candidate_shelf)
+
+    cursor.close()
 
 
     # category_area_ratio: 分类陈列面积比例表

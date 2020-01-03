@@ -67,7 +67,11 @@ def init_base_data(uc_shopid, batch_id):
                     mch_id, mch_goods_code))
             (goods_id, goods_name, upc, tz_display_img, category1_id, category2_id, category3_id, category4_id, package_type, brand,
              width, height, depth, is_superimpose, is_suspension) = cursor.fetchone()
-            # TODO 需要获取四级分类的数据
+
+            # TODO 这里要做商品报警
+            if category3_id is None:
+                category3_id = ''
+                print("商品{}({})没有设定三级分类".format(goods_name,mch_goods_code))
         except:
             not_found_goods += 1
             continue

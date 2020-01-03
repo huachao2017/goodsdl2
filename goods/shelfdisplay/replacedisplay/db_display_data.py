@@ -69,6 +69,9 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
             goods_data_to_left_top = {}
             for goods_info in goods_level_array:
                 goods_data = find_goods(goods_info['mch_goods_code'], base_data.goods_data_list)
+                if goods_data is None:
+                    print('选品表中有陈列商品不存在：{}'.format(goods_info['mch_goods_code']))
+                    raise ValueError('选品表中有陈列商品不存在')
                 if goods_data in goods_data_to_left_top:
                     goods_data_to_left_top[goods_data].append((goods_info['left'], goods_info['top']))
                 else:

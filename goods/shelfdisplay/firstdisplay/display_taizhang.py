@@ -212,6 +212,8 @@ class TaizhangDisplay:
             cv2.imwrite(image_path, image)
         return image_name # FIXME 只能返回一个货架
 
+    def to_old_image(self, image_dir):
+        return None
 
 class Shelf:
     # 空间常量
