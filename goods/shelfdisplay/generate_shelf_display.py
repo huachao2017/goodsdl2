@@ -36,21 +36,24 @@ def generate_workflow_displays(uc_shopid, batch_id):
     except:
         traceback.print_exc()
         print('获取台账失败：{}！'.format(uc_shopid))
-        cursor.close()
         raise ValueError('taizhang error:{}'.format(uc_shopid))
+    finally:
+        cursor.close()
 
     # 计算陈列
     taizhang_display_list = []
     for one_tz_id in taizhangs:
         # 获取上次陈列
         old_display_id = None
+        close_old_connections()
+        cursor = connections['ucenter'].cursor()
         try:
             cursor.execute(
                 "select id from sf_taizhang_display where taizhang_id={} and status in (1,2,3) and approval_status=1 order by start_datetime desc limit 1".format(
                     one_tz_id[0]))
             (old_display_id,) = cursor.fetchone()
         except Exception as e:
-            traceback.print_exc()
+            # traceback.print_exc()
             print("没有找到已有陈列:{}".format(one_tz_id[0]))
         finally:
             cursor.close()
