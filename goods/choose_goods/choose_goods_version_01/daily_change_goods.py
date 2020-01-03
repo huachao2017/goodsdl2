@@ -390,7 +390,7 @@ class DailyChangeGoods:
         # print(self.can_order_mch_code_dict)
         # print(self.taizhang_goods_mch_code_list)
         # print(must_up_mch_goods_list)
-        itemCF = ItemBasedCF(self.shop_id,770,2150)   # 协同过滤
+        itemCF = ItemBasedCF(self.shop_id,70,150)   # 协同过滤
         rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
 
         for mch_goods, score in rank_list:
@@ -399,10 +399,10 @@ class DailyChangeGoods:
                 # print(type(mch_goods))
                 if str(mch_goods) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(mch_goods)]
-                    # if delivery_type != 2:     # 把非日配的挑出来
-                    #     continue
-                    if delivery_type == 2 and str(mch_goods) in optional_up_mch_goods_dict:
-                        print("从可选上架里挑选出一个关联品00000！")
+                    if delivery_type != 2:     # 把非日配的挑出来
+                        continue
+                    # if delivery_type == 2 and str(mch_goods) in optional_up_mch_goods_dict:
+                    #     print("从可选上架里挑选出一个关联品00000！")
 
                     must_up_mch_goods_list.append(mch_goods)
                     if str(mch_goods) in optional_up_mch_goods_dict:
@@ -416,9 +416,12 @@ class DailyChangeGoods:
                         # print("123456789")
                         sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}' and upc > 0"
                         self.cursor_ucenter.execute(sql.format(mch_goods))
+                        psd_data = self.get_mch_psd_data(mch_goods,self.template_shop_ids)
+                        print('psd_data',psd_data)
+
                         try:
                             d = self.cursor_ucenter.fetchone()
-                            must_up_goods.append([','.join(self.template_shop_ids), d[0], None, None, mch_goods, None, d[1], 0, 0, 1, 2])
+                            must_up_goods.append([','.join(self.template_shop_ids), d[0], None, psd_data[0], mch_goods, None, d[1], 0, 0, 1, 2])
                         except:
                             print("mch为{}的商品获取upc和name失败".format(mch_goods))
 
