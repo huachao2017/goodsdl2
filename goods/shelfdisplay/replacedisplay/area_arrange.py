@@ -37,6 +37,9 @@ class AreaManager:
         self._second_combine_areas()
         self._prepare_area_base_data()
         self._prepare_area_calculate_data()
+
+        self._print_choose_goods_info()
+
         self._arrange_areas()
         candidate_shelf_list = self._generate_all_area_candidate()
         return self.calculate_best_candidate_shelf(candidate_shelf_list)
@@ -163,6 +166,44 @@ class AreaManager:
     def _prepare_area_calculate_data(self):
         for area in self.area_list:
             area.prepare_calculate_data()
+
+    def _print_choose_goods_info(self):
+        """
+        area.up_choose_goods_list = []
+        area.down_display_goods_list = []
+        self.levelid_to_goods_width = {}
+        self.levelid_to_remain_width = {}
+
+        area.display_goods_to_reduce_face_num = {}
+        area.second_down_display_goods_list = []
+
+        :return:
+        """
+
+        up_info = '上架商品：'
+        for area in self.area_list:
+            for choose_goods in area.up_choose_goods_list:
+                up_info += choose_goods.goods_name
+                up_info += ','
+
+        print(up_info)
+
+        down_info = '下架商品：'
+        for area in self.area_list:
+            for display_goods in area.down_display_goods_list:
+                down_info += display_goods.goods_data.goods_name
+                down_info += ','
+            for display_goods in area.second_down_display_goods_list:
+                down_info += display_goods.goods_data.goods_name
+                down_info += ','
+        print(down_info)
+
+        reduce_info = '减扩面商品：'
+        for area in self.area_list:
+            for display_goods in area.display_goods_to_reduce_face_num:
+                reduce_info += display_goods.goods_data.goods_name + '(' + str(area.display_goods_to_reduce_face_num[display_goods])
+                reduce_info += '),'
+        print(reduce_info)
 
     def _arrange_areas(self):
         """
