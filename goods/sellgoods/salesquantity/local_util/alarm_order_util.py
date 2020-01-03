@@ -41,3 +41,7 @@ def order_process():
             send_message(msg,3)
     cursor_ai.close()
     conn.close()
+
+
+if __name__=='__main__':
+    alarm_order()
