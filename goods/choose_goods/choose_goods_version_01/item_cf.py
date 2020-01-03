@@ -148,7 +148,8 @@ class ItemBasedCF():
 
         shop_sales_data = self.get_shop_sales_data(self.pos_shop_id)
         for data in shop_sales_data:
-            self.shop_psd_number_dict[str(data[3])] = data[6]
+            # self.shop_psd_number_dict[str(data[3])] = data[6]      # 按照psd
+            self.shop_psd_number_dict[str(data[3])] = data[0]      # 按照psd金额
 
         K = self.n_sim_goods
         N = self.n_rec_goods
@@ -253,6 +254,7 @@ class ItemBasedCF():
                 can_order_list.append(data[0])
         except:
             print('pos店号是{},查询是否可订货和配送类型失败'.format(self.pos_shop_id))
+        conn_ucenter.close()
         return can_order_list[:],delivery_type_dict
 
     def get_shop_sales_data(self, shop_id):
@@ -273,10 +275,10 @@ class ItemBasedCF():
 
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
-    itemCF = ItemBasedCF(4598,70,50)
+    itemCF = ItemBasedCF(1284,70,50)
     # itemCF.get_dataset(rating_file)
-    # a = itemCF.recommend_02()
-    a = itemCF.get_can_order_dict()
+    a = itemCF.recommend_02()
+    # a = itemCF.get_can_order_dict()
     print(type(a))
     print(a)
     # itemCF.evaluate()
