@@ -93,7 +93,7 @@ def day_order_process():
                                                        data[0]))  # 更新到“结束计算”和耗时多少
                 cursor_ai.connection.commit()
                 # if 'test' not in batch_id:
-                #     msg = "error ,e=" + str(e)
+                #     msg = "error ,e={}".format(e)
                 #     sass_interface.order_commit(batch_id, msg=msg)
     conn.close()
     conn_erp.close()
@@ -109,8 +109,8 @@ def add_order_process():
     # 获取日常订单
     cursor_ai.execute(sql_workflow.format(taskflow.add_order_type))
     add_flow_data = cursor_ai.fetchall()
-    if add_flow_data is not None:
-        for data in add_flow_data and len(add_flow_data) > 0:
+    if add_flow_data is not None and len(add_flow_data) > 0:
+        for data in add_flow_data:
             id = data[0]
             batch_id = data[1]
             uc_shop_id = data[2]
@@ -155,7 +155,7 @@ def add_order_process():
                                                        data[0]))  # 更新到“结束计算”和耗时多少
                 cursor_ai.connection.commit()
                 # if 'test' not in batch_id:
-                #     msg = "error ,e=" + str(e)
+                #     msg = "error ,e={}" .format(e)
                 #     sass_interface.order_commit(batch_id, msg=msg)
                 print ("data is error!" +str(data))
                 traceback.print_exc()

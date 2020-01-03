@@ -45,9 +45,9 @@ def init_base_data(uc_shopid, batch_id):
     for one in all_categorylevelrelation:
         base_data.category3_level_value[one[0]] = one[1]
 
-    # 获取选品数据
+    # 获取选品数据（去除选品删除数据）
     cursor_default.execute(
-        "select mch_goods_code, predict_sales_num, predict_sales_amount, goods_role, ranking from goods_goodsselectionhistory where shopid={} and batch_id='{}'".format(
+        "select mch_goods_code, predict_sales_num, predict_sales_amount, goods_role, ranking from goods_goodsselectionhistory where shopid={} and batch_id='{}' and goods_role != 5".format(
             shopid, batch_id))
     all_selection_goods = cursor_default.fetchall()
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,MengniuFreezerImage, GoodsImage,ShelfDisplayDebug,ShelfDisplayDebugGoods,AllWorkFlowBatch, ArmImage
+from goods.models import ShelfImage, ShelfGoods, ShelfImage2, ShelfGoods2,FreezerImage,MengniuFreezerImage, GoodsImage,ShelfDisplayDebug,AllWorkFlowBatch, ArmImage
 import os
 from django.conf import settings
 
@@ -194,29 +194,10 @@ class AllWorkFlowBatchSerializer(serializers.ModelSerializer):
                   'create_time','update_time')
         read_only_fields = ('create_time','update_time')
 
-class ShelfDisplayDebugGoodsSerializer(serializers.ModelSerializer):
-    goods_tree_source_url = serializers.SerializerMethodField()
-    class Meta:
-        model = ShelfDisplayDebugGoods
-        fields = ('pk', 'category', 'goods_tree_source','goods_tree_source_url',
-                  'create_time')
-
-    def get_goods_tree_source_url(self, shelf_display_debug_goods):
-        request = self.context.get('request')
-        if shelf_display_debug_goods.goods_tree_source:
-            current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
-                                                           host=request.get_host(),
-                                                           path=settings.MEDIA_URL,
-                                                           visual=shelf_display_debug_goods.goods_tree_source)
-            return current_uri
-
-        else:
-            return None
 
 class ShelfDisplayDebugSerializer(serializers.ModelSerializer):
-    image_problem_goods = ShelfDisplayDebugGoodsSerializer(many=True, read_only=True)
     display_source_url = serializers.SerializerMethodField()
-    category_intimacy_source_url = serializers.SerializerMethodField()
+    old_display_source_url = serializers.SerializerMethodField()
     class Meta:
         model = ShelfDisplayDebug
         fields = ('pk', 'batch_id', 'uc_shopid', 'tz_id', 'json_ret', 'calculate_time',
@@ -234,13 +215,13 @@ class ShelfDisplayDebugSerializer(serializers.ModelSerializer):
 
         else:
             return None
-    def get_category_intimacy_source_url(self, shelf_display_debug):
+    def get_old_display_source_url(self, shelf_display_debug):
         request = self.context.get('request')
-        if shelf_display_debug.category_intimacy_source:
+        if shelf_display_debug.old_display_source:
             current_uri = '{scheme}://{host}{path}{visual}'.format(scheme=request.scheme,
                                                            host=request.get_host(),
                                                            path=settings.MEDIA_URL,
-                                                           visual=shelf_display_debug.category_intimacy_source)
+                                                           visual=shelf_display_debug.old_display_source)
             return current_uri
 
         else:
