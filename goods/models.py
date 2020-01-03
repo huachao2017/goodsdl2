@@ -191,14 +191,8 @@ class ShelfDisplayDebug(models.Model):
     json_ret = models.TextField(default='')
     calculate_time = models.IntegerField(default=0)
     display_source = models.CharField(max_length=200, default='')
-    category_intimacy_source = models.CharField(max_length=200, default='')
+    old_display_source = models.CharField(max_length=200, default='')
     create_time = models.DateTimeField('date created', auto_now_add=True)
-
-class ShelfDisplayDebugGoods(models.Model):
-    shelf_display_debug = models.ForeignKey(ShelfImage2, related_name="shelf_display_debug_goods", on_delete=models.CASCADE)
-    category = models.CharField(max_length=20)
-    goods_tree_source = models.CharField(max_length=200, default='')
-
 
 def arm_image_upload_source(instance, filename):
     now = datetime.datetime.now()
