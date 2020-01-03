@@ -1,5 +1,5 @@
 import logging
-from object_detection.utils import visualization_utils as vis_util
+from dl.utils import visualization_utils as vis_util
 import numpy as np
 from sklearn.cluster import KMeans
 import traceback

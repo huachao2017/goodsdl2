@@ -18,8 +18,8 @@ from keras.utils import multi_gpu_model
 from keras.backend.tensorflow_backend import set_session
 from set_config import config
 # from goods.freezer.keras_yolo3.yolo3 import yolo_freezer
-from object_detection.utils import visualization_utils as vis_util
-from object_detection.utils import label_map_util
+from dl.utils import visualization_utils as vis_util
+from dl.utils import label_map_util
 from goods.freezer.keras_yolo3.good_proxy import proxy
 import logging
 import tensorflow as tf
