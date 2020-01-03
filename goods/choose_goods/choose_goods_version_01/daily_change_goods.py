@@ -384,12 +384,12 @@ class DailyChangeGoods:
             # print(goods)
             optional_up_mch_goods_dict[str(goods[4])] = goods
 
-        print('哈哈')
-        print(optional_up_mch_goods_dict)
-        print(self.can_order_mch_code_dict)
-        print(self.taizhang_goods_mch_code_list)
-        print(must_up_mch_goods_list)
-        itemCF = ItemBasedCF(self.shop_id,770,1150)   # 协同过滤
+        # print('哈哈')
+        # print(optional_up_mch_goods_dict)
+        # print(self.can_order_mch_code_dict)
+        # print(self.taizhang_goods_mch_code_list)
+        # print(must_up_mch_goods_list)
+        itemCF = ItemBasedCF(self.shop_id,770,2150)   # 协同过滤
         rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
 
         for mch_goods, score in rank_list:
@@ -398,8 +398,8 @@ class DailyChangeGoods:
                 # print(type(mch_goods))
                 if str(mch_goods) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(mch_goods)]
-                    if delivery_type != 2:     # 把非日配的挑出来
-                        continue
+                    # if delivery_type != 2:     # 把非日配的挑出来
+                    #     continue
 
                     must_up_mch_goods_list.append(mch_goods)
                     if str(mch_goods) in optional_up_mch_goods_dict:
