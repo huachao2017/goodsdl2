@@ -12,6 +12,7 @@ from goods.choose_goods.choose_goods_version_01.item_cf import ItemBasedCF
 
 import main.import_django_settings
 from django.db import connections
+from django.db import close_old_connections
 
 class DailyChangeGoods:
     """
@@ -29,7 +30,7 @@ class DailyChangeGoods:
         self.days = days     # 取数周期
         self.all_third_category_mch_dict = []      # 三级分类的列表
         self.first_category_goods_count_dict = {}     # 一级分类选品预估的数量
-        self.supplier_id_list = None     # 供应商id
+        self.supplier_id_list = []     # 供应商id
         self.debug = True
         self.can_order_mch_code_dict = {}    # 可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
         self.all_goods_len = 0    # 本店台账已有len
@@ -45,6 +46,7 @@ class DailyChangeGoods:
 
         # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
         # self.cursor = conn.cursor()
+        close_old_connections()
         self.cursor = connections['dmstore'].cursor()
         self.cursor_ucenter = connections['ucenter'].cursor()
 
@@ -140,12 +142,16 @@ class DailyChangeGoods:
         # 注意：and c.display_third_cat_id>0 类型是字符串
         sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id in ({}) and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code in ({}) and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
         try:
+            print("sql语句：",self.supplier_id_list)
+
+            print(sql.format(','.join(self.supplier_id_list),",".join(mch_code_list)))
             self.cursor_ucenter.execute(sql.format(','.join(self.supplier_id_list),",".join(mch_code_list)))
             all_data = self.cursor_ucenter.fetchall()
             for data in all_data:
                 third_category_mch_dict[data[0]] = data[1]
             return third_category_mch_dict
-        except:
+        except Exception as e:
+            print('pos店号是{},查询该店三级分类报错,{}'.format(self.shop_id, e))
             return dict()
 
 
@@ -264,8 +270,8 @@ class DailyChangeGoods:
                     delivery_type_dict[data[0]] = 2
                     continue
                 delivery_type_dict[data[0]] = data[1]
-        except:
-            print('pos店号是{},查询是否可订货和配送类型失败'.format(self.shop_id))
+        except Exception as e:
+            print('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
         conn_ucenter.close()
         return delivery_type_dict
 
@@ -702,8 +708,8 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
-    # f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
+    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
+    f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
