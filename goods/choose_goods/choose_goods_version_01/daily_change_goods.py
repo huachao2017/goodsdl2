@@ -360,9 +360,11 @@ class DailyChangeGoods:
         """
         for goods in must_up_goods:
             if goods[-1] == 0:   # 结构品
-                goods.append(goods[3]*1000)
+                goods.append(goods[3]*100000)
             elif goods[-1] == 1:   # 畅销品
-                goods.append(goods[3]*100)
+                goods.append(goods[3]*10000)
+            elif goods[-1] == 2:   # 畅销品
+                goods.append(goods[3]*1000)
             else:
                 # raise Exception("必上品列表出现异常数据！")
                 print("必上品列表出现异常数据！")
@@ -418,10 +420,13 @@ class DailyChangeGoods:
                         self.cursor_ucenter.execute(sql.format(mch_goods))
                         psd_data = self.get_mch_psd_data(mch_goods,self.template_shop_ids)
                         print('psd_data',psd_data)
-
+                        if psd_data:
+                            psd_amount = psd_data[0]
+                        else:
+                            psd_amount = 0
                         try:
                             d = self.cursor_ucenter.fetchone()
-                            must_up_goods.append([','.join(self.template_shop_ids), d[0], None, psd_data[0], mch_goods, None, d[1], 0, 0, 1, 2])
+                            must_up_goods.append([','.join(self.template_shop_ids), d[0], None, psd_amount, mch_goods, None, d[1], 0, 0, 1, 2])
                         except:
                             print("mch为{}的商品获取upc和name失败".format(mch_goods))
 
@@ -637,10 +642,12 @@ class DailyChangeGoods:
         print('must_up_goods',len(must_up_goods))
         print('optional_up_goods',len(optional_up_goods))
 
-        must_up_goods = self.must_up_add_ranking(must_up_goods)     # 添加ranking的值
+
 
         # 添加必上的关联品
         must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
+
+        must_up_goods = self.must_up_add_ranking(must_up_goods)  # 添加ranking的值
 
         optional_up_goods.sort(key=lambda x: x[3], reverse=False)  # 基于psd金额排序
         for index,goods in enumerate(optional_up_goods):    # 添加ranking的值
