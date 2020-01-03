@@ -394,15 +394,15 @@ class DailyChangeGoods:
 
         for mch_goods, score in rank_list:
             if mch_goods not in self.taizhang_goods_mch_code_list and mch_goods not in must_up_mch_goods_list:
-                print(mch_goods)
-                print(type(mch_goods))
+                # print(mch_goods)
+                # print(type(mch_goods))
                 if str(mch_goods) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(mch_goods)]
                     if delivery_type != 2:     # 把非日配的挑出来
                         continue
 
                     must_up_mch_goods_list.append(mch_goods)
-                    if mch_goods in optional_up_mch_goods_dict:
+                    if str(mch_goods) in optional_up_mch_goods_dict:
                         print("从可选上架里挑选出一个关联品！")
                         temp_data = optional_up_mch_goods_dict[mch_goods]
                         temp_data[-1] = 2
@@ -410,7 +410,7 @@ class DailyChangeGoods:
                         # temp_data.apeend(score)
                         must_up_goods.append(optional_up_mch_goods_dict[mch_goods])
                     else:
-                        print("123456789")
+                        # print("123456789")
                         sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}' and upc > 0"
                         self.cursor_ucenter.execute(sql.format(mch_goods))
                         try:
