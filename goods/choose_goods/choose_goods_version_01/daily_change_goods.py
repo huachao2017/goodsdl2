@@ -377,6 +377,7 @@ class DailyChangeGoods:
         """
         print("must_up_goods长度",len(must_up_goods))
         print("optional_up_goods长度",len(optional_up_goods))
+        print(optional_up_goods)
         # candidate_mch_goods_list = [goods[4] for goods in candidate_up_goods_list]
         must_up_mch_goods_list = [str(goods[4]) for goods in must_up_goods]
         optional_up_mch_goods_dict = {}
