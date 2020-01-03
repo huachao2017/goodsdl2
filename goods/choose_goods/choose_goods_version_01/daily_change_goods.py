@@ -29,7 +29,7 @@ class DailyChangeGoods:
         self.days = days     # 取数周期
         self.all_third_category_mch_dict = []      # 三级分类的列表
         self.first_category_goods_count_dict = {}     # 一级分类选品预估的数量
-        self.supplier_id = None     # 供应商id
+        self.supplier_id_list = None     # 供应商id
         self.debug = True
         self.can_order_mch_code_dict = {}    # 可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
         self.all_goods_len = 0    # 本店台账已有len
@@ -98,9 +98,9 @@ class DailyChangeGoods:
         """
         all_third_category_mch_dict = {}
         # 注意：and c.display_third_cat_id>0 类型是字符串
-        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id = {} and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code is not NULL and c.mch_goods_code !='' and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
+        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id in ({}) and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code is not NULL and c.mch_goods_code !='' and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
         try:
-            self.cursor_ucenter.execute(sql.format(self.supplier_id))
+            self.cursor_ucenter.execute(sql.format(','.join(self.supplier_id_list)))
             all_data = self.cursor_ucenter.fetchall()
             for data in all_data:
                 all_third_category_mch_dict[data[0]] = data[1]
@@ -138,9 +138,9 @@ class DailyChangeGoods:
         """
         third_category_mch_dict = {}
         # 注意：and c.display_third_cat_id>0 类型是字符串
-        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id = {} and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code in ({}) and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
+        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id in ({}) and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code in ({}) and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
         try:
-            self.cursor_ucenter.execute(sql.format(self.supplier_id,",".join(mch_code_list)))
+            self.cursor_ucenter.execute(sql.format(','.join(self.supplier_id_list),",".join(mch_code_list)))
             all_data = self.cursor_ucenter.fetchall()
             for data in all_data:
                 third_category_mch_dict[data[0]] = data[1]
@@ -219,31 +219,24 @@ class DailyChangeGoods:
         获取可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
         :return:
         """
-        # sql = "SELECT erp_shop_id from erp_shop_related WHERE shop_id='{}' and erp_shop_type=2"
-        # self.cursor.execute(sql.format(self.shop_id))
-        # try:
-        #     erp_shop_id = self.cursor.fetchone()[0]
-        # except:
-        #     print('erp_shop_id获取失败！')
-        #     return []
 
-        self.cursor.execute("SELECT erp_shop_id from erp_shop_related WHERE shop_id ={} AND erp_shop_type=0;".format(self.shop_id))
+        self.cursor.execute("SELECT erp_shop_id from erp_shop_related WHERE shop_id ={} AND erp_shop_type=1;".format(self.shop_id))
         try:
             erp_shop_id = self.cursor.fetchone()[0]
         except:
             print('erp_shop_id获取失败！')
             return []
-        try:
-            ms_conn = connections["erp"]
-            ms_cursor = ms_conn.cursor()
-            ms_cursor.execute("SELECT authorized_shop_id FROM ms_relation WHERE is_authorized_shop_id IN (SELECT authorized_shop_id FROM	ms_relation WHERE is_authorized_shop_id = {} AND STATUS = 1) AND STATUS = 1".format(erp_shop_id))
-            all_data = ms_cursor.fetchall()
-            supplier_code = []
-            for data in all_data:
-                supplier_code.append(str(data[0]))
-        except:
-            print('supplier_code获取失败！')
-            return []
+        # try:
+        #     ms_conn = connections["erp"]
+        #     ms_cursor = ms_conn.cursor()
+        #     ms_cursor.execute("SELECT authorized_shop_id FROM ms_relation WHERE is_authorized_shop_id IN (SELECT authorized_shop_id FROM	ms_relation WHERE is_authorized_shop_id = {} AND STATUS = 1) AND STATUS = 1".format(erp_shop_id))
+        #     all_data = ms_cursor.fetchall()
+        #     supplier_code = []
+        #     for data in all_data:
+        #         supplier_code.append(str(data[0]))
+        # except:
+        #     print('supplier_code获取失败！')
+        #     return []
 
 
 
@@ -252,19 +245,28 @@ class DailyChangeGoods:
         cursor_ucenter = conn_ucenter.cursor()
         delivery_type_dict = {}    # 店内码是key，配送类型是value
         try:
-            cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
-            (supplier_id,) = cursor_ucenter.fetchone()
-            self.supplier_id = supplier_id
+            # cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
+            # (supplier_id,) = cursor_ucenter.fetchone()
+            # self.supplier_id = supplier_id
+
+            cursor_ucenter.execute("SELECT supplier_id from uc_warehouse_supplier_shop WHERE warehouse_id={}".format(erp_shop_id))
+            all_supplier_id_data = cursor_ucenter.fetchall()
+            for supplier_data in all_supplier_id_data:
+                self.supplier_id_list.append(str(supplier_data[0]))
             cursor_ucenter.execute(
                 # "select supplier_goods_code,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(supplier_id))
                 # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
                 # 有尺寸数据
-                "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id = {} and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.display_third_cat_id > 0".format(supplier_id))
+                "select DISTINCT a.supplier_goods_code,b.delivery_attr,c.display_second_cat_id from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id in ({}) and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.display_third_cat_id > 0".format(','.join(self.supplier_id_list)))
             all_data = cursor_ucenter.fetchall()
             for data in all_data:
+                if data[2] == "104":    #  巧克力分类 ,按照非日配逻辑来处理
+                    delivery_type_dict[data[0]] = 2
+                    continue
                 delivery_type_dict[data[0]] = data[1]
         except:
             print('pos店号是{},查询是否可订货和配送类型失败'.format(self.shop_id))
+        conn_ucenter.close()
         return delivery_type_dict
 
     def calculate_not_move_goods(self):
