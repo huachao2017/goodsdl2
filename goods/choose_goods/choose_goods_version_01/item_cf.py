@@ -24,6 +24,7 @@ class ItemBasedCF():
         self.supplier_id_list = []  # 供应商id，可以多个
         self.can_order_mch_list = []
         self.dmstore_cursor = connections['dmstore'].cursor()
+        self.cursor_ucenter = connections['ucenter'].cursor()
 
         # 找到相似的多少个商品，为门店推荐多少个商品
         self.n_sim_goods = n_sim_goods
@@ -44,7 +45,7 @@ class ItemBasedCF():
         print('Recommneded goods number = %d' % self.n_rec_goods)
     def __del__(self):
         self.dmstore_cursor.close()
-        # self.cursor_ucenter.close()
+        self.cursor_ucenter.close()
 
     # 读取数据库得到"订单-商品"数据
     def get_data(self):
@@ -235,29 +236,29 @@ class ItemBasedCF():
             print('erp_shop_id获取失败！')
             return []
 
-        conn_ucenter = connections['ucenter']
-        cursor_ucenter = conn_ucenter.cursor()
+        # conn_ucenter = connections['ucenter']
+        # cursor_ucenter = conn_ucenter.cursor()
         delivery_type_dict = {}    # 店内码是key，配送类型是value
         can_order_list = []   #可订货列表
         try:
             # cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
-            cursor_ucenter.execute("SELECT supplier_id from uc_warehouse_supplier_shop WHERE warehouse_id={}".format(erp_shop_id))
-            all_supplier_id_data = cursor_ucenter.fetchall()
+            self.cursor_ucenter.execute("SELECT supplier_id from uc_warehouse_supplier_shop WHERE warehouse_id={}".format(erp_shop_id))
+            all_supplier_id_data = self.cursor_ucenter.fetchall()
             for supplier_data in all_supplier_id_data:
                 self.supplier_id_list.append(str(supplier_data[0]))
 
-            cursor_ucenter.execute(
+            self.cursor_ucenter.execute(
                 # "select supplier_goods_code from uc_supplier_goods where supplier_id in ({}) and order_status = 1 ".format(','.join(self.supplier_id_list)))
                 # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
                 # 有尺寸数据
                 "select DISTINCT a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id in ({}) and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.display_third_cat_id > 0".format(','.join(self.supplier_id_list)))
-            all_data = cursor_ucenter.fetchall()
+            all_data = self.cursor_ucenter.fetchall()
             for data in all_data:
                 # delivery_type_dict[data[0]] = data[1]
                 can_order_list.append(data[0])
         except:
             print('pos店号是{},查询是否可订货和配送类型失败'.format(self.pos_shop_id))
-        conn_ucenter.close()
+        # conn_ucenter.close()
         return can_order_list[:],delivery_type_dict
 
     def get_shop_sales_data(self, shop_id):
