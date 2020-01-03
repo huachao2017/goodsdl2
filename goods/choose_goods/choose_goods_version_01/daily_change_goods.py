@@ -12,6 +12,7 @@ from goods.choose_goods.choose_goods_version_01.item_cf import ItemBasedCF
 
 import main.import_django_settings
 from django.db import connections
+from django.db import close_old_connections
 
 class DailyChangeGoods:
     """
@@ -45,6 +46,7 @@ class DailyChangeGoods:
 
         # conn = pymysql.connect('123.103.16.19', 'readonly', password='fxiSHEhui2018@)@)', database='dmstore',charset="utf8", port=3300, use_unicode=True)
         # self.cursor = conn.cursor()
+        close_old_connections()
         self.cursor = connections['dmstore'].cursor()
         self.cursor_ucenter = connections['ucenter'].cursor()
 
