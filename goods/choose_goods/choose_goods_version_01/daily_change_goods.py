@@ -235,8 +235,8 @@ class DailyChangeGoods:
         self.cursor.execute("SELECT erp_shop_id from erp_shop_related WHERE shop_id ={} AND erp_shop_type=1;".format(self.shop_id))
         try:
             erp_shop_id = self.cursor.fetchone()[0]
-        except:
-            print('erp_shop_id获取失败！')
+        except Exception as e:
+            print('pos店号是{},erp_shop_id获取失败:{}'.format(self.shop_id,e))
             return []
         # try:
         #     ms_conn = connections["erp"]
@@ -351,8 +351,9 @@ class DailyChangeGoods:
     def must_up_add_ranking(self,must_up_goods):
         """
         添加ranking的值,
-        策略1-结构品，为必备品，选出商品后，排名分值赋予psd金额*1000
-        策略2-畅销品，为必备品，选出商品后，排名分值赋予psd金额*100
+        策略1-结构品，为必备品，选出商品后，排名分值赋予psd金额*100000
+        策略2-畅销品，为必备品，选出商品后，排名分值赋予psd金额*10000
+        策略2-关联品，为必备品，选出商品后，排名分值赋予psd金额*1000
         之后加入了其他关联品等策略后，排名分值根据策略再去设定
         :param must_up_goods:
         :return:
@@ -383,12 +384,17 @@ class DailyChangeGoods:
             # print(goods)
             optional_up_mch_goods_dict[str(goods[4])] = goods
 
-
-        itemCF = ItemBasedCF(self.shop_id,70,50)   # 协同过滤
+        print('哈哈')
+        print(optional_up_mch_goods_dict)
+        print(self.can_order_mch_code_dict)
+        print(self.taizhang_goods_mch_code_list)
+        print(must_up_mch_goods_list)
+        itemCF = ItemBasedCF(self.shop_id,70,150)   # 协同过滤
         rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
 
         for mch_goods, score in rank_list:
             if mch_goods not in self.taizhang_goods_mch_code_list and mch_goods not in must_up_mch_goods_list:
+                print(mch_goods)
                 if str(mch_goods) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(mch_goods)]
                     if delivery_type != 2:     # 把非日配的挑出来
@@ -396,11 +402,11 @@ class DailyChangeGoods:
 
                     must_up_mch_goods_list.append(mch_goods)
                     if mch_goods in optional_up_mch_goods_dict:
-                        print("不可能！")
+                        print("从可选上架里挑选出一个关联品！")
                         temp_data = optional_up_mch_goods_dict[mch_goods]
                         temp_data[-1] = 2
                         temp_data[-2] = 1
-                        temp_data.apeend(score)
+                        # temp_data.apeend(score)
                         must_up_goods.append(optional_up_mch_goods_dict[mch_goods])
                     else:
                         # print("123456789")
@@ -408,7 +414,7 @@ class DailyChangeGoods:
                         self.cursor_ucenter.execute(sql.format(mch_goods))
                         try:
                             d = self.cursor_ucenter.fetchone()
-                            must_up_goods.append([','.join(self.template_shop_ids), d[0], None, None, mch_goods, None, d[1], 0, 0, 1, 2, score])
+                            must_up_goods.append([','.join(self.template_shop_ids), d[0], None, None, mch_goods, None, d[1], 0, 0, 1, 2])
                         except:
                             print("mch为{}的商品获取upc和name失败".format(mch_goods))
 
@@ -714,8 +720,8 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
-    # f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
+    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
+    f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
