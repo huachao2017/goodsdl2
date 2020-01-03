@@ -14,3 +14,7 @@ def start_container(ip='0.0.0.0', port='80'):
 @task
 def do_test():
     local('python manage.py test')
+
+@task
+def display():
+    local('sh goods/shelfdisplay/deamon.sh')
