@@ -711,7 +711,7 @@ class DailyChangeGoods:
             print("删掉{}该批次之前的数据".format(self.batch_id))
         print('开始入库')
         # print(insert_sql_02)
-        print(tuple_data[:])
+        print(tuple_data[:5])
         cursor.executemany(insert_sql_02.format(self.shop_id,mch_code,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
         conn.commit()
         conn.close()
