@@ -421,7 +421,7 @@ class DailyChangeGoods:
                         psd_data = self.get_mch_psd_data(mch_goods,self.template_shop_ids)
                         print('psd_data',psd_data)
                         if psd_data:
-                            psd_amount = psd_data[0]
+                            psd_amount = psd_data[0][0]
                         else:
                             psd_amount = 0
                         try:
@@ -652,7 +652,7 @@ class DailyChangeGoods:
         # print(optional_up_goods)
 
         must_up_goods = self.must_up_add_ranking(must_up_goods)  # 添加ranking的值
-        # print('must_up_goods000', must_up_goods)
+        # print('must_up_goods', must_up_goods)
 
         optional_up_goods.sort(key=lambda x: x[3], reverse=False)  # 基于psd金额排序
         for index,goods in enumerate(optional_up_goods):    # 添加ranking的值
