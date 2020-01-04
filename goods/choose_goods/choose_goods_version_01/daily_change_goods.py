@@ -660,9 +660,9 @@ class DailyChangeGoods:
         must_up_goods = [tuple(goods) for goods in must_up_goods]
         optional_up_goods = [tuple(goods) for goods in optional_up_goods]
 
-        # print('must_up_goods', must_up_goods)
+        print('must_up_goods', must_up_goods)
         print()
-        # print('optional_up_goods', optional_up_goods)
+        print('optional_up_goods', optional_up_goods)
 
 
         # 3、保存至数据库
