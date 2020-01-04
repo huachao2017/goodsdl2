@@ -25,6 +25,7 @@ class SalesCol:
     winddirect = None
     windpower = None
     holiday_type = None
+    num = None
 
 
 
@@ -61,11 +62,11 @@ class SalesPredict:
         sc_inss = self.process_data(sql1_dict,sql2_list,sql3_dict,sql4_dict)
 
         with open('sales_train.CSV','w') as f:
-            f.write("shop_id,goods_id,upc,goods_name,price,city,city_id,create_date,week_date,first_cate_id,second_cate_id,third_cate_id,weather_type,temphigh,templow,windspeed,winddirect,windpower,holiday_type")
+            f.write("shop_id,goods_id,upc,goods_name,price,city,city_id,create_date,week_date,first_cate_id,second_cate_id,third_cate_id,weather_type,temphigh,templow,windspeed,winddirect,windpower,holiday_type,num")
             f.write("\n")
             for sc_ins in sc_inss:
                 sc_str = ("{},{},{},{},{},{},{},{},{},{},"
-                          "{},{},{},{},{},{},{},{},{}".format(
+                          "{},{},{},{},{},{},{},{},{},{}".format(
                     sc_ins.shop_id,
                     sc_ins.goods_id,
                     sc_ins.upc,
@@ -84,7 +85,8 @@ class SalesPredict:
                     sc_ins.windspeed,
                     sc_ins.winddirect,
                     sc_ins.windpower,
-                    sc_ins.holiday_type
+                    sc_ins.holiday_type,
+                    sc_ins.num
                 ))
                 f.write(sc_str)
                 f.write("\n")
