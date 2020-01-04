@@ -258,24 +258,32 @@ class AreaManager:
 
         candidate_shelf_list = []
         for one_candidate_list in product(*total_list):
-            candidate_shelf = self.shelf.copy_raw()
+            candidate_shelf = self.arrange_goods(one_candidate_list)
             candidate_shelf_list.append(candidate_shelf)
-            cur_level_index = 0
-            cur_goods_width = 0
-            for one_candidate in one_candidate_list:
-                for display_goods in one_candidate:
-                    goods_width = display_goods.goods_data.width * display_goods.face_num
-                    cur_level = candidate_shelf.levels[cur_level_index]
-                    if cur_goods_width + goods_width > candidate_shelf.width + 10:  # 加10的容差
-                        cur_level_index += 1
-                        cur_level = candidate_shelf.levels[cur_level_index]
-                        cur_level.add_display_goods(display_goods)
-                        cur_goods_width = goods_width
-                    else:
-                        cur_level.add_display_goods(display_goods)
-                        cur_goods_width += goods_width
 
         return candidate_shelf_list
+
+    def arrange_goods(self, one_candidate_list):
+        candidate_shelf = self.shelf.copy_raw()
+        cur_level_index = 0
+        cur_goods_width = 0
+        for one_candidate in one_candidate_list:
+            for display_goods in one_candidate:
+                goods_width = display_goods.goods_data.width * display_goods.face_num
+                cur_level = candidate_shelf.levels[cur_level_index]
+                if cur_goods_width + goods_width > candidate_shelf.width + 10:  # 加10的容差
+                    cur_level_index += 1
+                    if cur_level_index >= len(candidate_shelf.levels):
+                        print("陈列商品超出货架，陈列到此结束:{}".format(cur_level_index))
+                        return candidate_shelf
+                    cur_level = candidate_shelf.levels[cur_level_index]
+                    cur_level.add_display_goods(display_goods)
+                    cur_goods_width = goods_width
+                else:
+                    cur_level.add_display_goods(display_goods)
+                    cur_goods_width += goods_width
+
+        return candidate_shelf
 
 
 class Area:
@@ -421,6 +429,9 @@ class Area:
         down_total_width = 0
         for down_display_goods in self.down_display_goods_list:
             down_total_width += down_display_goods.goods_data.width * down_display_goods.face_num
+
+        if up_total_width == 0 and down_total_width == 0:
+            return
 
         need_width = up_total_width - down_total_width - remain_total_width
         if up_total_width > 0:
