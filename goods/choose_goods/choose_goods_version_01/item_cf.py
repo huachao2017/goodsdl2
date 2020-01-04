@@ -178,7 +178,7 @@ class ItemBasedCF():
                 sim_dict[goods] = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
             except:
                 continue
-        f.write(sim_dict)
+        f.write(str(sim_dict))
         f.close()
 
         return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
