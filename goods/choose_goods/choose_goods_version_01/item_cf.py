@@ -172,7 +172,7 @@ class ItemBasedCF():
                 print(ttt)
                 continue
 
-        f = open("相似度.txt", mode="w", encoding="utf-8")
+        f = open("相似度name.txt", mode="w", encoding="utf-8")
         sim_dict = {}
         for goods,rating in self.shop_psd_number_dict.items():
             try:
