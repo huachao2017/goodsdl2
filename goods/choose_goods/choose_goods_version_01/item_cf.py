@@ -54,13 +54,17 @@ class ItemBasedCF():
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
         sql = "select p.payment_id,GROUP_CONCAT(g.neighbor_goods_id) n from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and g.neighbor_goods_id in ({}) GROUP BY p.payment_id having COUNT(g.neighbor_goods_id) >1"
-        self.dmstore_cursor.execute(sql.format(week_ago, now_date,','.join(can_order_mch_list)))
-        all_data = self.dmstore_cursor.fetchall()
-        print(len(all_data))
-        for data in all_data:
-            for goods in data[1].split(","):
-                self.trainSet.setdefault(data[0], {})
-                self.trainSet[data[0]][goods] = 1
+        try:
+            self.dmstore_cursor.execute(sql.format(week_ago, now_date,','.join(can_order_mch_list)))
+            all_data = self.dmstore_cursor.fetchall()
+            print(len(all_data))
+            for data in all_data:
+                for goods in data[1].split(","):
+                    self.trainSet.setdefault(data[0], {})
+                    self.trainSet[data[0]][goods] = 1
+        except Exception as e:
+            print("获取订单-商品数据失败：{}".format(e))
+
 
     # 读文件得到“用户-商品”数据
     def get_dataset(self, filename, pivot=0.9999999):
