@@ -360,9 +360,11 @@ class DailyChangeGoods:
         """
         for goods in must_up_goods:
             if goods[-1] == 0:   # 结构品
-                goods.append(goods[3]*1000)
+                goods.append(goods[3]*100000)
             elif goods[-1] == 1:   # 畅销品
-                goods.append(goods[3]*100)
+                goods.append(goods[3]*10000)
+            elif goods[-1] == 2:   # 关联品
+                goods.append(goods[3]*1000)
             else:
                 # raise Exception("必上品列表出现异常数据！")
                 print("必上品列表出现异常数据！")
@@ -390,7 +392,7 @@ class DailyChangeGoods:
         # print(self.can_order_mch_code_dict)
         # print(self.taizhang_goods_mch_code_list)
         # print(must_up_mch_goods_list)
-        itemCF = ItemBasedCF(self.shop_id,770,2150)   # 协同过滤
+        itemCF = ItemBasedCF(self.shop_id,100,50)   # 协同过滤
         rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
 
         for mch_goods, score in rank_list:
@@ -399,14 +401,14 @@ class DailyChangeGoods:
                 # print(type(mch_goods))
                 if str(mch_goods) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(mch_goods)]
-                    # if delivery_type != 2:     # 把非日配的挑出来
-                    #     continue
-                    if delivery_type == 2 and str(mch_goods) in optional_up_mch_goods_dict:
-                        print("从可选上架里挑选出一个关联品00000！")
+                    if delivery_type != 2:     # 把非日配的挑出来
+                        continue
+                    # if delivery_type == 2 and str(mch_goods) in optional_up_mch_goods_dict:
+                    #     print("从可选上架里挑选出一个关联品00000！")
 
                     must_up_mch_goods_list.append(mch_goods)
                     if str(mch_goods) in optional_up_mch_goods_dict:
-                        print("从可选上架里挑选出一个关联品！")
+                        print("从可选上架里挑选出一个关联品,,mch为{}".format(mch_goods))
                         temp_data = optional_up_mch_goods_dict[mch_goods]
                         temp_data[-1] = 2
                         temp_data[-2] = 1
@@ -416,9 +418,15 @@ class DailyChangeGoods:
                         # print("123456789")
                         sql = "SELECT upc,goods_name from uc_merchant_goods WHERE mch_goods_code='{}' and upc > 0"
                         self.cursor_ucenter.execute(sql.format(mch_goods))
+                        psd_data = self.get_mch_psd_data(mch_goods,self.template_shop_ids)
+                        print('psd_data',psd_data)
+                        if psd_data:
+                            psd_amount = psd_data[0][0]
+                        else:
+                            psd_amount = 0
                         try:
                             d = self.cursor_ucenter.fetchone()
-                            must_up_goods.append([','.join(self.template_shop_ids), d[0], None, None, mch_goods, None, d[1], 0, 0, 1, 2])
+                            must_up_goods.append([','.join(self.template_shop_ids), d[0], None, psd_amount, mch_goods, None, d[1], 0, 0, 1, 2])
                         except:
                             print("mch为{}的商品获取upc和name失败".format(mch_goods))
 
@@ -625,19 +633,13 @@ class DailyChangeGoods:
             temp_number += 1
         optional_up_goods += candidate_up_goods_list[temp_number:]
 
-
-
-
-
-
-        # 以下4行时添加ranking的值
-        print('must_up_goods',len(must_up_goods))
-        print('optional_up_goods',len(optional_up_goods))
-
-        must_up_goods = self.must_up_add_ranking(must_up_goods)     # 添加ranking的值
-
         # 添加必上的关联品
         must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
+        # print('must_up_goods000',must_up_goods)
+
+
+        must_up_goods = self.must_up_add_ranking(must_up_goods)  # 添加ranking的值
+        # print('must_up_goods', must_up_goods)
 
         optional_up_goods.sort(key=lambda x: x[3], reverse=False)  # 基于psd金额排序
         for index,goods in enumerate(optional_up_goods):    # 添加ranking的值
@@ -647,7 +649,7 @@ class DailyChangeGoods:
         optional_up_goods = [tuple(goods) for goods in optional_up_goods]
 
         # print('must_up_goods', must_up_goods)
-        print()
+        # print()
         # print('optional_up_goods', optional_up_goods)
 
 
@@ -724,8 +726,8 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
-    f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
+    # f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
