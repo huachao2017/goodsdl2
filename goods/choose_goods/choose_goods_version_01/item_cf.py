@@ -153,8 +153,8 @@ class ItemBasedCF():
         shop_sales_data = self.get_shop_sales_data(self.pos_shop_id)
         for data in shop_sales_data:
             # self.shop_psd_number_dict[str(data[3])] = data[6]      # 按照psd
-            # self.shop_psd_number_dict[str(data[3])] = data[0]      # 按照psd金额
-            self.shop_psd_number_dict[str(data[5])] = data[0]      # 按照psd金额
+            self.shop_psd_number_dict[str(data[3])] = data[0]      # 按照psd金额
+            # self.shop_psd_number_dict[str(data[5])] = data[0]      # key是name
 
         K = self.n_sim_goods
         N = self.n_rec_goods
@@ -172,21 +172,21 @@ class ItemBasedCF():
                 print(ttt)
                 continue
 
-        f = open("相似度name.txt", mode="w", encoding="utf-8")
-        sim_dict = {}
-        for goods,rating in self.shop_psd_number_dict.items():
-            try:
-                # sim_dict[goods] = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
-                l = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
-                f.write(goods)
-                f.write(":")
-                f.write(str(l))
-                f.write("\n")
-                f.write("\n")
-            except:
-                continue
-        # f.write(str(sim_dict))
-        f.close()
+        # f = open("相似度name.txt", mode="w", encoding="utf-8")
+        # sim_dict = {}
+        # for goods,rating in self.shop_psd_number_dict.items():
+        #     try:
+        #         # sim_dict[goods] = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
+        #         l = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
+        #         f.write(goods)
+        #         f.write(":")
+        #         f.write(str(l))
+        #         f.write("\n")
+        #         f.write("\n")
+        #     except:
+        #         continue
+        # # f.write(str(sim_dict))
+        # f.close()
 
         return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
 
