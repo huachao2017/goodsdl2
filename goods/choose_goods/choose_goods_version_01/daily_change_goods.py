@@ -392,7 +392,7 @@ class DailyChangeGoods:
         # print(self.can_order_mch_code_dict)
         # print(self.taizhang_goods_mch_code_list)
         # print(must_up_mch_goods_list)
-        itemCF = ItemBasedCF(self.shop_id,70,150)   # 协同过滤
+        itemCF = ItemBasedCF(self.shop_id,100,50)   # 协同过滤
         rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
 
         for mch_goods, score in rank_list:
@@ -408,7 +408,7 @@ class DailyChangeGoods:
 
                     must_up_mch_goods_list.append(mch_goods)
                     if str(mch_goods) in optional_up_mch_goods_dict:
-                        print("从可选上架里挑选出一个关联品！")
+                        print("从可选上架里挑选出一个关联品,,mch为{}".format(mch_goods))
                         temp_data = optional_up_mch_goods_dict[mch_goods]
                         temp_data[-1] = 2
                         temp_data[-2] = 1
@@ -633,23 +633,10 @@ class DailyChangeGoods:
             temp_number += 1
         optional_up_goods += candidate_up_goods_list[temp_number:]
 
-
-
-
-
-
-        # 以下4行时添加ranking的值
-        print('must_up_goods',len(must_up_goods))
-        print('optional_up_goods',len(optional_up_goods))
-
-
-
         # 添加必上的关联品
         must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
-        print('must_up_goods000',must_up_goods)
-        # print()
-        # print()
-        # print(optional_up_goods)
+        # print('must_up_goods000',must_up_goods)
+
 
         must_up_goods = self.must_up_add_ranking(must_up_goods)  # 添加ranking的值
         # print('must_up_goods', must_up_goods)
@@ -662,8 +649,8 @@ class DailyChangeGoods:
         optional_up_goods = [tuple(goods) for goods in optional_up_goods]
 
         # print('must_up_goods', must_up_goods)
-        print()
-        print('optional_up_goods', optional_up_goods)
+        # print()
+        # print('optional_up_goods', optional_up_goods)
 
 
         # 3、保存至数据库
@@ -739,8 +726,8 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
-    f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
+    # f = DailyChangeGoods(1284, "223,4004",'lishu_test_010',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
