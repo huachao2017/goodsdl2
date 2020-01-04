@@ -56,7 +56,7 @@ class SalesPredict:
 
         sql3_dict = self.process_sql3(sql3)
 
-        sql4_dict = self.process_sql4(sql1)
+        sql4_dict = self.process_sql4(sql4)
 
         sc_inss = self.process_data(sql1_dict,sql2_list,sql3_dict,sql4_dict)
 
