@@ -175,10 +175,15 @@ class ItemBasedCF():
         sim_dict = {}
         for goods,rating in self.shop_psd_number_dict.items():
             try:
-                sim_dict[goods] = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
+                # sim_dict[goods] = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
+                l = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
+                f.write(goods)
+                f.write(":")
+                f.write(str(l))
+                f.write("\n")
             except:
                 continue
-        f.write(str(sim_dict))
+        # f.write(str(sim_dict))
         f.close()
 
         return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
