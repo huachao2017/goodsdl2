@@ -18,6 +18,7 @@ shelfs:[{
             width:
             height:
             depth:
+            layout:
             displays:[{
                 top:
                 left:

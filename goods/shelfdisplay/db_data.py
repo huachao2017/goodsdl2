@@ -136,6 +136,7 @@ class GoodsData:
         self.category4 = category4
         self.package_type = package_type
         self.brand = brand
+        self.layout = 1
         self.width = width
         self.height = height
         self.depth = depth

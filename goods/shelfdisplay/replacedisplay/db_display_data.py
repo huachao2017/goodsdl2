@@ -72,6 +72,14 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
                 if goods_data is None:
                     print('选品表中有陈列商品不存在：{}'.format(goods_info['mch_goods_code']))
                     raise ValueError('选品表中有陈列商品不存在')
+
+                # FIXME 修改陈列方式和长宽深
+                if goods_info['layout'] != 1:
+                    goods_data.width = goods_info['p_width']
+                    goods_data.height = goods_info['p_height']
+                    goods_data.depth = goods_info['p_depth']
+                    goods_data.layout = goods_info['layout']
+
                 if goods_data in goods_data_to_left_top:
                     goods_data_to_left_top[goods_data].append((goods_info['left'], goods_info['top']))
                 else:
