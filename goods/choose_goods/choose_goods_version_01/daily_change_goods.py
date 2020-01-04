@@ -235,22 +235,10 @@ class DailyChangeGoods:
         self.cursor.execute("SELECT erp_shop_id from erp_shop_related WHERE shop_id ={} AND erp_shop_type=1;".format(self.shop_id))
         try:
             erp_shop_id = self.cursor.fetchone()[0]
+            print("erp_shop_id",erp_shop_id)
         except Exception as e:
             print('pos店号是{},erp_shop_id获取失败:{}'.format(self.shop_id,e))
             return []
-        # try:
-        #     ms_conn = connections["erp"]
-        #     ms_cursor = ms_conn.cursor()
-        #     ms_cursor.execute("SELECT authorized_shop_id FROM ms_relation WHERE is_authorized_shop_id IN (SELECT authorized_shop_id FROM	ms_relation WHERE is_authorized_shop_id = {} AND STATUS = 1) AND STATUS = 1".format(erp_shop_id))
-        #     all_data = ms_cursor.fetchall()
-        #     supplier_code = []
-        #     for data in all_data:
-        #         supplier_code.append(str(data[0]))
-        # except:
-        #     print('supplier_code获取失败！')
-        #     return []
-
-
 
         # 获取商品的 可定 配送类型
         # conn_ucenter = connections['ucenter']
@@ -265,12 +253,14 @@ class DailyChangeGoods:
             all_supplier_id_data = self.cursor_ucenter.fetchall()
             for supplier_data in all_supplier_id_data:
                 self.supplier_id_list.append(str(supplier_data[0]))
+            print("supplier_id_list",self.supplier_id_list)
             self.cursor_ucenter.execute(
                 # "select supplier_goods_code,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(supplier_id))
                 # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
                 # 有尺寸数据
                 "select DISTINCT a.supplier_goods_code,b.delivery_attr,c.display_second_cat_id from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id in ({}) and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.display_third_cat_id > 0".format(','.join(self.supplier_id_list)))
             all_data = self.cursor_ucenter.fetchall()
+            print("可订货数据：",all_data)
             for data in all_data:
                 if data[2] == "104":    #  巧克力分类 ,按照非日配逻辑来处理
                     delivery_type_dict[data[0]] = 2
