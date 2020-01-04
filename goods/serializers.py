@@ -201,8 +201,8 @@ class ShelfDisplayDebugSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShelfDisplayDebug
         fields = ('pk', 'batch_id', 'uc_shopid', 'tz_id', 'json_ret', 'calculate_time',
-                  'display_source','display_source_url', 'category_intimacy_source','category_intimacy_source_url',
-                  'image_problem_goods', 'create_time')
+                  'display_source','display_source_url', 'old_display_source','old_display_source_url',
+                  'create_time')
 
     def get_display_source_url(self, shelf_display_debug):
         request = self.context.get('request')

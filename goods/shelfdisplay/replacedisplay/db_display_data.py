@@ -67,6 +67,7 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
             shelf.add_level(level)
 
             goods_data_to_left_top = {}
+            goods_level_array.sort(key=lambda x:x['left'])
             for goods_info in goods_level_array:
                 goods_data = find_goods(goods_info['mch_goods_code'], base_data.goods_data_list)
                 if goods_data is None:
@@ -94,7 +95,13 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
                     if left not in left_list:
                         left_list.append(left)
                     if top not in top_list:
-                        top_list.append(top)
+                        # 考虑摆放误差
+                        min_diff = goods_data.height
+                        for one_top in top_list:
+                            if abs(one_top-top) < min_diff:
+                                min_diff = abs(one_top-top)
+                        if min_diff > int(goods_data.height/2):
+                            top_list.append(top)
                 display_goods = DisplayGoods(goods_data,face_num=len(left_list),superimpose_num=len(top_list))
                 level.add_display_goods(display_goods)
                 if goods_data.category3 not in category3_list:
