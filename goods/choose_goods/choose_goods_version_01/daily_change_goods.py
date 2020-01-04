@@ -646,6 +646,10 @@ class DailyChangeGoods:
 
         # 添加必上的关联品
         must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
+        print(must_up_goods)
+        print()
+        print()
+        print(optional_up_goods)
 
         must_up_goods = self.must_up_add_ranking(must_up_goods)  # 添加ranking的值
 
