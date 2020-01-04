@@ -181,6 +181,7 @@ class ItemBasedCF():
                 f.write(":")
                 f.write(str(l))
                 f.write("\n")
+                f.write("\n")
             except:
                 continue
         # f.write(str(sim_dict))
