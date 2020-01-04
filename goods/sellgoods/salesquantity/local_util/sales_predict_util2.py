@@ -99,6 +99,7 @@ class SalesPredict:
         start_date = str(
             (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                 days=-days_num)).strftime("%Y-%m-%d"))
+        sc_inss = []
         for sc_ins in sql2_list:
             for i in range(days_num):
                 create_date = str(
@@ -135,7 +136,8 @@ class SalesPredict:
                     sc_ins.winddirect = ''
                     sc_ins.windpower = 0
                     sc_ins.city_id = 0
-        return sql2_list
+                sc_inss.append(sc_ins)
+        return sc_inss
     def process_sql1(self,sql1):
         print ("sql1......")
         conn_dmstore = connections['dmstore']
