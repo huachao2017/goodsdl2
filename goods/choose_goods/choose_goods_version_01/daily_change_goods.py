@@ -421,7 +421,7 @@ class DailyChangeGoods:
                         psd_data = self.get_mch_psd_data(mch_goods,self.template_shop_ids)
                         print('psd_data',psd_data)
                         if psd_data:
-                            psd_amount = psd_data[0][0]
+                            psd_amount = psd_data[0][0]/(psd_data[0][4]*psd_data[0][6])
                         else:
                             psd_amount = 0
                         try:
