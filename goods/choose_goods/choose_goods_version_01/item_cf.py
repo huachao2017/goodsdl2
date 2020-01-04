@@ -174,7 +174,10 @@ class ItemBasedCF():
         f = open("相似度.txt", mode="w", encoding="utf-8")
         sim_dict = {}
         for goods,rating in self.shop_psd_number_dict.items():
-            sim_dict[goods] = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
+            try:
+                sim_dict[goods] = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
+            except:
+                continue
         f.write(sim_dict)
         f.close()
 
