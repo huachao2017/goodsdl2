@@ -30,6 +30,7 @@ class AreaManager:
         self.threshold = self.len_area_list_to_threshold[100]
         self.candidate_step = 1
         self.down_display_goods_list = []
+        self.up_choose_goods_list = []
 
     def calculate_candidate_shelf(self):
 
@@ -109,8 +110,7 @@ class AreaManager:
         """
         self.area_list = []
 
-        area = Area(self)
-        self.area_list.append(area)
+        area = None
         area_category3 = None
         one_display_goods_list = []
 
@@ -119,23 +119,32 @@ class AreaManager:
         sorted_level_ids.sort()
         for level_id in sorted_level_ids:
             display_goods_list = self.levelid_to_displaygoods_list[level_id]
-            for display_goods in display_goods_list:
-                if area_category3 is None:
-                    area_category3 = display_goods.goods_data.category3
-                    one_display_goods_list.append(display_goods)
-                else:
-                    if area_category3 == display_goods.goods_data.category3:
+            if len(display_goods_list) > 0:
+                if area_category3 != display_goods_list[0].goods_data.category3:
+                    # 开始一个新的area
+                    area = Area(self)
+                    self.area_list.append(area)
+                    area_category3 = None
+
+                for display_goods in display_goods_list:
+                    if area_category3 is None:
+                        area_category3 = display_goods.goods_data.category3
                         one_display_goods_list.append(display_goods)
                     else:
-                        area.add_child_area_in_one_category3(level_id, one_display_goods_list)
-                        area_category3 = display_goods.goods_data.category3
-                        one_display_goods_list = [display_goods]
-                        area = Area(self)
-                        self.area_list.append(area)
+                        if area_category3 == display_goods.goods_data.category3:
+                            one_display_goods_list.append(display_goods)
+                        else:
+                            # 结束上一个child_area, 开始一个新的child_area
+                            area.add_child_area_in_one_category3(level_id, one_display_goods_list)
+                            one_display_goods_list = [display_goods]
+                            area_category3 = display_goods.goods_data.category3
+                            # 开始一个新的area
+                            area = Area(self)
+                            self.area_list.append(area)
 
-            area.add_child_area_in_one_category3(level_id, one_display_goods_list)
-            one_display_goods_list = []
-            area_category3 = None
+                # 结束上一个child_area, 开始一个新的child_area
+                area.add_child_area_in_one_category3(level_id, one_display_goods_list)
+                one_display_goods_list = []
 
     def _second_combine_areas(self):
         """
@@ -180,7 +189,7 @@ class AreaManager:
         :return:
         """
 
-        up_info = '上架商品：'
+        up_info = '必须上架商品：'
         for area in self.area_list:
             for choose_goods in area.up_choose_goods_list:
                 up_info += choose_goods.goods_name
@@ -188,15 +197,19 @@ class AreaManager:
 
         print(up_info)
 
-        down_info = '下架商品：'
+        down_info = '必须下架商品：'
         for area in self.area_list:
             for display_goods in area.down_display_goods_list:
                 down_info += display_goods.goods_data.goods_name
                 down_info += ','
-            for display_goods in area.second_down_display_goods_list:
-                down_info += display_goods.goods_data.goods_name
-                down_info += ','
         print(down_info)
+
+        second_up_info = '二次上架商品：'
+        for area in self.area_list:
+            for choose_goods in area.second_up_choose_goods_list:
+                second_up_info += choose_goods.goods_name
+                second_up_info += ','
+        print(second_up_info)
 
         reduce_info = '减扩面商品：'
         for area in self.area_list:
@@ -204,6 +217,13 @@ class AreaManager:
                 reduce_info += display_goods.goods_data.goods_name + '(' + str(area.display_goods_to_reduce_face_num[display_goods])
                 reduce_info += '),'
         print(reduce_info)
+
+        second_down_info = '二次下架商品：'
+        for area in self.area_list:
+            for display_goods in area.second_down_display_goods_list:
+                second_down_info += display_goods.goods_data.goods_name
+                second_down_info += ','
+        print(second_down_info)
 
     def _arrange_areas(self):
         """
@@ -238,24 +258,32 @@ class AreaManager:
 
         candidate_shelf_list = []
         for one_candidate_list in product(*total_list):
-            candidate_shelf = self.shelf.copy_raw()
+            candidate_shelf = self.arrange_goods(one_candidate_list)
             candidate_shelf_list.append(candidate_shelf)
-            cur_level_index = 0
-            cur_goods_width = 0
-            for one_candidate in one_candidate_list:
-                for display_goods in one_candidate:
-                    goods_width = display_goods.goods_data.width * display_goods.face_num
-                    cur_level = candidate_shelf.levels[cur_level_index]
-                    if cur_goods_width + goods_width > candidate_shelf.width + 10:  # 加10的容差
-                        cur_level_index += 1
-                        cur_level = candidate_shelf.levels[cur_level_index]
-                        cur_level.add_display_goods(display_goods)
-                        cur_goods_width = goods_width
-                    else:
-                        cur_level.add_display_goods(display_goods)
-                        cur_goods_width += goods_width
 
         return candidate_shelf_list
+
+    def arrange_goods(self, one_candidate_list):
+        candidate_shelf = self.shelf.copy_raw()
+        cur_level_index = 0
+        cur_goods_width = 0
+        for one_candidate in one_candidate_list:
+            for display_goods in one_candidate:
+                goods_width = display_goods.goods_data.width * display_goods.face_num
+                cur_level = candidate_shelf.levels[cur_level_index]
+                if cur_goods_width + goods_width > candidate_shelf.width + 10:  # 加10的容差
+                    cur_level_index += 1
+                    if cur_level_index >= len(candidate_shelf.levels):
+                        print("陈列商品超出货架，陈列到此结束:{}".format(cur_level_index))
+                        return candidate_shelf
+                    cur_level = candidate_shelf.levels[cur_level_index]
+                    cur_level.add_display_goods(display_goods)
+                    cur_goods_width = goods_width
+                else:
+                    cur_level.add_display_goods(display_goods)
+                    cur_goods_width += goods_width
+
+        return candidate_shelf
 
 
 class Area:
@@ -276,6 +304,7 @@ class Area:
 
         # 动态计算数据
         self.display_goods_to_reduce_face_num = {}
+        self.second_up_choose_goods_list = []
         self.second_down_display_goods_list = []
 
         # 结果数据
@@ -369,6 +398,7 @@ class Area:
         for choose_goods in self.choose_goods_list:
             if choose_goods.goods_role == 1:
                 self.up_choose_goods_list.append(choose_goods)
+                self.area_manager.up_choose_goods_list.append(choose_goods)
 
         # 上架品由低到高排序，这样保证在上架商品在一起时，会出现由高到低插入
         self.up_choose_goods_list.sort(key=lambda x: x.height)
@@ -378,6 +408,7 @@ class Area:
         """
         同一分区内可能有一个或多个商品上架，也可能有0个或n个商品下架，优先挤扩面，扩面的销售产出按照psd金额/n递减计算；如需下架商品从分区内销售最差的商品开始选择
         self.display_goods_to_reduce_face_num = {}
+        self.second_up_choose_goods_list = []
         self.second_down_display_goods_list = []
         :param choose_goods_list:
         :return:
@@ -399,6 +430,9 @@ class Area:
         for down_display_goods in self.down_display_goods_list:
             down_total_width += down_display_goods.goods_data.width * down_display_goods.face_num
 
+        if up_total_width == 0 and down_total_width == 0:
+            return
+
         need_width = up_total_width - down_total_width - remain_total_width
         if up_total_width > 0:
             need_width += self.width_tolerance
@@ -415,6 +449,11 @@ class Area:
             if need_width > reduce_width:
                 print('出现无法解决的区域：')
                 print(self)
+        elif need_width < -100:
+            add_width = self._up_other_goods(-need_width)
+            if add_width + need_width < 100:
+                print('出现无法解决的区域：')
+                print(self)
 
     def calculate_candidate(self, candidate_step=1, candidate_threshold=5):
         """
@@ -428,6 +467,7 @@ class Area:
 
         # 动态计算数据
         self.display_goods_to_reduce_face_num = {}
+        self.second_up_choose_goods_list = []
         self.second_down_display_goods_list = []
         :param candidate_step:
         :param candidate_threshold:
@@ -448,7 +488,7 @@ class Area:
                                                      superimpose_num=display_goods.superimpose_num)
                     new_display_goods_list.append(new_display_goods)
 
-        if len(self.up_choose_goods_list) > 0:
+        if len(self.up_choose_goods_list) > 0 or len(self.second_up_choose_goods_list) > 0:
             self._generate_up_choose_goods_candidate(new_display_goods_list, candidate_step, candidate_threshold)
         else:
             # TODO 做候选上架处理
@@ -457,7 +497,10 @@ class Area:
     def _generate_up_choose_goods_candidate(self, new_display_goods_list, candidate_step, candidate_threshold):
         # 先计算首个插入的位置
         up_choose_goods_to_insert_position = {}
-        for up_choose_goods in self.up_choose_goods_list:
+        up_choose_goods_list = []
+        up_choose_goods_list.extend(self.up_choose_goods_list)
+        up_choose_goods_list.extend(self.second_up_choose_goods_list)
+        for up_choose_goods in up_choose_goods_list:
             for i in range(len(new_display_goods_list) - 1, -1, -1):
                 if new_display_goods_list[i].goods_data.category3 == up_choose_goods.category3:
                     up_choose_goods_to_insert_position[up_choose_goods] = [i + 1]
@@ -469,7 +512,7 @@ class Area:
 
 
         up_choose_goods_to_end = {}
-        for up_choose_goods in self.up_choose_goods_list:
+        for up_choose_goods in up_choose_goods_list:
             up_choose_goods_to_end[up_choose_goods] = False
         # 逐步往后挪动插入位置
         candidate_cnt = 1
@@ -491,7 +534,7 @@ class Area:
 
             # 判断是否已经没有解
             is_end = True
-            for up_choose_goods in self.up_choose_goods_list:
+            for up_choose_goods in up_choose_goods_list:
                 if not up_choose_goods_to_end[up_choose_goods]:
                     is_end = False
             if is_end:
@@ -555,10 +598,37 @@ class Area:
 
         return reduce_width
 
+    def _up_other_goods(self, need_width):
+        """
+        # 操作self.second_up_display_goods_list 和 self.area_manager.up_choose_goods_list
+        计算进一步需要上架的商品
+        :param need_width:
+        :return:
+        """
+
+        add_width = 0
+
+        candidate_up_choose_goods_list = []
+        for child_area in self.child_area_list:
+            for choose_goods in self.choose_goods_list:
+                # 必须下架的商品要排除
+                if choose_goods.goods_role == 3: # 只能是可选上架商品
+                    candidate_up_choose_goods_list.append(choose_goods)
+
+        candidate_up_choose_goods_list.sort(key=lambda x: x.psd_amount, reverse=True)
+        for up_choose_goods in candidate_up_choose_goods_list:
+            add_width += up_choose_goods.width
+            self.second_up_choose_goods_list.append(up_choose_goods)
+            self.area_manager.up_choose_goods_list.append(up_choose_goods)
+            if add_width > need_width-100:
+                break
+
+        return add_width
+
     def _down_other_goods(self, need_width):
         """
         # 操作self.second_down_display_goods_list 和 self.area_manager.down_display_goods_list
-        返回进一步需要下架的商品
+        计算进一步需要下架的商品
         :param need_width:
         :return:
         """

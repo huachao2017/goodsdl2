@@ -77,6 +77,7 @@ class TaizhangDisplay:
                     width:
                     height:
                     depth:
+                    layout:
                     displays:[{
                         top:
                         left:
@@ -126,6 +127,7 @@ class TaizhangDisplay:
                         "width": display_goods.goods_data.width,
                         "height": display_goods.goods_data.height,
                         "depth": display_goods.goods_data.depth,
+                        "layout": display_goods.goods_data.layout,
                         "displays": []
                     }
                     json_level["goods"].append(json_goods)

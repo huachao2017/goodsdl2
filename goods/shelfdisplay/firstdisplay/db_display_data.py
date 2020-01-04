@@ -75,7 +75,7 @@ def init_display_data(uc_shopid, tz_id, base_data):
             total_height = 0
             # 筛选商品
             for goods in base_data.goods_data_list:
-                if goods.category3 == cat_id:
+                if goods.category3 == cat_id and goods.goods_role != 2: # 删除品需要去掉
                     total_height += goods.height
                     shelf_goods_data_list.append(goods)
                     if goods.category3 in shelf_category3_to_goods_cnt:
