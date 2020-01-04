@@ -191,7 +191,7 @@ class ItemBasedCF():
         #         continue
         # # f.write(str(sim_dict))
         # f.close()
-
+        print(sorted(rank.items(), key=itemgetter(1), reverse=True))
         return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
 
 
