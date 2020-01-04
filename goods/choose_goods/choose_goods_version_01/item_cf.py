@@ -153,7 +153,8 @@ class ItemBasedCF():
         shop_sales_data = self.get_shop_sales_data(self.pos_shop_id)
         for data in shop_sales_data:
             # self.shop_psd_number_dict[str(data[3])] = data[6]      # 按照psd
-            self.shop_psd_number_dict[str(data[3])] = data[0]      # 按照psd金额
+            # self.shop_psd_number_dict[str(data[3])] = data[0]      # 按照psd金额
+            self.shop_psd_number_dict[str(data[5])] = data[0]      # 按照psd金额
 
         K = self.n_sim_goods
         N = self.n_rec_goods
