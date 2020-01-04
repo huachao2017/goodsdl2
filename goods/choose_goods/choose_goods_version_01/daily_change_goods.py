@@ -363,7 +363,7 @@ class DailyChangeGoods:
                 goods.append(goods[3]*100000)
             elif goods[-1] == 1:   # 畅销品
                 goods.append(goods[3]*10000)
-            elif goods[-1] == 2:   # 畅销品
+            elif goods[-1] == 2:   # 关联品
                 goods.append(goods[3]*1000)
             else:
                 # raise Exception("必上品列表出现异常数据！")
@@ -646,12 +646,13 @@ class DailyChangeGoods:
 
         # 添加必上的关联品
         must_up_goods, optional_up_goods = self.calculate_relation_goods(must_up_goods,optional_up_goods)
-        print(must_up_goods)
-        print()
-        print()
-        print(optional_up_goods)
+        # print(must_up_goods)
+        # print()
+        # print()
+        # print(optional_up_goods)
 
         must_up_goods = self.must_up_add_ranking(must_up_goods)  # 添加ranking的值
+        print('must_up_goods000', must_up_goods)
 
         optional_up_goods.sort(key=lambda x: x[3], reverse=False)  # 基于psd金额排序
         for index,goods in enumerate(optional_up_goods):    # 添加ranking的值
@@ -660,7 +661,7 @@ class DailyChangeGoods:
         must_up_goods = [tuple(goods) for goods in must_up_goods]
         optional_up_goods = [tuple(goods) for goods in optional_up_goods]
 
-        print('must_up_goods', must_up_goods)
+        # print('must_up_goods', must_up_goods)
         print()
         print('optional_up_goods', optional_up_goods)
 
