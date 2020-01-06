@@ -267,6 +267,6 @@ class SalesPredict:
 
 if __name__=='__main__':
     sp_ins = SalesPredict()
-    # sp_ins.generate_data()
+    sp_ins.generate_data()
 
-    sp_ins.load_data()
+    # sp_ins.load_data()
