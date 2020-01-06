@@ -135,6 +135,8 @@ class DailyChangeGoods:
                         for goods in layer:
                             # goods_upc = goods['goods_upc']
                             taizhang_data_list.append(goods)
+            print('台账：',taizhang_data_list)
+            print('台账mch：',[i['mch_goods_code'] for i in taizhang_data_list])
             self.taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_data_list]))  # 去重
             print('台账mch去重：', self.taizhang_goods_mch_code_list)
             return taizhang_data_list, all_data[0][5]
@@ -730,8 +732,9 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
+    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
     # f = DailyChangeGoods(1284, "223",'lishu_test_010',806)
+    f = DailyChangeGoods(88, "223",'lishu_test_01',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
