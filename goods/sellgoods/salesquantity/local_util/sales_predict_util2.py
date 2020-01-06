@@ -5,6 +5,8 @@ import django
 import main.import_django_settings
 from django.db import connections
 from django.db import close_old_connections
+
+
 class SalesCol:
     shop_id = None
     goods_id = None
@@ -29,9 +31,10 @@ class SalesCol:
 
 
 
-shop_ids = "1284,3955,3779,1925,4076,1924,3598"
+shop_ids = "1284"
 days_num = 400
 class SalesPredict:
+
     def generate_data(self):
         close_old_connections()
         end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
@@ -264,5 +267,6 @@ class SalesPredict:
 
 if __name__=='__main__':
     sp_ins = SalesPredict()
-    sp_ins.generate_data()
+    # sp_ins.generate_data()
 
+    sp_ins.load_data()
