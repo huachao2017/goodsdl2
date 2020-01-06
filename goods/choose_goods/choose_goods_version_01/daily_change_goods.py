@@ -712,10 +712,11 @@ class DailyChangeGoods:
         #     print('error')
 
         if goods_role == 3:
-            try:
-                cursor.executemany("UPDATE goods_goodsselectionhistory SET relation_score={} WHERE mch_goods_code='{}'",self.all_rank_list)
-            except Exception as e:
-                print("保存relation_score时，报错：{}".format(e))
+            for data in self.all_rank_list:
+                try:
+                    cursor.executemany("UPDATE goods_goodsselectionhistory SET relation_score={} WHERE mch_goods_code='{}'".format(data[1],data[0]))
+                except Exception as e:
+                    print("mch为{}，保存relation_score时，报错：{}".format(data[0],e))
 
 
 
