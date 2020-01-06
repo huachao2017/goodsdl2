@@ -103,11 +103,13 @@ class SalesPredict:
             (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                 days=-days_num)).strftime("%Y-%m-%d"))
         sc_inss = []
-        for sc_ins in sql2_list:
+        for sc_ins1 in sql2_list:
             for i in range(days_num):
+                sc_ins = sc_ins1.deepcopy()
                 create_date = str(
                 (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
                 days=i)).strftime("%Y-%m-%d"))
+                print (create_date)
                 week_date = datetime.datetime.strptime(create_date, "%Y-%m-%d").weekday() + 1
                 sc_ins.create_date = create_date
                 sc_ins.week_date = week_date
