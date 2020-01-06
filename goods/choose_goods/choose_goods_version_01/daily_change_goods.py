@@ -701,8 +701,7 @@ class DailyChangeGoods:
         # print(insert_sql_02)
         print(tuple_data[:5])
         cursor.executemany(insert_sql_02.format(self.shop_id,mch_code,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
-        conn.commit()
-        conn.close()
+
         print('ok')
         # except:
         #     # 如果发生错误则回滚
@@ -717,6 +716,8 @@ class DailyChangeGoods:
                     cursor.execute("UPDATE goods_goodsselectionhistory SET relation_score={} WHERE mch_goods_code='{}' and batch_id='{}'".format(data[1],data[0],self.batch_id))
                 except Exception as e:
                     print("mch为{}，保存relation_score时，报错：{}".format(data[0],e))
+        conn.commit()
+        conn.close()
 
 
 
