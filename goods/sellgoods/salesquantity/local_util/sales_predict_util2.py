@@ -5,6 +5,8 @@ import django
 import main.import_django_settings
 from django.db import connections
 from django.db import close_old_connections
+import copy
+
 class SalesCol:
     shop_id = None
     goods_id = None
@@ -29,9 +31,10 @@ class SalesCol:
 
 
 
-shop_ids = "1284,3955,3779,1925,4076,1924,3598"
+shop_ids = "1284"
 days_num = 400
 class SalesPredict:
+
     def generate_data(self):
         close_old_connections()
         end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
@@ -100,11 +103,13 @@ class SalesPredict:
             (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
                 days=-days_num)).strftime("%Y-%m-%d"))
         sc_inss = []
-        for sc_ins in sql2_list:
+        for sc_ins1 in sql2_list:
             for i in range(days_num):
+                sc_ins = copy.deepcopy(sc_ins1)
                 create_date = str(
                 (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
                 days=i)).strftime("%Y-%m-%d"))
+                print (create_date)
                 week_date = datetime.datetime.strptime(create_date, "%Y-%m-%d").weekday() + 1
                 sc_ins.create_date = create_date
                 sc_ins.week_date = week_date
@@ -266,3 +271,4 @@ if __name__=='__main__':
     sp_ins = SalesPredict()
     sp_ins.generate_data()
 
+    # sp_ins.load_data()
