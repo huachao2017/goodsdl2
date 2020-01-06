@@ -225,9 +225,9 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             line_str += str(0)  # psd
             line_str += ","
 
-        psd_sql_shops = "select sum(p.amount), COUNT(DISTINCT shop_id),g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {} and g.neighbor_goods_id={};"
+        psd_sql_shops = "select sum(p.amount), COUNT(DISTINCT shop_id),g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.neighbor_goods_id={};"
         # close_old_connections()
-        cursor_dmstore.execute(psd_sql_shops.format(week_ago,now_date,tuple(template_shop_ids.split(',')),data[10]))
+        cursor_dmstore.execute(psd_sql_shops.format(week_ago,now_date,template_shop_ids,data[10]))
         psd_data_shops = cursor_dmstore.fetchone()
         # print('psd_data_shops',psd_data_shops)
         if psd_data_shops[0]:
