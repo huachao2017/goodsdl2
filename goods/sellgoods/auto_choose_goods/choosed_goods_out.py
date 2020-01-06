@@ -287,11 +287,16 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
                 delivery_str = str(delivery_type_dict[delivery])  # 配送类型
             except:
                 delivery_str = str('None')
+            try:
+                relation_score_value = relation_score_dict[i[0]]
+            except:
+                relation_score_value = 0
+
 
 
             print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem, i[3], i[4], i[5], i[6], delivery_str, i[0],
                                                                            i[2], i[1], None, '可选上架', 0, None, None, None,
-                                                                           None,relation_score_dict[i[0]]))
+                                                                           None,relation_score_value))
         except:
             continue
     conn_ucenter.close()
