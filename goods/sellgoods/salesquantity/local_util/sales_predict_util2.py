@@ -5,7 +5,7 @@ import django
 import main.import_django_settings
 from django.db import connections
 from django.db import close_old_connections
-
+import copy
 
 class SalesCol:
     shop_id = None
@@ -105,7 +105,7 @@ class SalesPredict:
         sc_inss = []
         for sc_ins1 in sql2_list:
             for i in range(days_num):
-                sc_ins = sc_ins1.deepcopy()
+                sc_ins = copy.deepcopy(sc_ins1)
                 create_date = str(
                 (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
                 days=i)).strftime("%Y-%m-%d"))
