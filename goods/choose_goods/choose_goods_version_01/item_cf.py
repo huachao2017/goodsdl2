@@ -17,12 +17,12 @@ from operator import itemgetter
 
 class ItemBasedCF():
     # 初始化参数
-    def __init__(self,pos_shop_id,n_sim_goods,n_ave):
+    def __init__(self,pos_shop_id,n_sim_goods,n_ave,can_order_list):
 
         self.pos_shop_id = pos_shop_id
         self.days = 28
         self.supplier_id_list = []  # 供应商id，可以多个
-        self.can_order_mch_list = []
+        self.can_order_mch_list = can_order_list
         self.dmstore_cursor = connections['dmstore'].cursor()
         self.cursor_ucenter = connections['ucenter'].cursor()
 
@@ -49,13 +49,13 @@ class ItemBasedCF():
 
     # 读取数据库得到"订单-商品"数据
     def get_data(self):
-        can_order_mch_list, _ = self.get_can_order_dict()
+        # self.can_order_mch_list, _ = self.get_can_order_dict()
         now = datetime.datetime.now()
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
         sql = "select p.payment_id,GROUP_CONCAT(g.neighbor_goods_id) n from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and g.neighbor_goods_id in ({}) GROUP BY p.payment_id having COUNT(g.neighbor_goods_id) >1"
         try:
-            self.dmstore_cursor.execute(sql.format(week_ago, now_date,','.join(can_order_mch_list)))
+            self.dmstore_cursor.execute(sql.format(week_ago, now_date,','.join(self.can_order_mch_list)))
             all_data = self.dmstore_cursor.fetchall()
             print(len(all_data))
             for data in all_data:
@@ -208,7 +208,7 @@ class ItemBasedCF():
         # # f.write(str(sim_dict))
         # f.close()
         # print(sorted(rank.items(), key=itemgetter(1), reverse=True))
-        return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
+        return rank_score_lsit[:N],rank_score_lsit
 
 
 
@@ -313,11 +313,16 @@ class ItemBasedCF():
         results = self.dmstore_cursor.fetchall()
         return results
 
+    def bendi_test(self):
+        self.can_order_mch_list, _ = self.get_can_order_dict()
+
+
 
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
     itemCF = ItemBasedCF(1284,100,2.5)
     # itemCF.get_dataset(rating_file)
+    itemCF.bendi_test()   # 本地这个文件测试的时候，执行它
     a = itemCF.recommend_02()
     # a = itemCF.get_can_order_dict()
     print(type(a))

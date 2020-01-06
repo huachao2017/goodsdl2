@@ -33,9 +33,11 @@ class DailyChangeGoods:
         self.supplier_id_list = []     # 供应商id
         self.debug = True
         self.can_order_mch_code_dict = {}    # 可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
+        self.can_order_list = []    # 可订货的7位得mch_goods_code的列表
         self.all_goods_len = 0    # 本店台账已有len
         self.taizhang_goods_mch_code_list = []
         self.third_category_mch_dict = {}  # 本店有的，陈列三级分类的字典，k为mch，v为mch字符串，逗号隔开
+        self.all_rank_list = []    # 本店所有关联品的分值，里边是元组，第一个为mch，第二个为总的关联分值
 
         # self.not_move_goods = []  # 没有变动的品
         # self.must_up_goods = []  # 必须上架的品
@@ -241,8 +243,7 @@ class DailyChangeGoods:
             return []
 
         # 获取商品的 可定 配送类型
-        # conn_ucenter = connections['ucenter']
-        # cursor_ucenter = conn_ucenter.cursor()
+        can_order_list = []  # 可订货列表
         delivery_type_dict = {}    # 店内码是key，配送类型是value
         try:
             # cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
@@ -262,6 +263,7 @@ class DailyChangeGoods:
             all_data = self.cursor_ucenter.fetchall()
             # print("可订货数据：",all_data)
             for data in all_data:
+                can_order_list.append(data[0])
                 if data[2] == "104":    #  巧克力分类 ,按照非日配逻辑来处理
                     delivery_type_dict[data[0]] = 2
                     continue
@@ -269,7 +271,7 @@ class DailyChangeGoods:
         except Exception as e:
             print('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
         # conn_ucenter.close()
-        return delivery_type_dict
+        return can_order_list,delivery_type_dict
 
     def calculate_not_move_goods(self):
         """
@@ -382,8 +384,8 @@ class DailyChangeGoods:
         # print(self.can_order_mch_code_dict)
         # print(self.taizhang_goods_mch_code_list)
         # print(must_up_mch_goods_list)
-        itemCF = ItemBasedCF(self.shop_id,100,2.4)   # 协同过滤
-        rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
+        itemCF = ItemBasedCF(self.shop_id,100,2.4,self.can_order_list)   # 协同过滤
+        rank_list,self.all_rank_list = itemCF.recommend_02()   #列表形式，里边是元组，第一个为mch，第二个为总的关联分值
 
         for mch_goods, score in rank_list:
             if mch_goods not in self.taizhang_goods_mch_code_list and mch_goods not in must_up_mch_goods_list:
@@ -444,7 +446,7 @@ class DailyChangeGoods:
 
 
         # 0、列表可订货
-        self.can_order_mch_code_dict = self.get_can_order_dict()
+        self.can_order_list,self.can_order_mch_code_dict = self.get_can_order_dict()
         print('可订货len：', len(self.can_order_mch_code_dict))
 
         #   1.1、获取本店有销量的商品
@@ -474,6 +476,8 @@ class DailyChangeGoods:
         not_move_goods, optional_out_goods = self.calculate_this_shop_old_goods_data(taizhang_goods,mch_code,sales_goods_mch_code_dict)   #得出下架品、不动品和可选下架品
 
         self.calculate_this_shop_new_goods_data(mch_code,not_move_goods,optional_out_goods)
+
+
 
     def calculate_this_shop_old_goods_data(self,taizhang_goods,mch_code,sales_goods_mch_code_dict):
         # 得出下架品、不动品和可选下架品
@@ -666,6 +670,7 @@ class DailyChangeGoods:
         self.save_data(optional_up_goods, 3, mch_code)
 
 
+
     def save_data(self,data,goods_role,mch_code):
         """
         保存选品的数据
@@ -706,6 +711,13 @@ class DailyChangeGoods:
         #     conn.close()
         #     print('error')
 
+        if goods_role == 3:
+            try:
+                cursor.executemany("UPDATE goods_goodsselectionhistory SET relation_score={} WHERE mch_goods_code='{}'",self.all_rank_list)
+            except Exception as e:
+                print("保存relation_score时，报错：{}".format(e))
+
+
 
 
 
@@ -717,8 +729,8 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
-    # f = DailyChangeGoods(1284, "223",'lishu_test_010',806)
+    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
+    f = DailyChangeGoods(1284, "223",'lishu_test_010',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
