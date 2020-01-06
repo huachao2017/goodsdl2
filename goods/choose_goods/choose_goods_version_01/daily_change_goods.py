@@ -414,7 +414,7 @@ class DailyChangeGoods:
                         psd_data = self.get_mch_psd_data(mch_goods,self.template_shop_ids)
                         print('psd_data',psd_data)
                         if psd_data:
-                            psd_amount = psd_data[0][0]/(psd_data[0][4]*psd_data[0][6])
+                            psd_amount = psd_data[0][0]/(self.days*psd_data[0][6])
                         else:
                             psd_amount = 0
                         try:
@@ -724,6 +724,7 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
     # f = DailyChangeGoods(pos_shopid, "88,3156,3238",batch_id,uc_shop_id)
     f = DailyChangeGoods(pos_shopid, "1284,3955,3779,1925,4076,1924,3598",batch_id,uc_shop_id)
     f.recommend_03()
+
 
 
 
