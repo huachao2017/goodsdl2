@@ -698,11 +698,9 @@ class DailyChangeGoods:
             cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id,goods_role).replace('=None', ' is NULL'))
             print("删掉{}该批次之前的数据".format(self.batch_id))
         print('开始入库')
-        # print(insert_sql_02)
         print(tuple_data[:5])
         cursor.executemany(insert_sql_02.format(self.shop_id,mch_code,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
 
-        print('ok')
         # except:
         #     # 如果发生错误则回滚
         #     conn.rollback()
@@ -718,6 +716,7 @@ class DailyChangeGoods:
                     print("mch为{}，保存relation_score时，报错：{}".format(data[0],e))
         conn.commit()
         conn.close()
+        print('ok')
 
 
 
@@ -729,8 +728,8 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
-    f = DailyChangeGoods(1284, "223",'lishu_test_010',806)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',806)
+    # f = DailyChangeGoods(1284, "223",'lishu_test_010',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
     # f.get_taizhang_goods()
