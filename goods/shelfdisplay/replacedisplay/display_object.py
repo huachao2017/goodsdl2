@@ -25,6 +25,7 @@ class Shelf:
             for display_goods in level.display_goods_list:
                 for i in range(display_goods.face_num):
                     ret += display_goods.goods_data.goods_name
+                    ret += '(' + str(display_goods.goods_data.category3) + ')'
                     ret += ','
 
             ret += '\n'

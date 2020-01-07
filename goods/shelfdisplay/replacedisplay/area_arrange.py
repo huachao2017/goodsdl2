@@ -190,6 +190,10 @@ class AreaManager:
         :return:
         """
 
+        print('区域分解：')
+        for area in self.area_list:
+            print(area)
+
         up_info = '必须上架商品：'
         for area in self.area_list:
             for choose_goods in area.up_choose_goods_list:
