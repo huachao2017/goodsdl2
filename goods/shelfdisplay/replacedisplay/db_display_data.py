@@ -5,6 +5,7 @@ from django.db import connections
 from goods.shelfdisplay.db_data import Category3
 from goods.shelfdisplay.replacedisplay.display_taizhang import TaizhangDisplay
 from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
+from goods.third_tools import dingtalk
 
 
 def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
@@ -29,9 +30,11 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
             "select t.id, t.shelf_id, t.shelf_count from sf_taizhang t where t.id = {}".format(tz_id))
         (taizhang_id, shelf_id, count) = cursor.fetchone()
     except:
-        print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
+        msg = '获取台账失败:{},{}'.format(uc_shopid, tz_id)
+        print(msg)
         cursor.close()
-        raise ValueError('taizhang_display error:{},{}'.format(uc_shopid, tz_id))
+        dingtalk.send_message(msg, 2)
+        raise ValueError(msg)
 
     # 获取陈列信息
     cursor.execute("select display_goods_info, display_shelf_info from sf_taizhang_display where id = {} and taizhang_id = {}".format(old_display_id, tz_id))
@@ -71,7 +74,9 @@ def init_display_data(uc_shopid, tz_id, old_display_id, base_data):
             for goods_info in goods_level_array:
                 goods_data = find_goods(goods_info['mch_goods_code'], base_data.goods_data_list)
                 if goods_data is None:
-                    print('选品表中有陈列商品不存在：{}'.format(goods_info['mch_goods_code']))
+                    msg = '选品表中有陈列商品不存在：{}'.format(goods_info['mch_goods_code'])
+                    print(msg)
+                    dingtalk.send_message(msg, 2)
                     raise ValueError('选品表中有陈列商品不存在')
 
                 # FIXME 修改陈列方式和长宽深
