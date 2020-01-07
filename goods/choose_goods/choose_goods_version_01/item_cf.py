@@ -180,6 +180,8 @@ class ItemBasedCF():
 
 
         rank_score_lsit = sorted(rank.items(), key=itemgetter(1), reverse=True)    # 最终分值，里边是元组，mch和score
+        if not rank_score_lsit:
+            return [],[]
         N = int(len(rank_score_lsit) / 10)
         all_score = 0
         for i in rank_score_lsit:
