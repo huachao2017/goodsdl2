@@ -135,8 +135,8 @@ class DailyChangeGoods:
                         for goods in layer:
                             # goods_upc = goods['goods_upc']
                             taizhang_data_list.append(goods)
-            print('台账：',taizhang_data_list)
-            print('台账mch：',[i['mch_goods_code'] for i in taizhang_data_list])
+            # print('台账：',taizhang_data_list)
+            # print('台账mch：',[i['mch_goods_code'] for i in taizhang_data_list])
             self.taizhang_goods_mch_code_list = list(set([i['mch_goods_code'] for i in taizhang_data_list]))  # 去重
             print('台账mch去重：', self.taizhang_goods_mch_code_list)
             return taizhang_data_list, all_data[0][5]
