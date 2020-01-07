@@ -6,10 +6,10 @@ import traceback
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from goods.sellgoods.salesquantity.proxy import order_rule
 from goods.sellgoods.salesquantity.service.order_version_6.data_util import cacul_util
+import math
 shop_type = config.shellgoods_params['shop_types'][0]  # 门店
 yinliao_cat_ids = config.shellgoods_params['yinliao_cat_ids'] # 饮料台账分类
 def generate(shop_id = None):
-
     try:
         sales_order_inss = []
         print ("门店向二批补货,shop_id"+str(shop_id))
@@ -19,6 +19,14 @@ def generate(shop_id = None):
         print ("规则0 商品数："+str(len(result.keys())))
         for mch_code  in result:
             drg_ins = result[mch_code]
+            if drg_ins.delivery_type==2:
+                drg_ins.safe_stock = max(drg_ins.min_disnums,math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price), math.ceil(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
+            else:
+                if drg_ins.storage_day < 15:
+                    min_disnums = 1
+                else:
+                    min_disnums = 2
+                drg_ins.safe_stock = min_disnums
             if (drg_ins.delivery_type==2 and max(0,drg_ins.stock) < drg_ins.max_disnums and drg_ins.category_id in yinliao_cat_ids)  or (drg_ins.delivery_type==2 and max(0,drg_ins.stock) <= drg_ins.min_disnums and drg_ins.category_id not in yinliao_cat_ids) or (drg_ins.delivery_type==1 and drg_ins.supply_stock > 0 ):
                 # 非日配
                 if drg_ins.delivery_type == 2:
