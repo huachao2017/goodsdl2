@@ -158,6 +158,8 @@ class ItemBasedCF():
 
         shop_qiuck_seller = self.get_shop_qiuck_seller(shop_sales_data)
 
+        print("本店所有品len：{}".format(len(shop_sales_data)))
+        print("本店畅销品len：{}".format(len(shop_qiuck_seller)))
         print("本店畅销品数据：{}".format(shop_qiuck_seller))
 
         for data in shop_sales_data:
@@ -334,7 +336,7 @@ class ItemBasedCF():
         for goods in shop_sales_data:  # 将累计前占比60%psd金额的商品选出来，遇到边界多/少选策略
             shop_qiuck_seller.append(goods)   # 遇到边界多选策略
             temp_amount += goods[0]
-            if temp_amount > amount * 0.6:
+            if temp_amount > amount * Decimal(0.6):
                 break
         return shop_qiuck_seller
 
@@ -344,9 +346,10 @@ class ItemBasedCF():
 
 
 
+
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
-    itemCF = ItemBasedCF(1284,100,2.5)
+    itemCF = ItemBasedCF(1284,100,2.5,[])
     # itemCF.get_dataset(rating_file)
     itemCF.bendi_test()   # 本地这个文件测试的时候，执行它
     a = itemCF.recommend_02()
