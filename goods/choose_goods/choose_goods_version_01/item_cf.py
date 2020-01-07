@@ -155,6 +155,7 @@ class ItemBasedCF():
         self.calc_goods_sim()
 
         shop_sales_data = self.get_shop_sales_data(self.pos_shop_id)
+        print("本店畅销品数据：{}".format(shop_sales_data))
         for data in shop_sales_data:
             # self.shop_psd_number_dict[str(data[3])] = data[6]      # 按照psd
             self.shop_psd_number_dict[str(data[3])] = data[0]      # 按照psd金额
