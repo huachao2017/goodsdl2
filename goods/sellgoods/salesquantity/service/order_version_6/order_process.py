@@ -43,6 +43,7 @@ def day_order_process():
             try:
                 cursor_erp.execute(sql_dmshop.format(int(erp_warehouse_id)))
                 erp_shopids = cursor_erp.fetchall()
+                print ("待订货 店铺数量："+str(len(erp_shopids)))
                 if erp_shopids is not None and len(erp_shopids) > 0 :
                     cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                     cursor_ai.connection.commit()
