@@ -4,6 +4,7 @@ from django.db import connections
 
 from goods.shelfdisplay.db_data import Category3
 from goods.shelfdisplay.firstdisplay.display_taizhang import TaizhangDisplay, Shelf
+from goods.third_tools import dingtalk
 
 
 def init_display_data(uc_shopid, tz_id, base_data):
@@ -31,11 +32,15 @@ def init_display_data(uc_shopid, tz_id, base_data):
             "select t.id, t.shelf_id, t.shelf_count, t.third_cate_ids from sf_taizhang t where t.id = {}".format(tz_id))
         (taizhang_id, shelf_id, count, third_cate_ids) = cursor.fetchone()
         if third_cate_ids is None or third_cate_ids == '':
-            raise ValueError('third_cate_ids is None:{},{},{}'.format(taizhang_id, shelf_id, count))
+            msg = '台账没有定义陈列分类:{},{},{}'.format(taizhang_id, shelf_id, count)
+            dingtalk.send_message(msg, 2)
+            raise ValueError(msg)
     except:
-        print('获取台账失败：{},{}！'.format(uc_shopid, tz_id))
+        msg = '获取台账失败：{},{}！'.format(uc_shopid, tz_id)
+        print(msg)
+        dingtalk.send_message(msg, 2)
         cursor.close()
-        raise ValueError('taizhang_display error:{},{}'.format(uc_shopid, tz_id))
+        raise ValueError(msg)
 
     # 获取货架信息
     cursor.execute(
@@ -92,7 +97,9 @@ def init_display_data(uc_shopid, tz_id, base_data):
     print(shelf_category3_to_goods_cnt)
 
     if len(shelf_goods_data_list) == 0:
-        raise ValueError('no any display goods')
+        msg = '没有需要需要陈列的商品'
+        dingtalk.send_message(msg, 2)
+        raise ValueError(msg)
     shelf_goods_data_list.sort(key=lambda x: x.mch_code)
     for goods_data in shelf_goods_data_list:
         print(goods_data)

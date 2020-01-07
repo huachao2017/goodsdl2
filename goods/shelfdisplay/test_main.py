@@ -22,11 +22,15 @@ if __name__ == "__main__":
     # taizhang = generate_displays(806, 1187)
 
 
+    old_display_id = None
     cursor = connections['ucenter'].cursor()
-    cursor.execute(
-        "select id from sf_taizhang_display where taizhang_id={} and status in (1,2,3) and approval_status=1 order by start_datetime desc limit 1".format(
-            args.tzid))
-    (old_display_id,) = cursor.fetchone()
+    try:
+        cursor.execute(
+            "select id from sf_taizhang_display where taizhang_id={} and status in (1,2,3) and approval_status=1 order by start_datetime desc limit 1".format(
+                args.tzid))
+        (old_display_id,) = cursor.fetchone()
+    except:
+        pass
     cursor.close()
     taizhang = generate_displays(args.shopid, args.tzid, args.batchid, old_display_id)
     print(taizhang.best_candidate_shelf)
