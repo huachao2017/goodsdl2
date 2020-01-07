@@ -725,6 +725,7 @@ class DailyChangeGoods:
         conn.commit()
         conn.close()
         print('ok')
+        print()
 
 
 
