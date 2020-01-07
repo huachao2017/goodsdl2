@@ -149,15 +149,25 @@ def get_shop_order_goods(shopid,add_type=False):
 
                         # 获取商品的 可定  起订量  配送类型
                         start_sum = 0
-                        delivery_type = 1
+                        delivery_type = 2
                         try:
-                            cursor.execute(
-                                "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and order_status = 1 ".format(supplier_id,supplier_goods_code))
-                            (start_sum,order_status,delivery_type_str) = cursor.fetchone()
-                            cursor.execute(
-                                "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
-                                    delivery_type_str))
-                            (delivery_type,) = cursor.fetchone()
+                            if add_type == False:
+                                cursor.execute(
+                                    "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and order_status = 1 ".format(supplier_id,supplier_goods_code))
+                                (start_sum,order_status,delivery_type_str) = cursor.fetchone()
+                                cursor.execute(
+                                    "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
+                                        delivery_type_str))
+                                (delivery_type,) = cursor.fetchone()
+                            else:
+                                cursor.execute(
+                                    "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} ".format(
+                                        supplier_id, supplier_goods_code))
+                                (start_sum, order_status, delivery_type_str) = cursor.fetchone()
+                                cursor.execute(
+                                    "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
+                                        delivery_type_str))
+                                (delivery_type,) = cursor.fetchone()
                         except:
                             print ("该品 不订货，获取商品的可定  起订量  配送类型 失败 ！ erp_resupply_id={},upc={},mch_code={}".format(erp_resupply_id,upc,mch_code))
                             if add_type == False:
