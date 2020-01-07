@@ -360,6 +360,7 @@ def get_order_all_data(result,sales_order_inss):
         mch_goods_dict['week_6_7_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)
         mch_goods_dict['single_face_min_disnums'] = drg_ins.single_face_min_disnums
         mch_goods_dict['add_sub_count'] = drg_ins.add_sub_count
+        mch_goods_dict['safe_stock'] = drg_ins.safe_stock
         shelf_data = []
         for shelf_ins in drg_ins.shelf_inss:
             shelf_data.append({"tz_id": shelf_ins.taizhang_id, "shelf_id": shelf_ins.shelf_id,

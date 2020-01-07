@@ -41,7 +41,7 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
     if flag == 0:   # 首次
         print("首次选品")
         # a = get_data(pos_shopid, '88,3156,3238')
-        a = get_data(pos_shopid, '1284,3955,3779,1925,4076,1924,3598,223,4004')
+        a = get_data(pos_shopid, '1284,3955,3779,1925,4076,1924,3598,223,4004, 88,3156,3238')
         print("uc_shopid,pos_shopid", uc_shop_id, pos_shopid)
         # a = storage_day_choose(a)
         # c = choose_goods(a)
@@ -50,7 +50,7 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
     elif flag == 1:   # 非首次
         print("汰换选品")
         # f = DailyChangeGoods(pos_shopid, "88,3156,3238",batch_id,uc_shop_id)
-        f = DailyChangeGoods(pos_shopid, "1284,3955,3779,1925,4076,1924,3598,223,4004",batch_id,uc_shop_id)
+        f = DailyChangeGoods(pos_shopid, "1284,3955,3779,1925,4076,1924,3598,223,4004, 88,3156,3238",batch_id,uc_shop_id)
         f.recommend_03()
     else:
         raise Exception("获取台账失败！")
