@@ -34,6 +34,7 @@ def day_order_process():
     # 获取日常订单
     cursor_ai.execute(sql_workflow.format(taskflow.day_order_type))
     first_flow_data = cursor_ai.fetchall()
+    print ("待订货仓数量："+str(len(first_flow_data)))
     if first_flow_data is not None and len(first_flow_data) > 0 :
         for data in first_flow_data:
             id = data[0]
@@ -42,6 +43,7 @@ def day_order_process():
             try:
                 cursor_erp.execute(sql_dmshop.format(int(erp_warehouse_id)))
                 erp_shopids = cursor_erp.fetchall()
+                print ("待订货 店铺数量："+str(len(erp_shopids)))
                 if erp_shopids is not None and len(erp_shopids) > 0 :
                     cursor_ai.execute(update_sql_01.format(id))  # 更新到“正在计算”
                     cursor_ai.connection.commit()

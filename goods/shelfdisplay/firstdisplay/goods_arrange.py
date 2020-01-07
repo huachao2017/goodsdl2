@@ -15,6 +15,7 @@ import math
 import goods.shelfdisplay.firstdisplay.goods_arrange_category3
 from goods.shelfdisplay.normal_algorithm import dict_arrange
 from goods.shelfdisplay.firstdisplay import display_taizhang, single_algorithm
+from goods.third_tools import dingtalk
 
 
 def goods_arrange(shelf):
@@ -74,7 +75,9 @@ def goods_arrange(shelf):
     # 计算候选解的badcase得分
     print('共找到{}个候选解'.format(len(candidate_result_shelf_list)))
     if len(candidate_result_shelf_list) == 0:
-        raise ValueError('没有找到一个候选解')
+        msg = '没有找到一个候选解'
+        dingtalk.send_message(msg, 2)
+        raise ValueError(msg)
     best_candidate_shelf = single_algorithm.goods_badcase_score(candidate_result_shelf_list)
 
     shelf.best_candidate_shelf = best_candidate_shelf
@@ -217,8 +220,10 @@ def _level_add_goods(candidate_shelf, input_level, goods, last_goods):
     if not success:
         # FIXME 需要考虑整层无法摆下的拆分
         if cur_level != input_level:
-            print('无法成列商品，商品在一层无法摆下！')
-            raise ValueError('无法成列商品，商品在一层无法摆下！')
+            msg = '无法成列商品，商品在一层无法摆下！'
+            dingtalk.send_message(msg, 2)
+            print(msg)
+            raise ValueError(msg)
         # 无法陈列商品
         cur_level = display_taizhang.Level(
             candidate_shelf,

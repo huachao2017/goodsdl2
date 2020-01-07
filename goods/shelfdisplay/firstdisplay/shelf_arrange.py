@@ -12,6 +12,7 @@ import math
 from functools import reduce
 
 from goods.shelfdisplay.normal_algorithm import dict_arrange
+from goods.third_tools import dingtalk
 
 
 def shelf_arrange(shelf):
@@ -392,7 +393,9 @@ class CategoryTree:
             list_len = len(self.children)
 
             if list_len > 8:
-                raise ValueError('候选解太多：{}'.format(str(self)))
+                msg = '候选解太多：{}'.format(str(self))
+                dingtalk.send_message(msg, 2)
+                raise ValueError(msg)
             max_length = reduce(lambda x, y: x * y, range(1, list_len + 1))  # 阶乘
             if max_length > self.one_category_combination_threshhold:  # 如果大于阈值，则根据步长设置进行下采样
                 step_size = math.ceil(max_length / self.one_category_combination_threshhold)
@@ -424,7 +427,9 @@ class CategoryTree:
                     if j % step_size == 0:  # 进行下采样
                         self.result_list.append(one_result)
             if len(self.result_list) == 0:
-                raise ValueError('货架层级规则导致没有有效解: {}'.format(str(self)))
+                msg = '货架层级规则导致没有有效解: {}'.format(str(self))
+                dingtalk.send_message(msg, 2)
+                raise ValueError(msg)
 
     def get_all_simple_result(self):
         if self.children is not None:
