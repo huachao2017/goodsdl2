@@ -912,6 +912,8 @@ class DataRawGoods():
             self.delivery_type = 2
         self.fudong_nums = 0
 
+        self.safe_stock = 0
+
 class Shelf:
     taizhang_id = None
     shelf_id = None
