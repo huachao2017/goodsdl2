@@ -170,7 +170,7 @@ class GoodsImage(models.Model):
     create_time = models.DateTimeField('date created', auto_now_add=True,db_index=True)
 
 class AllWorkFlowBatch(models.Model):
-    batch_id = models.CharField(max_length=20, unique=True)
+    batch_id = models.CharField(max_length=30, unique=True)
     erp_warehouse_id = models.IntegerField(default=0)
     uc_shopid = models.IntegerField()
     type = models.IntegerField(default=0) # 1日常订货，2补货
