@@ -344,9 +344,10 @@ class ItemBasedCF():
 
 
 
+
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
-    itemCF = ItemBasedCF(1284,100,2.5)
+    itemCF = ItemBasedCF(1284,100,2.5,[])
     # itemCF.get_dataset(rating_file)
     itemCF.bendi_test()   # 本地这个文件测试的时候，执行它
     a = itemCF.recommend_02()
