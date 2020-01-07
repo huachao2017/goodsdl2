@@ -201,21 +201,21 @@ class ItemBasedCF():
         print("N",N)
 
 
-        # f = open("相似度.txt", mode="w", encoding="utf-8")
-        # sim_dict = {}
-        # for goods,rating in self.shop_psd_number_dict.items():
-        #     try:
-        #         # sim_dict[goods] = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
-        #         l = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
-        #         f.write(goods)
-        #         f.write(":")
-        #         f.write(str(l))
-        #         f.write("\n")
-        #         f.write("\n")
-        #     except:
-        #         continue
-        # f.write(str(sim_dict))
-        # f.close()
+        f = open("相似度.txt", mode="w", encoding="utf-8")
+        sim_dict = {}
+        for goods,rating in self.shop_psd_number_dict.items():
+            try:
+                # sim_dict[goods] = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
+                l = sorted(self.goods_sim_matrix[goods].items(), key=itemgetter(1), reverse=True)[:K]
+                f.write(goods)
+                f.write(":")
+                f.write(str(l))
+                f.write("\n")
+                f.write("\n")
+            except:
+                continue
+        f.write(str(sim_dict))
+        f.close()
         # print(sorted(rank.items(), key=itemgetter(1), reverse=True))
         return rank_score_lsit[:N],rank_score_lsit
 
