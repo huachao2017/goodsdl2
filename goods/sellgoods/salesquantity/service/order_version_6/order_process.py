@@ -34,6 +34,7 @@ def day_order_process():
     # 获取日常订单
     cursor_ai.execute(sql_workflow.format(taskflow.day_order_type))
     first_flow_data = cursor_ai.fetchall()
+    print ("待订货仓数量："+str(len(first_flow_data)))
     if first_flow_data is not None and len(first_flow_data) > 0 :
         for data in first_flow_data:
             id = data[0]
