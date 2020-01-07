@@ -41,8 +41,8 @@ class ItemBasedCF():
 
         self.shop_psd_number_dict = {}     # 本店销售量的字典
 
-        print('Similar goods number = %d' % self.n_sim_goods)
-        print('Recommneded goods number = %d' % self.n_ave)
+        # print('Similar goods number = %d' % self.n_sim_goods)
+        # print('Recommneded goods number = %d' % self.n_ave)
     def __del__(self):
         self.dmstore_cursor.close()
         self.cursor_ucenter.close()
@@ -155,7 +155,11 @@ class ItemBasedCF():
         self.calc_goods_sim()
 
         shop_sales_data = self.get_shop_sales_data(self.pos_shop_id)
-        print("本店畅销品数据：{}".format(shop_sales_data))
+
+        shop_qiuck_seller = self.get_shop_qiuck_seller(shop_sales_data)
+
+        print("本店畅销品数据：{}".format(shop_qiuck_seller))
+
         for data in shop_sales_data:
             # self.shop_psd_number_dict[str(data[3])] = data[6]      # 按照psd
             self.shop_psd_number_dict[str(data[3])] = data[0]      # 按照psd金额
@@ -315,6 +319,25 @@ class ItemBasedCF():
         self.dmstore_cursor.execute(sql.format(week_ago, now_date, shop_id))
         results = self.dmstore_cursor.fetchall()
         return results
+
+    def get_shop_qiuck_seller(self,shop_sales_data):
+        """
+        求本店的全排序的畅销品，累计前60%
+        :param shop_sales_data:
+        :return:
+        """
+        amount = 0  # 分类下psd金额的总额
+        for goods in shop_sales_data:
+            amount += goods[0]
+        temp_amount = 0
+        shop_qiuck_seller = []
+        for goods in shop_sales_data:  # 将累计前占比60%psd金额的商品选出来，遇到边界多/少选策略
+            shop_qiuck_seller.append(goods)   # 遇到边界多选策略
+            temp_amount += goods[0]
+            if temp_amount > amount * 0.6:
+                break
+        return shop_qiuck_seller
+
 
     def bendi_test(self):
         self.can_order_mch_list, _ = self.get_can_order_dict()
