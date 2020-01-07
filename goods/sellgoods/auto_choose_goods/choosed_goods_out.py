@@ -26,11 +26,12 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
     cursor_ai = conn_ai.cursor()
     # conn_dmstore = connections['dmstore']
     # cursor_dmstore = conn_dmstore.cursor()
-    print("时间,门店id,门店名称,一级分类,二级分类,三级分类,四级分类,配送类型,商品编码,商品名称,商品upc,策略标签,商品角色,上品优先级排名,商品实际销售4周预期psd金额,商品实际销售4周预期psd,组内门店4周预期psd金额,组内门店4周预期psd")
+    print("时间,门店id,门店名称,一级分类,二级分类,三级分类,四级分类,配送类型,商品编码,商品名称,商品upc,策略标签,商品角色,上品优先级排名,商品实际销售4周预期psd金额,商品实际销售4周预期psd,组内门店4周预期psd金额,组内门店4周预期psd,关联分值")
 
 
     select_sql = "select * from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is not NULL and goods_role in (1,2,4,0,3)"
     select_sql_02 = "select mch_goods_code from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and upc is NULL and goods_role=3"
+    select_sql_03 = "SELECT mch_goods_code,relation_score from goods_goodsselectionhistory WHERE uc_shopid={} and batch_id='{}'"
     cursor_ai.execute(select_sql.format(uc_shopid,batch_id))
     all_data = cursor_ai.fetchall()
 
@@ -40,6 +41,13 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
     cursor_ai.execute(select_sql_02.format(uc_shopid, batch_id))
     all_data_02 = cursor_ai.fetchall()
+
+    cursor_ai.execute(select_sql_03.format(uc_shopid, batch_id))
+    relation_score = cursor_ai.fetchall()
+    relation_score_dict = {}
+    for d in relation_score:
+        if d[1]:
+            relation_score_dict[d[0]] = d[1]
     conn_ai.close()
     tem = ""
     for data in all_data[:]:
@@ -217,9 +225,9 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
             line_str += str(0)  # psd
             line_str += ","
 
-        psd_sql_shops = "select sum(p.amount), COUNT(DISTINCT shop_id),g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in {} and g.neighbor_goods_id={};"
+        psd_sql_shops = "select sum(p.amount), COUNT(DISTINCT shop_id),g.price,p.name from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and p.shop_id in ({}) and g.neighbor_goods_id={};"
         # close_old_connections()
-        cursor_dmstore.execute(psd_sql_shops.format(week_ago,now_date,tuple(template_shop_ids.split(',')),data[10]))
+        cursor_dmstore.execute(psd_sql_shops.format(week_ago,now_date,template_shop_ids,data[10]))
         psd_data_shops = cursor_dmstore.fetchone()
         # print('psd_data_shops',psd_data_shops)
         if psd_data_shops[0]:
@@ -229,15 +237,21 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
                 line_str += str(psd_data_shops[0] / (days * psd_data_shops[1] * psd_data_shops[2]))  # psd,同组
             except:
                 line_str += str(0)
-            # line_str += ","
+            line_str += ","
         else:
             line_str += str(0)  # psd金额,同组
             line_str += ","
             line_str += str(0)  # psd,同组
-            # line_str += ","
+            line_str += ","
+
+        try:
+            line_str += str(data[22])
+        except:
+            line_str += str(0)
         print(line_str)
         conn_ucenter.close()
         conn_dmstore.close()
+
 
 
 
@@ -273,14 +287,20 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
                 delivery_str = str(delivery_type_dict[delivery])  # 配送类型
             except:
                 delivery_str = str('None')
+            try:
+                relation_score_value = relation_score_dict[i[0]]
+            except:
+                relation_score_value = 0
 
 
-            print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem, i[3], i[4], i[5], i[6], delivery_str, i[0],
+
+            print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem, i[3], i[4], i[5], i[6], delivery_str, i[0],
                                                                            i[2], i[1], None, '可选上架', 0, None, None, None,
-                                                                           None))
+                                                                           None,relation_score_value))
         except:
             continue
     conn_ucenter.close()
+
 
 
 
@@ -293,7 +313,7 @@ def data():
 
 if __name__ == '__main__':
     goods_out(806,"1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_010',28)
-    # goods_out(806,"1284,4076,3598,223,4004",'lishu_test_009',28)
+    # goods_out(806,"4004",'lishu_test_010',28)
 
 
 

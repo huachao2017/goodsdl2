@@ -17,18 +17,18 @@ from operator import itemgetter
 
 class ItemBasedCF():
     # 初始化参数
-    def __init__(self,pos_shop_id,n_sim_goods,n_rec_goods):
+    def __init__(self,pos_shop_id,n_sim_goods,n_ave,can_order_list):
 
         self.pos_shop_id = pos_shop_id
         self.days = 28
         self.supplier_id_list = []  # 供应商id，可以多个
-        self.can_order_mch_list = []
+        self.can_order_mch_list = can_order_list
         self.dmstore_cursor = connections['dmstore'].cursor()
         self.cursor_ucenter = connections['ucenter'].cursor()
 
-        # 找到相似的多少个商品，为门店推荐多少个商品
-        self.n_sim_goods = n_sim_goods
-        self.n_rec_goods = n_rec_goods
+
+        self.n_sim_goods = n_sim_goods    # 找到相似的多少个商品
+        self.n_ave = n_ave     # 选取的关联品，分值是平均分值的多少倍
 
         # 将数据集划分为训练集和测试集
         self.trainSet = {}
@@ -42,25 +42,29 @@ class ItemBasedCF():
         self.shop_psd_number_dict = {}     # 本店销售量的字典
 
         print('Similar goods number = %d' % self.n_sim_goods)
-        print('Recommneded goods number = %d' % self.n_rec_goods)
+        print('Recommneded goods number = %d' % self.n_ave)
     def __del__(self):
         self.dmstore_cursor.close()
         self.cursor_ucenter.close()
 
     # 读取数据库得到"订单-商品"数据
     def get_data(self):
-        can_order_mch_list, _ = self.get_can_order_dict()
+        # self.can_order_mch_list, _ = self.get_can_order_dict()
         now = datetime.datetime.now()
         now_date = now.strftime('%Y-%m-%d %H:%M:%S')
         week_ago = (now - datetime.timedelta(days=self.days)).strftime('%Y-%m-%d %H:%M:%S')
         sql = "select p.payment_id,GROUP_CONCAT(g.neighbor_goods_id) n from dmstore.payment_detail as p left join dmstore.goods as g on p.goods_id=g.id where p.create_time > '{}' and p.create_time < '{}' and g.neighbor_goods_id in ({}) GROUP BY p.payment_id having COUNT(g.neighbor_goods_id) >1"
-        self.dmstore_cursor.execute(sql.format(week_ago, now_date,','.join(can_order_mch_list)))
-        all_data = self.dmstore_cursor.fetchall()
-        print(len(all_data))
-        for data in all_data:
-            for goods in data[1].split(","):
-                self.trainSet.setdefault(data[0], {})
-                self.trainSet[data[0]][goods] = 1
+        try:
+            self.dmstore_cursor.execute(sql.format(week_ago, now_date,','.join(self.can_order_mch_list)))
+            all_data = self.dmstore_cursor.fetchall()
+            print(len(all_data))
+            for data in all_data:
+                for goods in data[1].split(","):
+                    self.trainSet.setdefault(data[0], {})
+                    self.trainSet[data[0]][goods] = 1
+        except Exception as e:
+            print("获取订单-商品数据失败：{}".format(e))
+
 
     # 读文件得到“用户-商品”数据
     def get_dataset(self, filename, pivot=0.9999999):
@@ -131,7 +135,7 @@ class ItemBasedCF():
     # 针对目标用户U，找到K个相似的商品，并推荐其N个商品
     def recommend(self, user):
         K = self.n_sim_goods
-        N = self.n_rec_goods
+        N = self.n_ave
         rank = {}
         sell_goods = self.trainSet[user]    # 卖出的商品
 
@@ -157,7 +161,8 @@ class ItemBasedCF():
             # self.shop_psd_number_dict[str(data[5])] = data[0]      # key是name
 
         K = self.n_sim_goods
-        N = self.n_rec_goods
+
+
         rank = {}
         ttt = 0
 
@@ -171,6 +176,21 @@ class ItemBasedCF():
                 ttt += 1
                 print(ttt)
                 continue
+
+
+
+        rank_score_lsit = sorted(rank.items(), key=itemgetter(1), reverse=True)    # 最终分值，里边是元组，mch和score
+        N = int(len(rank_score_lsit) / 10)
+        all_score = 0
+        for i in rank_score_lsit:
+            all_score += i[1]
+        ave = all_score/len(rank_score_lsit)    # 平均分值
+        for i in rank_score_lsit:
+            if i[1] < self.n_ave * ave:
+                N = rank_score_lsit.index(i)
+                break
+        print("N",N)
+
 
         # f = open("相似度name.txt", mode="w", encoding="utf-8")
         # sim_dict = {}
@@ -187,15 +207,15 @@ class ItemBasedCF():
         #         continue
         # # f.write(str(sim_dict))
         # f.close()
-
-        return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
+        # print(sorted(rank.items(), key=itemgetter(1), reverse=True))
+        return rank_score_lsit[:N],rank_score_lsit
 
 
 
     # 产生推荐并通过准确率、召回率和覆盖率进行评估
     def evaluate(self):
         print('Evaluating start ...')
-        N = self.n_rec_goods
+        N = self.n_ave
         # 准确率和召回率
         hit = 0
         rec_count = 0
@@ -293,11 +313,16 @@ class ItemBasedCF():
         results = self.dmstore_cursor.fetchall()
         return results
 
+    def bendi_test(self):
+        self.can_order_mch_list, _ = self.get_can_order_dict()
+
+
 
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
-    itemCF = ItemBasedCF(1284,100,50)
+    itemCF = ItemBasedCF(1284,100,2.5)
     # itemCF.get_dataset(rating_file)
+    itemCF.bendi_test()   # 本地这个文件测试的时候，执行它
     a = itemCF.recommend_02()
     # a = itemCF.get_can_order_dict()
     print(type(a))
