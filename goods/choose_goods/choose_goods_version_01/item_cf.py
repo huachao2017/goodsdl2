@@ -162,7 +162,7 @@ class ItemBasedCF():
         print("本店畅销品len：{}".format(len(shop_qiuck_seller)))
         print("本店畅销品数据：{}".format(shop_qiuck_seller))
 
-        for data in shop_sales_data:
+        for data in shop_qiuck_seller:
             # self.shop_psd_number_dict[str(data[3])] = data[6]      # 按照psd
             self.shop_psd_number_dict[str(data[3])] = data[0]      # 按照psd金额
             # self.shop_psd_number_dict[str(data[5])] = data[0]      # key是name
@@ -201,7 +201,7 @@ class ItemBasedCF():
         print("N",N)
 
 
-        # f = open("相似度name.txt", mode="w", encoding="utf-8")
+        # f = open("相似度.txt", mode="w", encoding="utf-8")
         # sim_dict = {}
         # for goods,rating in self.shop_psd_number_dict.items():
         #     try:
@@ -214,7 +214,7 @@ class ItemBasedCF():
         #         f.write("\n")
         #     except:
         #         continue
-        # # f.write(str(sim_dict))
+        # f.write(str(sim_dict))
         # f.close()
         # print(sorted(rank.items(), key=itemgetter(1), reverse=True))
         return rank_score_lsit[:N],rank_score_lsit
