@@ -10,6 +10,6 @@ demjson
 django-cors-headers
 aliyun-python-sdk-core
 aliyun-python-sdk-imagesearch
-keras
+keras==2.2.0
 pymysql
 
