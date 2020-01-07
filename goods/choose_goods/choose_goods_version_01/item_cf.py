@@ -334,7 +334,7 @@ class ItemBasedCF():
         for goods in shop_sales_data:  # 将累计前占比60%psd金额的商品选出来，遇到边界多/少选策略
             shop_qiuck_seller.append(goods)   # 遇到边界多选策略
             temp_amount += goods[0]
-            if temp_amount > amount * 0.6:
+            if temp_amount > amount * Decimal(0.6):
                 break
         return shop_qiuck_seller
 
