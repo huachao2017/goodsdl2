@@ -5,6 +5,7 @@
 from itertools import product
 from goods.shelfdisplay.normal_algorithm import dict_arrange
 from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
+from goods.third_tools import dingtalk
 
 
 class AreaManager:
@@ -317,7 +318,10 @@ class Area:
             self.category2 = category2
         else:
             if self.category2 != category2:
-                raise ValueError('one area category2 is not equal')
+                msg = '同三级分类的商品二级分类不一样：{}'.format(category3)
+                print(msg)
+                dingtalk.send_message(msg, 2)
+                raise ValueError(msg)
 
         if category3 not in self.category3_list:
             self.category3_list.append(category3)

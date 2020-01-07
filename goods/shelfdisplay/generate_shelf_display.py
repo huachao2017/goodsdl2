@@ -16,7 +16,7 @@ from goods.models import ShelfDisplayDebug
 from goods.shelfdisplay import db_data
 from goods.shelfdisplay.firstdisplay import db_display_data as first_db_display_data
 from goods.shelfdisplay.replacedisplay import db_display_data as replace_db_display_data
-
+from goods.third_tools import dingtalk
 
 def generate_workflow_displays(uc_shopid, batch_id):
     """
@@ -34,9 +34,10 @@ def generate_workflow_displays(uc_shopid, batch_id):
                 uc_shopid))
         taizhangs = cursor.fetchall()
     except:
-        traceback.print_exc()
-        print('获取台账失败：{}！'.format(uc_shopid))
-        raise ValueError('taizhang error:{}'.format(uc_shopid))
+        msg = '获取台账失败：{}！'.format(uc_shopid)
+        print(msg)
+        dingtalk.send_message(msg)
+        raise ValueError(msg)
     finally:
         cursor.close()
 
