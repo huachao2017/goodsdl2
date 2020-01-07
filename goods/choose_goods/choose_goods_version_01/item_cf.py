@@ -158,6 +158,8 @@ class ItemBasedCF():
 
         shop_qiuck_seller = self.get_shop_qiuck_seller(shop_sales_data)
 
+        print("本店所有品len：{}".format(len(shop_sales_data)))
+        print("本店畅销品len：{}".format(len(shop_qiuck_seller)))
         print("本店畅销品数据：{}".format(shop_qiuck_seller))
 
         for data in shop_sales_data:
