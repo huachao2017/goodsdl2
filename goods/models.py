@@ -185,7 +185,7 @@ class AllWorkFlowBatch(models.Model):
     update_time = models.DateTimeField('date updated', auto_now=True)
 
 class ShelfDisplayDebug(models.Model):
-    batch_id = models.CharField(max_length=20,default='0')
+    batch_id = models.CharField(max_length=30,default='0')
     uc_shopid = models.IntegerField(db_index=True,default=806)
     tz_id = models.IntegerField()
     json_ret = models.TextField(default='')
