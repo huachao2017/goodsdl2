@@ -18,3 +18,18 @@ def do_test():
 @task
 def display():
     local('sh goods/shelfdisplay/deamon.sh')
+
+@task
+def choose():
+    local('sh goods/choose_goods/choose_goods_version_01/choose_goods_task.sh')
+
+@task
+def order():
+    local('sh goods/sellgoods/shell/listener_order.sh')
+
+@task
+def auto():
+    local('sh goods/shelfdisplay/deamon.sh')
+    local('sh goods/choose_goods/choose_goods_version_01/choose_goods_task.sh')
+    local('sh goods/sellgoods/shell/listener_order.sh')
+
