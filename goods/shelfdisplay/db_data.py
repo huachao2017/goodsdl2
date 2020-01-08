@@ -122,6 +122,50 @@ class BaseData:
         self.category3_level_value = None
         self.goods_data_list = []
 
+class NullGoodsData:
+    def __init__(self, width):
+        self.mch_code = ''
+        self.goods_name = 'null'
+        self.upc = ''
+        self.tz_display_img = ''
+        self.category1 = ''
+        self.category2 = ''
+        self.category3 = ''
+        self.category4 = ''
+        self.package_type = 0
+        self.brand = ''
+        self.layout = 1
+        self.width = width
+        self.height = 0
+        self.depth = 0
+        self.is_superimpose = 2  # 1可叠放，2不可叠放
+        self.is_suspension = 2  # 1可挂放，2不可挂放
+        self.psd = 0  # 预测销量
+        self.psd_amount = 0 # 预测销售额
+        self.face_num = 1  # 在某层陈列时填入
+        self.add_face_num = 0  # 商品不足做扩面处理
+        self.superimpose_num = 1  # 在商品初始化时填入
+        self.goods_role = 3 # 商品的角色类型，0保护品，1上架，2下架，3可选上架，4可选下架'
+        self.ranking = 0 # 该品为可选上下品时的优先级，越大越优先，可重复
+
+    def equal(self, another_goods):
+        return False
+
+    def is_spu(self, another_goods):
+        return False
+
+    def height_diff(self, another_goods):
+        if another_goods is not None:
+            return (self.height * self.superimpose_num) - (another_goods.height - another_goods.superimpose_num)
+        return 0
+
+    def __str__(self):
+        ret = '(null'
+        ret += ','
+        ret += str(self.width)
+        ret += ')'
+        return ret
+
 
 class GoodsData:
     def __init__(self, mch_code, goods_name, upc, tz_display_img, category1, category2, category3, category4,

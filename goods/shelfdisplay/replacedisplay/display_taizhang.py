@@ -121,6 +121,9 @@ class TaizhangDisplay:
                 }
                 json_shelf["levels"].append(json_level)
                 for display_goods in level.display_goods_list:
+                    if display_goods.goods_data.mch_code == '':
+                        # 增加占位goods的处理
+                        continue
                     json_goods = {
                         "mch_good_code": display_goods.goods_data.mch_code,
                         "upc": display_goods.goods_data.upc,
@@ -169,6 +172,9 @@ class TaizhangDisplay:
             level_start_height = level_height
             last_level = level
             for display_goods in level.display_goods_list:
+                if display_goods.goods_data.mch_code == '':
+                    # 增加占位goods的处理
+                    continue
                 picurl = '{}{}'.format(settings.UC_PIC_HOST, display_goods.goods_data.tz_display_img)
                 if picurl in picurl_to_goods_image:
                     goods_image = picurl_to_goods_image[picurl]

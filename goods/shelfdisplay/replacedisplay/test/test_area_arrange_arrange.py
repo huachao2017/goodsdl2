@@ -36,14 +36,14 @@ class Test1(unittest.TestCase):
                 DisplayGoods(TestGoods('c2_1', 'c3_2', '6', 200, 40, 5, 0, 0), face_num=3),
                 DisplayGoods(TestGoods('c2_1', 'c3_3', '7', 150, 40, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_3', '8', 150, 40, 10, 0, 0))],
-            1: [DisplayGoods(TestGoods('c2_1', 'c3_3', '11', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '12', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '13', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '14', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '15', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '16', 150, 80, 10, 0, 0)),
+            1: [DisplayGoods(TestGoods('c2_1', 'c3_3', '18', 150, 40, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_3', '17', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '18', 150, 40, 10, 0, 0))],
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '16', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '15', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '14', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '13', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '12', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '11', 150, 80, 10, 0, 0))],
             2: [DisplayGoods(TestGoods('c2_1', 'c3_3', '21', 150, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_3', '22', 150, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_4', '23', 100, 80, 10, 0, 0)),
@@ -52,14 +52,14 @@ class Test1(unittest.TestCase):
                 DisplayGoods(TestGoods('c2_1', 'c3_4', '26', 100, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_5', '27', 100, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_5', '28', 100, 40, 10, 0, 0))],
-            3: [DisplayGoods(TestGoods('c2_1', 'c3_5', '31', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_5', '32', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_2', 'c3_6', '33', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_2', 'c3_6', '34', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_2', 'c3_6', '35', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_2', 'c3_6', '36', 100, 80, 10, 0, 0)),
+            3: [DisplayGoods(TestGoods('c2_2', 'c3_6', '38', 100, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_2', 'c3_6', '37', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_2', 'c3_6', '38', 100, 40, 10, 0, 0))],
+                DisplayGoods(TestGoods('c2_2', 'c3_6', '36', 100, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_2', 'c3_6', '35', 100, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_2', 'c3_6', '34', 100, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_2', 'c3_6', '33', 100, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_5', '32', 100, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_5', '31', 100, 40, 10, 0, 0))],
             4: [DisplayGoods(TestGoods('c2_2', 'c3_6', '41', 100, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_2', 'c3_6', '42', 100, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_2', 'c3_7', '43', 100, 80, 10, 0, 0)),
@@ -89,6 +89,8 @@ class Test1(unittest.TestCase):
         area_manager._second_combine_areas()
         area_manager._prepare_area_base_data()
         area_manager._prepare_area_calculate_data()
+        area_manager._print_choose_goods_info()
+
         area_manager._arrange_areas()
 
         self.assertEqual(area_manager.threshold, 100)
@@ -106,7 +108,7 @@ class Test1(unittest.TestCase):
         best_candidate_shelf = area_manager.calculate_best_candidate_shelf(candidate_shelf_list)
         level_to_display_goods_name_str = get_level_to_display_goods_name(best_candidate_shelf)
 
-        self.assertEqual(level_to_display_goods_name_str[0], '1,2,103,102,101,7,8,')
+        self.assertEqual(level_to_display_goods_name_str[0], '1,2,103,102,101,null,7,8,')
         self.assertEqual(level_to_display_goods_name_str[1], '11,12,13,14,15,16,17,18,')
         self.assertEqual(level_to_display_goods_name_str[2], '21,22,23,24,25,26,27,28,')
         self.assertEqual(level_to_display_goods_name_str[3], '31,32,33,34,35,36,37,38,')
@@ -131,14 +133,14 @@ class Test1(unittest.TestCase):
                 DisplayGoods(TestGoods('c2_1', 'c3_2', '6', 200, 40, 5, 0, 0), face_num=3),
                 DisplayGoods(TestGoods('c2_1', 'c3_3', '7', 150, 40, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_3', '8', 150, 40, 10, 0, 0))],
-            1: [DisplayGoods(TestGoods('c2_1', 'c3_3', '11', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '12', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '13', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '14', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '15', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '16', 150, 80, 10, 0, 0)),
+            1: [DisplayGoods(TestGoods('c2_1', 'c3_3', '18', 150, 40, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_3', '17', 150, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_3', '18', 150, 40, 10, 0, 0))],
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '16', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '15', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '14', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '13', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '12', 150, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_3', '11', 150, 80, 10, 0, 0))],
             2: [DisplayGoods(TestGoods('c2_1', 'c3_3', '21', 150, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_3', '22', 150, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_4', '23', 100, 80, 10, 0, 0)),
@@ -147,14 +149,14 @@ class Test1(unittest.TestCase):
                 DisplayGoods(TestGoods('c2_1', 'c3_4', '26', 100, 80, 7, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_5', '27', 100, 80, 6, 0, 0)),
                 DisplayGoods(TestGoods('c2_1', 'c3_5', '28', 100, 40, 5, 0, 0))],
-            3: [DisplayGoods(TestGoods('c2_1', 'c3_5', '31', 100, 80, 4, 0, 0)),
-                DisplayGoods(TestGoods('c2_1', 'c3_5', '32', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_2', 'c3_6', '33', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_2', 'c3_6', '34', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_2', 'c3_6', '35', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_2', 'c3_6', '36', 100, 80, 10, 0, 0)),
+            3: [DisplayGoods(TestGoods('c2_2', 'c3_6', '38', 100, 40, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_2', 'c3_6', '37', 100, 80, 10, 0, 0)),
-                DisplayGoods(TestGoods('c2_2', 'c3_6', '38', 100, 40, 10, 0, 0))],
+                DisplayGoods(TestGoods('c2_2', 'c3_6', '36', 100, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_2', 'c3_6', '35', 100, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_2', 'c3_6', '34', 100, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_2', 'c3_6', '33', 100, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_5', '32', 100, 80, 10, 0, 0)),
+                DisplayGoods(TestGoods('c2_1', 'c3_5', '31', 100, 80, 4, 0, 0))],
             4: [DisplayGoods(TestGoods('c2_2', 'c3_6', '41', 100, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_2', 'c3_6', '42', 100, 80, 10, 0, 0)),
                 DisplayGoods(TestGoods('c2_2', 'c3_7', '43', 100, 80, 10, 0, 0)),
@@ -184,6 +186,7 @@ class Test1(unittest.TestCase):
         area_manager._second_combine_areas()
         area_manager._prepare_area_base_data()
         area_manager._prepare_area_calculate_data()
+        area_manager._print_choose_goods_info()
         area_manager._arrange_areas()
 
         self.assertEqual(area_manager.threshold, 50)
@@ -201,7 +204,7 @@ class Test1(unittest.TestCase):
         best_candidate_shelf = area_manager.calculate_best_candidate_shelf(candidate_shelf_list)
         level_to_display_goods_name_str = get_level_to_display_goods_name(best_candidate_shelf)
 
-        self.assertEqual(level_to_display_goods_name_str[0], '1,2,2,3,101,5,5,6,6,7,8,')
+        self.assertEqual(level_to_display_goods_name_str[0], '1,2,2,3,101,5,5,6,6,null,7,8,')
         self.assertEqual(level_to_display_goods_name_str[1], '11,12,13,14,15,16,17,18,')
         self.assertEqual(level_to_display_goods_name_str[2], '21,22,23,24,102,26,32,')
         self.assertEqual(level_to_display_goods_name_str[3], '103,33,34,35,36,37,38,')
