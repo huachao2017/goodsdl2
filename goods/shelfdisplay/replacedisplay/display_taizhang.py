@@ -130,6 +130,9 @@ class TaizhangDisplay:
                         "width": display_goods.goods_data.width,
                         "height": display_goods.goods_data.height,
                         "depth": display_goods.goods_data.depth,
+                        "p_width": display_goods.goods_data.width,
+                        "p_height": display_goods.goods_data.height,
+                        "p_depth": display_goods.goods_data.depth,
                         "layout": display_goods.goods_data.layout,
                         "displays": []
                     }
