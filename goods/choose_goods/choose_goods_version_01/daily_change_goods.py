@@ -207,6 +207,7 @@ class DailyChangeGoods:
                 #     print('11111')
             category_dict[third_category] = third_category_has_psd_list
 
+        print('category_dict',category_dict)
         quick_seller_list = []
         structure_goods_list = []
         other_goods_list = []     # 有销量，但非结构非畅销
