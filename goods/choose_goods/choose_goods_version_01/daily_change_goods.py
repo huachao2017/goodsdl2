@@ -188,6 +188,7 @@ class DailyChangeGoods:
 
         self.all_third_category_mch_dict = self.get_all_third_category_mch_dict()
         print('可订货的所有三级分类len', len(self.all_third_category_mch_dict))
+        print('可订货的所有三级分类', self.all_third_category_mch_dict)
         category_dict = {}    # k为三级分类，v为分类下的商品列表
         for third_category,mch in self.all_third_category_mch_dict.items():      # 遍历每个三级分类
             all_shop_data = self.get_mch_psd_data(mch, self.template_shop_ids)
