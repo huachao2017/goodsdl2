@@ -483,7 +483,7 @@ class DailyChangeGoods:
 
         # 0、列表可订货
         self.can_order_list,self.can_order_mch_code_dict,self.can_order_new_list,self.can_order_mch_code_new_dict = self.get_can_order_dict()
-        print('可订货len：', len(self.can_order_mch_code_dict))
+        print('可订货len：', len(self.can_order_new_list))
 
         #   1.1、获取本店有销量的商品
         sales_data = self.get_shop_sales_data(self.shop_id)
@@ -765,10 +765,11 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 
 
+
 if __name__ == '__main__':
 
-    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_011',806)
-    # f = DailyChangeGoods(1284, "223",'lishu_test_010',806)
+    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_011',806)
+    f = DailyChangeGoods(1284, "223",'lishu_test_011',806)
     # f = DailyChangeGoods(88, "223",'lishu_test_01',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
