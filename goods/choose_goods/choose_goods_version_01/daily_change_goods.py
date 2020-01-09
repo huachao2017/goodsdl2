@@ -38,6 +38,10 @@ class DailyChangeGoods:
         self.taizhang_goods_mch_code_list = []
         self.third_category_mch_dict = {}  # 本店有的，陈列三级分类的字典，k为mch，v为mch字符串，逗号隔开
         self.all_rank_list = []    # 本店所有关联品的分值，里边是元组，第一个为mch，第二个为总的关联分值
+        self.trade_tag_str = ""      # 删除商圈不选的品的部分sql
+
+        if self.uc_shopid in [806]:
+            self.trade_tag_str =  "and c.trade_tag!='居民'"
 
         # self.not_move_goods = []  # 没有变动的品
         # self.must_up_goods = []  # 必须上架的品
@@ -106,9 +110,9 @@ class DailyChangeGoods:
         """
         all_third_category_mch_dict = {}
         # 注意：and c.display_third_cat_id>0 类型是字符串
-        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id in ({}) and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code is not NULL and c.mch_goods_code !='' and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
+        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on (a.supplier_goods_code=c.supplier_goods_code and a.supplier_id=c.supplier_id) where a.supplier_id in ({}) and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code is not NULL and c.mch_goods_code !='' and c.display_third_cat_id>0 {} GROUP BY c.display_third_cat_id"
         try:
-            self.cursor_ucenter.execute(sql.format(','.join(self.supplier_id_list)))
+            self.cursor_ucenter.execute(sql.format(','.join(self.supplier_id_list),self.trade_tag_str))
             all_data = self.cursor_ucenter.fetchall()
             for data in all_data:
                 all_third_category_mch_dict[data[0]] = data[1]
@@ -152,7 +156,7 @@ class DailyChangeGoods:
         """
         third_category_mch_dict = {}
         # 注意：and c.display_third_cat_id>0 类型是字符串
-        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.mch_goods_code where a.supplier_id in ({}) and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code in ({}) and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
+        sql = "select c.display_third_cat_id,GROUP_CONCAT(a.supplier_goods_code) from uc_supplier_goods a LEFT JOIN uc_merchant_goods c on (a.supplier_goods_code=c.supplier_goods_code and a.supplier_id=c.supplier_id) where a.supplier_id in ({}) and a.order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.mch_goods_code in ({}) and c.display_third_cat_id>0 GROUP BY c.display_third_cat_id"
         try:
             # print(sql.format(','.join(self.supplier_id_list),",".join(mch_code_list)))
             self.cursor_ucenter.execute(sql.format(','.join(self.supplier_id_list),",".join(mch_code_list)))
@@ -233,6 +237,7 @@ class DailyChangeGoods:
     def get_can_order_dict(self):
         """
         获取可订货的7位得mch_goods_code的字典，value为配送类型，k为店内码,从saas查询
+        筛掉商圈的标签：trade_tag_str
         :return:
         """
 
@@ -249,10 +254,6 @@ class DailyChangeGoods:
         can_order_list = []  # 可订货列表
         delivery_type_dict = {}    # 店内码是key，配送类型是value
         try:
-            # cursor_ucenter.execute("select id from uc_supplier where supplier_code in ({})".format(','.join(supplier_code)))
-            # (supplier_id,) = cursor_ucenter.fetchone()
-            # self.supplier_id = supplier_id
-
             self.cursor_ucenter.execute("SELECT supplier_id from uc_warehouse_supplier_shop WHERE warehouse_id={}".format(erp_shop_id))
             all_supplier_id_data = self.cursor_ucenter.fetchall()
             for supplier_data in all_supplier_id_data:
@@ -265,7 +266,7 @@ class DailyChangeGoods:
                 # "select supplier_goods_code,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(supplier_id))
                 # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
                 # 有尺寸数据
-                "select DISTINCT a.supplier_goods_code,b.delivery_attr,c.display_second_cat_id from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on a.supplier_goods_code=c.supplier_goods_code where a.supplier_id in ({}) and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 and c.display_third_cat_id > 0".format(','.join(self.supplier_id_list)))
+                "select DISTINCT a.supplier_goods_code,b.delivery_attr,c.display_second_cat_id from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on (a.supplier_goods_code=c.supplier_goods_code and a.supplier_id=c.supplier_id) where a.supplier_id in ({}) and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 {} and c.display_third_cat_id > 0".format(','.join(self.supplier_id_list),self.trade_tag_str))
             all_data = self.cursor_ucenter.fetchall()
             # print("可订货数据：",all_data)
             for data in all_data:
