@@ -30,7 +30,7 @@ def generate_workflow_displays(uc_shopid, batch_id):
     try:
         # FIXME 只获取有指定三级分类的台账
         cursor.execute(
-            "select t.id, t.shelf_id from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {} and t.third_cate_ids != ''".format(
+            "select t.id, t.shelf_id from sf_shop_taizhang st, sf_taizhang t where st.taizhang_id=t.id and st.shop_id = {}".format(
                 uc_shopid))
         taizhangs = cursor.fetchall()
     except:
