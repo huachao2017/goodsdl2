@@ -194,7 +194,7 @@ class DailyChangeGoods:
             all_shop_data = self.get_mch_psd_data(mch, self.template_shop_ids)
             if not all_shop_data:    # 说明这个分类下的品都没有销量
                 continue
-
+            print('haha')
             third_category_has_psd_list = list()
             for data in all_shop_data:     # psd金额除以商店数
                 # try:
