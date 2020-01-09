@@ -188,13 +188,13 @@ class DailyChangeGoods:
 
         self.all_third_category_mch_dict = self.get_all_third_category_mch_dict()
         print('可订货的所有三级分类len', len(self.all_third_category_mch_dict))
-        print('可订货的所有三级分类', self.all_third_category_mch_dict)
+        # print('可订货的所有三级分类', self.all_third_category_mch_dict)
         category_dict = {}    # k为三级分类，v为分类下的商品列表
         for third_category,mch in self.all_third_category_mch_dict.items():      # 遍历每个三级分类
             all_shop_data = self.get_mch_psd_data(mch, self.template_shop_ids)
             if not all_shop_data:    # 说明这个分类下的品都没有销量
                 continue
-            print('haha')
+            # print('haha')
             third_category_has_psd_list = list()
             for data in all_shop_data:     # psd金额除以商店数
                 # try:
@@ -770,8 +770,8 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_011',806)
-    f = DailyChangeGoods(1284, "223",'lishu_test_011',806)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_011',806)
+    # f = DailyChangeGoods(1284, "4004",'lishu_test_011',806)
     # f = DailyChangeGoods(88, "223",'lishu_test_01',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
