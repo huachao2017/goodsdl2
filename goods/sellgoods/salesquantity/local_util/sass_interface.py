@@ -7,6 +7,7 @@ def order_commit(batch_id,msg=''):
 
         url =  config.shellgoods_params["sass_order_url"]
         print("notify sass , batch_id={},msg={}".format(str(batch_id),str(msg)))
+        print (str(url).format(str(batch_id),str(msg)))
         index = 0
         while True:
             try:
