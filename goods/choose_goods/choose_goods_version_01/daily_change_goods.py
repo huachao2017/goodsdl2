@@ -511,22 +511,22 @@ class DailyChangeGoods:
             if not data['mch_goods_code'] in self.can_order_mch_code_dict:    # 不可订货即必须下架
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,is_structure,is_qiuck_seller,is_relation,relation_score,which_strategy,delivery_type,ranking
                 # must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, None, self.can_order_mch_code_dict[str(data['mch_goods_code'])], None))
-                must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0,None, None, None))
+                must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0,None, 401, None))
 
             elif data['mch_goods_code'] in not_move_goods_mch_code_list:    # 保护品即为不动的品
                 # print('有销量即为不动的品')
                 # not_move_goods.append((None, data['goods_upc'],None, None,data['mch_goods_code'], None, data['name'], 0, 0, 0, None, self.can_order_mch_code_dict[str(data['mch_goods_code'])], None))
-                not_move_goods.append((None, data['goods_upc'],None, None,data['mch_goods_code'], None, data['name'], 0, 0, 0, None, None, None))
+                not_move_goods.append((None, data['goods_upc'],None, None,data['mch_goods_code'], None, data['name'], 0, 0, 0, None, 101, None))
             else:    # 剩下的是可选下架的
                 if data['mch_goods_code'] in sales_goods_mch_code_dict.keys():    # 有销量的进行排序
                     # print('有销量即为不动的品')
                     # tem_list = [None, data['goods_upc'],None, sales_goods_mch_code_dict[data['mch_goods_code']][0],data['mch_goods_code'], None, data['name'], 0, 0, 0, self.can_order_mch_code_dict[str(data['mch_goods_code'])], None]
-                    tem_list = [None, data['goods_upc'],None, sales_goods_mch_code_dict[data['mch_goods_code']][0],data['mch_goods_code'], None, data['name'], 0, 0, 0,None, None]
+                    tem_list = [None, data['goods_upc'],None, sales_goods_mch_code_dict[data['mch_goods_code']][0],data['mch_goods_code'], None, data['name'], 0, 0, 0,None, 201]
                     if not tem_list in temp_optional_out_goods:
                         temp_optional_out_goods.append(tem_list)
                 else:       # 剩下没销量的为可选下架品的第一优先级
                     # optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, None, self.can_order_mch_code_dict[str(data['mch_goods_code'])], 10000))  # FIXME 分类code为空
-                    optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0,None, None, 10000))  # FIXME 分类code为空
+                    optional_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0,None, 201, 10000))  # FIXME 分类code为空
 
         optional_out_goods = list(set(optional_out_goods))
         temp_optional_out_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
@@ -593,14 +593,14 @@ class DailyChangeGoods:
             if data[2] in self.third_category_mch_dict and str(data[4]) in self.can_order_mch_code_dict and not str(data[4]) in self.taizhang_goods_mch_code_list:
                 print('???')
                 # data.extend([0, 1, 0, 1, self.can_order_mch_code_dict[str(data[4])]])  # is_structure,is_qiuck_seller,is_relation,which_strategy,delivery_type
-                data.extend([0, 1, 0,None, 1])  # is_structure,is_qiuck_seller,is_relation,which_strategy,delivery_type
+                data.extend([0, 1, 0,None, 1])  # is_structure,is_qiuck_seller,is_relation,relation_score,which_strategy,delivery_type
                 candidate_up_goods_list.append(data)
 
         # 该店没有的畅销品，并且可订货
         for data in all_quick_seller_list:
             if not str(data[4]) in self.taizhang_goods_mch_code_list and str(data[4]) in self.can_order_mch_code_dict:
                 # data.extend([0, 1, 0, 1, self.can_order_mch_code_dict[str(data[4])]])      # is_structure,is_qiuck_seller,is_relation,which_strategy,delivery_type
-                data.extend([0, 1, 0,None, 1])      # is_structure,is_qiuck_seller,is_relation,which_strategy,delivery_type
+                data.extend([0, 1, 0,None, 1])      # is_structure,is_qiuck_seller,is_relation,relation_score,which_strategy,delivery_type
                 candidate_up_goods_list.append(data)
 
         # candidate_up_goods_list = self.calculate_relation_goods(candidate_up_goods_list)
@@ -609,7 +609,7 @@ class DailyChangeGoods:
         for data in other_goods_list:
             if not str(data[4]) in self.taizhang_goods_mch_code_list and str(data[4]) in self.can_order_mch_code_dict:
                 # data.extend([0, 0, 0, None, self.can_order_mch_code_dict[str(data[4])]])  # is_structure,is_qiuck_seller,is_relation,which_strategy,delivery_type
-                data.extend([0, 0, 0,None, None])  # is_structure,is_qiuck_seller,is_relation,which_strategy,delivery_type
+                data.extend([0, 0, 0,None, 301])  # is_structure,is_qiuck_seller,is_relation,relation_score,which_strategy,delivery_type
                 candidate_up_goods_list.append(data)
 
 
@@ -672,7 +672,7 @@ class DailyChangeGoods:
         for mch in self.can_order_mch_code_dict:
             if not mch in all_data_mch:
                 # optional_up_goods_order.append((None, None, None, None, mch, None, None, 0, 0, 0, None,self.can_order_mch_code_dict[mch], 0))
-                optional_up_goods_order.append((None, None, None, None, mch, None, None, 0, 0, 0,None, None, 0))
+                optional_up_goods_order.append((None, None, None, None, mch, None, None, 0, 0, 0,None, 301, 0))
         optional_up_goods.extend(optional_up_goods_order)
 
 
