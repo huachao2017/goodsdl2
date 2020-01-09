@@ -158,7 +158,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
                 line_str += str(which_strategy_dict[1])  # 策略标签
             elif data[17] == 1:
                 line_str += str(which_strategy_dict[2])  # 策略标签
-            elif data[19] == [0,2,3,4]:
+            elif data[19] in [0,2,3,4]:
                 line_str += str(which_strategy_dict[data[20]])  # 策略标签
             else:
                 line_str += str('None')  # 策略标签
@@ -297,7 +297,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
 
 
             print("{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}".format(tem, i[3], i[4], i[5], i[6], delivery_str, i[0],
-                                                                           i[2], i[1], None, '可选上架', 0, None, None, None,
+                                                                           i[2], i[1], '品库可订商品', '可选上架', 0, None, None, None,
                                                                            None,relation_score_value))
         except:
             continue
@@ -315,7 +315,7 @@ def data():
 
 if __name__ == '__main__':
     goods_out(806,"1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_011',28)
-    # goods_out(806,"4004",'lishu_test_010',28)
+    # goods_out(806,"4004",'lishu_test_011',28)
 
 
 
