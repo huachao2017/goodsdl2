@@ -148,7 +148,7 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
         line_str += ","
 
         #策略标签
-        which_strategy_dict = {0:'结构品',1:'畅销品',2:'关联品',3:'品库可定商品',4:'品谱选品',5:'决策树标签选品',6:'人工临时加品',7:'网红品'}
+        which_strategy_dict = {0:'结构品',1:'畅销品',2:'关联品',3:'品库可定商品',4:'品谱选品',5:'决策树标签选品',6:'人工临时加品',7:'网红品',101:'保留策略',201:'原陈列非保留品',301:'品库可订商品',401:'不可订货商品'}
         # print('data[19]',data[19])
         # if data[19] == 1:
         try:
@@ -158,6 +158,8 @@ def goods_out(uc_shopid,template_shop_ids,batch_id,days):
                 line_str += str(which_strategy_dict[1])  # 策略标签
             elif data[17] == 1:
                 line_str += str(which_strategy_dict[2])  # 策略标签
+            elif data[19] == [0,2,3,4]:
+                line_str += str(which_strategy_dict[data[20]])  # 策略标签
             else:
                 line_str += str('None')  # 策略标签
         except:
