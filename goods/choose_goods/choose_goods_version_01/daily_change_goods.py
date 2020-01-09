@@ -248,7 +248,8 @@ class DailyChangeGoods:
         except Exception as e:
             print('pos店号是{},erp_shop_id获取失败:{}'.format(self.shop_id,e))
             send_message('pos店号是{},erp_shop_id获取失败:{}'.format(self.shop_id,e))
-            return []
+            raise Exception('pos店号是{},erp_shop_id获取失败:{}'.format(self.shop_id,e))
+            # return []
 
         # 获取商品的 可定 配送类型
         can_order_list = []  # 可订货列表
@@ -262,6 +263,7 @@ class DailyChangeGoods:
 
             if not self.supplier_id_list:
                 send_message("pos店号是{},查询supplier_id为空，sql为'SELECT supplier_id from uc_warehouse_supplier_shop WHERE warehouse_id={}'".format(self.shop_id,erp_shop_id))
+                raise Exception("pos店号是{},查询supplier_id为空，sql为'SELECT supplier_id from uc_warehouse_supplier_shop WHERE warehouse_id={}'".format(self.shop_id,erp_shop_id))
             self.cursor_ucenter.execute(
                 # "select supplier_goods_code,delivery_type from uc_supplier_goods where supplier_id = {} and order_status = 1 ".format(supplier_id))
                 # "select a.supplier_goods_code,b.delivery_attr from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code where a.supplier_id = {} and order_status = 1".format(supplier_id))
@@ -276,10 +278,13 @@ class DailyChangeGoods:
                     continue
                 delivery_type_dict[data[0]] = data[1]
         except Exception as e:
-            print('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
             send_message('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
+            raise Exception('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
+
+
         if not can_order_list:
             send_message('pos店号是{},查询是否可订货数据为空'.format(self.shop_id))
+            raise Exception('pos店号是{},查询是否可订货数据为空'.format(self.shop_id))
         return can_order_list,delivery_type_dict
 
     def calculate_not_move_goods(self):
@@ -625,7 +630,7 @@ class DailyChangeGoods:
                 if str(goods[4]) in self.can_order_mch_code_dict:
                     delivery_type = self.can_order_mch_code_dict[str(goods[4])]
                     if delivery_type == 2:
-                        if goods[-1] is not None:    # 目前，畅销品和结构品都为必上品
+                        if goods[-1] != 301:    # 目前，畅销品和结构品都为必上品
                             must_up_goods.append(goods)
                     else:
                         # print("怎么回事？")
