@@ -347,6 +347,7 @@ class ItemBasedCF():
 
 
 
+
 if __name__ == '__main__':
     rating_file = 'user_item_rate.csv'
     itemCF = ItemBasedCF(1284,100,2.5,[])
