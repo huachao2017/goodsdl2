@@ -16,9 +16,7 @@ from django.db import connections
 import traceback
 from set_config import config
 from goods.third_tools.dingtalk import send_message
-from goods.sellgoods.salesquantity.service.order_version_5.data_util.goods_info import *
-
-
+# from goods.sellgoods.salesquantity.service.order_version_5.data_util.goods_info import *
 
 import main.import_django_settings
 from django.db import connections
