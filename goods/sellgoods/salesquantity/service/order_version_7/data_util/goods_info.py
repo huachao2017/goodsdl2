@@ -94,9 +94,16 @@ def get_shop_order_goods(shopid,add_type=False):
                 level_height = round(float(level['height']))
                 for goods in goods_level_array:
                     mch_code = goods['mch_goods_code']
-                    height = goods['p_height']
-                    width = goods['p_width']
-                    depth = goods['p_depth']
+                    try:
+                        height = goods['p_height']
+                        width = goods['p_width']
+                        depth = goods['p_depth']
+                    except:
+                        print("台账中存在品没有 p_height，p_width，p_depth 字段，tzid={}, shelf_id={},mch_goods_code={}".format(
+                            taizhang_id, shelf_id, mch_code))
+                        height = 0.001
+                        width = 0.001
+                        depth = 0.001
                     shelf_ins = Shelf()
                     shelf_ins.shelf_length = shelf_length
                     shelf_ins.shelf_height = shelf_height
