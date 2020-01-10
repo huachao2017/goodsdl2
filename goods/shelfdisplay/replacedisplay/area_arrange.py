@@ -102,6 +102,17 @@ class AreaManager:
         return 1
 
     def _calculate_level_remain_width(self):
+        sorted_level_ids = list(self.levelid_to_displaygoods_list.keys())
+        sorted_level_ids.sort()
+
+        max_sorted_level_id = sorted_level_ids[-1]
+
+        # 处理空层
+        for level_id in range(max_sorted_level_id+1):
+            if level_id not in sorted_level_ids:
+                # 处理空层
+                self.levelid_to_displaygoods_list[level_id] = [DisplayGoods(NullGoodsData(self.shelf.width))]
+
         levelid_to_remain_width = {}
         for level_id in self.levelid_to_displaygoods_list:
             goods_width = 0
@@ -715,7 +726,7 @@ class Area:
         return reduce_width
 
     def __str__(self):
-        ret = str(self.category3_list) + ':' + str(self.total_width) + '-'
+        ret = str(self.category3_list) + ':' + str(self.total_width) + ':'
         for area_level in self.child_area_list:
             ret += str(area_level)
         return ret
