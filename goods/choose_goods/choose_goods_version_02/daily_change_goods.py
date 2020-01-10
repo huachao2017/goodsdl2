@@ -536,7 +536,7 @@ class DailyChangeGoods:
         for data in taizhang_goods:
             if not data['mch_goods_code'] in self.can_order_mch_code_dict:    # 不可订货即必须下架
                 # template_shop_ids,upc,code,predict_sales_amount,mch_goods_code,predict_sales_num,name,is_structure,is_qiuck_seller,is_relation,relation_score,which_strategy,delivery_type,ranking
-                must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, None, 401, self.can_order_mch_code_dict[str(data['mch_goods_code'])], None))
+                must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0, None, 401, None, None))
                 # must_out_goods.append((None, data['goods_upc'], None, None, data['mch_goods_code'], None, data['name'], 0, 0, 0,None, 401, None))
 
             elif data['mch_goods_code'] in not_move_goods_mch_code_list:    # 保护品即为不动的品
