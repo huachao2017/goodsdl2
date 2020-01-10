@@ -332,6 +332,7 @@ class AreaManager:
                 remain_width_list = []
                 if remain_width < candidate_shelf.width - cur_level_goods_width + 10:
                     remain_width_list.append(remain_width)
+                    cur_level_goods_width += remain_width
                 else:
                     remain_width_list.append(candidate_shelf.width - cur_level_goods_width)
                     remain_width = remain_width - (candidate_shelf.width - cur_level_goods_width)
@@ -348,6 +349,8 @@ class AreaManager:
                 for remain_width in remain_width_list:
                     index += 1
                     display_goods = DisplayGoods(NullGoodsData(remain_width))
+                    if cur_level is None:
+                        cur_level = candidate_shelf.levels[cur_level_index]
                     cur_level.add_display_goods(display_goods)
                     if index < len(remain_width_list)-1:
                         cur_level = candidate_shelf.levels[cur_level_index]
@@ -751,8 +754,9 @@ class ChildArea:
     def __str__(self):
         ret = str(self.level_id) + '-' + str(self.category3) + ':['
         for display_goods in self.display_goods_list:
-            ret += str(display_goods.goods_data)
-            ret += ','
+            for i in range(display_goods.face_num):
+                ret += str(display_goods.goods_data)
+                ret += ','
         ret += '], '
 
         return ret

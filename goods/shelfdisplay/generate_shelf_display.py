@@ -126,8 +126,10 @@ def generate_displays(uc_shopid, tz_id, batch_id, old_display_id = None):
         return taizhang_display
     except Exception as e:
         # 更新陈列在ai系统的数据记录
+        msg = "自动陈列错误:{},{},{}。错误原因：{}".format(uc_shopid, tz_id, batch_id, e)
         shelf_display_debug_model.json_ret = str(e)
         shelf_display_debug_model.save()
         traceback.print_exc()
-        print("Failed:{},{},{}".format(uc_shopid, tz_id, batch_id))
+        print(msg)
+        dingtalk.send_message(msg, 2)
         return None
