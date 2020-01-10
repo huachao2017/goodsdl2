@@ -1,6 +1,6 @@
 
 import time
-from goods.sellgoods.salesquantity.service.order_version_5 import order_process
+from goods.sellgoods.salesquantity.service.order_version_7 import order_process
 from django.db import close_old_connections
 import traceback
 def generate_data():
