@@ -375,7 +375,7 @@ def get_shop_order_goods(shopid,add_type=False):
                                 "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
                                     upc, shopid))
                             (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
-                            sql_1_4 = "select one_week_psd_sales_count,four_week_psd_sales_count from tj_goods_week_psd where mch_id = {} and shop_id = {} and goods_code = {} and created_at >= '{} 00:00:00' and create_at <= '{} 23:59:59'".format(
+                            sql_1_4 = "select one_week_psd_sales_count,four_week_psd_sales_count from tj_goods_week_psd where mch_id = {} and shop_id = {} and goods_code = {} and created_at >= '{} 00:00:00' and created_at <= '{} 23:59:59'".format(
                                 mch_id, shopid, goods_id,end_date, end_date)
                             cursor_bi.execute(sql_1_4)
                             (upc_psd_nums_avg_1,upc_psd_nums_avg_4) = cursor_bi.fetchone()

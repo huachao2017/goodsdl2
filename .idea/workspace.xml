@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="91a34887-4bb4-4f55-991b-fe71dee1fcde" name="Default" comment="- 增加了">
-      <change beforePath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/generate_order_shop.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/generate_order_shop.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/data_util/goods_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/data_util/goods_info.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -79,11 +80,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="goods_info.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="goods_info.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/data_util/goods_info.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="381" column="73" selection-start-line="381" selection-start-column="55" selection-end-line="381" selection-end-column="73" />
+            <state relative-caret-position="121">
+              <caret line="379" column="54" lean-forward="true" selection-start-line="379" selection-start-column="54" selection-end-line="379" selection-end-column="54" />
               <folding>
                 <element signature="e#1#12#0" expanded="true" />
               </folding>
@@ -91,10 +92,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="generate_order_shop.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="generate_order_shop.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/generate_order_shop.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
+            <state relative-caret-position="387">
               <caret line="35" column="53" lean-forward="true" selection-start-line="35" selection-start-column="53" selection-end-line="35" selection-end-column="53" />
               <folding>
                 <element signature="e#33#62#0" expanded="true" />
@@ -149,10 +150,10 @@
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/listener_order.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/order_process.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/generate_order_2saler_add.py" />
-        <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/data_util/goods_info.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_7.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/data_util/cacul_util.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/generate_order_shop.py" />
+        <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/data_util/goods_info.py" />
       </list>
     </option>
   </component>
@@ -615,16 +616,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/data_util/goods_info.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="381" column="73" selection-start-line="381" selection-start-column="55" selection-end-line="381" selection-end-column="73" />
-          <folding>
-            <element signature="e#1#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_7.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="770">
@@ -674,10 +665,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/generate_order_shop.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
+        <state relative-caret-position="387">
           <caret line="35" column="53" lean-forward="true" selection-start-line="35" selection-start-column="53" selection-end-line="35" selection-end-column="53" />
           <folding>
             <element signature="e#33#62#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/data_util/goods_info.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="121">
+          <caret line="379" column="54" lean-forward="true" selection-start-line="379" selection-start-column="54" selection-end-line="379" selection-end-column="54" />
+          <folding>
+            <element signature="e#1#12#0" expanded="true" />
           </folding>
         </state>
       </provider>
