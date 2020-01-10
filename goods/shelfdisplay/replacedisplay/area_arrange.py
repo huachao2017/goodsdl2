@@ -102,6 +102,17 @@ class AreaManager:
         return 1
 
     def _calculate_level_remain_width(self):
+        sorted_level_ids = list(self.levelid_to_displaygoods_list.keys())
+        sorted_level_ids.sort()
+
+        max_sorted_level_id = sorted_level_ids[-1]
+
+        # 处理空层
+        for level_id in range(max_sorted_level_id+1):
+            if level_id not in sorted_level_ids:
+                # 处理空层
+                self.levelid_to_displaygoods_list[level_id] = [DisplayGoods(NullGoodsData(self.shelf.width))]
+
         levelid_to_remain_width = {}
         for level_id in self.levelid_to_displaygoods_list:
             goods_width = 0
@@ -215,7 +226,7 @@ class AreaManager:
         up_info = '必须上架商品：'
         for area in self.area_list:
             for choose_goods in area.up_choose_goods_list:
-                up_info += choose_goods.goods_name
+                up_info += str(choose_goods)
                 up_info += ','
 
         print(up_info)
@@ -223,28 +234,28 @@ class AreaManager:
         down_info = '必须下架商品：'
         for area in self.area_list:
             for display_goods in area.down_display_goods_list:
-                down_info += display_goods.goods_data.goods_name
+                down_info += str(display_goods.goods_data)
                 down_info += ','
         print(down_info)
 
         second_up_info = '二次上架商品：'
         for area in self.area_list:
             for choose_goods in area.second_up_choose_goods_list:
-                second_up_info += choose_goods.goods_name
+                second_up_info += str(choose_goods)
                 second_up_info += ','
         print(second_up_info)
 
         reduce_info = '减扩面商品：'
         for area in self.area_list:
             for display_goods in area.display_goods_to_reduce_face_num:
-                reduce_info += display_goods.goods_data.goods_name + '(' + str(area.display_goods_to_reduce_face_num[display_goods])
+                reduce_info += str(display_goods.goods_data) + '(' + str(area.display_goods_to_reduce_face_num[display_goods])
                 reduce_info += '),'
         print(reduce_info)
 
         second_down_info = '二次下架商品：'
         for area in self.area_list:
             for display_goods in area.second_down_display_goods_list:
-                second_down_info += display_goods.goods_data.goods_name
+                second_down_info += str(display_goods.goods_data)
                 second_down_info += ','
         print(second_down_info)
 
@@ -341,6 +352,9 @@ class AreaManager:
                     if index < len(remain_width_list)-1:
                         cur_level = candidate_shelf.levels[cur_level_index]
                         cur_level_index += 1
+                        if cur_level_index >= len(candidate_shelf.levels):
+                            print("陈列商品超出货架，陈列到此结束:{}".format(cur_level_index))
+                            return candidate_shelf
 
         return candidate_shelf
 
@@ -715,7 +729,7 @@ class Area:
         return reduce_width
 
     def __str__(self):
-        ret = str(self.category3_list) + ':' + str(self.total_width) + '-'
+        ret = str(self.category3_list) + ':' + str(self.total_width) + ':'
         for area_level in self.child_area_list:
             ret += str(area_level)
         return ret

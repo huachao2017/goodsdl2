@@ -20,7 +20,8 @@ def generate(shop_id = None):
         for mch_code  in result:
             drg_ins = result[mch_code]
             if drg_ins.delivery_type==2:
-                drg_ins.safe_stock = max(drg_ins.min_disnums,math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price), math.ceil(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
+                drg_ins.safe_stock = max(drg_ins.min_disnums, drg_ins.upc_psd_nums_avg_4,
+                                             drg_ins.upc_psd_nums_avg_1)
             else:
                 if drg_ins.storage_day < 15:
                     min_disnums = 1
