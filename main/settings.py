@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+SECURE_SSL_REDIRECT = False
 INSTALLED_APPS = [
     'django_crontab',
     'django.contrib.admin',
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'django_filters',
+    'sslserver',
     'goods',
 ]
 
