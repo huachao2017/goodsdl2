@@ -88,7 +88,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
           "模板店4周预估psd,模板店4周预估psd金额,配送单位,最小陈列数,"
           "最大陈列数,门店库存,仓库库存,配送类型,保质期,"
           "起订量,在途订货数,进货价,商品单价,开店以来单天最大psd数量,"
-          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,品的生命周期:0首次1新品2旧品,"
+          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,psd的计算来自bi:1是,品的生命周期:0首次1新品2旧品,"
           "7天平均废弃率,7天平均废弃后毛利率,7天平均废弃量,7日平均废弃后毛利额,浮动量,2周的psd数量,2周小类的psd数量,单face配置最小陈列量,补货单在途订单数")
     for drg_ins in goods_order_all:
         mch_goods_dict = {}
@@ -125,6 +125,8 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
         mch_goods_dict['oneday_max_psd'] = math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)
         mch_goods_dict['upc_psd_nums_avg_4'] = float(drg_ins.upc_psd_nums_avg_4)
         mch_goods_dict['upc_psd_nums_avg_1'] = float(drg_ins.upc_psd_nums_avg_1)
+        mch_goods_dict['upc_psd_from_bi_flag'] = drg_ins.upc_psd_from_bi_flag
+
         mch_goods_dict['upc_status_type'] = drg_ins.upc_status_type
         mch_goods_dict['loss_avg'] = drg_ins.loss_avg
         mch_goods_dict['loss_avg_profit_amount'] = drg_ins.loss_avg_profit_amount
@@ -146,7 +148,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
         print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
-              "%s,%s,%s,%s,%s,%s,%s,%s,%s"
+              "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s"
               % (str(drg_ins.order_sale),str(warhouse_order_sale),
                  str(drg_ins.ucshop_id), str(drg_ins.shop_name), str(drg_ins.mch_code),
                  str(drg_ins.upc), str(drg_ins.goods_name),
@@ -158,7 +160,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
                  str(drg_ins.start_sum), str(drg_ins.sub_count), str(drg_ins.purchase_price), str(drg_ins.upc_price),
                  str(math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)),
                  str(drg_ins.max_scale), str(float(drg_ins.upc_psd_nums_avg_4)),
-                 str(float(drg_ins.upc_psd_nums_avg_1)), str(drg_ins.upc_status_type),
+                 str(float(drg_ins.upc_psd_nums_avg_1)),str(drg_ins.upc_psd_from_bi_flag), str(drg_ins.upc_status_type),
                  str(drg_ins.loss_avg), str(drg_ins.loss_avg_profit_amount), str(drg_ins.loss_avg_nums),str(drg_ins.loss_avg_amount),str(drg_ins.fudong_nums),
                  str(float(drg_ins.psd_nums_2)), str(float(drg_ins.psd_nums_2_cls)),str(drg_ins.single_face_min_disnums),str(drg_ins.add_sub_count)))
         jsondata.append(mch_goods_dict)
