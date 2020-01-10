@@ -12,6 +12,11 @@ def start_container(ip='0.0.0.0', port='80'):
     local('nohup python3 manage.py runserver {}:{} &'.format(ip, port))
 
 @task
+def start_sslcontainer(ip='0.0.0.0', port='80'):
+    #migrate()
+    local('nohup python3 manage.py runsslserver --certificate aicvs_server.pem --key aicvs_server.key {}:{} &'.format(ip, port))
+
+@task
 def do_test():
     local('python manage.py test')
 
