@@ -226,7 +226,7 @@ class AreaManager:
         up_info = '必须上架商品：'
         for area in self.area_list:
             for choose_goods in area.up_choose_goods_list:
-                up_info += choose_goods.goods_name
+                up_info += str(choose_goods)
                 up_info += ','
 
         print(up_info)
@@ -234,28 +234,28 @@ class AreaManager:
         down_info = '必须下架商品：'
         for area in self.area_list:
             for display_goods in area.down_display_goods_list:
-                down_info += display_goods.goods_data.goods_name
+                down_info += str(display_goods.goods_data)
                 down_info += ','
         print(down_info)
 
         second_up_info = '二次上架商品：'
         for area in self.area_list:
             for choose_goods in area.second_up_choose_goods_list:
-                second_up_info += choose_goods.goods_name
+                second_up_info += str(choose_goods)
                 second_up_info += ','
         print(second_up_info)
 
         reduce_info = '减扩面商品：'
         for area in self.area_list:
             for display_goods in area.display_goods_to_reduce_face_num:
-                reduce_info += display_goods.goods_data.goods_name + '(' + str(area.display_goods_to_reduce_face_num[display_goods])
+                reduce_info += str(display_goods.goods_data) + '(' + str(area.display_goods_to_reduce_face_num[display_goods])
                 reduce_info += '),'
         print(reduce_info)
 
         second_down_info = '二次下架商品：'
         for area in self.area_list:
             for display_goods in area.second_down_display_goods_list:
-                second_down_info += display_goods.goods_data.goods_name
+                second_down_info += str(display_goods.goods_data)
                 second_down_info += ','
         print(second_down_info)
 
