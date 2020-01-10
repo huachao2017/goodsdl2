@@ -332,6 +332,7 @@ class AreaManager:
                 remain_width_list = []
                 if remain_width < candidate_shelf.width - cur_level_goods_width + 10:
                     remain_width_list.append(remain_width)
+                    cur_level_goods_width += remain_width
                 else:
                     remain_width_list.append(candidate_shelf.width - cur_level_goods_width)
                     remain_width = remain_width - (candidate_shelf.width - cur_level_goods_width)
