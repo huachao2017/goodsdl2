@@ -751,8 +751,9 @@ class ChildArea:
     def __str__(self):
         ret = str(self.level_id) + '-' + str(self.category3) + ':['
         for display_goods in self.display_goods_list:
-            ret += str(display_goods.goods_data)
-            ret += ','
+            for i in range(display_goods.face_num):
+                ret += str(display_goods.goods_data)
+                ret += ','
         ret += '], '
 
         return ret
