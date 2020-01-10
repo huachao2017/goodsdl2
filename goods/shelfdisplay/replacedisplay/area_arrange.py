@@ -352,6 +352,9 @@ class AreaManager:
                     if index < len(remain_width_list)-1:
                         cur_level = candidate_shelf.levels[cur_level_index]
                         cur_level_index += 1
+                        if cur_level_index >= len(candidate_shelf.levels):
+                            print("陈列商品超出货架，陈列到此结束:{}".format(cur_level_index))
+                            return candidate_shelf
 
         return candidate_shelf
 
