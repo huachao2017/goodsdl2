@@ -369,6 +369,7 @@ def get_shop_order_goods(shopid,add_type=False):
                         # TODO 获取bi 数据库 ， 品的psd金额   mch_id  dmstore_shopid  goods_code
                         upc_psd_nums_avg_1 = 0
                         upc_psd_nums_avg_4 = 0
+                        upc_psd_from_bi_flag = 1
                         try:
                             end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
                             cursor_dmstore.execute(
@@ -382,72 +383,61 @@ def get_shop_order_goods(shopid,add_type=False):
                             upc_psd_nums_avg_1 = float(upc_psd_nums_avg_1)
                             upc_psd_nums_avg_4 = float(upc_psd_nums_avg_4)
                         except:
-                            print('bi 找不到1周和4周的psd  ！{},{}'.format(shopid, upc))
+                            print('bi 找不到1周和4周的psd  tj_goods_week_psd, 手动按销量计算 ！{},{}'.format(shopid, upc))
+                            upc_psd_amount_avg_1 = 0
+                            upc_psd_from_bi_flag = 0
+                            try:
+                                cursor_dmstore.execute(
+                                    "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                        upc, shopid))
+                                (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+                                end_date = str(time.strftime('%Y%m%d', time.localtime()))
+                                start_date_1 = str((datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(days=-7)).strftime("%Y%m%d"))
+                                print ("获取bi 真实psd {} ,{},{},{},{}".format(shopid,goods_id,mch_id,upc,goods_name))
+                                sql_1 = "select psd,date from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date < {}".format(mch_id,shopid,goods_id,int(start_date_1),int(end_date))
+                                cursor_bi.execute(sql_1)
+                                res1 = cursor_bi.fetchall()
+                                if res1 is None or len(res1) < 1:
+                                    upc_psd_amount_avg_1 = 0
+                                else:
+                                    psd_amount = 0
+                                    for re in res1:
+                                        psd_amount += re[0]
+                                    upc_psd_amount_avg_1 = float(psd_amount / 7)
+                            except:
+                                print('bi 找不到psd ,tj_goods_day_psd 1！{},{}'.format(shopid, upc))
+                                upc_psd_amount_avg_1 = 0
 
-                        # # upc_psd_amount_avg_1 = 0
-                        # upc_psd_amount_avg_1_5 = 0
-                        # upc_psd_amount_avg_6_7 = 0
-                        # try:
-                        #     cursor_dmstore.execute(
-                        #         "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
-                        #             upc, shopid))
-                        #     (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
-                        #     end_date = str(time.strftime('%Y%m%d', time.localtime()))
-                        #     start_date_1 = str((datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(days=-7)).strftime("%Y%m%d"))
-                        #     print ("获取bi 真实psd {} ,{},{},{},{}".format(shopid,goods_id,mch_id,upc,goods_name))
-                        #     sql_1 = "select psd,date from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date < {}".format(mch_id,shopid,goods_id,int(start_date_1),int(end_date))
-                        #     cursor_bi.execute(sql_1)
-                        #     res1 = cursor_bi.fetchall()
-                        #     if res1 is None or len(res1) < 1:
-                        #         upc_psd_amount_avg_1 = 0
-                        #     else:
-                        #         res_len1 = 0
-                        #         psd_amount = 0
-                        #         psd_amount_1_5 = 0
-                        #         psd_amount_6_7 = 0
-                        #         for re in res1:
-                        #             psd_amount += re[0]
-                        #             day_date = re[1]
-                        #             weekday_i = datetime.datetime.strptime(str(day_date), "%Y%m%d").weekday() + 1
-                        #             if weekday_i >= 1 and  weekday_i<=5:
-                        #                 psd_amount_1_5 += re[0]
-                        #             else:
-                        #                 psd_amount_6_7 += re[0]
-                        #             res_len1+=1
-                        #         # upc_psd_amount_avg_1 = float(psd_amount / 7)
-                        #         upc_psd_amount_avg_1_5 = float(psd_amount_1_5 / 5)
-                        #         upc_psd_amount_avg_6_7 = float(psd_amount_6_7 / 2)
-                        # except:
-                        #     print('bi 找不到psd  4！{},{}'.format(shopid, upc))
-                        #     # upc_psd_amount_avg_1 = 0
-                        #     upc_psd_amount_avg_1_5 = 0
-                        #     upc_psd_amount_avg_6_7 = 0
-                        # upc_psd_amount_avg_4 = 0
-                        # try:
-                        #     cursor_dmstore.execute(
-                        #         "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
-                        #             upc, shopid))
-                        #     (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
-                        #     end_date = str(time.strftime('%Y%m%d', time.localtime()))
-                        #     start_date_4 = str(
-                        #         (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
-                        #             days=-28)).strftime("%Y%m%d"))
-                        #     sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date < {}".format(
-                        #         mch_id, shopid, goods_id,int(start_date_4),int(end_date))
-                        #     cursor_bi.execute(sql_2)
-                        #     res2 = cursor_bi.fetchall()
-                        #     if res2 is None or len(res2) < 1:
-                        #         upc_psd_amount_avg_4 = 0
-                        #     else:
-                        #         res_len2 = 0
-                        #         psd_amount2 = 0
-                        #         for re in res2:
-                        #             psd_amount2 += re[0]
-                        #             res_len2 += 1
-                        #         upc_psd_amount_avg_4 = float(psd_amount2 / 28)
-                        # except:
-                        #     print('bi 找不到psd  4！{},{}'.format(shopid,upc))
-                        #     upc_psd_amount_avg_4 = 0
+                            upc_psd_amount_avg_4 = 0
+                            try:
+                                cursor_dmstore.execute(
+                                    "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                                        upc, shopid))
+                                (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+                                end_date = str(time.strftime('%Y%m%d', time.localtime()))
+                                start_date_4 = str(
+                                    (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
+                                        days=-28)).strftime("%Y%m%d"))
+                                sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date < {}".format(
+                                    mch_id, shopid, goods_id,int(start_date_4),int(end_date))
+                                cursor_bi.execute(sql_2)
+                                res2 = cursor_bi.fetchall()
+                                if res2 is None or len(res2) < 1:
+                                    upc_psd_amount_avg_4 = 0
+                                else:
+                                    res_len2 = 0
+                                    psd_amount2 = 0
+                                    for re in res2:
+                                        psd_amount2 += re[0]
+                                        res_len2 += 1
+                                    upc_psd_amount_avg_4 = float(psd_amount2 / 28)
+                            except:
+                                print('bi 找不到psd  4！{},{}'.format(shopid,upc))
+                                upc_psd_amount_avg_4 = 0
+                            if upc_price is None or float(upc_price) == 0 :
+                                upc_price = 1
+                            upc_psd_nums_avg_1 = float(upc_psd_amount_avg_1) / upc_price
+                            upc_psd_nums_avg_4 = float(upc_psd_amount_avg_4) / upc_price
                         # 单天最大psd
                         oneday_max_psd = 0
                         try:
@@ -502,7 +492,7 @@ def get_shop_order_goods(shopid,add_type=False):
                                                      category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss,
                                                      shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type,dmstore_shopid=shopid,
                                                      up_shelf_date = up_shelf_date,sub_count = sub_count,upc_price=upc_price,
-                                                     upc_psd_nums_avg_4=upc_psd_nums_avg_4,purchase_price = purchase_price,upc_psd_nums_avg_1=upc_psd_nums_avg_1,
+                                                     upc_psd_nums_avg_4=upc_psd_nums_avg_4,purchase_price = purchase_price,upc_psd_nums_avg_1=upc_psd_nums_avg_1,upc_psd_from_bi_flag = upc_psd_from_bi_flag,
                                                      psd_nums_4=psd_nums_4,psd_amount_4=psd_amount_4,max_scale=max_scale,oneday_max_psd = oneday_max_psd,psd_nums_2=psd_nums_2,
                                                      psd_amount_2=psd_amount_2,psd_nums_2_cls=psd_nums_2_cls, psd_amount_2_cls=psd_nums_2_cls,loss_avg = loss_avg,
                                                      loss_avg_profit_amount = loss_avg_profit_amount, loss_avg_amount = loss_avg_amount,loss_avg_nums=loss_avg_nums,
@@ -693,7 +683,7 @@ class DataRawGoods():
     def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
                  stock=0,supply_stock=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,
                  storage_day=None,shelf_inss=None,shop_name=None,uc_shopid =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
-                 sub_count = None,upc_price = None,upc_psd_nums_avg_4 = None,purchase_price = None,upc_psd_nums_avg_1=None,
+                 sub_count = None,upc_price = None,upc_psd_nums_avg_4 = None,purchase_price = None,upc_psd_nums_avg_1=None,upc_psd_from_bi_flag=None,
                  psd_nums_4=None, psd_amount_4=None,max_scale=None,oneday_max_psd = None ,psd_nums_2=None, psd_amount_2=None,psd_nums_2_cls=None, psd_amount_2_cls=None,
                  loss_avg = None,loss_avg_profit_amount = None, loss_avg_amount = None,loss_avg_nums = None
                 ,last_tz_upcs = None,last_v_upcs=None,single_face_min_disnums=None,add_sub_count=None):
@@ -708,6 +698,7 @@ class DataRawGoods():
         self.display_code = corp_classify_code # FIXME 需要修订为真实陈列分类
         self.spec = spec
         self.volume = volume
+        self.upc_psd_from_bi_flag = upc_psd_from_bi_flag
         if width is None:
             self.width = 0
         else:
