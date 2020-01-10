@@ -349,6 +349,8 @@ class AreaManager:
                 for remain_width in remain_width_list:
                     index += 1
                     display_goods = DisplayGoods(NullGoodsData(remain_width))
+                    if cur_level is None:
+                        cur_level = candidate_shelf.levels[cur_level_index]
                     cur_level.add_display_goods(display_goods)
                     if index < len(remain_width_list)-1:
                         cur_level = candidate_shelf.levels[cur_level_index]
