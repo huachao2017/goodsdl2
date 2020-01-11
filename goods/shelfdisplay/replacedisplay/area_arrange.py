@@ -219,11 +219,11 @@ class AreaManager:
         :return:
         """
 
-        print('区域分解：')
+        print('\n区域分解：')
         for area in self.area_list:
             print(area)
 
-        up_info = '必须上架商品：'
+        up_info = '\n必须上架商品：'
         for area in self.area_list:
             for choose_goods in area.up_choose_goods_list:
                 up_info += str(choose_goods)
@@ -231,28 +231,28 @@ class AreaManager:
 
         print(up_info)
 
-        down_info = '必须下架商品：'
+        down_info = '\n必须下架商品：'
         for area in self.area_list:
             for display_goods in area.down_display_goods_list:
                 down_info += str(display_goods.goods_data)
                 down_info += ','
         print(down_info)
 
-        second_up_info = '二次上架商品：'
+        second_up_info = '\n二次上架商品：'
         for area in self.area_list:
             for choose_goods in area.second_up_choose_goods_list:
                 second_up_info += str(choose_goods)
                 second_up_info += ','
         print(second_up_info)
 
-        reduce_info = '减扩面商品：'
+        reduce_info = '\n减扩面商品：'
         for area in self.area_list:
             for display_goods in area.display_goods_to_reduce_face_num:
                 reduce_info += str(display_goods.goods_data) + '(' + str(area.display_goods_to_reduce_face_num[display_goods])
                 reduce_info += '),'
         print(reduce_info)
 
-        second_down_info = '二次下架商品：'
+        second_down_info = '\n二次下架商品：'
         for area in self.area_list:
             for display_goods in area.second_down_display_goods_list:
                 second_down_info += str(display_goods.goods_data)
