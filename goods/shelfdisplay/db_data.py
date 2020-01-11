@@ -230,8 +230,8 @@ class GoodsData:
         # ret += ','
         # ret += str(self.category2)
         # ret += ','
-        # ret += str(self.category3)
-        # ret += ','
+        ret += str(self.category3)
+        ret += ','
         # ret += str(self.category4)
         # ret += ','
         ret += str(self.package_type)
