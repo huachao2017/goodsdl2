@@ -14,7 +14,7 @@ import numpy as np
 from django.conf import settings
 
 from goods.shelfdisplay.replacedisplay.display_object import Shelf
-from goods.shelfdisplay.replacedisplay.area_arrange import AreaManager
+from goods.shelfdisplay.replacedisplay.area_manager import AreaManager
 
 
 class TaizhangDisplay:
