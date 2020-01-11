@@ -30,8 +30,8 @@ class SalesCol:
     num = None
 
 
-
-shop_ids = "1284"
+#  1284,3955,3779,1925,4076,1924,3598   模板店
+shop_ids = "3955"
 days_num = 400
 class SalesPredict:
 
