@@ -299,15 +299,14 @@ class DailyChangeGoods:
             for key,value in can_order_mch_code_dict.items():
                 print("三级分类：", value[3])
                 if third_cat_ave_width_dict.get(value[3]):
-                    third_cat_ave_width_dict[value[3]].append(value[5])
+                    third_cat_ave_width_dict[value[3]].append(value[4])
                 else:
-                    third_cat_ave_width_dict[value[3]] = [value[5]]
+                    third_cat_ave_width_dict[value[3]] = [value[4]]
             for key,width_list in third_cat_ave_width_dict.items():
                 sum_width = 0
                 for width in width_list:
                     sum_width += width
                 third_cat_ave_width_dict[key] = sum_width / len(sum_width)
-
 
 
             # 以下是把日配的没尺寸的商品的数据也加上
