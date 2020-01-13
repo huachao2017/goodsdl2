@@ -327,8 +327,7 @@ class DailyChangeGoods:
             # 以下是把商圈不选的筛掉，仅为必上和可选上等新品服务
             self.cursor_ucenter.execute(
                 # 有尺寸数据
-                "select DISTINCT a.supplier_goods_code,b.delivery_attr,c.display_first_cat_id,c.display_second_cat_id,c.display_third_cat_id,c.width from from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on (a.supplier_goods_code=c.supplier_goods_code and a.supplier_id=c.supplier_id) where a.supplier_id in ({}) and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 {} and c.display_third_cat_id > 0".format(
-                    ','.join(self.supplier_id_list), self.trade_tag_str))
+                "select DISTINCT a.supplier_goods_code,b.delivery_attr,c.display_first_cat_id,c.display_second_cat_id,c.display_third_cat_id,c.width from uc_supplier_goods a LEFT JOIN uc_supplier_delivery b on a.delivery_type=b.delivery_code LEFT JOIN uc_merchant_goods c on (a.supplier_goods_code=c.supplier_goods_code and a.supplier_id=c.supplier_id) where a.supplier_id in ({}) and order_status = 1 and c.width > 0 and c.height > 0 and c.depth > 0 {} and c.display_third_cat_id > 0".format(','.join(self.supplier_id_list), self.trade_tag_str))
             all_data = self.cursor_ucenter.fetchall()
             # print("可订货数据：",all_data)
             for data in all_data:
