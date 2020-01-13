@@ -555,7 +555,7 @@ class DailyChangeGoods:
         daily_must_up_goods, daily_optional_up_goods = self.calculate_this_shop_new_goods_data(not_move_goods,optional_out_goods)
 
         # 日配商品的计算
-        self.calculate_this_shop_daily_goods_data(self,daily_not_move_goods,daily_must_up_goods,daily_optional_out_goods,daily_optional_up_goods,must_out_goods)
+        self.calculate_this_shop_daily_goods_data(daily_not_move_goods,daily_must_up_goods,daily_optional_out_goods,daily_optional_up_goods,must_out_goods)
 
         print("选品结束！")
 
