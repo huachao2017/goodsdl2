@@ -550,16 +550,16 @@ class DailyChangeGoods:
 
         print('本店已有三级分类', len(self.third_category_mch_dict), self.third_category_mch_dict)
 
-        not_move_goods, optional_out_goods, daily_not_move_goods,daily_optional_out_goods = self.calculate_this_shop_old_goods_data(taizhang_goods,sales_goods_mch_code_dict)   #得出下架品、不动品和可选下架品
+        not_move_goods, optional_out_goods, daily_not_move_goods,daily_optional_out_goods,must_out_goods = self.calculate_this_shop_old_goods_data(taizhang_goods,sales_goods_mch_code_dict)   #得出下架品、不动品和可选下架品
 
         daily_must_up_goods, daily_optional_up_goods = self.calculate_this_shop_new_goods_data(not_move_goods,optional_out_goods)
 
         # 日配商品的计算
-        self.calculate_this_shop_daily_goods_data(self,daily_not_move_goods,daily_must_up_goods,daily_optional_out_goods,daily_optional_up_goods)
+        self.calculate_this_shop_daily_goods_data(self,daily_not_move_goods,daily_must_up_goods,daily_optional_out_goods,daily_optional_up_goods,must_out_goods)
 
         print("选品结束！")
 
-    def calculate_this_shop_daily_goods_data(self,daily_not_move_goods,daily_must_up_goods,daily_optional_out_goods,daily_optional_up_goods,mch_code):
+    def calculate_this_shop_daily_goods_data(self,daily_not_move_goods,daily_must_up_goods,daily_optional_out_goods,daily_optional_up_goods,must_out_goods):
         """
         按照以下优先级：保留品＞必备品＞选下＞选上，数量选到陈列总宽度为上限
         内部排序：
@@ -576,21 +576,36 @@ class DailyChangeGoods:
 
         # self.calculate_display_sum_width()
 
-        # 计算日配的陈列空间
+        not_can_order_mch_code_dict = {}
+        for goods in must_out_goods:
+            self.cursor_ucenter.execute("select c.width,c.display_first_cat_id,c.display_second_cat_id,c.display_third_cat_id from uc_merchant_goods c where c.supplier_id in ({}) and c.width > 0 and c.display_third_cat_id > 0 and mch_goods_code={}".format(','.join(self.supplier_id_list),goods[4]))
+            try:
+                data = self.cursor_ucenter.fetchone()
+                not_can_order_mch_code_dict[goods[4]] = [data[0],data[1],data[2],data[3]]
+            except Exception as e:
+                print("查询不可订货商品(mch_goods_code为{})报错：{}".format(goods[4],e))
+
+
+
+            # 计算日配的陈列空间
         for mch in self.taizhang_goods_mch_code_list:
+            try:
+                if self.can_order_mch_code_dict[mch][2] == "101":
+                    try:
+                        self.bread_width += self.mch_taizhang_width_dict[mch]
+                    except:
+                        self.bread_width += self.can_order_mch_code_dict[mch][4]
+            except:
+                self.bread_width += not_can_order_mch_code_dict[mch][0]
 
-            if self.can_order_mch_code_dict[mch][2] == "101":
-                try:
-                    self.bread_width += self.mch_taizhang_width_dict[mch]
-                except:
-                    self.bread_width += self.can_order_mch_code_dict[mch][4]
-
-
-            if self.can_order_mch_code_dict[mch][1] == "2":
-                try:
-                    self.milk_width += self.mch_taizhang_width_dict[mch]
-                except:
-                    self.milk_width += self.can_order_mch_code_dict[mch][4]
+            try:
+                if self.can_order_mch_code_dict[mch][1] == "2":
+                    try:
+                        self.milk_width += self.mch_taizhang_width_dict[mch]
+                    except:
+                        self.milk_width += self.can_order_mch_code_dict[mch][4]
+            except:
+                self.milk_width += not_can_order_mch_code_dict[mch][0]
 
         print("bread_width:", self.bread_width)
         print("milk_width:", self.milk_width)
@@ -718,7 +733,7 @@ class DailyChangeGoods:
         self.save_data(must_out_goods, 2)
         self.save_data(not_daily_optional_out_goods, 4)
 
-        return not_move_goods,optional_out_goods,daily_not_move_goods,daily_optional_out_goods
+        return not_move_goods,optional_out_goods,daily_not_move_goods,daily_optional_out_goods,must_out_goods
 
     def split_delivery_type(self,goods_data_list):
         """
