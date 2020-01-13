@@ -86,17 +86,17 @@ def day_order_process():
                     cursor_ai.execute(
                         update_sql_02.format(taskflow.cal_status_end, int(time.time() - start_time), data[0]))
                     cursor_ai.connection.commit()
-                    # if 'test' not in batch_id:
-                    #     sass_interface.order_commit(batch_id,msg='')
+                    if 'test' not in batch_id:
+                        sass_interface.order_commit(batch_id,msg='')
             except Exception as e:
                 print ("data is error data="+str(data))
                 traceback.print_exc()
                 cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, 0,
                                                        data[0]))  # 更新到“结束计算”和耗时多少
                 cursor_ai.connection.commit()
-                # if 'test' not in batch_id:
-                #     msg = "error ,e={}".format(e)
-                #     sass_interface.order_commit(batch_id, msg=msg)
+                if 'test' not in batch_id:
+                    msg = "error ,e={}".format(e)
+                    sass_interface.order_commit(batch_id, msg=msg)
     conn.close()
     conn_erp.close()
     conn_dmstore.close()
@@ -148,17 +148,17 @@ def add_order_process():
                     cursor_ai.connection.commit()
                     # 把订单结果和批次结果 通知给摩售
                     shop_type = config.shellgoods_params['shop_types'][0]  # 门店
-                    if 'test' not in batch_id and len(sales_order_inss) > 0:
-                        erp_interface.order_commit(dmstore_shopid,shop_type,sales_order_inss,batch_id=batch_id)
-                    # if 'test' not in batch_id:
-                    #     sass_interface.order_commit(batch_id,msg='')
+                    # if 'test' not in batch_id and len(sales_order_inss) > 0:
+                    #     erp_interface.order_commit(dmstore_shopid,shop_type,sales_order_inss,batch_id=batch_id)
+                    if 'test' not in batch_id:
+                        sass_interface.order_commit(batch_id,msg='')
             except Exception as e:
                 cursor_ai.execute(update_sql_02.format(taskflow.cal_status_failed, 0,
                                                        data[0]))  # 更新到“结束计算”和耗时多少
                 cursor_ai.connection.commit()
-                # if 'test' not in batch_id:
-                #     msg = "error ,e={}" .format(e)
-                #     sass_interface.order_commit(batch_id, msg=msg)
+                if 'test' not in batch_id:
+                    msg = "error ,e={}" .format(e)
+                    sass_interface.order_commit(batch_id, msg=msg)
                 print ("data is error!" +str(data))
                 traceback.print_exc()
     conn.close()
