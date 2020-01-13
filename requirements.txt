@@ -1,5 +1,6 @@
 fabric3
 django<=1.11.7
+django-sslserver
 djangorestframework
 django-filter
 django-crontab

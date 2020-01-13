@@ -4,6 +4,7 @@ import logging
 import math
 import os
 import urllib.request
+import subprocess
 
 import cv2
 import numpy as np
@@ -175,7 +176,16 @@ class ShelfScore(APIView):
             source=os.path.join(image_relative_dir,source_image_name),
             test_server=test_server
         )
-
+        # command = "nohup python3 {}/goods/shelf_recoginze/main_service.py --imageid={} > {}/logs/shelf_recognize.out 2>&1 &".format(
+        #     settings.BASE_DIR,
+        #     shelf_image.pk,
+        #     settings.BASE_DIR
+        # )
+        #
+        # # 启动训练进程
+        # logger.info(command)
+        # subprocess.call(command, shell=True)
+        # ret = ''
         compare_ret = detect_compare(shelf_image, source_image_path)
 
         retpicurl = ''

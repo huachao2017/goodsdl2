@@ -1,6 +1,6 @@
 import unittest
 
-from goods.shelfdisplay.replacedisplay.area_arrange import AreaManager
+from goods.shelfdisplay.replacedisplay.area_manager import AreaManager
 from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
 from goods.shelfdisplay.replacedisplay.test.temporary_object import TestGoods
 
@@ -108,10 +108,9 @@ class Test1(unittest.TestCase):
         self.assertEqual(len(area_manager.area_list[0].display_goods_to_reduce_face_num), 2)
         self.assertEqual(area_manager.area_list[0].display_goods_to_reduce_face_num[levelid_to_displaygoods_list[0][1]], 1)
         self.assertEqual(area_manager.area_list[0].display_goods_to_reduce_face_num[levelid_to_displaygoods_list[0][5]], 2)
-        self.assertEqual(len(area_manager.area_list[0].second_down_display_goods_list), 2)
+        self.assertEqual(len(area_manager.area_list[0].second_down_display_goods_list), 1)
         self.assertEqual(area_manager.area_list[0].second_down_display_goods_list[0], levelid_to_displaygoods_list[0][5])
-        self.assertEqual(area_manager.area_list[0].second_down_display_goods_list[1], levelid_to_displaygoods_list[0][2])
-        self.assertEqual(len(area_manager.down_display_goods_list), 4)
+        self.assertEqual(len(area_manager.down_display_goods_list), 3)
 
         print('\n')
         for area in area_manager.area_list:
@@ -203,15 +202,13 @@ class Test1(unittest.TestCase):
         self.assertEqual(area_manager.area_list[1].levelid_to_remain_width[0], int(80 / 600 * 40))
 
         area_manager._prepare_area_calculate_data()
-        self.assertEqual(len(area_manager.area_list[0].display_goods_to_reduce_face_num), 1)
-        self.assertEqual(area_manager.area_list[0].display_goods_to_reduce_face_num[levelid_to_displaygoods_list[0][5]], 1)
+        self.assertEqual(len(area_manager.area_list[0].display_goods_to_reduce_face_num), 0)
         self.assertEqual(len(area_manager.area_list[0].second_down_display_goods_list), 0)
         self.assertEqual(len(area_manager.area_list[2].display_goods_to_reduce_face_num), 0)
-        self.assertEqual(len(area_manager.area_list[2].second_down_display_goods_list), 3)
+        self.assertEqual(len(area_manager.area_list[2].second_down_display_goods_list), 2)
         self.assertIn(levelid_to_displaygoods_list[3][0], area_manager.area_list[2].second_down_display_goods_list)
         self.assertIn(levelid_to_displaygoods_list[2][7], area_manager.area_list[2].second_down_display_goods_list)
-        self.assertIn(levelid_to_displaygoods_list[2][6], area_manager.area_list[2].second_down_display_goods_list)
-        self.assertEqual(len(area_manager.down_display_goods_list), 5)
+        self.assertEqual(len(area_manager.down_display_goods_list), 4)
 
     def test_bottom_middle_level_same_psd_amount(self):
         shelf = Shelf(1, 1800, 600, 300)
@@ -299,16 +296,13 @@ class Test1(unittest.TestCase):
         self.assertEqual(area_manager.area_list[1].levelid_to_remain_width[0], int(80 / 600 * 40))
 
         area_manager._prepare_area_calculate_data()
-        self.assertEqual(len(area_manager.area_list[0].display_goods_to_reduce_face_num), 1)
-        self.assertEqual(
-            area_manager.area_list[0].display_goods_to_reduce_face_num[levelid_to_displaygoods_list[0][5]], 1)
+        self.assertEqual(len(area_manager.area_list[0].display_goods_to_reduce_face_num), 0)
         self.assertEqual(len(area_manager.area_list[0].second_down_display_goods_list), 0)
         self.assertEqual(len(area_manager.area_list[2].display_goods_to_reduce_face_num), 0)
-        self.assertEqual(len(area_manager.area_list[2].second_down_display_goods_list), 3)
+        self.assertEqual(len(area_manager.area_list[2].second_down_display_goods_list), 2)
         self.assertIn(levelid_to_displaygoods_list[2][2], area_manager.area_list[2].second_down_display_goods_list)
         self.assertIn(levelid_to_displaygoods_list[2][3], area_manager.area_list[2].second_down_display_goods_list)
-        self.assertIn(levelid_to_displaygoods_list[2][5], area_manager.area_list[2].second_down_display_goods_list)
-        self.assertEqual(len(area_manager.down_display_goods_list), 5)
+        self.assertEqual(len(area_manager.down_display_goods_list), 4)
 
         area_manager._arrange_areas()
         # TODO 为什么出现死循环？

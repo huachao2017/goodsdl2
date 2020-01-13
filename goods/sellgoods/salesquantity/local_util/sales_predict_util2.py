@@ -30,8 +30,8 @@ class SalesCol:
     num = None
 
 
-
-shop_ids = "1284"
+#  1284,3955,3779,1925,4076,1924,3598   模板店
+shop_ids = "3955"
 days_num = 400
 class SalesPredict:
 
@@ -109,7 +109,7 @@ class SalesPredict:
                 create_date = str(
                 (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
                 days=i)).strftime("%Y-%m-%d"))
-                print (create_date)
+                # print (create_date)
                 week_date = datetime.datetime.strptime(create_date, "%Y-%m-%d").weekday() + 1
                 sc_ins.create_date = create_date
                 sc_ins.week_date = week_date
