@@ -297,7 +297,7 @@ class DailyChangeGoods:
             # 以下是求各三级分类得宽度的平均值
             third_cat_ave_width_dict = {}
             for key,value in can_order_mch_code_dict.items():
-                print("三级分类：", value[3])
+                # print("三级分类：", value[3])
                 if third_cat_ave_width_dict.get(value[3]):
                     third_cat_ave_width_dict[value[3]].append(value[4])
                 else:
@@ -306,7 +306,7 @@ class DailyChangeGoods:
                 sum_width = 0
                 for width in width_list:
                     sum_width += width
-                third_cat_ave_width_dict[key] = sum_width / len(sum_width)
+                third_cat_ave_width_dict[key] = sum_width / len(width_list)
 
 
             # 以下是把日配的没尺寸的商品的数据也加上
