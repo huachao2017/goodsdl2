@@ -47,6 +47,8 @@ class DailyChangeGoods:
         self.mch_code = None
         self.bread_width = 0     # 二级分类101:面包所占货架总宽度
         self.milk_width = 0      # 一级分类2:风幕乳制所占货架总宽度
+        # self.mch_p_width_dict = {}   # 每个品对应的陈列的宽度
+
 
         if self.uc_shopid in [806]:
             self.trade_tag_str =  "and c.trade_tag!='居民'"
@@ -147,6 +149,7 @@ class DailyChangeGoods:
                         for goods in layer:
                             # goods_upc = goods['goods_upc']
                             taizhang_data_list.append(goods)
+                            # self.mch_p_width_dict[goods["mch_goods_code"]] = goods["p_width"]
 
 
             # print('台账：',taizhang_data_list)
@@ -268,7 +271,8 @@ class DailyChangeGoods:
         can_order_new_list = []  # 可订货列表(必上和可选上用这个)
         can_order_mch_code_dict = {}    # 店内码是key，配送类型是value
         can_order_mch_code_new_dict = {}    # 店内码是key，配送类型是value(必上和可选上用这个)
-        try:
+        # try:
+        if 1:
             self.cursor_ucenter.execute("SELECT supplier_id from uc_warehouse_supplier_shop WHERE warehouse_id={}".format(erp_shop_id))
             all_supplier_id_data = self.cursor_ucenter.fetchall()
             for supplier_data in all_supplier_id_data:
@@ -333,14 +337,14 @@ class DailyChangeGoods:
                     continue
                 can_order_mch_code_new_dict[data[0]] = [data[1], data[2], data[3], data[4],data[5]]
 
-        except Exception as e:
-            send_message('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
-            raise Exception('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
+        # except Exception as e:
+        #     send_message('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
+        #     raise Exception('pos店号是{},查询是否可订货和配送类型失败,{}'.format(self.shop_id,e))
 
 
-        if not can_order_list:
-            send_message('pos店号是{},查询是否可订货数据为空'.format(self.shop_id))
-            raise Exception('pos店号是{},查询是否可订货数据为空'.format(self.shop_id))
+        # if not can_order_list:
+        #     send_message('pos店号是{},查询是否可订货数据为空'.format(self.shop_id))
+        #     raise Exception('pos店号是{},查询是否可订货数据为空'.format(self.shop_id))
         return can_order_list,can_order_mch_code_dict,can_order_new_list,can_order_mch_code_new_dict
 
     def calculate_not_move_goods(self):
@@ -411,9 +415,9 @@ class DailyChangeGoods:
 
         # 计算日配的陈列空间
         for mch in self.taizhang_goods_mch_code_list:
-            if self.can_order_mch_code_dict[mch][2] == 101:
+            if self.can_order_mch_code_dict[mch][2] == "101":
                 self.bread_width += self.can_order_mch_code_dict[mch][4]
-            if self.can_order_mch_code_dict[mch][1] == 2:
+            if self.can_order_mch_code_dict[mch][1] == "2":
                 self.milk_width += self.can_order_mch_code_dict[mch][4]
         print("bread_width:",self.bread_width)
         print("milk_width:",self.milk_width)
@@ -574,9 +578,9 @@ class DailyChangeGoods:
 
         # 计算日配的陈列空间
         for mch in self.taizhang_goods_mch_code_list:
-            if self.can_order_mch_code_dict[mch][2] == 101:
+            if self.can_order_mch_code_dict[mch][2] == "101":
                 self.bread_width += self.can_order_mch_code_dict[mch][4]
-            if self.can_order_mch_code_dict[mch][1] == 2:
+            if self.can_order_mch_code_dict[mch][1] == "2":
                 self.milk_width += self.can_order_mch_code_dict[mch][4]
         print("bread_width:", self.bread_width)
         print("milk_width:", self.milk_width)
@@ -617,7 +621,7 @@ class DailyChangeGoods:
         # 二级分类面包
         for goods_role,goods_list in daily_all_goods:
             for index,goods in enumerate(goods_list):
-                if self.can_order_mch_code_dict[goods[4]][2] == 101:
+                if self.can_order_mch_code_dict[goods[4]][2] == "101":
                     temp_bread_width += self.can_order_mch_code_dict[goods[4]][4]
                     if temp_bread_width > self.bread_width:
                         self.save_data(goods_list[:index+1], goods_role)
@@ -630,7 +634,7 @@ class DailyChangeGoods:
         # 一级分类风幕乳制
         for goods_role, goods_list in daily_all_goods:
             for index, goods in enumerate(goods_list):
-                if self.can_order_mch_code_dict[goods[4]][1] == 2:
+                if self.can_order_mch_code_dict[goods[4]][1] == "2":
                     temp_milk_width += self.can_order_mch_code_dict[goods[4]][4]
                     if temp_milk_width > self.milk_width:
                         self.save_data(goods_list[:index + 1], goods_role)
