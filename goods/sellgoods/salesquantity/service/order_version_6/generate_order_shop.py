@@ -27,18 +27,18 @@ def generate(shop_id = None):
                 else:
                     min_disnums = 2
                 drg_ins.safe_stock = min_disnums
-            if (drg_ins.delivery_type==2 and max(0,drg_ins.stock) < drg_ins.max_disnums and drg_ins.category_id in yinliao_cat_ids)  or (drg_ins.delivery_type==2 and max(0,drg_ins.stock) <= drg_ins.min_disnums and drg_ins.category_id not in yinliao_cat_ids) or (drg_ins.delivery_type==1 and drg_ins.supply_stock > 0 ):
-                # 非日配
-                if drg_ins.delivery_type == 2:
-                    order_sale = min(drg_ins.max_disnums-max(0,drg_ins.stock),max(0,drg_ins.supply_stock))
-                else:
-                    order_sale = drg_ins.supply_stock
-                order_sale = order_sale
-                if order_sale <= 0:
-                    continue
-                sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id,shop_type)
-                sales_order_ins.order_sale = order_sale
-                sales_order_inss.append(sales_order_ins)
+            order_sale = 0
+            if max(0,drg_ins.stock) < drg_ins.max_disnums and drg_ins.category_id in yinliao_cat_ids and drg_ins.supply_stock > 0 :
+                order_sale = min(drg_ins.max_disnums - max(0, drg_ins.stock), max(0, drg_ins.supply_stock))
+            elif drg_ins.delivery_type==1 and drg_ins.supply_stock > 0 and drg_ins.category2_id in [101,102,103]: # 面包、日配鲜食品、果汁及乳制品
+                order_sale = max(0,drg_ins.supply_stock)
+            elif max(0,drg_ins.stock) <= drg_ins.min_disnums and drg_ins.supply_stock > 0  and drg_ins.category_id not in yinliao_cat_ids and  drg_ins.category2_id not in [101,102,103]:
+                order_sale = min(drg_ins.max_disnums - max(0, drg_ins.stock), max(0, drg_ins.supply_stock))
+            if order_sale <= 0:
+                continue
+            sales_order_ins = cacul_util.get_saleorder_ins(drg_ins, shop_id,shop_type)
+            sales_order_ins.order_sale = order_sale
+            sales_order_inss.append(sales_order_ins)
         sales_order_inss = order_rule.rule_filter_order_sale(sales_order_inss)
         print("规则三：商品数：" + str(len(sales_order_inss)))
         return sales_order_inss,result
