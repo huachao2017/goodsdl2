@@ -877,7 +877,7 @@ class DailyChangeGoods:
             all_data_mch.append(str(data[4]))
         for mch in self.can_order_mch_code_new_dict:
             if not mch in all_data_mch:
-                optional_up_goods_order.append((None, None, None, None, mch, None, None, 0, 0, 0, None, 301,self.can_order_mch_code_new_dict[mch][0], 0))
+                optional_up_goods_order.append((None, None, None, 0, mch, None, None, 0, 0, 0, None, 301,self.can_order_mch_code_new_dict[mch][0], 0))
                 # optional_up_goods_order.append((None, None, None, None, mch, None, None, 0, 0, 0,None, 301, 0))
         optional_up_goods.extend(optional_up_goods_order)
 
