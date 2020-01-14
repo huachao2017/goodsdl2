@@ -653,8 +653,8 @@ class DailyChangeGoods:
         # 二级分类面包
         for goods_role,goods_list in daily_all_goods:
             for index,goods in enumerate(goods_list):
-                if self.can_order_mch_code_dict[goods[4]][2] == "101":
-                    temp_bread_width += self.can_order_mch_code_dict[goods[4]][4]
+                if self.can_order_mch_code_dict[str(goods[4])][2] == "101":
+                    temp_bread_width += self.can_order_mch_code_dict[str(goods[4])][4]
                     if temp_bread_width > self.bread_width:
                         self.save_data(goods_list[:index+1], goods_role)
                         break
@@ -666,8 +666,8 @@ class DailyChangeGoods:
         # 一级分类风幕乳制
         for goods_role, goods_list in daily_all_goods:
             for index, goods in enumerate(goods_list):
-                if self.can_order_mch_code_dict[goods[4]][1] == "2":
-                    temp_milk_width += self.can_order_mch_code_dict[goods[4]][4]
+                if self.can_order_mch_code_dict[str(goods[4])][1] == "2":
+                    temp_milk_width += self.can_order_mch_code_dict[str(goods[4])][4]
                     if temp_milk_width > self.milk_width:
                         self.save_data(goods_list[:index + 1], goods_role)
                         break
