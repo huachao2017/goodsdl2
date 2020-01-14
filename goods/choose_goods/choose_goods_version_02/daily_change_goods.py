@@ -510,7 +510,7 @@ class DailyChangeGoods:
 
                     must_up_mch_goods_list.append(mch_goods)
                     if str(mch_goods) in optional_up_mch_goods_dict:
-                        print("从可选上架里挑选出一个关联品,,mch为{}".format(mch_goods))
+                        print("从可选上架里挑选出一个关联品,mch为{}".format(mch_goods))
                         temp_data = optional_up_mch_goods_dict[mch_goods]
                         temp_data[-2] = 2
                         temp_data[-3] = score
@@ -653,27 +653,31 @@ class DailyChangeGoods:
 
         # 二级分类面包
         for goods_role,goods_list in daily_all_goods:
+            saved_goods_list = []
             for index,goods in enumerate(goods_list):
                 if self.can_order_mch_code_dict[str(goods[4])][2] == "101":
+                    saved_goods_list.append(goods)
                     temp_bread_width += self.can_order_mch_code_dict[str(goods[4])][4]
                     if temp_bread_width > self.bread_width:
-                        self.save_data(goods_list[:index+1], goods_role)
+                        self.save_data(saved_goods_list, goods_role)
                         break
             if temp_bread_width < self.bread_width:
-                self.save_data(goods_list, goods_role)
+                self.save_data(saved_goods_list, goods_role)
             else:
                 break
 
         # 一级分类风幕乳制
         for goods_role, goods_list in daily_all_goods:
+            saved_goods_list = []
             for index, goods in enumerate(goods_list):
                 if self.can_order_mch_code_dict[str(goods[4])][1] == "2":
+                    saved_goods_list.append(goods)
                     temp_milk_width += self.can_order_mch_code_dict[str(goods[4])][4]
                     if temp_milk_width > self.milk_width:
-                        self.save_data(goods_list[:index + 1], goods_role)
+                        self.save_data(saved_goods_list, goods_role)
                         break
             if temp_milk_width < self.milk_width:
-                self.save_data(goods_list, goods_role)
+                self.save_data(saved_goods_list, goods_role)
             else:
                 break
 
@@ -758,7 +762,6 @@ class DailyChangeGoods:
             if goods[-2] == 2:
                 not_daily.append(goods)
         return daily,not_daily
-
 
     def calculate_this_shop_new_goods_data(self,not_move_goods,optional_out_goods):
 
@@ -885,8 +888,6 @@ class DailyChangeGoods:
         self.save_data(not_daily_optional_up_goods, 3)
         return daily_must_up_goods,daily_optional_up_goods
 
-
-
     def save_data(self,data,goods_role):
         """
         保存选品的数据
@@ -961,8 +962,8 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 if __name__ == '__main__':
 
-    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_201',806)
-    # f = DailyChangeGoods(1284, "4004",'lishu_test_201',806)
+    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_201',806)
+    f = DailyChangeGoods(1284, "4004",'lishu_test_201',806)
     # f = DailyChangeGoods(88, "223",'lishu_test_01',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
