@@ -585,6 +585,7 @@ class DailyChangeGoods:
                 data = self.cursor_ucenter.fetchone()
                 not_can_order_mch_code_dict[goods[4]] = [data[0],data[1],data[2],data[3]]
             except Exception as e:
+                not_can_order_mch_code_dict[goods[4]] = [0,0,0,0]
                 print("查询不可订货商品(mch_goods_code为{},sql为{})报错：{}".format(goods[4],sql,e))
 
 
@@ -598,7 +599,8 @@ class DailyChangeGoods:
                     except:
                         self.bread_width += self.can_order_mch_code_dict[mch][4]
             except:
-                self.bread_width += not_can_order_mch_code_dict[mch][0]
+                if not_can_order_mch_code_dict[mch][2] == "101":
+                    self.bread_width += not_can_order_mch_code_dict[mch][0]
 
             try:
                 if self.can_order_mch_code_dict[mch][1] == "2":
@@ -607,7 +609,8 @@ class DailyChangeGoods:
                     except:
                         self.milk_width += self.can_order_mch_code_dict[mch][4]
             except:
-                self.milk_width += not_can_order_mch_code_dict[mch][0]
+                if not_can_order_mch_code_dict[mch][1] == "2":
+                    self.milk_width += not_can_order_mch_code_dict[mch][0]
 
         print("bread_width:", self.bread_width)
         print("milk_width:", self.milk_width)
