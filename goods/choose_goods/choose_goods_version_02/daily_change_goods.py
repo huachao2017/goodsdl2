@@ -679,10 +679,10 @@ class DailyChangeGoods:
                 if self.can_order_mch_code_dict[str(goods[4])][1] == "2":
                     temp_milk_width += self.can_order_mch_code_dict[str(goods[4])][4]
                     if temp_milk_width > self.milk_width:
-                        self.save_data(goods_list[:index + 1], goods_role,1)
+                        self.save_data(goods_list[:index + 1], goods_role)
                         break
             if temp_milk_width < self.milk_width:
-                self.save_data(goods_list, goods_role,1)
+                self.save_data(goods_list, goods_role)
             else:
                 break
 
@@ -747,9 +747,9 @@ class DailyChangeGoods:
         daily_not_move_goods,not_daily_not_move_goods = self.split_delivery_type(not_move_goods)
         daily_optional_out_goods,not_daily_optional_out_goods = self.split_delivery_type(optional_out_goods)
 
-        self.save_data(not_daily_not_move_goods, 0,2)
+        self.save_data(not_daily_not_move_goods, 0)
         self.save_data(must_out_goods, 2)
-        self.save_data(not_daily_optional_out_goods, 4,2)
+        self.save_data(not_daily_optional_out_goods, 4)
 
         return not_move_goods,optional_out_goods,daily_not_move_goods,daily_optional_out_goods,must_out_goods
 
@@ -875,7 +875,7 @@ class DailyChangeGoods:
 
         # 3、保存至数据库
         daily_must_up_goods, not_daily_must_up_goods = self.split_delivery_type(must_up_goods)
-        self.save_data(not_daily_must_up_goods, 1,2)
+        self.save_data(not_daily_must_up_goods, 1)
 
 
         # 把可订货的都存到可选上架
@@ -891,12 +891,12 @@ class DailyChangeGoods:
         optional_up_goods.extend(optional_up_goods_order)
 
         daily_optional_up_goods, not_daily_optional_up_goods = self.split_delivery_type(optional_up_goods)
-        self.save_data(not_daily_optional_up_goods, 3,2)
+        self.save_data(not_daily_optional_up_goods, 3)
         return daily_must_up_goods,daily_optional_up_goods
 
 
 
-    def save_data(self,data,goods_role,delivery_type):
+    def save_data(self,data,goods_role):
         """
         保存选品的数据
         :param data:
@@ -947,7 +947,7 @@ class DailyChangeGoods:
 
         delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
         select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
-        print('batch_id', self.batch_id, type(self.batch_id))
+        print('batch_id：', self.batch_id)
         cursor.execute(select_sql.format(self.uc_shopid, self.batch_id).replace('=None',' is NULL'))  # 查询有该批次，没有的话，插入，有的话，先删再插入
         # print('history_batch_id', history_batch_id,type(history_batch_id))
         if cursor.fetchone():
