@@ -413,16 +413,46 @@ class DailyChangeGoods:
                 return str(data[0])
         return None
 
-    def calculate_display_sum_width(self):
+    def calculate_display_sum_width(self,must_out_goods):
 
         # 计算日配的陈列空间
+        not_can_order_mch_code_dict = {}
+        for goods in must_out_goods:
+            sql = "select c.width,c.display_first_cat_id,c.display_second_cat_id,c.display_third_cat_id from uc_merchant_goods c where c.width > 0 and c.display_third_cat_id > 0 and mch_goods_code={}".format(
+                goods[4])
+            # self.cursor_ucenter.execute("select c.width,c.display_first_cat_id,c.display_second_cat_id,c.display_third_cat_id from uc_merchant_goods c where c.supplier_id in ({}) and c.width > 0 and c.display_third_cat_id > 0 and mch_goods_code={}".format(','.join(self.supplier_id_list),goods[4]))
+            self.cursor_ucenter.execute(sql)
+            try:
+                data = self.cursor_ucenter.fetchone()
+                not_can_order_mch_code_dict[str(goods[4])] = [data[0], data[1], data[2], data[3]]
+            except Exception as e:
+                not_can_order_mch_code_dict[str(goods[4])] = [0, 0, 0, 0]
+                print("查询不可订货商品(mch_goods_code为{},sql为{})报错：{}".format(goods[4], sql, e))
+
+            # 计算日配的陈列空间
         for mch in self.taizhang_goods_mch_code_list:
-            if self.can_order_mch_code_dict[mch][2] == "101":
-                self.bread_width += self.can_order_mch_code_dict[mch][4]
-            if self.can_order_mch_code_dict[mch][1] == "2":
-                self.milk_width += self.can_order_mch_code_dict[mch][4]
-        print("bread_width:",self.bread_width)
-        print("milk_width:",self.milk_width)
+            try:
+                if self.can_order_mch_code_dict[mch][2] == "101":
+                    try:
+                        self.bread_width += self.mch_taizhang_width_dict[mch]
+                    except:
+                        self.bread_width += self.can_order_mch_code_dict[mch][4]
+            except:
+                if not_can_order_mch_code_dict[mch][2] == "101":
+                    self.bread_width += not_can_order_mch_code_dict[mch][0]
+
+            try:
+                if self.can_order_mch_code_dict[mch][1] == "2":
+                    try:
+                        self.milk_width += self.mch_taizhang_width_dict[mch]
+                    except:
+                        self.milk_width += self.can_order_mch_code_dict[mch][4]
+            except:
+                if not_can_order_mch_code_dict[mch][1] == "2":
+                    self.milk_width += not_can_order_mch_code_dict[mch][0]
+
+        print("bread_width:", self.bread_width)
+        print("milk_width:", self.milk_width)
 
 
     def must_up_add_ranking(self,must_up_goods):
@@ -578,46 +608,7 @@ class DailyChangeGoods:
         :return:
         """
 
-        # self.calculate_display_sum_width()
-
-        not_can_order_mch_code_dict = {}
-        for goods in must_out_goods:
-            sql = "select c.width,c.display_first_cat_id,c.display_second_cat_id,c.display_third_cat_id from uc_merchant_goods c where c.width > 0 and c.display_third_cat_id > 0 and mch_goods_code={}".format(goods[4])
-            # self.cursor_ucenter.execute("select c.width,c.display_first_cat_id,c.display_second_cat_id,c.display_third_cat_id from uc_merchant_goods c where c.supplier_id in ({}) and c.width > 0 and c.display_third_cat_id > 0 and mch_goods_code={}".format(','.join(self.supplier_id_list),goods[4]))
-            self.cursor_ucenter.execute(sql)
-            try:
-                data = self.cursor_ucenter.fetchone()
-                not_can_order_mch_code_dict[str(goods[4])] = [data[0],data[1],data[2],data[3]]
-            except Exception as e:
-                not_can_order_mch_code_dict[str(goods[4])] = [0,0,0,0]
-                print("查询不可订货商品(mch_goods_code为{},sql为{})报错：{}".format(goods[4],sql,e))
-
-
-
-            # 计算日配的陈列空间
-        for mch in self.taizhang_goods_mch_code_list:
-            try:
-                if self.can_order_mch_code_dict[mch][2] == "101":
-                    try:
-                        self.bread_width += self.mch_taizhang_width_dict[mch]
-                    except:
-                        self.bread_width += self.can_order_mch_code_dict[mch][4]
-            except:
-                if not_can_order_mch_code_dict[mch][2] == "101":
-                    self.bread_width += not_can_order_mch_code_dict[mch][0]
-
-            try:
-                if self.can_order_mch_code_dict[mch][1] == "2":
-                    try:
-                        self.milk_width += self.mch_taizhang_width_dict[mch]
-                    except:
-                        self.milk_width += self.can_order_mch_code_dict[mch][4]
-            except:
-                if not_can_order_mch_code_dict[mch][1] == "2":
-                    self.milk_width += not_can_order_mch_code_dict[mch][0]
-
-        print("bread_width:", self.bread_width)
-        print("milk_width:", self.milk_width)
+        self.calculate_display_sum_width(must_out_goods)
 
         temp_bread_width = 0
         temp_milk_width = 0
@@ -968,11 +959,10 @@ def start_choose_goods(batch_id,uc_shop_id,pos_shopid):
 
 
 
-
 if __name__ == '__main__':
 
-    # f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_201',806)
-    f = DailyChangeGoods(1284, "4004",'lishu_test_201',806)
+    f = DailyChangeGoods(1284, "1284,3955,3779,1925,4076,1924,3598,223,4004",'lishu_test_201',806)
+    # f = DailyChangeGoods(1284, "4004",'lishu_test_201',806)
     # f = DailyChangeGoods(88, "223",'lishu_test_01',806)
     f.recommend_03()
     # start_choose_goods('lishu_test_01',806,88)
