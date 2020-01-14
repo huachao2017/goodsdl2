@@ -72,13 +72,7 @@ class Test1(unittest.TestCase):
         area_manager._print_choose_goods_info()
         area_manager._arrange_areas()
 
-        candidate_shelf_list = area_manager._generate_all_area_candidate()
-
-        # self.assertEqual(len(candidate_shelf_list), 3)
-        # for shelf_list in candidate_shelf_list:
-        #     print(shelf_list)
-
-        best_candidate_shelf = area_manager.calculate_best_candidate_shelf(candidate_shelf_list)
+        best_candidate_shelf = area_manager.arrange_goods()
         level_to_display_goods_name_str = get_level_to_display_goods_name(best_candidate_shelf)
 
         self.assertEqual(level_to_display_goods_name_str[0], '1,2,3,4,101,6,7,8,')
@@ -143,16 +137,10 @@ class Test1(unittest.TestCase):
         area_manager._print_choose_goods_info()
         area_manager._arrange_areas()
 
-        candidate_shelf_list = area_manager._generate_all_area_candidate()
-
-        # self.assertEqual(len(candidate_shelf_list), 3)
-        # for shelf_list in candidate_shelf_list:
-        #     print(shelf_list)
-
-        best_candidate_shelf = area_manager.calculate_best_candidate_shelf(candidate_shelf_list)
+        best_candidate_shelf = area_manager.arrange_goods()
         level_to_display_goods_name_str = get_level_to_display_goods_name(best_candidate_shelf)
 
-        self.assertEqual(level_to_display_goods_name_str[0], '2,3,101,4,5,6,7,8,')
+        self.assertEqual(level_to_display_goods_name_str[0], '2,3,4,101,5,6,7,8,')
         self.assertEqual(level_to_display_goods_name_str[1], '11,12,13,14,102,16,17,18,')
         self.assertEqual(level_to_display_goods_name_str[2], '21,22,23,24,25,26,27,28,')
         print(shelf)

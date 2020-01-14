@@ -10,9 +10,12 @@ from goods.third_tools import dingtalk
 
 class Area:
     max_width_tolerance = 20
+    candidate_threshold = 100
 
-    def __init__(self, area_manager):
+    def __init__(self, area_manager, start_level_id, start_width):
         self.area_manager = area_manager
+        self.start_level_id = start_level_id
+        self.start_width = start_width
         self.child_area_list = []
         self.category2 = None
         self.category3_list = []
@@ -32,9 +35,17 @@ class Area:
         self.second_down_display_goods_list = []
 
         # 结果数据
-        self.candidate_display_goods_list_list = []
+        self.candidate_display_goods_list_list = None
+        self.best_display_goods_list = None
 
-    def add_child_area_in_one_category3(self, level_id, display_goods_list):
+    def add_child_area_in_one_category3(self, level_id, end_width, display_goods_list):
+        """
+        创建子区域
+        :param level_id:
+        :param end_width:
+        :param display_goods_list:
+        :return:
+        """
         category2 = display_goods_list[0].goods_data.category2
         category3 = display_goods_list[0].goods_data.category3
         if self.category2 is None:
@@ -49,7 +60,11 @@ class Area:
         if category3 not in self.category3_list:
             self.category3_list.append(category3)
 
-        self.child_area_list.append(ChildArea(level_id, display_goods_list))
+        start_width = end_width
+        for display_goods in display_goods_list:
+            start_width -= display_goods.goods_data.width*display_goods.face_num
+
+        self.child_area_list.append(ChildArea(level_id, start_width, display_goods_list))
 
     def get_category2(self):
         return self.category2
@@ -180,7 +195,7 @@ class Area:
                 print('增上商品出现无法解决的区域：')
                 print(self)
 
-    def calculate_candidate(self, candidate_step=1, candidate_threshold=5):
+    def calculate_best_display_goods(self):
         """
         对所有确定好的上下架商品进行最优排列
         # 基础计算数据
@@ -194,8 +209,6 @@ class Area:
         self.display_goods_to_reduce_face_num = {}
         self.second_up_choose_goods_list = []
         self.second_down_display_goods_list = []
-        :param candidate_step:
-        :param candidate_threshold:
         :return:
         """
 
@@ -214,17 +227,82 @@ class Area:
                     new_display_goods_list.append(new_display_goods)
 
         if len(self.up_choose_goods_list) > 0 or len(self.second_up_choose_goods_list) > 0:
-            self._generate_up_choose_goods_candidate(new_display_goods_list, candidate_step, candidate_threshold)
+            self.candidate_display_goods_list_list = self._generate_up_choose_goods_candidate(new_display_goods_list)
+            self.best_display_goods_list = self._calculate_best_display_goods_list()
         else:
-            # TODO 做候选上架处理
-            self.candidate_display_goods_list_list.append(new_display_goods_list)
+            self.best_display_goods_list = new_display_goods_list
 
-    def _generate_up_choose_goods_candidate(self, new_display_goods_list, candidate_step, candidate_threshold):
-        # 先计算首个插入的位置
+    def _calculate_score(self, old_display_goods, level_id, start_width, candidate_display_goods_list):
+        """
+        TODO 需要整体计算变化的结果
+        :param old_display_goods:
+        :param level_id
+        :param start_width:
+        :param candidate_display_goods_list:
+        :return:
+        """
+        if old_display_goods in self.down_display_goods_list or old_display_goods in self.second_down_display_goods_list:
+            return 0
+        candidate_start_width = self.start_width
+        candidate_start_level_id = self.start_level_id
+        for display_goods in candidate_display_goods_list:
+            if display_goods.goods_data.equal(old_display_goods.goods_data):
+                if abs(level_id - candidate_start_level_id) > 0:
+                    return 10*abs(level_id - candidate_start_level_id)
+                elif abs(start_width - candidate_start_width) < 10:
+                    return 0
+                elif abs(start_width - candidate_start_width) < old_display_goods.goods_data.width * old_display_goods.face_num:
+                    return 0.2
+                else:
+                    return abs(start_width - candidate_start_width)/self.area_manager.shelf.width * 10
+            candidate_start_width += display_goods.goods_data.width * display_goods.face_num
+            if candidate_start_width > self.area_manager.shelf.width:
+                candidate_start_width = 0
+                candidate_start_level_id += 1
+        return 1
+
+    def _calculate_best_display_goods_list(self):
+        """
+        核心算法：计算评分
+        所有商品移动步长，每一步移动做扣分
+        暂不做，被挤下商品为可选下架品中预期psd金额较低商品，随金额变低做加分
+        :return: 分数最低的shelf
+        """
+
+        min_badcase_value = 100000
+        best_display_goods_list = None
+        for candidate_display_goods_list in self.candidate_display_goods_list_list:
+            badcase_value = 0
+            for child_area in self.child_area_list:
+                start_width = child_area.start_width
+                for old_display_goods in child_area.display_goods_list:
+                    badcase_value += self._calculate_score(old_display_goods, child_area.level_id, start_width,
+                                                           candidate_display_goods_list)
+                    start_width += old_display_goods.goods_data.width * old_display_goods.face_num
+
+            if badcase_value < min_badcase_value:
+                min_badcase_value = badcase_value
+                best_display_goods_list = candidate_display_goods_list
+        print('{}共{}个候选解，最低分：{}'.format(self, len(self.candidate_display_goods_list_list),min_badcase_value))
+
+        return best_display_goods_list
+
+    def _generate_up_choose_goods_candidate(self, new_display_goods_list):
+        """
+        生成候选解的核心算法
+        1、准备数据
+        2、计算首个可插入的位置
+        3、逐步往后挪动生成所有可插入位置
+        4、生成所有插入位置的组合，生成新的candidate_display_goods_list的列表
+        :param new_display_goods_list:
+        :return:
+        """
+        # 准备数据
         up_choose_goods_to_insert_position = {}
         up_choose_goods_list = []
         up_choose_goods_list.extend(self.up_choose_goods_list)
         up_choose_goods_list.extend(self.second_up_choose_goods_list)
+        # 先计算首个可插入的位置
         for up_choose_goods in up_choose_goods_list:
             for i in range(len(new_display_goods_list) - 1, -1, -1):
                 if new_display_goods_list[i].goods_data.category3 == up_choose_goods.category3:
@@ -236,23 +314,23 @@ class Area:
                 up_choose_goods_to_insert_position[up_choose_goods] = [len(new_display_goods_list)]
 
 
+        # 逐步往后挪动生成所有可插入位置
         up_choose_goods_to_end = {}
         for up_choose_goods in up_choose_goods_list:
             up_choose_goods_to_end[up_choose_goods] = False
-        # 逐步往后挪动插入位置
         candidate_cnt = 1
-        while candidate_cnt < candidate_threshold:
+        while candidate_cnt < self.candidate_threshold:
             for up_choose_goods in up_choose_goods_to_insert_position.keys():
                 if not up_choose_goods_to_end[up_choose_goods]:
-                    insert_position = up_choose_goods_to_insert_position[up_choose_goods][-1]
+                    last_insert_position = up_choose_goods_to_insert_position[up_choose_goods][-1]
 
-                    next_position = insert_position - candidate_step
+                    next_position = last_insert_position - 1
                     if next_position >= 0 and new_display_goods_list[
-                                next_position - 1].goods_data.category3 == up_choose_goods.category3:
+                                next_position].goods_data.category3 == up_choose_goods.category3:
                         up_choose_goods_to_insert_position[up_choose_goods].append(next_position)
 
                         candidate_cnt = self._calculate_candidate_cnt(up_choose_goods_to_insert_position)
-                        if candidate_cnt >= candidate_threshold:
+                        if candidate_cnt >= self.candidate_threshold:
                             break
                     else:
                         up_choose_goods_to_end[up_choose_goods] = True
@@ -265,18 +343,22 @@ class Area:
             if is_end:
                 break
 
-        # FIXME 同一个三级分类的上架多个品，出现的候选解要变化
-        # 取出所有解的集合
+        # FIXME 如果一个区域内的三级分类被分成两段，下面一段的候选解没有被添加
+        # FIXME 同一个三级分类的上架多个品，出现先后顺序也应该成为候选解
+        # 生成所有插入位置的组合，生成新的candidate_display_goods_list的列表
         up_choose_goods_to_candidate_list = dict_arrange(up_choose_goods_to_insert_position)
+        candidate_display_goods_list_list = []
         for up_choose_goods_to_candidate in up_choose_goods_to_candidate_list:
             candidate_display_goods_list = new_display_goods_list.copy()
             insert_candidate_list = list(up_choose_goods_to_candidate.items())
             insert_candidate_list.sort(key=lambda x: x[1], reverse=True)
             for insert_candidate in insert_candidate_list:
-                # FIXME 暂时没有处理上架商品的face_num 和 superimpose_num
+                # FIXME 没有处理上架商品的face_num 和 superimpose_num
                 candidate_display_goods_list.insert(insert_candidate[1], DisplayGoods(insert_candidate[0]))
 
-            self.candidate_display_goods_list_list.append(candidate_display_goods_list)
+            candidate_display_goods_list_list.append(candidate_display_goods_list)
+
+        return candidate_display_goods_list_list
 
     def _calculate_candidate_cnt(self, key_to_candidate_list):
         ret = 1

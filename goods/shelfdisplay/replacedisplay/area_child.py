@@ -1,6 +1,7 @@
 class ChildArea:
-    def __init__(self, level_id, display_goods_list):
+    def __init__(self, level_id, start_width, display_goods_list):
         self.level_id = level_id
+        self.start_width = start_width
         self.display_goods_list = display_goods_list
         self.down_display_goods_list = []
         self.category3 = display_goods_list[0].goods_data.category3
@@ -12,7 +13,7 @@ class ChildArea:
         return goods_width
 
     def __str__(self):
-        ret = str(self.level_id) + '-' + str(self.category3) + ':['
+        ret = str(self.level_id) + '-' + str(self.start_width) + '-' + str(self.category3) + ':['
         for display_goods in self.display_goods_list:
             for i in range(display_goods.face_num):
                 ret += str(display_goods.goods_data)
