@@ -585,10 +585,9 @@ class DailyChangeGoods:
             self.cursor_ucenter.execute(sql)
             try:
                 data = self.cursor_ucenter.fetchone()
-                not_can_order_mch_code_dict[goods[4]] = [data[0],data[1],data[2],data[3]]
+                not_can_order_mch_code_dict[str(goods[4])] = [data[0],data[1],data[2],data[3]]
             except Exception as e:
-                print('haha',type(goods[4]))
-                not_can_order_mch_code_dict[goods[4]] = [0,0,0,0]
+                not_can_order_mch_code_dict[str(goods[4])] = [0,0,0,0]
                 print("查询不可订货商品(mch_goods_code为{},sql为{})报错：{}".format(goods[4],sql,e))
 
 
@@ -602,8 +601,6 @@ class DailyChangeGoods:
                     except:
                         self.bread_width += self.can_order_mch_code_dict[mch][4]
             except:
-                print("哈哈")
-                print('haha',type(mch))
                 if not_can_order_mch_code_dict[mch][2] == "101":
                     self.bread_width += not_can_order_mch_code_dict[mch][0]
 
@@ -629,29 +626,37 @@ class DailyChangeGoods:
         daily_optional_up_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
         daily_all_goods_len = len(daily_not_move_goods) + len(daily_must_up_goods) + len(daily_optional_out_goods) + len(daily_optional_up_goods)
 
+        daily_not_move_goods_ranked = []
+        daily_must_up_goods_ranked = []
+        daily_optional_out_goods_ranked = []
+        daily_optional_up_goods_ranked = []
+
         for index, goods in enumerate(daily_not_move_goods):  # 添加ranking的值
             list_goods = list(goods)
             list_goods.pop()
             list_goods.append(daily_all_goods_len-index)
+            daily_not_move_goods_ranked.append(tuple(list_goods))
 
         for index, goods in enumerate(daily_must_up_goods):  # 添加ranking的值
             list_goods = list(goods)
             list_goods.pop()
             list_goods.append(daily_all_goods_len-index-len(daily_not_move_goods))
+            daily_must_up_goods_ranked.append(tuple(list_goods))
 
         for index, goods in enumerate(daily_optional_out_goods):  # 添加ranking的值
             list_goods = list(goods)
             list_goods.pop()
             list_goods.append(daily_all_goods_len-index-len(daily_not_move_goods)-len(daily_must_up_goods))
+            daily_optional_out_goods_ranked.append(tuple(list_goods))
 
         for index, goods in enumerate(daily_optional_up_goods):  # 添加ranking的值
             list_goods = list(goods)
             list_goods.pop()
             list_goods.append(daily_all_goods_len-index-len(daily_not_move_goods)-len(daily_must_up_goods)-len(daily_optional_out_goods))
+            daily_optional_up_goods_ranked.append(tuple(list_goods))
 
 
-
-        daily_all_goods = [(0,daily_not_move_goods),(1,daily_must_up_goods),(4,daily_optional_out_goods),(3,daily_optional_up_goods)]
+        daily_all_goods = [(0,daily_not_move_goods_ranked),(1,daily_must_up_goods_ranked),(4,daily_optional_out_goods_ranked),(3,daily_optional_up_goods_ranked)]
 
         # 二级分类面包
         for goods_role,goods_list in daily_all_goods:
