@@ -614,7 +614,7 @@ class DailyChangeGoods:
         temp_milk_width = 0
 
         daily_not_move_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
-        # daily_must_up_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
+        daily_must_up_goods.sort(key=lambda x: x[-1], reverse=True)  # 基于psd金额排序
         daily_optional_out_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
         daily_optional_up_goods.sort(key=lambda x: x[3], reverse=True)  # 基于psd金额排序
         daily_all_goods_len = len(daily_not_move_goods) + len(daily_must_up_goods) + len(daily_optional_out_goods) + len(daily_optional_up_goods)
@@ -806,7 +806,7 @@ class DailyChangeGoods:
         # 该店有该三级分类,并且可订货,并且本店本来是没有的
         for data in all_structure_goods_list:
             if data[2] in self.third_category_mch_dict and str(data[4]) in self.can_order_mch_code_new_dict and not str(data[4]) in self.taizhang_goods_mch_code_list:
-                print('???')
+                # print('???')
                 data.extend([0, 1, 0,None, 1, self.can_order_mch_code_new_dict[str(data[4])][0]])  # is_structure,is_qiuck_seller,is_relation,which_strategy,delivery_type
                 # data.extend([0, 1, 0,None, 1])  # is_structure,is_qiuck_seller,is_relation,relation_score,which_strategy,delivery_type
                 candidate_up_goods_list.append(data)
