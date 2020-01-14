@@ -290,7 +290,7 @@ class DailyChangeGoods:
             # print("可订货数据：",all_data)
             for data in all_data:
                 can_order_list.append(data[0])
-                if data[3] == "104":    #  巧克力分类 ,按照非日配逻辑来处理
+                if data[3] == "104" or data[0] in ['2032903','2036701','2032904','2021918','2009767','2045293','2037109']:    #  巧克力分类还有一些特殊品 ,按照非日配逻辑来处理
                     can_order_mch_code_dict[data[0]] = [2,data[2],data[3],data[4],data[5]]
                     continue
                 can_order_mch_code_dict[data[0]] = [data[1],data[2],data[3],data[4],data[5]]
@@ -333,7 +333,7 @@ class DailyChangeGoods:
             # print("可订货数据：",all_data)
             for data in all_data:
                 can_order_new_list.append(data[0])
-                if data[2] == "104":  # 巧克力分类 ,按照非日配逻辑来处理
+                if data[3] == "104" or data[0] in ['2032903','2036701','2032904','2021918','2009767','2045293','2037109']:    #  巧克力分类还有一些特殊品 ,按照非日配逻辑来处理
                     can_order_mch_code_new_dict[data[0]] = [2,data[2],data[3],data[4],data[5]]
                     continue
                 can_order_mch_code_new_dict[data[0]] = [data[1], data[2], data[3], data[4],data[5]]
