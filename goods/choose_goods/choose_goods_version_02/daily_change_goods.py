@@ -578,7 +578,7 @@ class DailyChangeGoods:
 
         not_can_order_mch_code_dict = {}
         for goods in must_out_goods:
-            sql = "select c.width,c.display_first_cat_id,c.display_second_cat_id,c.display_third_cat_id from uc_merchant_goods c where c.width > 0 and c.display_third_cat_id > 0 and mch_goods_code={}".format(','.join(self.supplier_id_list),goods[4])
+            sql = "select c.width,c.display_first_cat_id,c.display_second_cat_id,c.display_third_cat_id from uc_merchant_goods c where c.width > 0 and c.display_third_cat_id > 0 and mch_goods_code={}".format(goods[4])
             # self.cursor_ucenter.execute("select c.width,c.display_first_cat_id,c.display_second_cat_id,c.display_third_cat_id from uc_merchant_goods c where c.supplier_id in ({}) and c.width > 0 and c.display_third_cat_id > 0 and mch_goods_code={}".format(','.join(self.supplier_id_list),goods[4]))
             self.cursor_ucenter.execute(sql)
             try:
