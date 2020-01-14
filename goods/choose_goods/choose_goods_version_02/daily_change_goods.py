@@ -705,7 +705,10 @@ class DailyChangeGoods:
 
             elif data['mch_goods_code'] in not_move_goods_mch_code_list:    # 保护品即为不动的品
                 # print('有销量即为不动的品')
-                not_move_goods.append((None, data['goods_upc'],None, self.shop_sales_goods_mch_code_dict.get(data['mch_goods_code'],0),data['mch_goods_code'], None, data['name'], 0, 0, 0, None,101, self.can_order_mch_code_dict[str(data['mch_goods_code'])][0], None))
+                protect_psd = self.shop_sales_goods_mch_code_dict.get(data['mch_goods_code'],0)
+                if protect_psd != 0:
+                    protect_psd = protect_psd[0]
+                not_move_goods.append((None, data['goods_upc'],None, protect_psd,data['mch_goods_code'], None, data['name'], 0, 0, 0, None,101, self.can_order_mch_code_dict[str(data['mch_goods_code'])][0], None))
                 # not_move_goods.append((None, data['goods_upc'],None, None,data['mch_goods_code'], None, data['name'], 0, 0, 0, None, 101, None))
             else:    # 剩下的是可选下架的
                 if data['mch_goods_code'] in self.shop_sales_goods_mch_code_dict.keys():    # 有销量的进行排序
