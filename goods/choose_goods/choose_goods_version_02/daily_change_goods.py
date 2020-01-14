@@ -523,6 +523,8 @@ class DailyChangeGoods:
         temp_optional_out_goods = []  # 临时可选下架
         third_category_mch_dict = []   # 本店已有三级分类
 
+        # 先删掉该批次之前的数据
+        self.delete_data()
 
         # 0、列表可订货
         self.can_order_list,self.can_order_mch_code_dict,self.can_order_new_list,self.can_order_mch_code_new_dict = self.get_can_order_dict()
@@ -677,10 +679,10 @@ class DailyChangeGoods:
                 if self.can_order_mch_code_dict[str(goods[4])][1] == "2":
                     temp_milk_width += self.can_order_mch_code_dict[str(goods[4])][4]
                     if temp_milk_width > self.milk_width:
-                        self.save_data(goods_list[:index + 1], goods_role)
+                        self.save_data(goods_list[:index + 1], goods_role,1)
                         break
             if temp_milk_width < self.milk_width:
-                self.save_data(goods_list, goods_role)
+                self.save_data(goods_list, goods_role,1)
             else:
                 break
 
@@ -745,9 +747,9 @@ class DailyChangeGoods:
         daily_not_move_goods,not_daily_not_move_goods = self.split_delivery_type(not_move_goods)
         daily_optional_out_goods,not_daily_optional_out_goods = self.split_delivery_type(optional_out_goods)
 
-        self.save_data(not_daily_not_move_goods, 0)
+        self.save_data(not_daily_not_move_goods, 0,2)
         self.save_data(must_out_goods, 2)
-        self.save_data(not_daily_optional_out_goods, 4)
+        self.save_data(not_daily_optional_out_goods, 4,2)
 
         return not_move_goods,optional_out_goods,daily_not_move_goods,daily_optional_out_goods,must_out_goods
 
@@ -873,8 +875,7 @@ class DailyChangeGoods:
 
         # 3、保存至数据库
         daily_must_up_goods, not_daily_must_up_goods = self.split_delivery_type(must_up_goods)
-        self.save_data(not_daily_must_up_goods, 1)
-        # self.save_data(optional_up_goods, 3,mch_code)
+        self.save_data(not_daily_must_up_goods, 1,2)
 
 
         # 把可订货的都存到可选上架
@@ -890,12 +891,12 @@ class DailyChangeGoods:
         optional_up_goods.extend(optional_up_goods_order)
 
         daily_optional_up_goods, not_daily_optional_up_goods = self.split_delivery_type(optional_up_goods)
-        self.save_data(not_daily_optional_up_goods, 3)
+        self.save_data(not_daily_optional_up_goods, 3,2)
         return daily_must_up_goods,daily_optional_up_goods
 
 
 
-    def save_data(self,data,goods_role):
+    def save_data(self,data,goods_role,delivery_type):
         """
         保存选品的数据
         :param data:
@@ -911,16 +912,9 @@ class DailyChangeGoods:
 
         # insert_sql_01 = "insert into goods_firstgoodsselection(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid) values (%s,%s,%s,%s,%s,2,%s,%s,%s,'{}','{}')"
         insert_sql_02 = "insert into goods_goodsselectionhistory(shopid,template_shop_ids,upc,code,predict_sales_amount,mch_code,mch_goods_code,predict_sales_num,name,batch_id,uc_shopid,goods_role,is_structure,is_qiuck_seller,is_relation,relation_score,which_strategy,delivery_type,ranking,handle_goods_role) values ({},%s,%s,%s,%s,{},%s,%s,%s,'{}','{}',{},%s,%s,%s,%s,%s,%s,%s,{})"
-        delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
-        select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}' and goods_role={}"
         # try:
         print('batch_id', self.batch_id, type(self.batch_id))
         print('len',len(tuple_data))
-        cursor.execute(select_sql.format(self.uc_shopid, self.batch_id,goods_role).replace('=None', ' is NULL'))  # 查询有该批次，没有的话，插入，有的话，先删再插入
-        # print('history_batch_id', history_batch_id,type(history_batch_id))
-        if cursor.fetchone():
-            cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id,goods_role).replace('=None', ' is NULL'))
-            print("删掉{}该批次之前的数据".format(self.batch_id))
         print('开始入库')
         print(tuple_data[:5])
         cursor.executemany(insert_sql_02.format(self.shop_id,self.mch_code,self.batch_id, self.uc_shopid,goods_role,goods_role).replace('None', 'NULL'), tuple_data[:])
@@ -942,6 +936,26 @@ class DailyChangeGoods:
         conn.close()
         print('ok')
         print()
+
+    def delete_data(self):
+        """
+        删除本批次的以前的数据
+        :return:
+        """
+        conn = connections['default']
+        cursor = conn.cursor()
+
+        delete_sql_02 = "delete from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
+        select_sql = "select batch_id from goods_goodsselectionhistory where uc_shopid={} and batch_id='{}'"
+        print('batch_id', self.batch_id, type(self.batch_id))
+        cursor.execute(select_sql.format(self.uc_shopid, self.batch_id).replace('=None',' is NULL'))  # 查询有该批次，没有的话，插入，有的话，先删再插入
+        # print('history_batch_id', history_batch_id,type(history_batch_id))
+        if cursor.fetchone():
+            cursor.execute(delete_sql_02.format(self.uc_shopid, self.batch_id).replace('=None',' is NULL'))
+            print("删掉{}该批次之前的数据".format(self.batch_id))
+        conn.commit()
+        conn.close()
+
 
 
 
