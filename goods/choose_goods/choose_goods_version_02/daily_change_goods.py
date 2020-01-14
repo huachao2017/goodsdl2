@@ -842,7 +842,7 @@ class DailyChangeGoods:
                 break
             try:
                 if str(goods[4]) in self.can_order_mch_code_new_dict:
-                    if goods[-1] != 301:  # 目前，畅销品和结构品都为必上品
+                    if goods[-2] != 301:  # 目前，畅销品和结构品都为必上品
                         must_up_goods.append(goods)
                     else:
                         optional_up_goods.append(goods)
