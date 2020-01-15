@@ -239,8 +239,8 @@ class Area:
                 # 减一个商品，重新计算
                 self._reduce_width(self.max_width_tolerance + 1, force_down=True)
                 self.calculate_best_display_goods()
-
-            self.best_display_goods_list = self._calculate_best_display_goods_list()
+            else:
+                self.best_display_goods_list = self._calculate_best_display_goods_list()
         else:
             self.best_display_goods_list = new_display_goods_list
 
