@@ -16,6 +16,8 @@ class Area:
         self.area_manager = area_manager
         self.start_level_id = start_level_id
         self.start_width = start_width
+        self.end_level_id = start_level_id
+        self.end_width = start_width
         self.child_area_list = []
         self.category2 = None
         self.category3_list = []
@@ -46,6 +48,9 @@ class Area:
         :param display_goods_list:
         :return:
         """
+        self.end_level_id = level_id
+        self.end_width = end_width
+
         category2 = display_goods_list[0].goods_data.category2
         category3 = display_goods_list[0].goods_data.category3
         if self.category2 is None:
@@ -78,11 +83,6 @@ class Area:
                 total_height += display_goods.goods_data.height * display_goods.superimpose_num
 
         return int(total_height / total_count)
-
-    def combine_area(self, last_area):
-        self.child_area_list = last_area.child_area_list + self.child_area_list
-        self.category3_list = last_area.category3_list + self.category3_list
-
 
     def calculate_width(self):
         """
@@ -474,7 +474,16 @@ class Area:
         return reduce_width
 
     def __str__(self):
-        ret = str(self.category3_list) + ':' + str(self.total_width) + ':'
+        ret = str(self.category3_list)
+        ret += ':('
+        ret += str(self.start_level_id)
+        ret += ':'
+        ret += str(self.start_width)
+        ret += '-'
+        ret += str(self.end_level_id)
+        ret += ':'
+        ret += str(self.end_width)
+        ret += '):'
         for area_level in self.child_area_list:
             ret += str(area_level)
         return ret

@@ -88,7 +88,6 @@ class AreaManager:
                     if cur_area_category3 is not None and cur_area_category3 == display_goods.goods_data.category3:
                         cur_area_category3 = display_goods.goods_data.category3
                         child_area_display_goods_list.append(display_goods)
-                        start_width += display_goods.goods_data.width * display_goods.face_num
                     else:
                         # 结束上一个child_area, 开始一个新的child_area
                         if len(child_area_display_goods_list)>0:
@@ -98,6 +97,7 @@ class AreaManager:
                         self.area_list.append(area)
                         child_area_display_goods_list = [display_goods]
                         cur_area_category3 = display_goods.goods_data.category3
+                    start_width += display_goods.goods_data.width * display_goods.face_num
 
                 # 结束上一个child_area, 开始一个新的child_area
                 area.add_child_area_in_one_category3(level_id, start_width, child_area_display_goods_list)
@@ -116,7 +116,10 @@ class AreaManager:
             if last_area is not None:
                 if area.category2 == last_area.category2:
                     if abs(last_area_height - avg_height) < 50:
-                        area.combine_area(last_area)
+                        area.child_area_list = last_area.child_area_list + area.child_area_list
+                        area.category3_list = last_area.category3_list + area.category3_list
+                        area.start_level_id = last_area.start_level_id
+                        area.start_width = last_area.start_width
                         removed_area_list.append(last_area)
 
             last_area = area
