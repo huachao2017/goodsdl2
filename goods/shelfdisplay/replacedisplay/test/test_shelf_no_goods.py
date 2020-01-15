@@ -1,7 +1,7 @@
 import unittest
 from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
 from goods.shelfdisplay.replacedisplay.area_manager import AreaManager
-from goods.shelfdisplay.replacedisplay.test.temporary_object import TestGoods
+from goods.shelfdisplay.replacedisplay.test.temporary_object import TestGoods, get_level_to_display_goods_name
 
 
 class Test1(unittest.TestCase):
@@ -112,15 +112,3 @@ class Test1(unittest.TestCase):
         print(shelf)
         print(best_candidate_shelf)
 
-def get_level_to_display_goods_name(shelf):
-    level_to_display_goods_name_str = {}
-    for level in shelf.levels:
-        display_goods_name_str = ''
-        for display_goods in level.display_goods_list:
-            for i in range(display_goods.face_num):
-                display_goods_name_str += display_goods.goods_data.goods_name
-                display_goods_name_str += ','
-
-        level_to_display_goods_name_str[level.level_id] = display_goods_name_str
-
-    return level_to_display_goods_name_str

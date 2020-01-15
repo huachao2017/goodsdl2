@@ -1,7 +1,7 @@
 import unittest
 from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
 from goods.shelfdisplay.replacedisplay.area_manager import AreaManager
-from goods.shelfdisplay.replacedisplay.test.temporary_object import TestGoods
+from goods.shelfdisplay.replacedisplay.test.temporary_object import TestGoods, get_level_to_display_goods_name
 
 
 class Test1(unittest.TestCase):
@@ -140,22 +140,8 @@ class Test1(unittest.TestCase):
         best_candidate_shelf = area_manager.arrange_goods()
         level_to_display_goods_name_str = get_level_to_display_goods_name(best_candidate_shelf)
 
-        self.assertEqual(level_to_display_goods_name_str[0], '2,3,4,101,5,6,7,8,')
+        self.assertEqual(level_to_display_goods_name_str[0], '101,2,3,4,5,6,7,8,')
         self.assertEqual(level_to_display_goods_name_str[1], '11,12,13,14,102,16,17,18,')
         self.assertEqual(level_to_display_goods_name_str[2], '21,22,23,24,25,26,27,28,')
         print(shelf)
         print(best_candidate_shelf)
-
-
-def get_level_to_display_goods_name(shelf):
-    level_to_display_goods_name_str = {}
-    for level in shelf.levels:
-        display_goods_name_str = ''
-        for display_goods in level.display_goods_list:
-            for i in range(display_goods.face_num):
-                display_goods_name_str += display_goods.goods_data.goods_name
-                display_goods_name_str += ','
-
-        level_to_display_goods_name_str[level.level_id] = display_goods_name_str
-
-    return level_to_display_goods_name_str

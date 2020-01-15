@@ -178,22 +178,29 @@ class Area:
 
         # 第三步：如需要：挤排面
         if need_width > 0:
-            reduce_width = self._reduce_face_num(need_width)
-
-            need_width = need_width - reduce_width
-            # 第四步：如需要：下架商品
-            if need_width > self.width_tolerance:
-                reduce_width = self._down_other_goods(need_width)
-
-            if reduce_width + self.width_tolerance < need_width:
-                print('挤下商品无法解决的区域：')
-                # dingtalk.send_message(str(self), 2)
-                print(self)
+            self._reduce_width(need_width)
         elif need_width < 0:
             add_width = self._up_other_goods(-need_width)
             if add_width + need_width < self.width_tolerance:
                 print('增上商品出现无法解决的区域：')
                 print(self)
+
+    def _reduce_width(self, need_width, force_down=False):
+        if len(self.second_up_choose_goods_list) > 0:
+            remove_choose_goods = self.second_up_choose_goods_list[-1]
+            self.second_up_choose_goods_list.remove(remove_choose_goods)
+            self.area_manager.up_choose_goods_list.remove(remove_choose_goods)
+            return
+
+        reduce_width = self._reduce_face_num(need_width)
+        need_width = need_width - reduce_width
+        # 第四步：如需要：下架商品
+        if need_width > self.width_tolerance:
+            reduce_width = self._down_other_goods(need_width, force_down)
+        if reduce_width + self.width_tolerance < need_width:
+            print('挤下商品无法解决的区域：{}'.format(self))
+            # dingtalk.send_message(str(self), 2)
+            print(self)
 
     def calculate_best_display_goods(self):
         """
@@ -228,6 +235,11 @@ class Area:
 
         if len(self.up_choose_goods_list) > 0 or len(self.second_up_choose_goods_list) > 0:
             self.candidate_display_goods_list_list = self._generate_up_choose_goods_candidate(new_display_goods_list)
+            if len(self.candidate_display_goods_list_list) == 0:
+                # 减一个商品，重新计算
+                self._reduce_width(self.max_width_tolerance + 1, force_down=True)
+                self.calculate_best_display_goods()
+
             self.best_display_goods_list = self._calculate_best_display_goods_list()
         else:
             self.best_display_goods_list = new_display_goods_list
@@ -294,6 +306,7 @@ class Area:
         2、计算首个可插入的位置
         3、逐步往后挪动生成所有可插入位置
         4、生成所有插入位置的组合，生成新的candidate_display_goods_list的列表
+        5、排除超出区域的候选列表
         :param new_display_goods_list:
         :return:
         """
@@ -356,9 +369,32 @@ class Area:
                 # FIXME 没有处理上架商品的face_num 和 superimpose_num
                 candidate_display_goods_list.insert(insert_candidate[1], DisplayGoods(insert_candidate[0]))
 
-            candidate_display_goods_list_list.append(candidate_display_goods_list)
+            if self._arrange_test(candidate_display_goods_list):
+                candidate_display_goods_list_list.append(candidate_display_goods_list)
 
         return candidate_display_goods_list_list
+
+    def _arrange_test(self, candidate_display_goods_list):
+        """
+        测试候选商品是否超出区域
+        :param candidate_display_goods_list:
+        :return:
+        """
+        cur_level_id = self.start_level_id
+        start_width = self.start_width
+        for display_goods in candidate_display_goods_list:
+            goods_width = display_goods.goods_data.width * display_goods.face_num
+            if start_width + goods_width > self.area_manager.shelf.width + self.area_manager.level_max_width_tolerance:  # 加固定的容差
+                cur_level_id += 1
+                start_width = goods_width
+            else:
+                start_width += goods_width
+
+        if cur_level_id > self.end_level_id:
+            return False
+        if cur_level_id == self.end_level_id and start_width > self.end_width + self.max_width_tolerance:
+            return False
+        return True
 
     def _calculate_candidate_cnt(self, key_to_candidate_list):
         ret = 1
@@ -443,11 +479,12 @@ class Area:
 
         return add_width
 
-    def _down_other_goods(self, need_width):
+    def _down_other_goods(self, need_width, force_down=False):
         """
         # 操作self.second_down_display_goods_list 和 self.area_manager.down_display_goods_list
         计算进一步需要下架的商品
         :param need_width:
+        :param force_down: 是否要强行减
         :return:
         """
 
@@ -457,14 +494,15 @@ class Area:
         for child_area in self.child_area_list:
             for display_goods in child_area.display_goods_list:
                 # 必须下架的商品要排除
-                if display_goods not in self.down_display_goods_list:
+                if display_goods not in self.down_display_goods_list and display_goods not in self.second_down_display_goods_list:
                     candidate_down_display_goods_list.append(display_goods)
 
         candidate_down_display_goods_list.sort(key=lambda x: x.goods_data.psd_amount)
         for down_display_goods in candidate_down_display_goods_list:
             # 减少太多就放弃
-            if reduce_width + down_display_goods.goods_data.width > need_width + self.width_tolerance:
-                break
+            if not force_down:
+                if reduce_width + down_display_goods.goods_data.width > need_width + self.width_tolerance:
+                    break
             reduce_width += down_display_goods.goods_data.width
             self.second_down_display_goods_list.append(down_display_goods)
             self.area_manager.down_display_goods_list.append(down_display_goods)

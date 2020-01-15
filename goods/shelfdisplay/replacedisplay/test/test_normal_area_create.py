@@ -248,6 +248,3 @@ class Test1(unittest.TestCase):
         # print('\n')
         for area in area_manager.area_list:
             print(area)
-
-                    # if __name__ == '__main__':
-#     unittest.main()#运行所有的测试用例
