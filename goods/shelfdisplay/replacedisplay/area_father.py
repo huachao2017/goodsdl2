@@ -200,7 +200,6 @@ class Area:
         if reduce_width + self.width_tolerance < need_width:
             print('挤下商品无法解决的区域：{}'.format(self))
             # dingtalk.send_message(str(self), 2)
-            print(self)
 
     def calculate_best_display_goods(self):
         """
@@ -412,38 +411,42 @@ class Area:
         #
         reduce_width = 0
 
-        reduce_face_display_goods_list = []
-        for child_area in self.child_area_list:
-            for display_goods in child_area.display_goods_list:
-                # 必须下架的商品要排除
-                if display_goods not in self.down_display_goods_list:
-                    if display_goods.face_num > 1:
-                        reduce_face_display_goods_list.append(display_goods)
+        if len(self.display_goods_to_reduce_face_num) == 0:
+            reduce_face_display_goods_list = []
+            for child_area in self.child_area_list:
+                for display_goods in child_area.display_goods_list:
+                    # 必须下架的商品要排除
+                    if display_goods not in self.down_display_goods_list:
+                        if display_goods.face_num > 1:
+                            reduce_face_display_goods_list.append(display_goods)
 
-        reduce_face_display_goods_list.sort(key=lambda x: x.goods_data.psd_amount / x.face_num)
+            reduce_face_display_goods_list.sort(key=lambda x: x.goods_data.psd_amount / x.face_num)
 
-        second_reduce_face_display_goods_list = []
-        for reduce_face_display_goods in reduce_face_display_goods_list:
-            # 减少太多就放弃
-            if reduce_width + reduce_face_display_goods.goods_data.width > need_width + self.width_tolerance:
-                break
-            reduce_width += reduce_face_display_goods.goods_data.width
-            self.display_goods_to_reduce_face_num[reduce_face_display_goods] = 1
-            if reduce_face_display_goods.face_num > 2:
-                second_reduce_face_display_goods_list.append(reduce_face_display_goods)
-            if reduce_width >= need_width:
-                break
-
-        # 最多减两轮face
-        if reduce_width < need_width:
-            for reduce_face_display_goods in second_reduce_face_display_goods_list:
+            second_reduce_face_display_goods_list = []
+            for reduce_face_display_goods in reduce_face_display_goods_list:
                 # 减少太多就放弃
                 if reduce_width + reduce_face_display_goods.goods_data.width > need_width + self.width_tolerance:
                     break
                 reduce_width += reduce_face_display_goods.goods_data.width
-                self.display_goods_to_reduce_face_num[reduce_face_display_goods] += 1
+                self.display_goods_to_reduce_face_num[reduce_face_display_goods] = 1
+                if reduce_face_display_goods.face_num > 2:
+                    second_reduce_face_display_goods_list.append(reduce_face_display_goods)
                 if reduce_width >= need_width:
                     break
+
+            # 最多减两轮face
+            if reduce_width < need_width:
+                for reduce_face_display_goods in second_reduce_face_display_goods_list:
+                    # 减少太多就放弃
+                    if reduce_width + reduce_face_display_goods.goods_data.width > need_width + self.width_tolerance:
+                        break
+                    reduce_width += reduce_face_display_goods.goods_data.width
+                    self.display_goods_to_reduce_face_num[reduce_face_display_goods] += 1
+                    if reduce_width >= need_width:
+                        break
+        else:
+            # TODO 如果后续还可以减扩面需要实现
+            pass
 
         return reduce_width
 
