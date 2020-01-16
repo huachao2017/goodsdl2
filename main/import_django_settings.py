@@ -1,4 +1,4 @@
 import os
 import django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.test_settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
