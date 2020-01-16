@@ -9,13 +9,16 @@ import traceback
 from goods import utils
 from set_config import config
 
-def get_shop_order_goods(shopid,add_type=False,batch_id = None ):
+def get_shop_order_goods(shopid,add_type=False,select_batch_id = None ):
     """
     获取商店的所有货架及货架上的商品信息，该方法在订货V3时用
     :param shopid: fx系统的商店id
     :param erp_shop_type: erp系统里面的类型
     :return:返回一个DataRawGoods对象的map,key为mch_code
     """
+    # TODO 更改流程后 batch_id 必传， 这里为了测试普天店 选取固定值batch_id
+    if select_batch_id is None:
+        select_batch_id = 'lishu_test_201'
     ret = {}
     next_day = str(time.strftime('%Y-%m-%d', time.localtime()))
     cursor = connections['ucenter'].cursor()
@@ -54,7 +57,7 @@ def get_shop_order_goods(shopid,add_type=False,batch_id = None ):
     shelf_inss = []
 
     # 获取日配选品字典
-    sg_ins_dict = get_select_goods(shopid,batch_id)
+    sg_ins_dict = get_select_goods(shopid,select_batch_id)
 
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]

@@ -184,7 +184,7 @@ def rule_bingql(drg_inss,order_data_dict):
             order_sale = 0
         order_sale = order_sale + bingql_drg_ins.stock + bingql_drg_ins.supply_stock + bingql_drg_ins.sub_count
         while order_sale > 2*bingql_drg_ins.start_sum:
-            order_data_dict[key] = order_sale - bingql_drg_ins.start_sum -  (bingql_drg_ins.stock + bingql_drg_ins.supply_stock + bingql_drg_ins.sub_count)
+            order_data_dict[key] = order_sale - bingql_drg_ins.start_sum - (bingql_drg_ins.stock + bingql_drg_ins.supply_stock + bingql_drg_ins.sub_count)
             order_sale = order_sale - bingql_drg_ins.start_sum
             print ("bing qi lin rule , 不减品的 ,该品减少了一倍的起订量="+str(bingql_drg_ins.goods_name))
             if bingql_filter(drg_inss,order_data_dict):
