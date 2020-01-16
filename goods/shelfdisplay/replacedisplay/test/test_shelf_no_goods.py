@@ -1,7 +1,7 @@
 import unittest
 from goods.shelfdisplay.replacedisplay.display_object import Shelf, Level, DisplayGoods
 from goods.shelfdisplay.replacedisplay.area_manager import AreaManager
-from goods.shelfdisplay.replacedisplay.test.temporary_object import TestGoods
+from goods.shelfdisplay.replacedisplay.test.temporary_object import TestGoods, get_level_to_display_goods_name
 
 
 class Test1(unittest.TestCase):
@@ -63,13 +63,7 @@ class Test1(unittest.TestCase):
         area_manager._print_choose_goods_info()
         area_manager._arrange_areas()
 
-        candidate_shelf_list = area_manager._generate_all_area_candidate()
-
-        self.assertEqual(len(candidate_shelf_list), 1)
-        # for shelf_list in candidate_shelf_list:
-        #     print(shelf_list)
-
-        best_candidate_shelf = area_manager.calculate_best_candidate_shelf(candidate_shelf_list)
+        best_candidate_shelf = area_manager.arrange_goods()
         level_to_display_goods_name_str = get_level_to_display_goods_name(best_candidate_shelf)
 
         self.assertEqual(level_to_display_goods_name_str[0], 'null,')
@@ -109,13 +103,7 @@ class Test1(unittest.TestCase):
         area_manager._print_choose_goods_info()
         area_manager._arrange_areas()
 
-        candidate_shelf_list = area_manager._generate_all_area_candidate()
-
-        self.assertEqual(len(candidate_shelf_list), 1)
-        # for shelf_list in candidate_shelf_list:
-        #     print(shelf_list)
-
-        best_candidate_shelf = area_manager.calculate_best_candidate_shelf(candidate_shelf_list)
+        best_candidate_shelf = area_manager.arrange_goods()
         level_to_display_goods_name_str = get_level_to_display_goods_name(best_candidate_shelf)
 
         self.assertEqual(level_to_display_goods_name_str[0], 'null,')
@@ -124,15 +112,3 @@ class Test1(unittest.TestCase):
         print(shelf)
         print(best_candidate_shelf)
 
-def get_level_to_display_goods_name(shelf):
-    level_to_display_goods_name_str = {}
-    for level in shelf.levels:
-        display_goods_name_str = ''
-        for display_goods in level.display_goods_list:
-            for i in range(display_goods.face_num):
-                display_goods_name_str += display_goods.goods_data.goods_name
-                display_goods_name_str += ','
-
-        level_to_display_goods_name_str[level.level_id] = display_goods_name_str
-
-    return level_to_display_goods_name_str

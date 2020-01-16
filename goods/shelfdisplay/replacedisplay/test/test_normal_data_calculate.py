@@ -305,9 +305,3 @@ class Test1(unittest.TestCase):
         self.assertEqual(len(area_manager.down_display_goods_list), 4)
 
         area_manager._arrange_areas()
-        # TODO 为什么出现死循环？
-
-        print(1)
-
-            # if __name__ == '__main__':
-#     unittest.main()#运行所有的测试用例
