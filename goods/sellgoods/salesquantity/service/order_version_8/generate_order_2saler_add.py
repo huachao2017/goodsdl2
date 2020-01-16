@@ -2,8 +2,7 @@
 二批向供货商非日配的首次订货  （1284 --> 好邻居）  非新店期
 """
 from set_config import config
-from goods.sellgoods.salesquantity.proxy import order_rule
-from goods.sellgoods.salesquantity.service.order_version_6.data_util import cacul_util
+from goods.sellgoods.salesquantity.service.order_version_8.data_util import cacul_util
 import traceback
 import time
 import datetime
@@ -31,6 +30,7 @@ def generate(shop_id = None):
             drg_ins = result[mch_code]
             order_sale = 0
             if drg_ins.delivery_type == 2:
+                drg_ins.safe_stock = max(drg_ins.min_disnums, drg_ins.upc_psd_num_avg_4, drg_ins.upc_psd_num_avg_1)
                 if drg_ins.upc_status_type == 0:# 首次订货
                     if drg_ins.psd_nums_4 > 0:
                         x = drg_ins.psd_nums_4 * bhuo_days + drg_ins.min_disnums
@@ -38,7 +38,6 @@ def generate(shop_id = None):
                         x = 0
                     y = min(drg_ins.max_disnums, drg_ins.min_disnums * 2)
                     order_sale = max(x, y, drg_ins.start_sum)
-                    drg_ins.safe_stock = max(drg_ins.min_disnums,math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price), math.ceil(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
                 elif drg_ins.upc_status_type == 1: # 新品
                     if drg_ins.psd_nums_4 > 0:
                         x = drg_ins.psd_nums_4 * bhuo_days + drg_ins.min_disnums
@@ -46,17 +45,16 @@ def generate(shop_id = None):
                         x = 0
                     y = min(drg_ins.max_disnums, drg_ins.min_disnums * 2)
                     a = max(x, y, drg_ins.start_sum)
-                    drg_ins.safe_stock = max(drg_ins.min_disnums,math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price), math.ceil(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
                     if math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price) < a:
                         order_sale = a
                     else:
                         order_sale = math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price) + drg_ins.min_disnums
                 else:
-                    safe_stock = max(drg_ins.min_disnums,math.ceil(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price), math.ceil(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
-                    track_stock =drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price * bhuo_days + safe_stock
+                    safe_stock = max(drg_ins.min_disnums, drg_ins.upc_psd_num_avg_4,
+                                             drg_ins.upc_psd_num_avg_1)
+                    track_stock =drg_ins.upc_psd_num_avg_4 * bhuo_days + safe_stock
                     order_sale =  math.ceil(track_stock)
                     drg_ins.safe_stock = safe_stock
-                    # order_sale = track_stock - drg_ins.stock - drg_ins.supply_stock - drg_ins.sub_count
             else: # 日配订货
                 # 日配类型 改变商品的最小陈列量
                 if drg_ins.storage_day < 15:
@@ -79,27 +77,12 @@ def generate(shop_id = None):
                     else:
                         safe_day = bhuo_days
                     track_stock = end_safe_stock + safe_day * psd_nums_2
-                    order_sale =  math.ceil(track_stock)
+                    order_sale = math.ceil(track_stock)
                     drg_ins.safe_stock = end_safe_stock
                 else:
-                    # TODO  商品的psd*保质期＜1，则该商品建议剔除选品，不订货    目前psd 取不到真实值， 这段逻辑先不走
-                    # if drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price * drg_ins.storage_day < 1:
-                    #     continue
                     end_safe_stock = drg_ins.min_disnums
-                    end_date = str(time.strftime('%Y%m%d', time.localtime()))
-                    # 到货日
-                    order_get_date = str(
-                        (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
-                            days=gethuo_days)).strftime("%Y%m%d"))
-                    order_get_week_i = datetime.datetime.strptime(order_get_date, "%Y%m%d").weekday() + 1
-                    one_day_psd = 0
-                    if order_get_week_i>=1 and order_get_week_i<=5:
-                        one_day_psd = float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)
-                    else:
-                        one_day_psd = float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)
-                    loss_oneday_nums =  drg_ins.loss_avg * one_day_psd / (1- drg_ins.loss_avg)
+                    loss_oneday_nums = drg_ins.loss_avg * drg_ins.upc_psd_num_avg_1 / (1- drg_ins.loss_avg)
                     fudong_nums = 0
-                    # #  浮动量 这块去掉
                     if drg_ins.loss_avg_amount <=0:
                         fudong_nums = 0-drg_ins.loss_avg_nums
                     else:
@@ -107,11 +90,12 @@ def generate(shop_id = None):
                             fudong_nums = -1
                         if loss_oneday_nums <= 0:
                             fudong_nums = 1
+                    # 新增 在店销售不满一个保质期天数的商品，不走浮动逻辑
                     end_date1 = str(time.strftime('%Y-%m-%d', time.localtime()))
                     time1 = time.mktime(time.strptime(drg_ins.up_shelf_date, '%Y-%m-%d'))
                     time2 = time.mktime(time.strptime(end_date1, '%Y-%m-%d'))
                     days = int((time2 - time1) / (24 * 60 * 60))
-                    if days <=7:
+                    if days <=drg_ins.storage_day:
                         fudong_nums = 0
                     drg_ins.fudong_nums = fudong_nums
                     safe_day = 0
@@ -119,9 +103,12 @@ def generate(shop_id = None):
                         safe_day = drg_ins.storage_day
                     else:
                         safe_day = bhuo_days
-                    track_stock = safe_day * one_day_psd + fudong_nums + end_safe_stock
+                    track_stock = safe_day * drg_ins.upc_psd_num_avg_1 + fudong_nums + end_safe_stock
                     order_sale = math.ceil(track_stock)
                     drg_ins.safe_stock = end_safe_stock
+                    # TODO  商品的psd*保质期＜1，则该商品建议剔除选品，不订货    目前psd 取不到真实值， 这段逻辑先不走
+                    if drg_ins.upc_psd_num_avg_1 * drg_ins.storage_day < 1:
+                        order_sale = 0
             drg_ins.order_sale = order_sale
             goods_orders.append(drg_ins)
         return goods_orders

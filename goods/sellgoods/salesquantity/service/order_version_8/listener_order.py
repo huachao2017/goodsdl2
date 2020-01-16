@@ -1,6 +1,9 @@
-
+"""
+流程改动 日配品 选品 订货  陈列， 添加日配品空间限制  https://shimo.im/docs/D8pYpwpT66RQ6vYD/read
+该版本上个版本 version6
+"""
 import time
-from goods.sellgoods.salesquantity.service.order_version_6 import order_process
+from goods.sellgoods.salesquantity.service.order_version_8 import order_process
 from django.db import close_old_connections
 import traceback
 def generate_data():

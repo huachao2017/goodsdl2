@@ -77,8 +77,8 @@ def rule_daydelivery_type(sales_order_inss):
 
 from functools import cmp_to_key
 def many_sort(drg_ins1, drg_ins2):
-    psd_nums_4_1 =max(drg_ins1.psd_nums_4,float(drg_ins1.upc_psd_amount_avg_4 / drg_ins1.upc_price))
-    psd_nums_4_2 = max(drg_ins2.psd_nums_4, float(drg_ins2.upc_psd_amount_avg_4 / drg_ins2.upc_price))
+    psd_nums_4_1 =max(drg_ins1.psd_nums_4,float(drg_ins1.upc_psd_num_avg_4))
+    psd_nums_4_2 = max(drg_ins2.psd_nums_4, float(drg_ins2.upc_psd_num_avg_4))
     if int(psd_nums_4_1) > int(psd_nums_4_2):
         return 1
     elif int(psd_nums_4_1) < int(psd_nums_4_2):
@@ -111,7 +111,7 @@ def bingql_filter(drg_inss,order_data_dict):
                 save_goods_days =  config.shellgoods_params['save_goods_days'][drg_ins.dmstoreshop_id]
             else:
                 save_goods_days = config.shellgoods_params['save_goods_days'][-8888]
-            V1 += drg_ins.height * drg_ins.width * drg_ins.depth * math.ceil(order_sale+drg_ins.sub_count - save_goods_days * float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
+            V1 += drg_ins.height * drg_ins.width * drg_ins.depth * math.ceil(order_sale+drg_ins.sub_count - save_goods_days * float(drg_ins.upc_psd_num_avg_1))
             for shelf_ins in shelf_inss:
                 shelf_id_dict[str(shelf_ins.shelf_id) +"," +str(shelf_ins.goods_level_id)] = shelf_ins
     for shelf_level_id in shelf_id_dict:
@@ -152,7 +152,7 @@ def daydelivery_filter(drg_inss,order_data_dict):
             else:
                 order_sale = 0
             shelf_inss = drg_ins.shelf_inss
-            V1 += drg_ins.height * drg_ins.width * drg_ins.depth * math.ceil(order_sale+drg_ins.stock - 1* float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price))
+            V1 += drg_ins.height * drg_ins.width * drg_ins.depth * math.ceil(order_sale+drg_ins.stock - 1* float(drg_ins.upc_psd_num_avg_1))
             for shelf_ins in shelf_inss:
                 shelf_id_dict[str(shelf_ins.shelf_id) +"," +str(shelf_ins.goods_level_id)] = shelf_ins
     for shelf_level_id in shelf_id_dict:

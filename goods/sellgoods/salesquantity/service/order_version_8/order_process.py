@@ -4,8 +4,8 @@ import main.import_django_settings
 from django.db import connections
 import time
 from goods.sellgoods.salesquantity.bean import taskflow
-from goods.sellgoods.salesquantity.service.order_version_6 import generate_order_2saler_add,generate_order_shop
-from goods.sellgoods.salesquantity.service.order_version_6.data_util import cacul_util
+from goods.sellgoods.salesquantity.service.order_version_8 import generate_order_2saler_add,generate_order_shop
+from goods.sellgoods.salesquantity.service.order_version_8.data_util import cacul_util
 from goods.sellgoods.salesquantity.local_util import sass_interface
 from goods.sellgoods.salesquantity.local_util import erp_interface
 from set_config import config
