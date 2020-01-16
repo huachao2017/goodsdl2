@@ -722,7 +722,7 @@ class SelectGoods:
 
 #  日配品 来自选品列表
 def get_select_goods(shopid,batch_id):
-    sql = "select upc,mch_goods_code,handle_goods_role,ranking from goods_goodsselectionhistory where delivery_type = 1 and shopid={} and batch_id ={}".format(shopid,batch_id)
+    sql = "select upc,mch_goods_code,handle_goods_role,ranking from goods_goodsselectionhistory where delivery_type = 1 and shopid={} and batch_id ='{}'".format(shopid,batch_id)
     sl_goods_inss_dict = {}
     cursor = connections['default'].cursor()
     cursor.execute(sql)
