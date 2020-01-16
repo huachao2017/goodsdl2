@@ -150,7 +150,7 @@ def get_shop_order_goods(shopid,add_type=False,select_batch_id = None ):
                             sg_ins_dict[mch_code].is_remove = True
                             handle_goods_role, ranking = sg_ins_dict[mch_code].handle_goods_role, sg_ins_dict[
                                 mch_code].ranking
-                        goods_name, upc, category1_id, category2_id, category_id, storage_day, package_type, single_face_min_disnums, supplier_id, supplier_goods_code, goods_status, max_scale, start_sum, delivery_type,order_status = get_ucenter_infos(mch_code,shopid,mch_id,erp_resupply_id)
+                        goods_name, upc, category1_id, category2_id, category_id, storage_day, package_type, single_face_min_disnums, supplier_id, supplier_goods_code, goods_status, max_scale, start_sum, delivery_type,order_status,uc_height,uc_width,uc_depth = get_ucenter_infos(mch_code,shopid,mch_id,erp_resupply_id)
 
                         if goods_status != 1 and order_status != 1 and add_type == False:
                             print ("该品不可定，mch_code={}".format(mch_code))
