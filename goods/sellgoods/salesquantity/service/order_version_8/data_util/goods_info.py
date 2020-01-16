@@ -241,10 +241,9 @@ def get_ai_infos(mch_goods_code,upc,shopid,uc_shopid):
                 uc_shopid, upc))
         (up_shelf_date, up_status) = cursor_ai.fetchone()
         up_shelf_date = str(up_shelf_date)
-        print('ai找到商品上架时间 :{}-{}-{}！'.format(uc_shopid, upc, up_shelf_date))
     except:
-        # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
         up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+        print('ai找不到商品上架时间 取当前时间:{}-{}-{}！'.format(uc_shopid, upc, up_shelf_date))
     return  up_shelf_date
 
 # ucenter 获取单upc 数据

@@ -14,8 +14,6 @@
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/goods_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/goods_info.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -54,8 +52,8 @@
       <file leaf-file-name="goods_info.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/goods_info.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1140">
-              <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
+            <state relative-caret-position="-456">
+              <caret line="246" column="25" lean-forward="true" selection-start-line="246" selection-start-column="25" selection-end-line="246" selection-end-column="25" />
               <folding>
                 <element signature="e#1#12#0" expanded="true" />
               </folding>
@@ -881,8 +879,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/goods_info.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1140">
-          <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
+        <state relative-caret-position="-456">
+          <caret line="246" column="25" lean-forward="true" selection-start-line="246" selection-start-column="25" selection-end-line="246" selection-end-column="25" />
           <folding>
             <element signature="e#1#12#0" expanded="true" />
           </folding>
