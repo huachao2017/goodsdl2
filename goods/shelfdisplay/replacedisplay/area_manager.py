@@ -234,25 +234,36 @@ class AreaManager:
         for area in self.area_list:
             cur_level_id = area.start_level_id
             start_width = area.start_width
-            one_area_display_goods_list = area.best_display_goods_list
-            for display_goods in one_area_display_goods_list:
-                goods_width = display_goods.goods_data.width * display_goods.face_num
-                cur_level = candidate_shelf.levels[cur_level_id]
-                if start_width + goods_width > candidate_shelf.width + self.level_max_width_tolerance:  # 加固定的容差
-                    cur_level_id += 1
-                    if cur_level_id >= len(candidate_shelf.levels):
-                        msg = "陈列商品超出货架，陈列到此结束:{}".format(cur_level_id)
-                        dingtalk.send_message(msg, 2)
-                        print(msg)
-                        return candidate_shelf
+            if len(area.up_choose_goods_list) == 0 and len(area.down_display_goods_list) == 0:
+                # 如果没有上下架情况就完全按原来区域样子摆
+                # FIXME 上一个区域如果出现强行摆并超出需要处理
+                for child_area in area.child_area_list:
+                    if child_area.level_id != cur_level_id:
+                        cur_level_id = child_area.level_id
                     cur_level = candidate_shelf.levels[cur_level_id]
-                    cur_level.add_display_goods(display_goods)
-                    start_width = goods_width
-                else:
-                    cur_level.add_display_goods(display_goods)
-                    start_width += goods_width
+                    for display_goods in child_area.display_goods_list:
+                        cur_level.add_display_goods(display_goods)
 
-            if start_width < area.end_width:
-                cur_level.add_display_goods(DisplayGoods(NullGoodsData(area.end_width - start_width)))
+            else:
+                one_area_display_goods_list = area.best_display_goods_list
+                for display_goods in one_area_display_goods_list:
+                    goods_width = display_goods.goods_data.width * display_goods.face_num
+                    cur_level = candidate_shelf.levels[cur_level_id]
+                    if start_width + goods_width > candidate_shelf.width + self.level_max_width_tolerance:  # 加固定的容差
+                        cur_level_id += 1
+                        if cur_level_id >= len(candidate_shelf.levels):
+                            msg = "陈列商品超出货架，陈列到此结束:{}".format(cur_level_id)
+                            dingtalk.send_message(msg, 2)
+                            print(msg)
+                            return candidate_shelf
+                        cur_level = candidate_shelf.levels[cur_level_id]
+                        cur_level.add_display_goods(display_goods)
+                        start_width = goods_width
+                    else:
+                        cur_level.add_display_goods(display_goods)
+                        start_width += goods_width
+
+                if start_width < area.end_width:
+                    cur_level.add_display_goods(DisplayGoods(NullGoodsData(area.end_width - start_width)))
 
         return candidate_shelf

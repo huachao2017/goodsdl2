@@ -61,7 +61,7 @@ class Test1(unittest.TestCase):
 
         self.assertIn(level_to_display_goods_name_str[0], ['101,1,1,1,1,2,null,', '1,1,1,1,101,2,null,'])
         self.assertEqual(level_to_display_goods_name_str[1], '11,102,12,13,14,')
-        self.assertEqual(level_to_display_goods_name_str[2], '21,22,23,24,null,')
+        self.assertEqual(level_to_display_goods_name_str[2], '21,22,23,24,')
         print(shelf)
         print(best_candidate_shelf)
 
