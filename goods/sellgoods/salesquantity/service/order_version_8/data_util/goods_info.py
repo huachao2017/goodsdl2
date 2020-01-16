@@ -150,7 +150,7 @@ def get_shop_order_goods(shopid,add_type=False,select_batch_id = None ):
                             sg_ins_dict[mch_code].is_remove = True
                             handle_goods_role, ranking = sg_ins_dict[mch_code].handle_goods_role, sg_ins_dict[
                                 mch_code].ranking
-                        goods_name, upc, category1_id, category2_id, category_id, storage_day, package_type, single_face_min_disnums, supplier_id, supplier_goods_code, goods_status, max_scale, start_sum, delivery_type,order_status = get_ucenter_infos(mch_code,shopid,mch_id,erp_resupply_id)
+                        goods_name, upc, category1_id, category2_id, category_id, storage_day, package_type, single_face_min_disnums, supplier_id, supplier_goods_code, goods_status, max_scale, start_sum, delivery_type,order_status,uc_height,uc_width,uc_depth = get_ucenter_infos(mch_code,shopid,mch_id,erp_resupply_id)
 
                         if goods_status != 1 and order_status != 1 and add_type == False:
                             print ("该品不可定，mch_code={}".format(mch_code))
@@ -241,10 +241,9 @@ def get_ai_infos(mch_goods_code,upc,shopid,uc_shopid):
                 uc_shopid, upc))
         (up_shelf_date, up_status) = cursor_ai.fetchone()
         up_shelf_date = str(up_shelf_date)
-        print('ai找到商品上架时间 :{}-{}-{}！'.format(uc_shopid, upc, up_shelf_date))
     except:
-        # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
         up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+        print('ai找不到商品上架时间 取当前时间:{}-{}-{}！'.format(uc_shopid, upc, up_shelf_date))
     return  up_shelf_date
 
 # ucenter 获取单upc 数据
@@ -723,9 +722,9 @@ class SelectGoods:
 
 #  日配品 来自选品列表
 def get_select_goods(shopid,batch_id):
-    sql = "select upc,mch_goods_code,handle_goods_role,ranking from goods_goodsselectionhistory where delivery_type = 1 and shopid={} and batch_id ={}".format(shopid,batch_id)
+    sql = "select upc,mch_goods_code,handle_goods_role,ranking from goods_goodsselectionhistory where delivery_type = 1 and shopid={} and batch_id ='{}'".format(shopid,batch_id)
     sl_goods_inss_dict = {}
-    cursor = connections['dmstore'].cursor()
+    cursor = connections['default'].cursor()
     cursor.execute(sql)
     results = cursor.fetchall()
     if results is not None and len(results) > 0 :
