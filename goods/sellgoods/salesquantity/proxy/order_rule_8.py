@@ -26,7 +26,7 @@ def rule_start_num2(order_sale,start_sum):
         order_sale = start_sum
     else:
         order_sale = math.ceil(
-            float((order_sale/ start_sum))) * start_sum
+            float(order_sale/ start_sum)) * start_sum
     return order_sale
 
 def rule_start_price(sales_order_inss,dmshop_id):
@@ -235,7 +235,7 @@ def rule_daydelivery_type2(drg_inss,order_data_dict):
         while order_sale > 2*dayd_drg_ins.start_sum:
             order_data_dict[key] = order_sale - dayd_drg_ins.start_sum -  (dayd_drg_ins.stock + dayd_drg_ins.supply_stock + dayd_drg_ins.sub_count)
             order_sale = order_sale - dayd_drg_ins.start_sum
-            print ("rule_daydelivery_type2 rule , 不减品的 ,该品减少了一倍的起订量="+str(dayd_drg_ins.goods_name))
+            print ("rule_daydelivery_type2 rule , 不减品的{}, ,该品减少了一倍的起订量={}".format(dayd_drg_ins.goods_name,dayd_drg_ins.start_sum))
             if daydelivery_filter(drg_inss,order_data_dict):
                 return order_data_dict
     # 减品的减少起订量
@@ -250,7 +250,7 @@ def rule_daydelivery_type2(drg_inss,order_data_dict):
             order_data_dict[key] = order_sale - dayd_drg_ins.start_sum - (
                     dayd_drg_ins.stock + dayd_drg_ins.supply_stock + dayd_drg_ins.sub_count)
             order_sale = order_sale - dayd_drg_ins.start_sum
-            print("rule_daydelivery_type2 rule , 减品的 ,该品减少了一倍的起订量=" + str(dayd_drg_ins.goods_name))
+            print("rule_daydelivery_type2 rule , 减品的{} ,该品减少了一倍的起订量={}" .format(dayd_drg_ins.goods_name,dayd_drg_ins.start_sum))
             if daydelivery_filter(drg_inss, order_data_dict):
                 return order_data_dict
     return order_data_dict

@@ -256,10 +256,10 @@ def get_order_data_warhouse(goods_order_all):
             order_data_ins.order_sale = 0
         if order_data_ins.order_sale > 0 :
             order_data_inss.append(order_data_ins)
-    # 日配品 空间限制规则
-    print ("日配品 空间限制前：len(order_data_inss) = "+str(len(order_data_inss)))
-    order_data_inss = order_rule.rule_daydelivery_type(order_data_inss)
-    print("日配品 空间限制后：len(order_data_inss) = " + str(len(order_data_inss)))
+    # # 日配品 空间限制规则
+    # print ("日配品 空间限制前：len(order_data_inss) = "+str(len(order_data_inss)))
+    # order_data_inss = order_rule.rule_daydelivery_type(order_data_inss)
+    # print("日配品 空间限制后：len(order_data_inss) = " + str(len(order_data_inss)))
     new_data_dict = {}
     for order_data_ins in order_data_inss:
         if order_data_ins.order_sale > 0 :

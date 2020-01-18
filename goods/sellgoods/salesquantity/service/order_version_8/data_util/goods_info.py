@@ -1073,11 +1073,16 @@ class DataRawGoods():
 
 
         # 判断商品的生命周期 0 首次订货 1 新品期订货 2 旧品期
-        shelf_up_date = self.up_shelf_date
-        end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-        time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
-        time2 = time.mktime(time.strptime(end_date, '%Y-%m-%d'))
-        days = int((time2 - time1) / (24 * 60 * 60))
+        # 判断商品的生命周期 0 首次订货 1 新品期订货 2 旧品期
+        try:
+            shelf_up_date = self.up_shelf_date
+            end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+            time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
+            time2 = time.mktime(time.strptime(end_date, '%Y-%m-%d'))
+            days = int((time2 - time1) / (24 * 60 * 60))
+        except:
+            days = 0
+            self.up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
         # 临时判断商品的生命周期 ， 只用上架时间和保质期 判断
         if self.delivery_type == 2: # 非日配
             if  last_tz_upcs is None or self.upc not in last_tz_upcs :
