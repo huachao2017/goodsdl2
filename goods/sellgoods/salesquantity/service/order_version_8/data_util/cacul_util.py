@@ -100,7 +100,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
           "起订量,在途订货数,进货价,商品单价,开店以来单天最大psd数量,"
           "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,1周和4周实际来自bi,品的生命周期:0首次1新品2旧品,"
           "7天平均废弃率,7天平均废弃后毛利率,7天平均废弃量,7日平均废弃后毛利额,浮动量,周1-5平均psd数量,周6-7平均psd数量,2周的psd数量,2周小类的psd数量,单face配置最小陈列量,补货单在途订单数,"
-          "品来自台账,品选品优先级,选品角色")
+          "品来自台账,品选品优先级,选品角色,商品的长宽深,商品所在货架的层长宽深")
     for drg_ins in goods_order_all:
         mch_goods_dict = {}
         warhouse_order_sale = 0
@@ -152,6 +152,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
         mch_goods_dict['handle_goods_role'] = drg_ins.handle_goods_role
         mch_goods_dict['upc_psd_from_bi_flag'] = drg_ins.upc_psd_from_bi_flag
         shelf_data = []
+
         for shelf_ins in drg_ins.shelf_inss:
             shelf_data.append({"tz_id": shelf_ins.taizhang_id, "shelf_id": shelf_ins.shelf_id,
                                "face_num": shelf_ins.face_num,"level_depth":shelf_ins.level_depth,"level_id":shelf_ins.goods_level_id,
@@ -160,11 +161,13 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
         mch_goods_dict['depth'] = drg_ins.depth
         mch_goods_dict['height'] = drg_ins.height
         mch_goods_dict['width'] = drg_ins.width
+        goods_h_w_d = str(drg_ins.height)+"##"+str(drg_ins.width)+"##"+str(drg_ins.depth)
+        shelf_h_w_d = str(shelf_data)
         print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
-              "%s,%s,%s,%s,%s"
+              "%s,%s,%s,%s,%s,%s,%s"
               % (str(drg_ins.order_sale),str(warhouse_order_sale),
                  str(drg_ins.ucshop_id), str(drg_ins.shop_name), str(drg_ins.mch_code),
                  str(drg_ins.upc), str(drg_ins.goods_name),
@@ -181,7 +184,7 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
                  str(float(drg_ins.upc_psd_num_avg_1_5)),
                  str(float(drg_ins.upc_psd_num_avg_6_7)),
                  str(float(drg_ins.psd_nums_2)), str(float(drg_ins.psd_nums_2_cls)),str(drg_ins.single_face_min_disnums),str(drg_ins.add_sub_count),
-                 str(drg_ins.from_tz_flag),str(drg_ins.ranking),drg_ins.handle_goods_role))
+                 str(drg_ins.from_tz_flag),str(drg_ins.ranking),drg_ins.handle_goods_role,goods_h_w_d,shelf_h_w_d))
         jsondata.append(mch_goods_dict)
     order_all_data = demjson.encode(jsondata)
     return order_all_data
