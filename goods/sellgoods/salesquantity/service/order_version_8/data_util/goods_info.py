@@ -478,7 +478,7 @@ def get_ms_infos(mch_goods_code,upc,shopid,erp_resupply_id,erp_supply_id):
     # 获取在途订单数
     try:
         cursor_erp.execute(
-            "SELECT sum(sub_item_count) as sub_count from ls_sub_item where  sub_number in  (SELECT sub_number from ls_sub where  seller_shop_id={} AND status in (30,50) ) AND sku_id =(SELECT sku_id FROM ls_sku sku, ls_prod  prod where prod.prod_id= sku.prod_id AND prod.shop_id={}  and sku.model_id='{}' )".format(
+            "SELECT sum(sub_item_count) as sub_count from ls_sub_item where  sub_number in  (SELECT sub_number from ls_sub where  seller_shop_id={} AND status = 50 ) AND sku_id =(SELECT sku_id FROM ls_sku sku, ls_prod  prod where prod.prod_id= sku.prod_id AND prod.shop_id={}  and sku.model_id='{}' )".format(
                 erp_resupply_id, erp_resupply_id, upc))
         (sub_count,) = cursor_erp.fetchone()
     except:
