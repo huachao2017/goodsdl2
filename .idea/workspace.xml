@@ -14,7 +14,7 @@
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_8.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_8.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -46,11 +46,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="goods_info.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="goods_info.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
+            <state>
               <caret line="350" lean-forward="true" selection-start-line="350" selection-end-line="350" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="order_rule_8.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_8.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="342">
+              <caret line="160" column="15" lean-forward="true" selection-start-line="160" selection-start-column="15" selection-end-line="160" selection-end-column="15" />
             </state>
           </provider>
         </entry>
@@ -108,18 +117,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mAp.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/mAp1/mAp.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="389">
-              <caret line="170" column="49" lean-forward="true" selection-start-line="150" selection-start-column="2" selection-end-line="170" selection-end-column="49" />
-              <folding>
-                <element signature="e#0#14#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="sales_lstm.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../GoodsServer/goods/net/sales_lstm.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -170,7 +167,6 @@
         <option value="$PROJECT_DIR$/../GoodsServer/freezer/test/utils/paste_imgs.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/generate_order_shop.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_7.py" />
-        <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_8.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/order_process.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/listener_order.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule.py" />
@@ -187,6 +183,7 @@
         <option value="$PROJECT_DIR$/../freezerdl/set_config/dev.py" />
         <option value="$PROJECT_DIR$/../GoodsServer/goods/net/load_data.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py" />
+        <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_8.py" />
       </list>
     </option>
   </component>
@@ -234,6 +231,14 @@
               <item name="goods" type="462c0819:PsiDirectoryNode" />
               <item name="sellgoods" type="462c0819:PsiDirectoryNode" />
               <item name="salesquantity" type="462c0819:PsiDirectoryNode" />
+              <item name="proxy" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="goodsdl2" type="462c0819:PsiDirectoryNode" />
+              <item name="goods" type="462c0819:PsiDirectoryNode" />
+              <item name="sellgoods" type="462c0819:PsiDirectoryNode" />
+              <item name="salesquantity" type="462c0819:PsiDirectoryNode" />
               <item name="service" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -244,16 +249,6 @@
               <item name="salesquantity" type="462c0819:PsiDirectoryNode" />
               <item name="service" type="462c0819:PsiDirectoryNode" />
               <item name="order_version_6" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goodsdl2" type="462c0819:PsiDirectoryNode" />
-              <item name="goods" type="462c0819:PsiDirectoryNode" />
-              <item name="sellgoods" type="462c0819:PsiDirectoryNode" />
-              <item name="salesquantity" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-              <item name="order_version_6" type="462c0819:PsiDirectoryNode" />
-              <item name="data_util" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
@@ -791,13 +786,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_8.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-371">
-          <caret line="90" column="13" lean-forward="true" selection-start-line="90" selection-start-column="13" selection-end-line="90" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/bean/taskflow.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="61">
@@ -972,8 +960,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
+        <state>
           <caret line="350" lean-forward="true" selection-start-line="350" selection-end-line="350" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_8.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="160" column="15" lean-forward="true" selection-start-line="160" selection-start-column="15" selection-end-line="160" selection-end-column="15" />
         </state>
       </provider>
     </entry>

@@ -130,8 +130,8 @@ def many_sort_daydelivery(drg_ins1, drg_ins2):
     elif int(ranking_1) < int(ranking_2):
         return -1
     else:
-        V1 = drg_ins1.depth *  drg_ins1.width * drg_ins1.height
-        V2 = drg_ins2.depth *  drg_ins2.width * drg_ins2.height
+        V1 = drg_ins1.depth *  drg_ins1.width
+        V2 = drg_ins2.depth *  drg_ins2.width
         if V1 > V2:
             return -1
         else:
@@ -152,13 +152,13 @@ def daydelivery_filter(drg_inss,order_data_dict):
             else:
                 order_sale = 0
             shelf_inss = drg_ins.shelf_inss
-            V1 += drg_ins.height * drg_ins.width * drg_ins.depth * math.ceil(order_sale+drg_ins.stock - 1* float(drg_ins.upc_psd_num_avg_1))
+            V1 += drg_ins.width * drg_ins.depth * math.ceil(order_sale+drg_ins.stock - 1* float(drg_ins.upc_psd_num_avg_1))
             for shelf_ins in shelf_inss:
                 shelf_id_dict[str(shelf_ins.shelf_id) +"," +str(shelf_ins.goods_level_id)] = shelf_ins
     for shelf_level_id in shelf_id_dict:
         shelf_ins = shelf_id_dict[shelf_level_id]
-        V2 += shelf_ins.level_width * shelf_ins.level_height * shelf_ins.level_depth
-    if V1 <= V2*0.8:
+        V2 += shelf_ins.level_width * shelf_ins.level_depth
+    if V1 < V2:
         return True
     else:
         return False
