@@ -14,7 +14,7 @@
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/cacul_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/cacul_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -28,23 +28,8 @@
       <file leaf-file-name="load_data.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../GoodsServer/goods/net/load_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="203">
-              <caret line="14" column="44" lean-forward="true" selection-start-line="14" selection-start-column="44" selection-end-line="14" selection-end-column="44" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="listener_order.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/listener_order.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
-              <folding>
-                <element signature="e#100#111#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="1291">
+              <caret line="233" column="24" lean-forward="true" selection-start-line="233" selection-start-column="24" selection-end-line="233" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -61,32 +46,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="taskflow.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/bean/taskflow.py">
+      <file leaf-file-name="goods_info.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="61">
-              <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+            <state relative-caret-position="228">
+              <caret line="350" lean-forward="true" selection-start-line="350" selection-end-line="350" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="generate_order_2saler_add.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/generate_order_2saler_add.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="9" column="11" lean-forward="true" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
-              <folding>
-                <element signature="e#45#74#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cacul_util.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="cacul_util.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/cacul_util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="213">
-              <caret line="103" column="35" lean-forward="true" selection-start-line="103" selection-start-column="35" selection-end-line="103" selection-end-column="35" />
+            <state relative-caret-position="228">
+              <caret line="114" column="43" lean-forward="true" selection-start-line="114" selection-start-column="43" selection-end-line="114" selection-end-column="43" />
               <folding>
                 <element signature="e#0#70#0" expanded="true" />
               </folding>
@@ -94,20 +67,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="order_rule_8.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_8.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-371">
-              <caret line="90" column="13" lean-forward="true" selection-start-line="90" selection-start-column="13" selection-end-line="90" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="goods_info.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/goods_info.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-10">
-              <caret line="1093" column="8" lean-forward="true" selection-start-line="1093" selection-start-column="8" selection-end-line="1109" selection-end-column="56" />
+            <state relative-caret-position="3342">
+              <caret line="346" column="8" lean-forward="true" selection-start-line="346" selection-start-column="8" selection-end-line="346" selection-end-column="8" />
               <folding>
                 <element signature="e#1#12#0" expanded="true" />
               </folding>
@@ -115,23 +79,55 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="generate_order_shop.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/generate_order_shop.py">
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="589">
-              <caret line="37" column="31" lean-forward="true" selection-start-line="37" selection-start-column="31" selection-end-line="37" selection-end-column="31" />
-              <folding>
-                <element signature="e#33#62#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="-95">
+              <caret line="113" column="6" lean-forward="true" selection-start-line="113" selection-start-column="6" selection-end-line="113" selection-end-column="6" />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="dev.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/set_config/dev.py">
+        <entry file="file://$PROJECT_DIR$/../freezerdl/set_config/dev.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="101" column="19" selection-start-line="101" selection-start-column="5" selection-end-line="101" selection-end-column="19" />
+            <state relative-caret-position="266">
+              <caret line="14" column="20" lean-forward="true" selection-start-line="14" selection-start-column="20" selection-end-line="14" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <folding>
+                <element signature="e#0#42#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mAp.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/mAp1/mAp.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="389">
+              <caret line="170" column="49" lean-forward="true" selection-start-line="150" selection-start-column="2" selection-end-line="170" selection-end-column="49" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sales_lstm.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../GoodsServer/goods/net/sales_lstm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="176">
+              <caret line="67" column="8" lean-forward="true" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#46#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -167,7 +163,6 @@
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/local_util/sales_predict_util2.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/generate_order_shop.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/generate_order_shop.py" />
-        <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/data_util/goods_info.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/order_process.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_7/order_process.py" />
@@ -181,15 +176,17 @@
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule.py" />
         <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/util/load_data.py" />
         <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/model.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/goods/net/sales_lstm.py" />
         <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/many_train.py" />
         <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/yolo.py" />
         <option value="$PROJECT_DIR$/../GoodsServer/goods/net/many_train.py" />
         <option value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/yolo3/yolo.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/goods/net/load_data.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/goods_info.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/generate_order_2saler_add.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/cacul_util.py" />
+        <option value="$PROJECT_DIR$/../GoodsServer/goods/net/sales_lstm.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/set_config/dev.py" />
+        <option value="$PROJECT_DIR$/../GoodsServer/goods/net/load_data.py" />
+        <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py" />
       </list>
     </option>
   </component>
@@ -237,7 +234,7 @@
               <item name="goods" type="462c0819:PsiDirectoryNode" />
               <item name="sellgoods" type="462c0819:PsiDirectoryNode" />
               <item name="salesquantity" type="462c0819:PsiDirectoryNode" />
-              <item name="proxy" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
@@ -246,6 +243,17 @@
               <item name="sellgoods" type="462c0819:PsiDirectoryNode" />
               <item name="salesquantity" type="462c0819:PsiDirectoryNode" />
               <item name="service" type="462c0819:PsiDirectoryNode" />
+              <item name="order_version_6" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="goodsdl2" type="462c0819:PsiDirectoryNode" />
+              <item name="goods" type="462c0819:PsiDirectoryNode" />
+              <item name="sellgoods" type="462c0819:PsiDirectoryNode" />
+              <item name="salesquantity" type="462c0819:PsiDirectoryNode" />
+              <item name="service" type="462c0819:PsiDirectoryNode" />
+              <item name="order_version_6" type="462c0819:PsiDirectoryNode" />
+              <item name="data_util" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
@@ -265,11 +273,6 @@
               <item name="service" type="462c0819:PsiDirectoryNode" />
               <item name="order_version_8" type="462c0819:PsiDirectoryNode" />
               <item name="data_util" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goodsdl2" type="462c0819:PsiDirectoryNode" />
-              <item name="set_config" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -302,7 +305,25 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.sales_lstm">
+  <component name="RunManager" selected="Python.load_data">
+    <configuration name="load_data" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="GoodsServer" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../GoodsServer/goods/net" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../GoodsServer/goods/net/load_data.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="paste_imgs" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="GoodsServer" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -342,9 +363,11 @@
     <list>
       <item itemvalue="Python.sales_lstm" />
       <item itemvalue="Python.paste_imgs" />
+      <item itemvalue="Python.load_data" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.load_data" />
         <item itemvalue="Python.sales_lstm" />
         <item itemvalue="Python.paste_imgs" />
       </list>
@@ -450,7 +473,7 @@
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3529412" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.23529412" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.036565978" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -524,47 +547,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../../tools/work/Anaconda/Lib/site-packages/sklearn/preprocessing/data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="731" column="32" lean-forward="true" selection-start-line="731" selection-start-column="32" selection-end-line="731" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../tools/work/Anaconda/Lib/site-packages/numpy/lib/npyio.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8683">
-          <caret line="481" selection-start-line="481" selection-end-line="481" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/cacul_util.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="950">
-          <caret line="394" selection-start-line="394" selection-end-line="394" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/generate_order_shop.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="29" column="1" selection-start-line="29" selection-start-column="1" selection-end-line="40" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/order_process.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="150" column="9" selection-start-line="150" selection-start-column="9" selection-end-line="151" selection-end-column="113" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/service/train_service.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-2622">
@@ -621,13 +603,6 @@
           <folding>
             <element signature="e#0#46#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="167" column="33" lean-forward="true" selection-start-line="167" selection-start-column="33" selection-end-line="167" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -732,16 +707,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/mAp1/mAp.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="4" selection-start-line="4" selection-end-line="7" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="70">
@@ -789,16 +754,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/mAp1/predict.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="12" column="18" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/many_train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="114">
@@ -809,24 +764,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/yolo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-104">
-          <caret line="113" column="32" selection-start-line="113" selection-start-column="16" selection-end-line="113" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/util/load_data.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="152">
           <caret line="23" column="20" lean-forward="true" selection-start-line="23" selection-start-column="20" selection-end-line="23" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="173" lean-forward="true" selection-start-line="173" selection-end-line="173" />
         </state>
       </provider>
     </entry>
@@ -836,37 +777,10 @@
     <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/model_data/voc_classes.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/yolo3/yolo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-38">
-          <caret line="33" column="5" lean-forward="true" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../GoodsServer/goods/net/many_train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="76">
           <caret line="34" column="6" selection-start-line="34" selection-start-column="6" selection-end-line="34" selection-end-column="105" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/goods/net/sales_lstm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="159" column="57" lean-forward="true" selection-start-line="154" selection-start-column="6" selection-end-line="159" selection-end-column="57" />
-          <folding>
-            <element signature="e#0#46#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/goods/net/load_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="14" column="44" lean-forward="true" selection-start-line="14" selection-start-column="44" selection-end-line="14" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -884,16 +798,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/goods_info.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-10">
-          <caret line="1093" column="8" lean-forward="true" selection-start-line="1093" selection-start-column="8" selection-end-line="1109" selection-end-column="56" />
-          <folding>
-            <element signature="e#1#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/bean/taskflow.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="61">
@@ -907,16 +811,6 @@
           <caret line="20" column="37" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
           <folding>
             <element signature="e#100#111#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/order_process.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="148" column="38" lean-forward="true" selection-start-line="148" selection-start-column="38" selection-end-line="148" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -941,13 +835,145 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/-1437457649/nt.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="41">
+          <caret line="339" column="4" selection-start-line="339" selection-start-column="4" selection-end-line="339" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/mAp1/predict.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="106" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/yolo3/yolo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3819">
+          <caret line="59" column="37" lean-forward="true" selection-start-line="59" selection-start-column="37" selection-end-line="59" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/yolo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-361">
+          <caret line="123" column="31" lean-forward="true" selection-start-line="123" selection-start-column="31" selection-end-line="123" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3420">
+          <caret line="191" column="33" lean-forward="true" selection-start-line="191" selection-start-column="33" selection-end-line="191" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/predict_time.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="1" column="10" lean-forward="true" selection-start-line="1" selection-start-column="10" selection-end-line="1" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/mAp1/predict.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="23" column="38" lean-forward="true" selection-start-line="23" selection-start-column="38" selection-end-line="23" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/mAp1/mAp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="389">
+          <caret line="170" column="49" lean-forward="true" selection-start-line="150" selection-start-column="2" selection-end-line="170" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/goods/net/sales_lstm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="67" column="8" lean-forward="true" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/order_process.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="267">
+          <caret line="148" column="38" lean-forward="true" selection-start-line="148" selection-start-column="38" selection-end-line="148" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/goods_info.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3342">
+          <caret line="346" column="8" lean-forward="true" selection-start-line="346" selection-start-column="8" selection-end-line="346" selection-end-column="8" />
+          <folding>
+            <element signature="e#1#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-95">
+          <caret line="113" column="6" lean-forward="true" selection-start-line="113" selection-start-column="6" selection-end-line="113" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/set_config/dev.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="14" column="20" lean-forward="true" selection-start-line="14" selection-start-column="20" selection-end-line="14" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/goods/net/load_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1291">
+          <caret line="233" column="24" lean-forward="true" selection-start-line="233" selection-start-column="24" selection-end-line="233" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/cacul_util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="103" column="35" lean-forward="true" selection-start-line="103" selection-start-column="35" selection-end-line="103" selection-end-column="35" />
+        <state relative-caret-position="228">
+          <caret line="114" column="43" lean-forward="true" selection-start-line="114" selection-start-column="43" selection-end-line="114" selection-end-column="43" />
           <folding>
             <element signature="e#0#70#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="350" lean-forward="true" selection-start-line="350" selection-end-line="350" />
         </state>
       </provider>
     </entry>
