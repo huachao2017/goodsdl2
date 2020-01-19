@@ -247,7 +247,7 @@ def get_order_data_warhouse(goods_order_all):
     order_data_inss = []
     for key in data_dict:
         order_data_ins = data_dict[key]
-        order_sale = order_data_ins.order_sale - order_data_ins.sub_count - order_data_ins.shop_stock - order_data_ins.supply_stock
+        order_sale = order_data_ins.order_sale - max(0,order_data_ins.sub_count) - max(0,order_data_ins.shop_stock) - max(0,order_data_ins.supply_stock)
         if order_sale > 0 :
             # 起订量规则
             order_sale = order_rule.rule_start_num2(order_sale, order_data_ins.start_sum)

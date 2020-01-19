@@ -182,9 +182,9 @@ def rule_bingql(drg_inss,order_data_dict):
             order_sale = order_data_dict[key]
         else:
             order_sale = 0
-        order_sale = order_sale + bingql_drg_ins.stock + bingql_drg_ins.supply_stock + bingql_drg_ins.sub_count
+        order_sale = order_sale + max(0,bingql_drg_ins.stock) + max(0,bingql_drg_ins.supply_stock) + max(0,bingql_drg_ins.sub_count)
         while order_sale > 2*bingql_drg_ins.start_sum:
-            order_data_dict[key] = order_sale - bingql_drg_ins.start_sum -  (bingql_drg_ins.stock + bingql_drg_ins.supply_stock + bingql_drg_ins.sub_count)
+            order_data_dict[key] = order_sale - bingql_drg_ins.start_sum -  (max(0,bingql_drg_ins.stock) + max(0,bingql_drg_ins.supply_stock) + max(0,bingql_drg_ins.sub_count))
             order_sale = order_sale - bingql_drg_ins.start_sum
             print ("bing qi lin rule , 不减品的 ,该品减少了一倍的起订量="+str(bingql_drg_ins.goods_name))
             if bingql_filter(drg_inss,order_data_dict):
@@ -196,10 +196,10 @@ def rule_bingql(drg_inss,order_data_dict):
             order_sale = order_data_dict[key]
         else:
             order_sale = 0
-        order_sale = order_sale + bingql_drg_ins.stock + bingql_drg_ins.supply_stock + bingql_drg_ins.sub_count
+        order_sale = order_sale + max(0,bingql_drg_ins.stock) + max(0,bingql_drg_ins.supply_stock) + max(0,bingql_drg_ins.sub_count)
         while order_sale > 0:
             order_data_dict[key] = order_sale - bingql_drg_ins.start_sum - (
-                        bingql_drg_ins.stock + bingql_drg_ins.supply_stock + bingql_drg_ins.sub_count)
+                        max(0,bingql_drg_ins.stock) + max(0,bingql_drg_ins.supply_stock) + max(0,bingql_drg_ins.sub_count))
             order_sale = order_sale - bingql_drg_ins.start_sum
             print("bing qi lin rule , 减品的 ,该品减少了一倍的起订量=" + str(bingql_drg_ins.goods_name))
             if bingql_filter(drg_inss, order_data_dict):
@@ -231,7 +231,7 @@ def rule_daydelivery_type2(drg_inss,order_data_dict):
             order_sale = order_data_dict[key]
         else:
             order_sale = 0
-        order_sale = order_sale + dayd_drg_ins.stock + dayd_drg_ins.supply_stock + dayd_drg_ins.sub_count
+        order_sale = order_sale + max(0,dayd_drg_ins.stock) + max(0,dayd_drg_ins.supply_stock) + max(0,dayd_drg_ins.sub_count)
         while order_sale > 2*dayd_drg_ins.start_sum:
             order_data_dict[key] = order_sale - dayd_drg_ins.start_sum -  (dayd_drg_ins.stock + dayd_drg_ins.supply_stock + dayd_drg_ins.sub_count)
             order_sale = order_sale - dayd_drg_ins.start_sum
