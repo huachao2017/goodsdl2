@@ -36,9 +36,9 @@ def train():
             daily_news_content += ","
         # news_dict[str(d.strftime("%Y%m%d"))] = daily_all_news
         cursor.execute(insert_sql.format(date_str,daily_news_title,daily_news_content))
+        conn.commit()
         time.sleep(13)
         d += delta
-        print(123)
 
 
 
