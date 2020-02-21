@@ -1,9 +1,13 @@
 import tushare as ts
 import datetime,time
 from django.db import connections
+import pymysql
+conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl',charset="utf8", port=3306, use_unicode=True)
 
-conn = connections['default']
+# conn = connections['default']
 cursor = conn.cursor()
+
+
 insert_sql = "insert into cctv_news(date,title,content) values ('{}','{}','{}')"
 def train():
     """
@@ -34,6 +38,7 @@ def train():
         cursor.execute(insert_sql.format(date_str,daily_news_title,daily_news_content))
         time.sleep(13)
         d += delta
+        print(123)
 
 
 
