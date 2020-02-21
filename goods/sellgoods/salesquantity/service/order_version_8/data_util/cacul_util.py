@@ -1,7 +1,7 @@
 from goods.sellgoods.commonbean.goods_ai_sales_order import SalesOrder
-from goods.sellgoods.salesquantity.service.order_version_6.data_util.goods_info import get_shop_order_goods
+from goods.sellgoods.salesquantity.service.order_version_8.data_util.goods_info import get_shop_order_goods
 from goods.sellgoods.salesquantity.bean import taskflow
-from goods.sellgoods.salesquantity.proxy import order_rule
+from goods.sellgoods.salesquantity.proxy import order_rule_8 as order_rule
 import math
 import demjson
 import time
@@ -39,8 +39,8 @@ def get_saleorder_ins(drg_ins, shop_id,shop_type):
     sales_order_ins.face_num = 0
     sales_order_ins.sub_count = drg_ins.sub_count
     sales_order_ins.upc_price = drg_ins.upc_price
-    sales_order_ins.upc_psd_amount_avg_4 = drg_ins.upc_psd_amount_avg_4
-    sales_order_ins.upc_psd_amount_avg_1 = drg_ins.upc_psd_amount_avg_1
+    sales_order_ins.upc_psd_num_avg_4 = drg_ins.upc_psd_num_avg_4
+    sales_order_ins.upc_psd_num_avg_1 = drg_ins.upc_psd_num_avg_1
     sales_order_ins.purchase_price = drg_ins.purchase_price
     sales_order_ins.max_scale = drg_ins.max_scale
     sales_order_ins.oneday_max_psd = drg_ins.oneday_max_psd
@@ -73,6 +73,16 @@ def get_goods_batch_order_data_warhouse(batch_id,goods_order_all):
     except:
         print ("冰淇淋空间限制 规则 error , check ....")
         traceback.print_exc()
+
+    # 加入日配品的 空间限制规则：
+    try:
+        print ("加入日配品的限制前 订货品个数 = "+str(len(list(demjson.decode(order_data)))))
+        order_data_dict = order_rule.rule_daydelivery_type2(drg_inss=goods_order_all,order_data_dict=order_data_dict)
+        order_data = update_order_data(order_data_dict,order_data)
+        print("加入日配品的限制后 订货品个数 = " + str(len(list(demjson.decode(order_data)))))
+    except:
+        print ("加入日配品的限制 规则 error , check ....")
+        traceback.print_exc()
     order_data_all = get_order_data_all_warhouse(goods_order_all,order_data_dict)
     create_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     update_time = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
@@ -88,8 +98,9 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
           "模板店4周预估psd,模板店4周预估psd金额,配送单位,最小陈列数,"
           "最大陈列数,门店库存,仓库库存,配送类型,保质期,"
           "起订量,在途订货数,进货价,商品单价,开店以来单天最大psd数量,"
-          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,品的生命周期:0首次1新品2旧品,"
-          "7天平均废弃率,7天平均废弃后毛利率,7天平均废弃量,7日平均废弃后毛利额,浮动量,周1-5平均psd数量,周6-7平均psd数量,2周的psd数量,2周小类的psd数量,单face配置最小陈列量,补货单在途订单数")
+          "最大陈列比例,4周实际销售psd数量,1周实际销售psd数量,1周和4周实际来自bi,品的生命周期:0首次1新品2旧品,"
+          "7天平均废弃率,7天平均废弃后毛利率,7天平均废弃量,7日平均废弃后毛利额,浮动量,周1-5平均psd数量,周6-7平均psd数量,2周的psd数量,2周小类的psd数量,单face配置最小陈列量,补货单在途订单数,"
+          "品来自台账,品选品优先级,选品角色,商品的长宽深,商品所在货架的层长宽深")
     for drg_ins in goods_order_all:
         mch_goods_dict = {}
         warhouse_order_sale = 0
@@ -123,20 +134,25 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
         mch_goods_dict['purchase_price'] = drg_ins.purchase_price
         mch_goods_dict['upc_price'] = drg_ins.upc_price
         mch_goods_dict['oneday_max_psd'] = math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)
-        mch_goods_dict['upc_psd_amount_avg_4'] = float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)
-        mch_goods_dict['upc_psd_amount_avg_1'] = float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)
+        mch_goods_dict['upc_psd_num_avg_4'] = float(drg_ins.upc_psd_num_avg_4)
+        mch_goods_dict['upc_psd_num_avg_1'] = float(drg_ins.upc_psd_num_avg_4)
         mch_goods_dict['upc_status_type'] = drg_ins.upc_status_type
         mch_goods_dict['loss_avg'] = drg_ins.loss_avg
         mch_goods_dict['loss_avg_profit_amount'] = drg_ins.loss_avg_profit_amount
         mch_goods_dict['loss_avg_nums'] = drg_ins.loss_avg_nums
         mch_goods_dict['loss_avg_amount'] = drg_ins.loss_avg_amount
         mch_goods_dict['fudong_nums'] = drg_ins.fudong_nums
-        mch_goods_dict['week_1_5_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)
-        mch_goods_dict['week_6_7_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)
+        mch_goods_dict['week_1_5_avg_psdnums'] = float(drg_ins.upc_psd_num_avg_1_5)
+        mch_goods_dict['week_6_7_avg_psdnums'] = float(drg_ins.upc_psd_num_avg_6_7)
         mch_goods_dict['single_face_min_disnums'] = drg_ins.single_face_min_disnums
         mch_goods_dict['add_sub_count'] = drg_ins.add_sub_count
         mch_goods_dict['safe_stock'] = drg_ins.safe_stock
+        mch_goods_dict['from_tz_flag'] = drg_ins.from_tz_flag
+        mch_goods_dict['ranking'] = drg_ins.ranking
+        mch_goods_dict['handle_goods_role'] = drg_ins.handle_goods_role
+        mch_goods_dict['upc_psd_from_bi_flag'] = drg_ins.upc_psd_from_bi_flag
         shelf_data = []
+
         for shelf_ins in drg_ins.shelf_inss:
             shelf_data.append({"tz_id": shelf_ins.taizhang_id, "shelf_id": shelf_ins.shelf_id,
                                "face_num": shelf_ins.face_num,"level_depth":shelf_ins.level_depth,"level_id":shelf_ins.goods_level_id,
@@ -145,11 +161,13 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
         mch_goods_dict['depth'] = drg_ins.depth
         mch_goods_dict['height'] = drg_ins.height
         mch_goods_dict['width'] = drg_ins.width
+        goods_h_w_d = str(drg_ins.height)+"##"+str(drg_ins.width)+"##"+str(drg_ins.depth)
+        shelf_h_w_d = str(shelf_data)
         print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
               "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,"
-              "%s"
+              "%s,%s,%s,%s,%s,%s,%s"
               % (str(drg_ins.order_sale),str(warhouse_order_sale),
                  str(drg_ins.ucshop_id), str(drg_ins.shop_name), str(drg_ins.mch_code),
                  str(drg_ins.upc), str(drg_ins.goods_name),
@@ -160,12 +178,13 @@ def get_order_data_all_warhouse(goods_order_all,order_data_dict):
                  str(drg_ins.storage_day),
                  str(drg_ins.start_sum), str(drg_ins.sub_count), str(drg_ins.purchase_price), str(drg_ins.upc_price),
                  str(math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)),
-                 str(drg_ins.max_scale), str(float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)),
-                 str(float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)), str(drg_ins.upc_status_type),
+                 str(drg_ins.max_scale), str(float(drg_ins.upc_psd_num_avg_4)),
+                 str(float(drg_ins.upc_psd_num_avg_1)),str(drg_ins.upc_psd_from_bi_flag), str(drg_ins.upc_status_type),
                  str(drg_ins.loss_avg), str(drg_ins.loss_avg_profit_amount), str(drg_ins.loss_avg_nums),str(drg_ins.loss_avg_amount),str(drg_ins.fudong_nums),
-                 str(float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)),
-                 str(float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)),
-                 str(float(drg_ins.psd_nums_2)), str(float(drg_ins.psd_nums_2_cls)),str(drg_ins.single_face_min_disnums),str(drg_ins.add_sub_count)))
+                 str(float(drg_ins.upc_psd_num_avg_1_5)),
+                 str(float(drg_ins.upc_psd_num_avg_6_7)),
+                 str(float(drg_ins.psd_nums_2)), str(float(drg_ins.psd_nums_2_cls)),str(drg_ins.single_face_min_disnums),str(drg_ins.add_sub_count),
+                 str(drg_ins.from_tz_flag),str(drg_ins.ranking),drg_ins.handle_goods_role,goods_h_w_d,shelf_h_w_d))
         jsondata.append(mch_goods_dict)
     order_all_data = demjson.encode(jsondata)
     return order_all_data
@@ -228,7 +247,7 @@ def get_order_data_warhouse(goods_order_all):
     order_data_inss = []
     for key in data_dict:
         order_data_ins = data_dict[key]
-        order_sale = order_data_ins.order_sale - order_data_ins.sub_count - order_data_ins.shop_stock - order_data_ins.supply_stock
+        order_sale = order_data_ins.order_sale - max(0,order_data_ins.sub_count) - max(0,order_data_ins.shop_stock) - max(0,order_data_ins.supply_stock)
         if order_sale > 0 :
             # 起订量规则
             order_sale = order_rule.rule_start_num2(order_sale, order_data_ins.start_sum)
@@ -237,10 +256,10 @@ def get_order_data_warhouse(goods_order_all):
             order_data_ins.order_sale = 0
         if order_data_ins.order_sale > 0 :
             order_data_inss.append(order_data_ins)
-    # 日配品 空间限制规则
-    print ("日配品 空间限制前：len(order_data_inss) = "+str(len(order_data_inss)))
-    order_data_inss = order_rule.rule_daydelivery_type(order_data_inss)
-    print("日配品 空间限制后：len(order_data_inss) = " + str(len(order_data_inss)))
+    # # 日配品 空间限制规则
+    # print ("日配品 空间限制前：len(order_data_inss) = "+str(len(order_data_inss)))
+    # order_data_inss = order_rule.rule_daydelivery_type(order_data_inss)
+    # print("日配品 空间限制后：len(order_data_inss) = " + str(len(order_data_inss)))
     new_data_dict = {}
     for order_data_ins in order_data_inss:
         if order_data_ins.order_sale > 0 :
@@ -350,14 +369,14 @@ def get_order_all_data(result,sales_order_inss):
         mch_goods_dict['purchase_price'] = drg_ins.purchase_price
         mch_goods_dict['upc_price'] = drg_ins.upc_price
         mch_goods_dict['oneday_max_psd'] = math.ceil(drg_ins.oneday_max_psd / drg_ins.upc_price)
-        mch_goods_dict['upc_psd_amount_avg_4'] = float(drg_ins.upc_psd_amount_avg_4 / drg_ins.upc_price)
-        mch_goods_dict['upc_psd_amount_avg_1'] = float(drg_ins.upc_psd_amount_avg_1 / drg_ins.upc_price)
+        mch_goods_dict['upc_psd_num_avg_4'] = float(drg_ins.upc_psd_num_avg_4)
+        mch_goods_dict['upc_psd_num_avg_1'] = float(drg_ins.upc_psd_num_avg_1)
         mch_goods_dict['upc_status_type'] = drg_ins.upc_status_type
         mch_goods_dict['loss_avg'] = drg_ins.loss_avg
         mch_goods_dict['loss_avg_profit_amount'] = drg_ins.loss_avg_profit_amount
         mch_goods_dict['loss_avg_nums'] = drg_ins.loss_avg_nums
-        mch_goods_dict['week_1_5_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_1_5 / drg_ins.upc_price)
-        mch_goods_dict['week_6_7_avg_psdnums'] = float(drg_ins.upc_psd_amount_avg_6_7 / drg_ins.upc_price)
+        mch_goods_dict['week_1_5_avg_psdnums'] = float(drg_ins.upc_psd_num_avg_1_5)
+        mch_goods_dict['week_6_7_avg_psdnums'] = float(drg_ins.upc_psd_num_avg_6_7)
         mch_goods_dict['single_face_min_disnums'] = drg_ins.single_face_min_disnums
         mch_goods_dict['add_sub_count'] = drg_ins.add_sub_count
         mch_goods_dict['safe_stock'] = drg_ins.safe_stock

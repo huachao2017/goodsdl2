@@ -364,7 +364,7 @@ def get_shop_order_goods(shopid,add_type=False):
                         # 获取在途订单数
                         try:
                             cursor_erp.execute(
-                                "SELECT sum(sub_item_count) as sub_count from ls_sub_item where  sub_number in  (SELECT sub_number from ls_sub where  seller_shop_id={} AND status in (30,50) ) AND sku_id =(SELECT sku_id FROM ls_sku sku, ls_prod  prod where prod.prod_id= sku.prod_id AND prod.shop_id={}  and sku.model_id='{}' )".format(
+                                "SELECT sum(sub_item_count) as sub_count from ls_sub_item where  sub_number in  (SELECT sub_number from ls_sub where  seller_shop_id={} AND status = 50 ) AND sku_id =(SELECT sku_id FROM ls_sku sku, ls_prod  prod where prod.prod_id= sku.prod_id AND prod.shop_id={}  and sku.model_id='{}' )".format(
                                     erp_resupply_id,erp_resupply_id,upc))
                             (sub_count,) = cursor_erp.fetchone()
                         except:
@@ -895,13 +895,16 @@ class DataRawGoods():
         self.max_disnums = max_disnums
         self.min_disnums = min_disnums
 
-
         # 判断商品的生命周期 0 首次订货 1 新品期订货 2 旧品期
-        shelf_up_date = self.up_shelf_date
-        end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-        time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
-        time2 = time.mktime(time.strptime(end_date, '%Y-%m-%d'))
-        days = int((time2 - time1) / (24 * 60 * 60))
+        try :
+            shelf_up_date = self.up_shelf_date
+            end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+            time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
+            time2 = time.mktime(time.strptime(end_date, '%Y-%m-%d'))
+            days = int((time2 - time1) / (24 * 60 * 60))
+        except :
+            days = 0
+            self.up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
         # 临时判断商品的生命周期 ， 只用上架时间和保质期 判断
         if self.delivery_type == 2: # 非日配
             if  last_tz_upcs is None or self.upc not in last_tz_upcs :

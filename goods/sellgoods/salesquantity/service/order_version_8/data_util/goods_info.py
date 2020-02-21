@@ -9,13 +9,16 @@ import traceback
 from goods import utils
 from set_config import config
 
-def get_shop_order_goods(shopid,add_type=False):
+def get_shop_order_goods(shopid,add_type=False,select_batch_id = None ):
     """
     获取商店的所有货架及货架上的商品信息，该方法在订货V3时用
     :param shopid: fx系统的商店id
     :param erp_shop_type: erp系统里面的类型
     :return:返回一个DataRawGoods对象的map,key为mch_code
     """
+    # TODO 更改流程后 batch_id 必传， 这里为了测试普天店 选取固定值batch_id
+    if select_batch_id is None:
+        select_batch_id = 'lishu_test_201'
     ret = {}
     next_day = str(time.strftime('%Y-%m-%d', time.localtime()))
     cursor = connections['ucenter'].cursor()
@@ -52,18 +55,22 @@ def get_shop_order_goods(shopid,add_type=False):
     if taizhangs is None:
         print ("获取订货日台账失败 uc_shopid="+str(uc_shopid))
     shelf_inss = []
+
+    # 获取日配选品字典
+    sg_ins_dict = get_select_goods(shopid,select_batch_id)
+
     for taizhang in taizhangs:
         taizhang_id = taizhang[0]
         shelf_id = taizhang[1]
         shelf_type = ''
         shelf_type_id = None
+        shelf_length, shelf_height, shelf_depth = 0,0,0
         try:
             cursor.execute("select id,shelf_type_id,length,height,depth from sf_shelf where id = {}".format(shelf_id))
             (id,shelf_type_id,shelf_length,shelf_height,shelf_depth) = cursor.fetchone()
         except:
             print ("台账找不到货架 ， shelf_id="+str(shelf_id))
             traceback.print_exc()
-
         try:
             cursor.execute("select id,type_name from sf_shelf_type where id = {} ".format(shelf_type_id))
             (id, type_name) = cursor.fetchone()
@@ -138,375 +145,85 @@ def get_shop_order_goods(shopid,add_type=False):
                         drg_ins.shelf_inss = new_shelf_inss
                         drg_ins.min_disnums = min_disnums
                     else:
-                        # 获取商品属性
-                        try:
-                            cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,display_first_cat_id,display_second_cat_id,display_third_cat_id,storage_day,package_type,display_goods_num,supplier_id,supplier_goods_code,goods_status from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
-                                    mch_id, mch_code))
-                            # FIXME width,height暂时翻转
-                            # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
-                            (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
-                             is_suspension,category1_id,category2_id,category_id,storage_day,package_type,single_face_min_disnums,supplier_id,supplier_goods_code,goods_status) = cursor.fetchone()
-                            if add_type == False and goods_status is not None and goods_status != 1:
-                                continue
-                        except:
-                            print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_code))
+                        handle_goods_role, ranking = 0,0
+                        if mch_code in sg_ins_dict.keys():
+                            sg_ins_dict[mch_code].is_remove = True
+                            handle_goods_role, ranking = sg_ins_dict[mch_code].handle_goods_role, sg_ins_dict[
+                                mch_code].ranking
+                        goods_name, upc, category1_id, category2_id, category_id, storage_day, package_type, single_face_min_disnums, supplier_id, supplier_goods_code, goods_status, max_scale, start_sum, delivery_type,order_status,uc_height,uc_width,uc_depth = get_ucenter_infos(mch_code,shopid,mch_id,erp_resupply_id)
+
+                        if goods_status != 1 and order_status != 1 and add_type == False:
+                            print ("该品不可定，mch_code={}".format(mch_code))
                             continue
 
-                        # 获取商品的 可定  起订量  配送类型
-                        start_sum = 0
-                        delivery_type = 2
-                        try:
-                            if add_type == False:
-                                cursor.execute(
-                                    "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} and order_status = 1 ".format(supplier_id,supplier_goods_code))
-                                (start_sum,order_status,delivery_type_str) = cursor.fetchone()
-                                cursor.execute(
-                                    "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
-                                        delivery_type_str))
-                                (delivery_type,) = cursor.fetchone()
-                            else:
-                                cursor.execute(
-                                    "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {} ".format(
-                                        supplier_id, supplier_goods_code))
-                                (start_sum, order_status, delivery_type_str) = cursor.fetchone()
-                                cursor.execute(
-                                    "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
-                                        delivery_type_str))
-                                (delivery_type,) = cursor.fetchone()
-                        except:
-                            print ("该品 不订货，获取商品的可定  起订量  配送类型 失败 ！ erp_resupply_id={},upc={},mch_code={}".format(erp_resupply_id,upc,mch_code))
-                            if add_type == False:
-                                continue
-                        # # 获取商品的最小陈列量  切换到sass 获取
-                        # single_face_min_disnums = 0
-                        # try:
-                        #     cursor_ai.execute("select single_face_min_disnums from goods_config_disnums where upc = '{}'".format(upc))
-                        #     (single_face_min_disnums,) = cursor_ai.fetchone()
-                        # except:
-                        #     print ("ai 找不到商品的单face最小陈列量 ")
-                        #     single_face_min_disnums = 0
+                        upc_psd_num_avg_1, upc_psd_num_avg_1_5, upc_psd_num_avg_6_7, upc_psd_num_avg_4, oneday_max_psd, upc_psd_from_bi_flag = get_bi_infos(mch_code,upc,shopid,mch_id)
+                        add_sub_count, supply_stock, sub_count, multiple = get_ms_infos(mch_code,upc,shopid,erp_resupply_id,erp_supply_id)
+                        up_shelf_date = get_ai_infos(mch_code,upc,shopid,uc_shopid)
+                        psd_nums_2_cls, psd_amount_2_cls, psd_nums_4, psd_amount_4, psd_nums_2, psd_amount_2 = get_common_infos(mch_code,upc,shopid)
+                        loss_avg, loss_avg_nums, loss_avg_profit_amount, loss_avg_amount, stock, purchase_price, upc_price = get_dmstore_infos(mch_code,upc,shopid)
 
-                        scale = None
-                        max_scale = 1
-                        # 获取最大陈列系数
-                        try:
-                            cursor.execute(
-                                "select cat3_id,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and cat3_id = '{}' ".format(
-                                    mch_id,category_id))
-                            (cat3_id, scale) = cursor.fetchone()
-                            if scale is None:
-                                max_scale = 1
-                            else:
-                                max_scale = float(scale)
-                        except:
-                            print('台账找不到商品的最大陈列系数:{}！'.format(mch_code))
-                            scale = None
-                        try:
-                            if scale is None:
-                                cursor.execute(
-                                    "select cat2_id,,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and cat2_id = '{}' ".format(
-                                        mch_id, category2_id))
-                                (cat2_id, scale) = cursor.fetchone()
-                                if scale is None:
-                                    max_scale = 1
-                                else:
-                                    max_scale = float(scale)
-                        except:
-                            print('台账找不到商品的最大陈列系数:{}！'.format(mch_code))
-                            scale = None
-                        if scale is None :
-                            max_scale = 1
-                        # 获取分类码
-                        try:
-                            cursor_dmstore.execute(
-                                "select corp_classify_code from goods where upc = '{}' and corp_goods_id={}".format(upc,
-                                                                                                                    mch_code))
-                            (corp_classify_code, ) = cursor_dmstore.fetchone()
-                        except:
-                            print('dmstore找不到商品:{}-{}！'.format(upc, mch_code))
-                            corp_classify_code = None
-
-                        try:
-                            cursor_dmstore.execute(
-                                "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
-                                    upc, shopid))
-                            (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
-                        except:
-                            stock = 0
-                            purchase_price = 1
-                            upc_price = 1
-                            print("%s delivery_type is error , goods_name=%s,upc=%s" % (
-                                str(delivery_type), str(goods_name),
-                                str(upc)))
-                        #  废弃率 ，废弃后毛利率 计算
-                        loss_avg=0  # 7天平均废弃率
-                        loss_avg_nums = 0 # 7天的平均废弃量
-                        loss_avg_profit_amount = 0 # 7天平均废弃后毛利率
-                        loss_avg_amount = 0 # 7天平均废弃额
-                        try:
-                            cursor_dmstore.execute(
-                                "select id,stock,price,purchase_price FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
-                                    upc, shopid))
-                            (shop_goods_id,upc_stock,price1,purchase_price1) = cursor_dmstore.fetchone()
-                            end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-                            start_date = str(
-                                (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
-                                    days=-7)).strftime("%Y-%m-%d"))
-                            # 计算销量  销售额
-                            cursor_dmstore.execute(
-                                "SELECT sum(number) AS nums,sum(amount) as amounts,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date FROM payment_detail " \
-                                "WHERE shop_id = {} AND shop_goods_id = {} AND number > 0 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
-                                "SELECT DISTINCT(payment.id) FROM payment WHERE payment.status = 10 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' " \
-                                " ) GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(shopid,shop_goods_id,start_date,end_date,start_date,end_date))
-                            results_sales = cursor_dmstore.fetchall()
-
-                            cursor_dmstore.execute(
-                                "SELECT sum(handle_amount) as h_amount,sum(handle_number) as h_number,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date   FROM shop_goods_loss_record  where shop_id = {} AND shop_goods_id = {} and create_time >= '{} 00:00:00'  and create_time < '{} 00:00:00' GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(
-                                    shopid, shop_goods_id, start_date, end_date))
-                            results_loss = cursor_dmstore.fetchall()
-
-
-                            # 初始化日期字典
-                            date_loss=[]
-                            for i in range(7):
-                                start_date1 = str(
-                                    (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
-                                        days=i)).strftime("%Y-%m-%d"))
-                                date_los_sale = {}
-                                if price1 is None:
-                                    date_los_sale["price"] = 0
-                                else:
-                                    date_los_sale["price"] = price1
-                                if purchase_price1 is None:
-                                    date_los_sale["purchase_price"] = 0
-                                else:
-                                    date_los_sale["purchase_price"] = purchase_price1
-                                date_los_sale["create_date"] = start_date1
-                                sale_falg = True
-                                if results_sales is not None and len(results_sales) > 0:
-                                    for results_sale in results_sales:
-                                        sale_nums = results_sale[0]
-                                        sale_amounts = results_sale[1]
-                                        create_date =  str(results_sale[2])
-                                        if create_date == start_date1:
-                                            sale_falg = False
-                                            date_los_sale["sale_nums"] = float(sale_nums)
-                                            date_los_sale["sale_amounts"] = float(sale_amounts)
-                                if sale_falg:
-                                    date_los_sale["sale_nums"] = 0
-                                    date_los_sale["sale_amounts"] = 0
-                                los_falg = True
-                                if results_loss is not None and len(results_loss) > 0:
-                                    for results_los in results_loss:
-                                        los_amount = results_los[0]
-                                        los_nums = results_los[1]
-                                        create_date = str(results_los[2])
-                                        if create_date == start_date1:
-                                            los_falg = False
-                                            date_los_sale["los_nums"] = float(los_nums)
-                                            date_los_sale["los_amount"] = float(los_amount)
-                                if los_falg:
-                                    date_los_sale["los_nums"] = 0
-                                    date_los_sale["los_amount"] = 0
-                                date_loss.append(date_los_sale)
-                            print ("date_loss "+str(date_loss))
-                            for date_los_sale in date_loss:
-                                if date_los_sale["los_nums"]+date_los_sale["sale_nums"] != 0:
-                                    day_loss_avg = date_los_sale["los_nums"] / (date_los_sale["los_nums"]+date_los_sale["sale_nums"])
-                                else:
-                                    day_loss_avg = 0
-                                loss_avg+=day_loss_avg
-
-                                if date_los_sale["sale_nums"] == 0:
-                                    day_loss_avg_profit_amount = 0
-                                else:
-                                    day_loss_avg_profit_amount = (date_los_sale["sale_amounts"]-date_los_sale["los_amount"]-date_los_sale["sale_nums"]*date_los_sale["purchase_price"]) /date_los_sale["sale_amounts"]
-
-                                loss_avg_profit_amount += day_loss_avg_profit_amount
-
-                                day_loss_avg_amount = date_los_sale["sale_amounts"]-date_los_sale["los_amount"]-date_los_sale["sale_nums"]*date_los_sale["purchase_price"]
-                                loss_avg_amount += day_loss_avg_amount
-                                loss_avg_nums += date_los_sale["los_nums"]
-                            loss_avg = float(loss_avg / 7)
-                            loss_avg_amount = float(loss_avg_amount / 7)
-                            loss_avg_profit_amount = float(loss_avg_profit_amount / 7)
-                            loss_avg_nums = float(loss_avg_nums / 7)
-                        except:
-                            traceback.print_exc()
-                            print ("计算损失 失败 ， upc="+str(upc))
-                        try:
-                            # 获取小仓库库存
-                            cursor_erp.execute(
-                                "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}' and s.party_code = '{}' ".format(
-                                    erp_supply_id, upc,mch_code))
-                            (sku_id,) = cursor_erp.fetchone()
-                            cursor_erp.execute(
-                                "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
-                                    sku_id))
-                            (supply_stock, ) = cursor_erp.fetchone()
-                        except:
-                            print('ErpSupply找不到商品:{}-{}！'.format(upc, erp_supply_id))
-                            supply_stock = 0
-
-                        #获取在途补货单数
-                        add_sub_count = 0 #一仓一店， 该配置可以为0
-                        # try:
-                        #     sql_add_shop = "SELECT sum(item.sub_item_count) FROM ls_sub_item item LEFT JOIN ls_sku sku ON item.sku_id=sku.sku_id WHERE sub_number IN ( " \
-	                     #                        "SELECT sub_number FROM ls_sub WHERE buyer_shop_id IN ( SELECT is_authorized_shop_id FROM ms_relation WHERE authorized_shop_id = {}) AND status = 50 " \
-                        #                         " ) and  sku.model_id='{}'"
-                        #     sql_add_shop = sql_add_shop.format(upc)
-                        #     cursor_erp.execute(sql_add_shop)
-                        #     (add_sub_count,) = cursor_erp.fetchone()
-                        # except:
-                        #     print ("ErpSupply 获取在途补货单数 找不到商品{}-{}".format(erp_supply_id,upc))
-                        #     add_sub_count = 0
-                        # 获取在途订单数
-                        try:
-                            cursor_erp.execute(
-                                "SELECT sum(sub_item_count) as sub_count from ls_sub_item where  sub_number in  (SELECT sub_number from ls_sub where  seller_shop_id={} AND status in (30,50) ) AND sku_id =(SELECT sku_id FROM ls_sku sku, ls_prod  prod where prod.prod_id= sku.prod_id AND prod.shop_id={}  and sku.model_id='{}' )".format(
-                                    erp_resupply_id,erp_resupply_id,upc))
-                            (sub_count,) = cursor_erp.fetchone()
-                        except:
-                            print('ErpSupply 获取在途订单数 找不到商品:{}-{}！'.format(upc, erp_resupply_id))
-                            sub_count = 0
-                        # 获取商品的上架时间
-                        try:
-                            cursor_ai.execute(
-                                "select DATE_FORMAT(up_shelf_date,'%Y-%m-%d') as upshelf_date,is_new_goods from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
-                                    uc_shopid, upc))
-                            (up_shelf_date,up_status) = cursor_ai.fetchone()
-                            up_shelf_date = str(up_shelf_date)
-                            print('ai找到商品上架时间 :{}-{}-{}！'.format(uc_shopid, upc,up_shelf_date))
-                        except:
-                            # print('ai找不到销量预测:{}-{}-{}！'.format(shopid,upc,next_day))
-                            up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-                        # TODO 获取bi 数据库 ， 品的psd金额   mch_id  dmstore_shopid  goods_code
-                        upc_psd_amount_avg_1 = 0
-                        upc_psd_amount_avg_1_5 = 0
-                        upc_psd_amount_avg_6_7 = 0
-                        try:
-                            cursor_dmstore.execute(
-                                "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
-                                    upc, shopid))
-                            (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
-                            end_date = str(time.strftime('%Y%m%d', time.localtime()))
-                            start_date_1 = str((datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(days=-7)).strftime("%Y%m%d"))
-                            print ("获取bi 真实psd {} ,{},{},{},{}".format(shopid,goods_id,mch_id,upc,goods_name))
-                            sql_1 = "select psd,date from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date < {}".format(mch_id,shopid,goods_id,int(start_date_1),int(end_date))
-                            cursor_bi.execute(sql_1)
-                            res1 = cursor_bi.fetchall()
-                            if res1 is None or len(res1) < 1:
-                                upc_psd_amount_avg_1 = 0
-                            else:
-                                res_len1 = 0
-                                psd_amount = 0
-                                psd_amount_1_5 = 0
-                                psd_amount_6_7 = 0
-                                for re in res1:
-                                    psd_amount += re[0]
-                                    day_date = re[1]
-                                    weekday_i = datetime.datetime.strptime(str(day_date), "%Y%m%d").weekday() + 1
-                                    if weekday_i >= 1 and  weekday_i<=5:
-                                        psd_amount_1_5 += re[0]
-                                    else:
-                                        psd_amount_6_7 += re[0]
-                                    res_len1+=1
-                                upc_psd_amount_avg_1 = float(psd_amount / 7)
-                                upc_psd_amount_avg_1_5 = float(psd_amount_1_5 / 5)
-                                upc_psd_amount_avg_6_7 = float(psd_amount_6_7 / 2)
-                        except:
-                            print('bi 找不到psd  4！{},{}'.format(shopid, upc))
-                            upc_psd_amount_avg_1 = 0
-                            upc_psd_amount_avg_1_5 = 0
-                            upc_psd_amount_avg_6_7 = 0
-                        upc_psd_amount_avg_4 = 0
-                        try:
-                            cursor_dmstore.execute(
-                                "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
-                                    upc, shopid))
-                            (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
-                            end_date = str(time.strftime('%Y%m%d', time.localtime()))
-                            start_date_4 = str(
-                                (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
-                                    days=-28)).strftime("%Y%m%d"))
-                            sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date < {}".format(
-                                mch_id, shopid, goods_id,int(start_date_4),int(end_date))
-                            cursor_bi.execute(sql_2)
-                            res2 = cursor_bi.fetchall()
-                            if res2 is None or len(res2) < 1:
-                                upc_psd_amount_avg_4 = 0
-                            else:
-                                res_len2 = 0
-                                psd_amount2 = 0
-                                for re in res2:
-                                    psd_amount2 += re[0]
-                                    res_len2 += 1
-                                upc_psd_amount_avg_4 = float(psd_amount2 / 28)
-                        except:
-                            print('bi 找不到psd  4！{},{}'.format(shopid,upc))
-                            upc_psd_amount_avg_4 = 0
-                        # 单天最大psd
-                        oneday_max_psd = 0
-                        try:
-                            if shopid in list(config.shellgoods_params['start_shop'].keys()):
-                                cursor_dmstore.execute(
-                                    "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
-                                        upc, shopid))
-                                (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
-                                if shopid in config.shellgoods_params['start_shop'].keys():
-                                    start_shop_date = int(config.shellgoods_params['start_shop'][shopid])
-                                else:
-                                    print ("该店没有开店期"+str(shopid))
-                                    start_shop_date = int(config.shellgoods_params['start_shop'][-8888])
-                                end_date = str (time.strftime('%Y%m%d', time.localtime()))
-                                sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date <= {} order by psd desc limit 1 ".format(
-                                    mch_id, shopid, goods_id, start_shop_date, int(end_date))
-                                cursor_bi.execute(sql_2)
-                                (oneday_max_psd,) = cursor_bi.fetchone()
-                                print ("找到  oneday_max_psd "+str(oneday_max_psd)+",upc="+str(upc))
-                                print ("%s,%s,%s,%s,%s" % (str(mch_id), str(shopid), str(goods_id), str(start_shop_date), str(int(end_date))))
-                        except:
-                            print('bi 找不到psd  one_day max ！{},{}'.format(shopid, upc))
-                            traceback.print_exc()
-                            oneday_max_psd = 0
-
-                        psd_nums_2_cls, psd_amount_2_cls = 0, 0
-                        try:
-                            crop_cls_code_sql = "select corp_classify_code from goods where upc='{}' and corp_classify_code != '' ".format(upc)
-                            cursor_dmstore.execute(crop_cls_code_sql)
-                            (corp_classify_code,) = cursor_dmstore.fetchone()
-                            if corp_classify_code is not None:
-                                psd_nums_2_cls, psd_amount_2_cls = utils.select_category_psd_data(corp_classify_code,shopid,14)
-                        except:
-                            print("select_psd_data is error ,upc=" + str(upc) + ",shop_id=" + str(shopid))
-                            psd_nums_2_cls, psd_amount_2_cls = 0, 0
-                        psd_nums_4, psd_amount_4 = 0, 0
-                        psd_nums_2, psd_amount_2 = 0, 0
-                        try:
-                            psd_nums_4, psd_amount_4 = utils.select_psd_data(upc, shopid, 28)
-                            psd_nums_2, psd_amount_2 = utils.select_psd_data(upc, shopid, 14)
-                        except:
-                            print("select_psd_data is error ,upc=" + str(upc)+",shop_id="+str(shopid))
-                            traceback.print_exc()
-                            psd_nums_4 = 0
-                            psd_amount_4 = 0
-                            psd_nums_2, psd_amount_2 = 0,0
-                        multiple = 0
-                        ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, tz_display_img,corp_classify_code, spec, volume, width, height, depth,
+                        from_tz_flag = 1
+                        ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, width, height, depth,
                                                       start_sum,multiple,
                                                      stock = stock,
                                                      supply_stock=supply_stock,delivery_type=delivery_type,category1_id=category1_id,
                                                      category2_id=category2_id,category_id=category_id,storage_day=storage_day,shelf_inss=shelf_inss,
                                                      shop_name=shop_name,uc_shopid=uc_shopid,package_type=package_type,dmstore_shopid=shopid,
                                                      up_shelf_date = up_shelf_date,sub_count = sub_count,upc_price=upc_price,
-                                                     upc_psd_amount_avg_4=upc_psd_amount_avg_4,purchase_price = purchase_price,upc_psd_amount_avg_1=upc_psd_amount_avg_1,
+                                                     upc_psd_num_avg_4=upc_psd_num_avg_4,purchase_price = purchase_price,upc_psd_num_avg_1=upc_psd_num_avg_1,
                                                      psd_nums_4=psd_nums_4,psd_amount_4=psd_amount_4,max_scale=max_scale,oneday_max_psd = oneday_max_psd,psd_nums_2=psd_nums_2,
                                                      psd_amount_2=psd_amount_2,psd_nums_2_cls=psd_nums_2_cls, psd_amount_2_cls=psd_nums_2_cls,
-                                                     upc_psd_amount_avg_1_5 = upc_psd_amount_avg_1_5,upc_psd_amount_avg_6_7 = upc_psd_amount_avg_6_7, loss_avg = loss_avg,
+                                                     upc_psd_num_avg_1_5 = upc_psd_num_avg_1_5,upc_psd_num_avg_6_7 = upc_psd_num_avg_6_7, loss_avg = loss_avg,
                                                      loss_avg_profit_amount = loss_avg_profit_amount, loss_avg_amount = loss_avg_amount,loss_avg_nums=loss_avg_nums,
-                                                     last_tz_upcs = last_tz_upcs,last_v_upcs=last_v_upcs,single_face_min_disnums = single_face_min_disnums,add_sub_count=add_sub_count
-                                                     )
+                                                     last_tz_upcs = last_tz_upcs,last_v_upcs=last_v_upcs,single_face_min_disnums = single_face_min_disnums,add_sub_count=add_sub_count,
+                                                     handle_goods_role=handle_goods_role, ranking = ranking,from_tz_flag = from_tz_flag,upc_psd_from_bi_flag=upc_psd_from_bi_flag)
+
+    for mch_code in sg_ins_dict.keys():
+        if sg_ins_dict[mch_code].is_remove == False:
+            from_tz_flag = 0
+            goods_name, upc, category1_id, category2_id, category_id, storage_day, package_type, single_face_min_disnums, supplier_id, supplier_goods_code, goods_status, max_scale, start_sum, delivery_type, order_status,uc_height,uc_width,uc_depth = get_ucenter_infos(
+                mch_code, shopid, mch_id, erp_resupply_id)
+
+            if goods_status != 1 and order_status != 1 and add_type == False:
+                print("该品不可定，mch_code={}".format(mch_code))
+                continue
+
+            handle_goods_role,ranking = sg_ins_dict[mch_code].handle_goods_role, sg_ins_dict[mch_code].ranking
+            upc_psd_num_avg_1, upc_psd_num_avg_1_5, upc_psd_num_avg_6_7, upc_psd_num_avg_4, oneday_max_psd, upc_psd_from_bi_flag = get_bi_infos(
+                mch_code, upc, shopid, mch_id)
+            add_sub_count, supply_stock, sub_count, multiple = get_ms_infos(mch_code, upc, shopid, erp_resupply_id,
+                                                                            erp_supply_id)
+            up_shelf_date = get_ai_infos(mch_code, upc, shopid, uc_shopid)
+            psd_nums_2_cls, psd_amount_2_cls, psd_nums_4, psd_amount_4, psd_nums_2, psd_amount_2 = get_common_infos(
+                mch_code, upc, shopid)
+            loss_avg, loss_avg_nums, loss_avg_profit_amount, loss_avg_amount, stock, purchase_price, upc_price = get_dmstore_infos(
+                mch_code, upc, shopid)
+
+            ret[mch_code] = DataRawGoods(mch_code, goods_name, upc, uc_width, uc_height, uc_depth,
+                                         start_sum, multiple,
+                                         stock=stock,
+                                         supply_stock=supply_stock, delivery_type=delivery_type,
+                                         category1_id=category1_id,
+                                         category2_id=category2_id, category_id=category_id, storage_day=storage_day,
+                                         shelf_inss=shelf_inss,
+                                         shop_name=shop_name, uc_shopid=uc_shopid, package_type=package_type,
+                                         dmstore_shopid=shopid,
+                                         up_shelf_date=up_shelf_date, sub_count=sub_count, upc_price=upc_price,
+                                         upc_psd_num_avg_4=upc_psd_num_avg_4, purchase_price=purchase_price,
+                                         upc_psd_num_avg_1=upc_psd_num_avg_1,
+                                         psd_nums_4=psd_nums_4, psd_amount_4=psd_amount_4, max_scale=max_scale,
+                                         oneday_max_psd=oneday_max_psd, psd_nums_2=psd_nums_2,
+                                         psd_amount_2=psd_amount_2, psd_nums_2_cls=psd_nums_2_cls,
+                                         psd_amount_2_cls=psd_nums_2_cls,
+                                         upc_psd_num_avg_1_5=upc_psd_num_avg_1_5,
+                                         upc_psd_num_avg_6_7=upc_psd_num_avg_6_7, loss_avg=loss_avg,
+                                         loss_avg_profit_amount=loss_avg_profit_amount, loss_avg_amount=loss_avg_amount,
+                                         loss_avg_nums=loss_avg_nums,
+                                         last_tz_upcs=last_tz_upcs, last_v_upcs=last_v_upcs,
+                                         single_face_min_disnums=single_face_min_disnums, add_sub_count=add_sub_count,
+                                         handle_goods_role=handle_goods_role, ranking=ranking,
+                                         from_tz_flag=from_tz_flag, upc_psd_from_bi_flag=upc_psd_from_bi_flag)
+
     cursor.close()
     cursor_dmstore.close()
     cursor_erp.close()
@@ -514,6 +231,449 @@ def get_shop_order_goods(shopid,add_type=False):
     if cursor_bi is not None:
         cursor_bi.close()
     return ret
+
+def get_ai_infos(mch_goods_code,upc,shopid,uc_shopid):
+    cursor_ai = connections['default'].cursor()
+    # 获取商品的上架时间
+    try:
+        cursor_ai.execute(
+            "select DATE_FORMAT(up_shelf_date,'%Y-%m-%d') as upshelf_date,is_new_goods from goods_up_shelf_datetime where shopid={} and upc='{}'".format(
+                uc_shopid, upc))
+        (up_shelf_date, up_status) = cursor_ai.fetchone()
+        up_shelf_date = str(up_shelf_date)
+    except:
+        up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+        print('ai找不到商品上架时间 取当前时间:{}-{}-{}！'.format(uc_shopid, upc, up_shelf_date))
+    return  up_shelf_date
+
+# ucenter 获取单upc 数据
+def get_ucenter_infos(mch_goods_code,shopid,mch_id,erp_resupply_id):
+    """
+    获取sass单品数据
+    :param mch_goods_code:
+    :param upc:
+    :return:
+    """
+    cursor = connections['ucenter'].cursor()
+    goods_name = None
+    upc = None
+    category1_id = 0
+    category2_id = 0
+    category_id = 0
+    storage_day = 0
+    package_type = None
+    single_face_min_disnums = 0
+    supplier_id = None
+    supplier_goods_code = None
+    goods_status = None
+    max_scale = 1
+    uc_height, uc_width, uc_depth = 0.001,0.001,0.001
+    # 获取商品属性
+    try:
+        cursor.execute(
+            "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,display_first_cat_id,display_second_cat_id,display_third_cat_id,storage_day,package_type,display_goods_num,supplier_id,supplier_goods_code,goods_status,height,width,depth from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                mch_id, mch_goods_code))
+        # FIXME width,height暂时翻转
+        # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
+        (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
+         is_suspension, category1_id, category2_id, category_id, storage_day, package_type, single_face_min_disnums,
+         supplier_id, supplier_goods_code, goods_status,uc_height,uc_width,uc_depth) = cursor.fetchone()
+    except:
+        print('台账找不到商品，只能把这个删除剔除:{}！'.format(mch_goods_code))
+
+    # 获取商品的 可定  起订量  配送类型
+    start_sum = 0
+    delivery_type = 2
+    order_status = 1
+    try:
+        cursor.execute(
+            "select min_order_num,order_status,delivery_type from uc_supplier_goods where supplier_id = {} and supplier_goods_code = {}".format(
+                supplier_id, supplier_goods_code))
+        (start_sum, order_status, delivery_type_str) = cursor.fetchone()
+        cursor.execute(
+            "select delivery_attr from uc_supplier_delivery where delivery_code = '{}' ".format(
+                delivery_type_str))
+        (delivery_type,) = cursor.fetchone()
+    except:
+        print("该品订货，获取商品的可定  起订量  配送类型 失败 ！ erp_resupply_id={},upc={},mch_code={}".format(erp_resupply_id, upc,
+                                                                                            mch_goods_code))
+    cursor = connections['ucenter'].cursor()
+    scale = None
+    max_scale = 1
+    # 获取最大陈列系数
+    try:
+        cursor.execute(
+            "select cat3_id,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and cat3_id = '{}' ".format(
+                mch_id, category_id))
+        (cat3_id, scale) = cursor.fetchone()
+        if scale is None:
+            max_scale = 1
+        else:
+            max_scale = float(scale)
+    except:
+        print('台账找不到商品的最大陈列系数:{}！'.format(mch_goods_code))
+        scale = None
+    try:
+        if scale is None:
+            cursor.execute(
+                "select cat2_id,,scale from sf_goods_categorymaxdisplayscale where mch_id = {} and cat2_id = '{}' ".format(
+                    mch_id, category2_id))
+            (cat2_id, scale) = cursor.fetchone()
+            if scale is None:
+                max_scale = 1
+            else:
+                max_scale = float(scale)
+    except:
+        print('台账找不到商品的最大陈列系数:{}！'.format(mch_goods_code))
+        scale = None
+    if scale is None:
+        max_scale = 1
+    return goods_name, upc, category1_id, category2_id, category_id, storage_day, package_type, single_face_min_disnums,supplier_id, supplier_goods_code, goods_status,max_scale,start_sum,delivery_type,order_status,uc_height,uc_width,uc_depth
+
+
+def get_dmstore_infos(mch_goods_code,upc,shopid):
+    """
+    获取dmstore单品数据
+    :param mch_goods_code:
+    :param upc:
+    :return:
+    """
+    cursor_dmstore = connections['dmstore'].cursor()
+    #  废弃率 ，废弃后毛利率 计算
+    loss_avg = 0  # 7天平均废弃率
+    loss_avg_nums = 0  # 7天的平均废弃量
+    loss_avg_profit_amount = 0  # 7天平均废弃后毛利率
+    loss_avg_amount = 0  # 7天平均废弃额
+    try:
+        cursor_dmstore.execute(
+            "select id,stock,price,purchase_price FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                upc, shopid))
+        (shop_goods_id, upc_stock, price1, purchase_price1) = cursor_dmstore.fetchone()
+        end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+        start_date = str(
+            (datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(
+                days=-7)).strftime("%Y-%m-%d"))
+        # 计算销量  销售额
+        cursor_dmstore.execute(
+            "SELECT sum(number) AS nums,sum(amount) as amounts,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date FROM payment_detail " \
+            "WHERE shop_id = {} AND shop_goods_id = {} AND number > 0 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' AND payment_id IN ( " \
+            "SELECT DISTINCT(payment.id) FROM payment WHERE payment.status = 10 AND create_time >= '{} 00:00:00' AND create_time < '{} 00:00:00' " \
+            " ) GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(shopid, shop_goods_id, start_date, end_date,
+                                                                     start_date, end_date))
+        results_sales = cursor_dmstore.fetchall()
+
+        cursor_dmstore.execute(
+            "SELECT sum(handle_amount) as h_amount,sum(handle_number) as h_number,DATE_FORMAT(create_time,'%Y-%m-%d') as create_date   FROM shop_goods_loss_record  where shop_id = {} AND shop_goods_id = {} and create_time >= '{} 00:00:00'  and create_time < '{} 00:00:00' GROUP BY DATE_FORMAT(create_time,'%Y-%m-%d')".format(
+                shopid, shop_goods_id, start_date, end_date))
+        results_loss = cursor_dmstore.fetchall()
+
+        # 初始化日期字典
+        date_loss = []
+        for i in range(7):
+            start_date1 = str(
+                (datetime.datetime.strptime(start_date, "%Y-%m-%d") + datetime.timedelta(
+                    days=i)).strftime("%Y-%m-%d"))
+            date_los_sale = {}
+            if price1 is None:
+                date_los_sale["price"] = 0
+            else:
+                date_los_sale["price"] = price1
+            if purchase_price1 is None:
+                date_los_sale["purchase_price"] = 0
+            else:
+                date_los_sale["purchase_price"] = purchase_price1
+            date_los_sale["create_date"] = start_date1
+            sale_falg = True
+            if results_sales is not None and len(results_sales) > 0:
+                for results_sale in results_sales:
+                    sale_nums = results_sale[0]
+                    sale_amounts = results_sale[1]
+                    create_date = str(results_sale[2])
+                    if create_date == start_date1:
+                        sale_falg = False
+                        date_los_sale["sale_nums"] = float(sale_nums)
+                        date_los_sale["sale_amounts"] = float(sale_amounts)
+            if sale_falg:
+                date_los_sale["sale_nums"] = 0
+                date_los_sale["sale_amounts"] = 0
+            los_falg = True
+            if results_loss is not None and len(results_loss) > 0:
+                for results_los in results_loss:
+                    los_amount = results_los[0]
+                    los_nums = results_los[1]
+                    create_date = str(results_los[2])
+                    if create_date == start_date1:
+                        los_falg = False
+                        date_los_sale["los_nums"] = float(los_nums)
+                        date_los_sale["los_amount"] = float(los_amount)
+            if los_falg:
+                date_los_sale["los_nums"] = 0
+                date_los_sale["los_amount"] = 0
+            date_loss.append(date_los_sale)
+        # print("date_loss " + str(date_loss))
+        for date_los_sale in date_loss:
+            if date_los_sale["los_nums"] + date_los_sale["sale_nums"] != 0:
+                day_loss_avg = date_los_sale["los_nums"] / (date_los_sale["los_nums"] + date_los_sale["sale_nums"])
+            else:
+                day_loss_avg = 0
+            loss_avg += day_loss_avg
+
+            if date_los_sale["sale_nums"] == 0:
+                day_loss_avg_profit_amount = 0
+            else:
+                day_loss_avg_profit_amount = (date_los_sale["sale_amounts"] - date_los_sale["los_amount"] -
+                                              date_los_sale["sale_nums"] * date_los_sale["purchase_price"]) / \
+                                             date_los_sale["sale_amounts"]
+
+            loss_avg_profit_amount += day_loss_avg_profit_amount
+
+            day_loss_avg_amount = date_los_sale["sale_amounts"] - date_los_sale["los_amount"] - date_los_sale[
+                "sale_nums"] * date_los_sale["purchase_price"]
+            loss_avg_amount += day_loss_avg_amount
+            loss_avg_nums += date_los_sale["los_nums"]
+        loss_avg = float(loss_avg / 7)
+        loss_avg_amount = float(loss_avg_amount / 7)
+        loss_avg_profit_amount = float(loss_avg_profit_amount / 7)
+        loss_avg_nums = float(loss_avg_nums / 7)
+    except:
+        traceback.print_exc()
+        print("计算损失 失败 ， upc=" + str(upc))
+    stock = 0
+    purchase_price = 1
+    upc_price = 1
+    try:
+        cursor_dmstore.execute(
+            "select id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                upc, shopid))
+        (id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+    except:
+        print(" delivery_type is error , mch_code=%s,upc=%s" % (
+            str(mch_goods_code), str(upc)))
+    return loss_avg ,loss_avg_nums,loss_avg_profit_amount,loss_avg_amount,stock,purchase_price,upc_price
+
+
+def get_ms_infos(mch_goods_code,upc,shopid,erp_resupply_id,erp_supply_id):
+    """
+    获取摩售单品数据
+    :param mch_goods_code:
+    :param upc:
+    :return:
+    """
+    cursor_erp = connections['erp'].cursor()
+    # 获取在途补货单数
+    add_sub_count = 0  # 一仓一店， 该配置可以为0
+    multiple = 0 # 订货步长
+    # try:
+    #     sql_add_shop = "SELECT sum(item.sub_item_count) FROM ls_sub_item item LEFT JOIN ls_sku sku ON item.sku_id=sku.sku_id WHERE sub_number IN ( " \
+    #                        "SELECT sub_number FROM ls_sub WHERE buyer_shop_id IN ( SELECT is_authorized_shop_id FROM ms_relation WHERE authorized_shop_id = {}) AND status = 50 " \
+    #                         " ) and  sku.model_id='{}'"
+    #     sql_add_shop = sql_add_shop.format(upc)
+    #     cursor_erp.execute(sql_add_shop)
+    #     (add_sub_count,) = cursor_erp.fetchone()
+    # except:
+    #     print ("ErpSupply 获取在途补货单数 找不到商品{}-{}".format(erp_supply_id,upc))
+    #     add_sub_count = 0
+
+    sub_count = 0
+    # 获取在途订单数
+    try:
+        cursor_erp.execute(
+            "SELECT sum(sub_item_count) as sub_count from ls_sub_item where  sub_number in  (SELECT sub_number from ls_sub where  seller_shop_id={} AND status = 50 ) AND sku_id =(SELECT sku_id FROM ls_sku sku, ls_prod  prod where prod.prod_id= sku.prod_id AND prod.shop_id={}  and sku.model_id='{}' )".format(
+                erp_resupply_id, erp_resupply_id, upc))
+        (sub_count,) = cursor_erp.fetchone()
+    except:
+        print('ErpSupply 获取在途订单数 找不到商品:{}-{}！'.format(upc, erp_resupply_id))
+    supply_stock = 0
+    try:
+        # 获取小仓库库存
+        cursor_erp.execute(
+            "select s.sku_id prod_id from ls_prod as p, ls_sku as s where p.prod_id = s.prod_id and p.shop_id = {} and s.model_id = '{}' and s.party_code = '{}' ".format(
+                erp_supply_id, upc, mch_goods_code))
+        (sku_id,) = cursor_erp.fetchone()
+        cursor_erp.execute(
+            "select stock from ms_sku_relation where ms_sku_relation.status=1 and sku_id = {}".format(
+                sku_id))
+        (supply_stock,) = cursor_erp.fetchone()
+    except:
+        print('ErpSupply找不到商品:{}-{}！'.format(upc, erp_supply_id))
+    return add_sub_count,supply_stock,sub_count,multiple
+
+def get_bi_infos(mch_goods_code,upc,shopid,mch_id):
+    """
+    获取bi单品数据
+    :param mch_goods_code:
+    :param upc:
+    :return:
+    """
+    cursor_dmstore = connections['dmstore'].cursor()
+    cursor_bi = connections['bi'].cursor()
+
+    # TODO 获取bi 数据库 ， 品的psd金额   mch_id  dmstore_shopid  goods_code
+    upc_psd_num_avg_1 = 0
+    upc_psd_num_avg_4 = 0
+    upc_psd_from_bi_flag = 1
+    try:
+        end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+        cursor_dmstore.execute(
+            "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                upc, shopid))
+        (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+        sql_1_4 = "select one_week_psd_sales_count,four_week_psd_sales_count from tj_goods_week_psd where mch_id = {} and shop_id = {} and goods_code = {} and created_at >= '{} 00:00:00' and created_at <= '{} 23:59:59'".format(
+            mch_id, shopid, goods_id, end_date, end_date)
+        cursor_bi.execute(sql_1_4)
+        (upc_psd_nums_avg_1, upc_psd_nums_avg_4) = cursor_bi.fetchone()
+        upc_psd_num_avg_1 = float(upc_psd_nums_avg_1)
+        upc_psd_num_avg_4 = float(upc_psd_nums_avg_4)
+    except:
+        print('bi 找不到1周和4周的psd  tj_goods_week_psd, 手动按销量计算 ！{},{}'.format(shopid, upc))
+        upc_psd_amount_avg_1 = 0
+        upc_psd_from_bi_flag = 0
+        try:
+            cursor_dmstore.execute(
+                "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                    upc, shopid))
+            (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+            end_date = str(time.strftime('%Y%m%d', time.localtime()))
+            start_date_1 = str(
+                (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(days=-7)).strftime("%Y%m%d"))
+            print("获取bi 真实psd {} ,{},{},{}".format(shopid, goods_id, mch_id, upc))
+            sql_1 = "select psd,date from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date < {}".format(
+                mch_id, shopid, goods_id, int(start_date_1), int(end_date))
+            cursor_bi.execute(sql_1)
+            res1 = cursor_bi.fetchall()
+            if res1 is None or len(res1) < 1:
+                upc_psd_amount_avg_1 = 0
+            else:
+                psd_amount = 0
+                for re in res1:
+                    psd_amount += re[0]
+                upc_psd_amount_avg_1 = float(psd_amount / 7)
+        except:
+            print('bi 找不到psd ,tj_goods_day_psd 1！{},{}'.format(shopid, upc))
+        upc_psd_amount_avg_4 = 0
+        upc_price = 0
+        try:
+            cursor_dmstore.execute(
+                "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                    upc, shopid))
+            (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+            end_date = str(time.strftime('%Y%m%d', time.localtime()))
+            start_date_4 = str(
+                (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(
+                    days=-28)).strftime("%Y%m%d"))
+            sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date < {}".format(
+                mch_id, shopid, goods_id, int(start_date_4), int(end_date))
+            cursor_bi.execute(sql_2)
+            res2 = cursor_bi.fetchall()
+            if res2 is None or len(res2) < 1:
+                upc_psd_amount_avg_4 = 0
+            else:
+                res_len2 = 0
+                psd_amount2 = 0
+                for re in res2:
+                    psd_amount2 += re[0]
+                    res_len2 += 1
+                upc_psd_amount_avg_4 = float(psd_amount2 / 28)
+        except:
+            print('bi 找不到psd  4！{},{}'.format(shopid, upc))
+        if upc_price is None or float(upc_price) == 0:
+            upc_price = 1
+        upc_psd_num_avg_1 = float(upc_psd_amount_avg_1) / upc_price
+        upc_psd_num_avg_4 = float(upc_psd_amount_avg_4) / upc_price
+
+    # 获取周一 周5 psd销量
+    upc_psd_num_avg_1_5 = 0
+    upc_psd_num_avg_6_7 = 0
+    try:
+        cursor_dmstore.execute(
+            "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                upc, shopid))
+        (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+        end_date = str(time.strftime('%Y%m%d', time.localtime()))
+        start_date_1 = str(
+            (datetime.datetime.strptime(end_date, "%Y%m%d") + datetime.timedelta(days=-7)).strftime("%Y%m%d"))
+        # print("获取bi 真实psd {} ,{},{},{}".format(shopid, goods_id, mch_id, upc))
+        sql_1 = "select psd,date from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and date >= {} and date < {}".format(
+            mch_id, shopid, goods_id, int(start_date_1), int(end_date))
+        cursor_bi.execute(sql_1)
+        res1 = cursor_bi.fetchall()
+        if res1 is None or len(res1) < 1:
+            upc_psd_amount_avg_1 = 0
+        else:
+            res_len1 = 0
+            psd_amount = 0
+            psd_amount_1_5 = 0
+            psd_amount_6_7 = 0
+            for re in res1:
+                psd_amount += re[0]
+                day_date = re[1]
+                weekday_i = datetime.datetime.strptime(str(day_date), "%Y%m%d").weekday() + 1
+                if weekday_i >= 1 and weekday_i <= 5:
+                    psd_amount_1_5 += re[0]
+                else:
+                    psd_amount_6_7 += re[0]
+                res_len1 += 1
+            upc_psd_amount_avg_1_5 = float(psd_amount_1_5 / 5)
+            upc_psd_amount_avg_6_7 = float(psd_amount_6_7 / 2)
+            if upc_price is None or float(upc_price) == 0:
+                upc_price = 1
+            upc_psd_num_avg_1_5 = float(upc_psd_amount_avg_1_5/upc_price)
+            upc_psd_num_avg_6_7 = float(upc_psd_amount_avg_6_7/upc_price)
+    except:
+        print('bi 找不到psd  4！{},{}'.format(shopid, upc))
+    # 单天最大psd
+    oneday_max_psd = 0
+    try:
+        if shopid in list(config.shellgoods_params['start_shop'].keys()):
+            cursor_dmstore.execute(
+                "select goods_id,price,purchase_price,stock FROM shop_goods where upc = '{}' and shop_id = {} order by modify_time desc ".format(
+                    upc, shopid))
+            (goods_id, upc_price, purchase_price, stock) = cursor_dmstore.fetchone()
+            if shopid in config.shellgoods_params['start_shop'].keys():
+                start_shop_date = int(config.shellgoods_params['start_shop'][shopid])
+            else:
+                print("该店没有开店期" + str(shopid))
+                start_shop_date = int(config.shellgoods_params['start_shop'][-8888])
+            end_date = str(time.strftime('%Y%m%d', time.localtime()))
+            sql_2 = "select psd from tj_goods_day_psd where mch_id = {} and shop_id = {} and goods_code = {} and  date >= {} and date <= {} order by psd desc limit 1 ".format(
+                mch_id, shopid, goods_id, start_shop_date, int(end_date))
+            cursor_bi.execute(sql_2)
+            (oneday_max_psd,) = cursor_bi.fetchone()
+            # print("找到  oneday_max_psd " + str(oneday_max_psd) + ",upc=" + str(upc))
+            # print("%s,%s,%s,%s,%s" % (str(mch_id), str(shopid), str(goods_id), str(start_shop_date), str(int(end_date))))
+    except:
+        print('bi 找不到psd  one_day max ！{},{}'.format(shopid, upc))
+        traceback.print_exc()
+    return upc_psd_num_avg_1,upc_psd_num_avg_1_5,upc_psd_num_avg_6_7,upc_psd_num_avg_4,oneday_max_psd,upc_psd_from_bi_flag
+
+def get_common_infos(mch_goods_code,upc,shopid):
+    """
+    获取公共数据 其他方法
+    :param mch_goods_code:
+    :param upc:
+    :param shopid:
+    :return:
+    """
+    cursor_dmstore = connections['dmstore'].cursor()
+    psd_nums_2_cls, psd_amount_2_cls = 0, 0
+    try:
+        crop_cls_code_sql = "select corp_classify_code from goods where upc='{}' and corp_classify_code != '' ".format(
+            upc)
+        cursor_dmstore.execute(crop_cls_code_sql)
+        (corp_classify_code,) = cursor_dmstore.fetchone()
+        if corp_classify_code is not None:
+            psd_nums_2_cls, psd_amount_2_cls = utils.select_category_psd_data(corp_classify_code, shopid, 14)
+    except:
+        print("select_psd_data is error ,upc=" + str(upc) + ",shop_id=" + str(shopid))
+    psd_nums_4, psd_amount_4 = 0, 0
+    psd_nums_2, psd_amount_2 = 0, 0
+    try:
+        psd_nums_4, psd_amount_4 = utils.select_psd_data(upc, shopid, 28)
+        psd_nums_2, psd_amount_2 = utils.select_psd_data(upc, shopid, 14)
+    except:
+        print("select_psd_data is error ,upc=" + str(upc) + ",shop_id=" + str(shopid))
+        traceback.print_exc()
+    return psd_nums_2_cls,psd_amount_2_cls,psd_nums_4,psd_amount_4,psd_nums_2,psd_amount_2
 
 def for_taizhang_upc(taizhangs,mch_id):
     upcs = []
@@ -542,8 +702,6 @@ def for_taizhang_upc(taizhangs,mch_id):
                         cursor.execute(
                             "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
                                 mch_id, mch_code))
-                        # FIXME width,height暂时翻转
-                        # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
                         (goods_id, goods_name, upc, tz_display_img, spec, volume, is_superimpose,
                          is_suspension, delivery_type, category1_id, category2_id, category_id, storage_day,
                          package_type) = cursor.fetchone()
@@ -555,6 +713,30 @@ def for_taizhang_upc(taizhangs,mch_id):
     return upcs
 
 
+class SelectGoods:
+    upc = None
+    mch_goods_code = None
+    handle_goods_role = None #手动更改的商品的角色类型，0保护品，1上架，2下架，3可选上架，4可选下架，5删除
+    ranking = None #该品为可选上下品时的优先级，越大越优先，可重复
+    is_remove = None
+
+#  日配品 来自选品列表
+def get_select_goods(shopid,batch_id):
+    sql = "select upc,mch_goods_code,handle_goods_role,ranking from goods_goodsselectionhistory where delivery_type = 1 and shopid={} and batch_id ='{}'".format(shopid,batch_id)
+    sl_goods_inss_dict = {}
+    cursor = connections['default'].cursor()
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    if results is not None and len(results) > 0 :
+        for ret in results:
+            sg_ins = SelectGoods()
+            sg_ins.upc = ret[0]
+            sg_ins.mch_goods_code = ret[1]
+            sg_ins.handle_goods_role = ret[2]
+            sg_ins.ranking = ret[3]
+            sg_ins.is_remove = False
+            sl_goods_inss_dict[sg_ins.mch_goods_code] = sg_ins
+    return sl_goods_inss_dict
 
 def get_taizhang(uc_shopid,shopid,mch_id,add_type=False):
     """
@@ -629,7 +811,6 @@ def get_taizhang(uc_shopid,shopid,mch_id,add_type=False):
             "select t.id, t.shelf_id, td.display_shelf_info, td.display_goods_info,td.batch_no,DATE_FORMAT(td.start_datetime,'%Y-%m-%d'),td.status from sf_shop_taizhang st, sf_taizhang t, sf_taizhang_display td where st.taizhang_id=t.id and td.taizhang_id=t.id and td.status =2 and td.approval_status=1 and st.shop_id = {} ORDER BY td.start_datetime ".format(
                 uc_shopid))
         lastday_taizhangs = cursor.fetchall()  # 执行中的台账 （一个店只会有一份）
-    # print(lastday_taizhangs)
     lasttaizhang_upcs = []
     if lastday_taizhangs is not None and len(lastday_taizhangs) > 0:
         lasttaizhang_upcs = for_taizhang_upc(lastday_taizhangs,mch_id)
@@ -687,26 +868,21 @@ def get_single_face_max_disnums_col(depth,shelf_ins,delivery_type,category1_id):
             return min(15,single_max_disnums)
     else:
         return max(1,math.floor(float(shelf_ins.level_depth) / depth))
-
 class DataRawGoods():
-    def __init__(self, mch_code, goods_name, upc, tz_display_img, corp_classify_code, spec, volume, width, height, depth,  start_sum, multiple,
+    def __init__(self, mch_code, goods_name, upc, width, height, depth,  start_sum, multiple,
                  stock=0,supply_stock=0,delivery_type=None,category1_id=None,category2_id=None,category_id=None,
                  storage_day=None,shelf_inss=None,shop_name=None,uc_shopid =None,package_type=None,dmstore_shopid = None,up_shelf_date = None,
-                 sub_count = None,upc_price = None,upc_psd_amount_avg_4 = None,purchase_price = None,upc_psd_amount_avg_1=None,
+                 sub_count = None,upc_price = None,upc_psd_num_avg_4 = None,purchase_price = None,upc_psd_num_avg_1=None,
                  psd_nums_4=None, psd_amount_4=None,max_scale=None,oneday_max_psd = None ,psd_nums_2=None, psd_amount_2=None,psd_nums_2_cls=None, psd_amount_2_cls=None,
-                 upc_psd_amount_avg_1_5= None, upc_psd_amount_avg_6_7 = None, loss_avg = None,loss_avg_profit_amount = None, loss_avg_amount = None,loss_avg_nums = None
-                ,last_tz_upcs = None,last_v_upcs=None,single_face_min_disnums=None,add_sub_count=None):
+                 upc_psd_num_avg_1_5= None, upc_psd_num_avg_6_7 = None, loss_avg = None,loss_avg_profit_amount = None, loss_avg_amount = None,loss_avg_nums = None
+                ,last_tz_upcs = None,last_v_upcs=None,single_face_min_disnums=None,add_sub_count=None,handle_goods_role = None, ranking = None,from_tz_flag = None,upc_psd_from_bi_flag=None):
         self.mch_code = mch_code
         self.goods_name = goods_name
         self.upc = upc
         self.shop_name = shop_name
         self.ucshop_id = uc_shopid
         self.dmstoreshop_id = dmstore_shopid
-        self.tz_display_img = tz_display_img
-        self.corp_classify_code = corp_classify_code
-        self.display_code = corp_classify_code # FIXME 需要修订为真实陈列分类
-        self.spec = spec
-        self.volume = volume
+
         if width is None:
             self.width = 0
         else:
@@ -747,24 +923,24 @@ class DataRawGoods():
             self.sub_count = 0
         else:
             self.sub_count = float(sub_count)
-        if upc_psd_amount_avg_4 is None:
-            self.upc_psd_amount_avg_4 = 0
+        if upc_psd_num_avg_4 is None:
+            self.upc_psd_num_avg_4 = 0
         else:
-            self.upc_psd_amount_avg_4 = float(upc_psd_amount_avg_4)
-        if upc_psd_amount_avg_1 is None:
-            self.upc_psd_amount_avg_1 = 0
+            self.upc_psd_num_avg_4 = float(upc_psd_num_avg_4)
+        if upc_psd_num_avg_1 is None:
+            self.upc_psd_num_avg_1 = 0
         else:
-            self.upc_psd_amount_avg_1= float(upc_psd_amount_avg_1)
+            self.upc_psd_num_avg_1= float(upc_psd_num_avg_1)
 
-        if upc_psd_amount_avg_1_5 is None:
-            self.upc_psd_amount_avg_1_5 = 0
+        if upc_psd_num_avg_1_5 is None:
+            self.upc_psd_num_avg_1_5 = 0
         else:
-            self.upc_psd_amount_avg_1_5 = float(upc_psd_amount_avg_1_5)
+            self.upc_psd_num_avg_1_5 = float(upc_psd_num_avg_1_5)
 
-        if upc_psd_amount_avg_6_7 is None:
-            self.upc_psd_amount_avg_6_7 = 0
+        if upc_psd_num_avg_6_7 is None:
+            self.upc_psd_num_avg_6_7 = 0
         else:
-            self.upc_psd_amount_avg_6_7 = float(upc_psd_amount_avg_6_7)
+            self.upc_psd_num_avg_6_7 = float(upc_psd_num_avg_6_7)
 
         if purchase_price is None:
             self.purchase_price = 1
@@ -897,11 +1073,16 @@ class DataRawGoods():
 
 
         # 判断商品的生命周期 0 首次订货 1 新品期订货 2 旧品期
-        shelf_up_date = self.up_shelf_date
-        end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
-        time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
-        time2 = time.mktime(time.strptime(end_date, '%Y-%m-%d'))
-        days = int((time2 - time1) / (24 * 60 * 60))
+        # 判断商品的生命周期 0 首次订货 1 新品期订货 2 旧品期
+        try:
+            shelf_up_date = self.up_shelf_date
+            end_date = str(time.strftime('%Y-%m-%d', time.localtime()))
+            time1 = time.mktime(time.strptime(shelf_up_date, '%Y-%m-%d'))
+            time2 = time.mktime(time.strptime(end_date, '%Y-%m-%d'))
+            days = int((time2 - time1) / (24 * 60 * 60))
+        except:
+            days = 0
+            self.up_shelf_date = str(time.strftime('%Y-%m-%d', time.localtime()))
         # 临时判断商品的生命周期 ， 只用上架时间和保质期 判断
         if self.delivery_type == 2: # 非日配
             if  last_tz_upcs is None or self.upc not in last_tz_upcs :
@@ -927,8 +1108,11 @@ class DataRawGoods():
         if self.category2_id == 104:
             self.delivery_type = 2
         self.fudong_nums = 0
-
         self.safe_stock = 0
+        self.handle_goods_role = handle_goods_role
+        self.ranking = ranking
+        self.from_tz_flag = from_tz_flag
+        self.upc_psd_from_bi_flag = upc_psd_from_bi_flag
 
 class Shelf:
     taizhang_id = None
