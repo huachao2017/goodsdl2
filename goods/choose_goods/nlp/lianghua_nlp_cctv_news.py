@@ -18,7 +18,7 @@ def train():
     pro = ts.pro_api()
 
 
-    begin = datetime.date(2006, 6, 1)
+    begin = datetime.date(2006, 6, 15)
     end = datetime.date(2020, 2, 22)
     d = begin
     delta = datetime.timedelta(days=1)
@@ -35,6 +35,8 @@ def train():
             daily_news_content += row[2]
             daily_news_content += ","
         # news_dict[str(d.strftime("%Y%m%d"))] = daily_all_news
+        daily_news_title.replace('"',',').replace("'",",")
+        daily_news_content.replace('"',',').replace("'",",")
         cursor.execute(insert_sql.format(date_str,daily_news_title,daily_news_content))
         conn.commit()
         time.sleep(13)
