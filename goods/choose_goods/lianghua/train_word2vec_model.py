@@ -81,5 +81,5 @@ def mian():
         sub = int(sub) + int(data_num)
 
 if __name__ == '__main__':
-    # mian()
-    train_model(['123','123','123'])
+    mian()
+    # train_model(['123','123','123'])
