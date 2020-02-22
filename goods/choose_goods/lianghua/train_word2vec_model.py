@@ -37,16 +37,16 @@ def train_model(data):
         rr += ' '
 
     # 将数据存到haha文件里
-    with open('resource/data_words.txt', 'w', encoding='utf-8') as f2:
+    with open('goods/choose_goods/lianghua/resource/data_words.txt', 'w', encoding='utf-8') as f2:
         f2.write(rr)
 
-    sentences = word2vec.LineSentence('resource/data_words.txt')  # 把目标文本读出来
+    sentences = word2vec.LineSentence('goods/choose_goods/lianghua/resource/data_words.txt')  # 把目标文本读出来
     # model = word2vec.Word2Vec(sentences, hs=1,min_count=1,window=6,size=128)     # 初始训练模型
 
-    model = word2vec.Word2Vec.load("resource/data_words_jieba.model")  # 加载模型
+    model = word2vec.Word2Vec.load("goods/choose_goods/lianghua/resource/data_words_jieba.model")  # 加载模型
     model.train(sentences, total_examples=model.corpus_count, epochs=model.iter)  # 增量训练模型
 
-    model.save("resource/trained_data_words_jieba.model")  # 保存模型
+    model.save("goods/choose_goods/lianghua/resource/trained_data_words_jieba.model")  # 保存模型
 
     # # 以下是将某词最相近的5的词打印出来
     # req_count = 5
