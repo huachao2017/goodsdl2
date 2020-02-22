@@ -18,7 +18,7 @@ def train():
     pro = ts.pro_api()
 
 
-    begin = datetime.date(2006, 8, 7)
+    begin = datetime.date(2009, 6, 27)
     end = datetime.date(2020, 2, 22)
     d = begin
     delta = datetime.timedelta(days=1)
@@ -30,9 +30,9 @@ def train():
         daily_news_title = ""
         daily_news_content = ""
         for index, row in df.iterrows():
-            daily_news_title += row[1]
+            daily_news_title += str(row[1])
             daily_news_title += ","
-            daily_news_content += row[2]
+            daily_news_content += str(row[2])
             daily_news_content += ","
         # news_dict[str(d.strftime("%Y%m%d"))] = daily_all_news
         daily_news_title.replace('"',',').replace("'",",")
