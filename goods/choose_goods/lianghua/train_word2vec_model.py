@@ -70,7 +70,7 @@ def mian():
 
         print(sub)
 
-        search_sql = 'select date,title,content from cctv_news where id<%s and id >= %s  and `content` not REGEXP "^[{]" '%(str(int(sub)+data_num),str(int(sub)))
+        search_sql = 'select date,title,content from cctv_news where id<%s and id >= %s'%(str(int(sub)+data_num),str(int(sub)))
         # print(search_sql)
         cursor.execute(search_sql)
         data = cursor.fetchall()
