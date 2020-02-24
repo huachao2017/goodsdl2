@@ -44,6 +44,7 @@ def train_model(data):
     # model = word2vec.Word2Vec(sentences, hs=1,min_count=1,window=6,size=128)     # 初始训练模型
 
     model = word2vec.Word2Vec.load("goods/choose_goods/lianghua/resource/data_words_jieba.model")  # 加载模型
+    model.build_vocab(sentences, update=True)  # 更新词汇表
     model.train(sentences, total_examples=model.corpus_count, epochs=model.iter)  # 增量训练模型
 
     model.save("goods/choose_goods/lianghua/resource/data_words_jieba.model")  # 保存模型
