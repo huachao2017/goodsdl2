@@ -41,14 +41,14 @@ def word_vec():
 
         vv = arr[1:]
         v = vv.reshape(1,-1)
-        print(str(np.matrix.tolist(v)))
+        # print(str(np.matrix.tolist(v)))
 
         insert_sql = "update cctv_news set vec='{}' where date={}".format(str(np.matrix.tolist(v)),date_str)
         cursor.execute(insert_sql)
         conn.commit()
-        break
+        # break
 
-        # d += delta
+        d += delta
 
 if __name__ == '__main__':
     word_vec()
