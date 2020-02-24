@@ -46,8 +46,9 @@ def word_vec():
         insert_sql = "insert into cctv_news(vec) values ('{}')".format(str(np.matrix.tolist(v)))
         cursor.execute(insert_sql)
         conn.commit()
+        break
 
-        d += delta
+        # d += delta
 
 if __name__ == '__main__':
     word_vec()
