@@ -41,7 +41,7 @@ def word_vec():
 
         vv = arr[1:]
         v = vv.reshape(1,-1)
-        print(str(np.matrix.tolist(v)))
+        # print(str(np.matrix.tolist(v)))
 
         insert_sql = "insert into cctv_news(vec) values ('{}')".format(str(np.matrix.tolist(v)))
         cursor.execute(insert_sql)
