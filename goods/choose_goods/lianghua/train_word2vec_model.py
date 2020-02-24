@@ -46,7 +46,7 @@ def train_model(data):
     model = word2vec.Word2Vec.load("goods/choose_goods/lianghua/resource/data_words_jieba.model")  # 加载模型
     model.train(sentences, total_examples=model.corpus_count, epochs=model.iter)  # 增量训练模型
 
-    model.save("goods/choose_goods/lianghua/resource/trained_data_words_jieba.model")  # 保存模型
+    model.save("goods/choose_goods/lianghua/resource/data_words_jieba.model")  # 保存模型
 
     # # 以下是将某词最相近的5的词打印出来
     # req_count = 5
