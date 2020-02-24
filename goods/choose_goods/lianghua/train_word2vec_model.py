@@ -4,8 +4,9 @@
 import jieba.posseg as pseg
 import pymysql
 from gensim.models import word2vec
+from gensim.models.word2vec import Word2Vec
 # from redis import *
-import re,time
+import re,time,jieba
 import pymysql
 import pandas as pd
 
@@ -90,7 +91,7 @@ class TrainWord2Vec:
     @author:xiaozhu
     @time:2018年10月12日
     """
-    def __init__(self, data, stopword, num_features=100, min_word_count=1, context=4, incremental=False,old_path):
+    def __init__(self, data, stopword, num_features=100, min_word_count=1, context=4, incremental=False):
         """
         定义变量
         :param data: 用于训练胡语料
@@ -107,7 +108,7 @@ class TrainWord2Vec:
         self.min_word_count = min_word_count
         self.context = context
         self.incremental = incremental
-        self.old_path = old_path
+        # self.old_path = old_path
 
     def clean_text(self):
         """
