@@ -34,14 +34,14 @@ def word_vec():
         data = cursor.fetchone()
         # data = [1,'昨天下午，一艘货轮行驶至武汉白沙洲洲','遭遇突如其来的狂风，船上28个装满鞭炮等货']
         arr = np.zeros(128)
-        keywords = jieba.analyse.extract_tags(data[1]+data[2], topK=30, withWeight=True)
+        keywords = jieba.analyse.extract_tags(data[1]+data[2], topK=30, withWeight=True,allowPOS=('j', 'l', 'n', 'nt', 'nz', 'vn', 'eng'))
         for w in keywords:
             vec = np.array(model[w[0]]).reshape(1, 128)  # 原本是128x1的数组
             arr = np.vstack((arr, vec))
 
         vv = arr[1:]
         v = vv.reshape(1,-1)
-        # print(str(np.matrix.tolist(v)))
+        print(str(np.matrix.tolist(v)))
 
         insert_sql = "insert into cctv_news(vec) values ('{}')".format(str(np.matrix.tolist(v)))
         cursor.execute(insert_sql)
