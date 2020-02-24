@@ -17,7 +17,7 @@ def word_vec():
     conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl', charset="utf8",port=3306, use_unicode=True)
     # conn = connections['default']
     cursor = conn.cursor()
-    model = word2vec.Word2Vec.load("resource/data_words_jieba.model")
+    model = word2vec.Word2Vec.load("goods/choose_goods/lianghua/resource/data_words_jieba.model")
     # print(r'\u626c\u5dde'.encode().decode('unicode-escape'))
     jieba.analyse.set_stop_words('goods/choose_goods/lianghua/resource/stop_words.txt')
 
