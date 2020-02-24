@@ -13,6 +13,7 @@ import jieba.analyse
 import pickle
 import datetime,time
 
+
 def word_vec():
     conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl', charset="utf8",port=3306, use_unicode=True)
     # conn = connections['default']
