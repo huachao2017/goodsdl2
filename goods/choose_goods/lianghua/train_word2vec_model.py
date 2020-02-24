@@ -77,6 +77,7 @@ def mian():
         if data:
             train_model(data)
         else:
+            print('end')
             break
         sub = int(sub) + int(data_num)
 
