@@ -22,7 +22,7 @@ def word_vec():
     # print(r'\u626c\u5dde'.encode().decode('unicode-escape'))
     jieba.analyse.set_stop_words('goods/choose_goods/lianghua/resource/stop_words.txt')
 
-    begin = datetime.date(2009, 6, 15)
+    begin = datetime.date(2006, 6, 15)
     end = datetime.date(2020, 2, 22)
     d = begin
     delta = datetime.timedelta(days=1)
