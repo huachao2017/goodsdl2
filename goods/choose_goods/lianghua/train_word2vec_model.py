@@ -168,5 +168,15 @@ class TrainWord2Vec:
 
 
 if __name__ == '__main__':
-    mian()
+    # mian()
     # train_model(['123','123','123'])
+    model = word2vec.Word2Vec.load("goods/choose_goods/lianghua/resource/data_words_jieba.model")  # 加载模型
+
+    # 以下是将某词最相近的5的词打印出来
+    req_count = 5
+    for key in model.wv.similar_by_word('主席', topn=100):
+        if len(key[0]) == 3:
+            req_count -= 1
+            print(key[0], key[1])
+            if req_count == 0:
+                break
