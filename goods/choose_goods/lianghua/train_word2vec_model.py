@@ -174,7 +174,7 @@ if __name__ == '__main__':
 
     # 以下是将某词最相近的5的词打印出来
     req_count = 5
-    for key in model.wv.similar_by_word('老师', topn=100):
+    for key in model.wv.similar_by_word('习近平', topn=100):
         if len(key[0]) == 3:
             req_count -= 1
             print(key[0], key[1])
