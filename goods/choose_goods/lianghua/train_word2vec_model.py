@@ -6,7 +6,7 @@ import pymysql
 from gensim.models import word2vec
 from gensim.models.word2vec import Word2Vec
 # from redis import *
-import re,time,jieba
+import re,time,jieba,gensim
 import pymysql
 import pandas as pd
 
@@ -45,11 +45,11 @@ def train_model(data):
     sentences = word2vec.LineSentence('goods/choose_goods/lianghua/resource/data_words.txt')  # 把目标文本读出来
     # model = word2vec.Word2Vec(sentences, hs=1,min_count=1,window=6,size=128)     # 初始训练模型
 
-    model = word2vec.Word2Vec.load("goods/choose_goods/lianghua/resource/data_words_jieba.model")  # 加载模型
+    model = word2vec.Word2Vec.load("goods/choose_goods/lianghua/resource/baike_26g_news_13g_novel_229g.model")  # 加载模型
     model.build_vocab(sentences, update=True)  # 更新词汇表
     model.train(sentences, total_examples=model.corpus_count, epochs=model.iter)  # 增量训练模型
 
-    model.save("goods/choose_goods/lianghua/resource/data_words_jieba.model")  # 保存模型
+    model.save("goods/choose_goods/lianghua/resource/baike_26g_news_13g_novel_229g.model")  # 保存模型
 
     # # 以下是将某词最相近的5的词打印出来
     # req_count = 5
@@ -85,98 +85,48 @@ def mian():
         sub = int(sub) + int(data_num)
 
 
-class TrainWord2Vec:
-    """
-    训练得到一个Word2Vec模型
-    @author:xiaozhu
-    @time:2018年10月12日
-    """
-    def __init__(self, data, stopword, num_features=100, min_word_count=1, context=4, incremental=False):
-        """
-        定义变量
-        :param data: 用于训练胡语料
-        :param stopword: 停用词表
-        :param num_features:  返回的向量长度
-        :param min_word_count:  最低词频
-        :param context: 滑动窗口大小
-        :param incremental: 是否进行增量训练
-        :param old_path: 若进行增量训练，原始模型路径
-        """
-        self.data = data
-        self.stopword = stopword
-        self.num_features = num_features
-        self.min_word_count = min_word_count
-        self.context = context
-        self.incremental = incremental
-        # self.old_path = old_path
-
-    def clean_text(self):
-        """
-        采用结巴分词函数分词
-        :param corpus: 待分词的Series序列
-        :return: 分词结果，list
-        """
-        # 去除无用字符
-        pattern = re.compile(r'[\sA-Za-z～()（）【】%*#+-\.\\\/:=：__,，。、;；“”""''’‘？?！!<《》>^&{}|=……]')
-        corpus_ = self.data.apply(lambda s: re.sub(pattern, '', s))
-        # 分词
-        text = corpus_.apply(jieba.lcut)
-        # 过滤通用词
-        text = text.apply(lambda cut_words: [word for word in cut_words if word not in self.stopword])
-        return text
-
-    def get_model(self, text):
-        """
-        从头训练word2vec模型
-        :param text: 经过清洗之后的语料数据
-        :return: word2vec模型
-        """
-        model = Word2Vec(text, size=self.num_features, min_count=self.min_word_count, window=self.context)
-        return model
-
-    def update_model(self, text):
-        """
-        增量训练word2vec模型
-        :param text: 经过清洗之后的新的语料数据
-        :return: word2vec模型
-        """
-        model = Word2Vec.load(self.old_path)  # 加载旧模型
-        model.build_vocab(text, update=True)  # 更新词汇表
-        model.train(text, total_examples=model.corpus_count, epochs=model.iter)  # epoch=iter语料库的迭代次数；（默认为5）  total_examples:句子数。
-        return model
-
-    def main(self):
-        """
-        主函数，保存模型
-        """
-        # 加入自定义分析词库
-        jieba.load_userdict("add_word.txt")
-        text = self.clean_text()
-        if self.incremental:
-            model = self.update_model(text)
-        else:
-            model = self.get_model(text)
-        # 保存模型
-        model.save("word2vec.model")
-
-
-# if __name__ == '__main__':
-#     corpus = pd.read_csv("corpus.csv", encoding='gbk')
-#     stop_word = pd.read_csv("stopword.csv", encoding='gbk')
-#     trainmodel = TrainWord2Vec(data=corpus, stopword=stop_word)
-#     trainmodel.main()
 
 
 if __name__ == '__main__':
-    # mian()
+    mian()
     # train_model(['123','123','123'])
-    model = word2vec.Word2Vec.load("goods/choose_goods/lianghua/resource/data_words_jieba.model")  # 加载模型
+    # model = word2vec.Word2Vec.load("goods/choose_goods/lianghua/resource/data_words_jieba.model")  # 加载模型
+    # model = word2vec.Word2Vec.load("C:/Users/86130/Downloads/work2vec_model/baike_26g_news_13g_novel_229g.model")  # 加载模型
+    # model = gensim.models.KeyedVectors.load_word2vec_format('C:/Users/86130/Downloads/work2vec_model/baike_26g_news_13g_novel_229g.bin', binary=True)
 
-    # 以下是将某词最相近的5的词打印出来
-    req_count = 5
-    for key in model.wv.similar_by_word('班主任', topn=100):
-        if len(key[0]) == 3:
-            req_count -= 1
-            print(key[0], key[1])
-            if req_count == 0:
-                break
+    # # 以下是将某词最相近的5的词打印出来
+    # req_count = 10
+    # print('<班主任>最近的10个词是：')
+    # for key in model.wv.similar_by_word('班主任', topn=100):
+    #     if len(key[0]) == 3:
+    #         req_count -= 1
+    #         print(key[0], key[1])
+    #         if req_count == 0:
+    #             break
+    # print('===============================')
+    # print('<微信>最近的10个词是：' )
+    # req_count = 10
+    # for key in model.wv.similar_by_word('微信', topn=100):
+    #     if len(key[0]) == 3:
+    #         req_count -= 1
+    #         print(key[0], key[1])
+    #         if req_count == 0:
+    #             break
+    # print('===============================')
+    # print('<微积分>最近的10个词是：')
+    # req_count = 10
+    # for key in model.wv.similar_by_word('微积分', topn=100):
+    #     if len(key[0]) == 3:
+    #         req_count -= 1
+    #         print(key[0], key[1])
+    #         if req_count == 0:
+    #             break
+    # print('===============================')
+    # print('<python>最近的10个词是：')
+    # req_count = 10
+    # for key in model.wv.similar_by_word('python', topn=100):
+    #     if len(key[0]) == 3:
+    #         req_count -= 1
+    #         print(key[0], key[1])
+    #         if req_count == 0:
+    #             break
