@@ -39,7 +39,7 @@ urlpatterns = [
     url(r'^api/get_shelfimage', views_shelf.GetShelfImage.as_view()),
     url(r'^api/shelfimage_detail', views_shelf.GetShelfImageDetail.as_view()),
     url(r'^api/detect_shelfimage', views_shelf.DetectShelfImage.as_view()),
-    url(r'^api/detect_shelf_nullbox_image', views_shelf.ShelfAndNullBoxDetect.as_view()),
+    # url(r'^api/detect_shelf_nullbox_image', views_shelf.ShelfAndNullBoxDetect.as_view()),
     url(r'^api/createshelfimage2', views_shelf2.CreateShelfImage.as_view()),
     url(r'^api/rectifyshelfimage2', views_shelf2.RectifyShelfImage.as_view()),
     # url(r'^api/notify_generate_shop_add', views_sellgoods.SellGoodsViewSet.as_view()),

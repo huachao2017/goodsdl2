@@ -71,3 +71,8 @@ class DetectShelf:
         except:
             print ("shelf bull_box detect error ")
             traceback.print_exc()
+
+
+if __name__=="__main__":
+    ds_ins = DetectShelf()
+    ds_ins.detect()

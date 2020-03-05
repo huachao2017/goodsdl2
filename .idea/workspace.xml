@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="91a34887-4bb4-4f55-991b-fe71dee1fcde" name="Default" comment="- 增加了">
-      <change afterPath="$PROJECT_DIR$/goods/shelfgoods/local_util/huofu_2.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/model_data/voc_classes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/model_data/voc_classes.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/yolo3/yolo.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/yolo3/yolo.py" afterDir="false" />
@@ -15,19 +14,10 @@
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/goodsdl2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/goodsdl2.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/freezer/keras_yolo3/util/shelfgoods_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/freezer/keras_yolo3/util/shelfgoods_util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/shelfgoods/utils/send_request.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/shelfgoods/utils/send_request.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/goods/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/util.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/goods/views_shelf.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/views_shelf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/test_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/test_settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/set_config/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/dev.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/local.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/set_config/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tradition/matcher/matcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/tradition/matcher/matcher.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -38,11 +28,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="423">
-              <caret line="67" column="29" lean-forward="true" selection-start-line="67" selection-start-column="29" selection-end-line="67" selection-end-column="29" />
+            <state relative-caret-position="176">
+              <caret line="17" column="23" lean-forward="true" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
               <folding>
                 <element signature="e#0#43#0" expanded="true" />
               </folding>
@@ -59,11 +49,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/set_config/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="44">
-              <caret line="30" column="78" selection-start-line="30" selection-start-column="78" selection-end-line="30" selection-end-column="78" />
+            <state relative-caret-position="310">
+              <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -77,53 +67,53 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="order_process.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/order_process.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="100">
-              <caret line="77" column="75" selection-start-line="77" selection-start-column="75" selection-end-line="77" selection-end-column="75" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cacul_util.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/cacul_util.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="241">
-              <caret line="87" column="4" selection-start-line="87" selection-start-column="4" selection-end-line="87" selection-end-column="75" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="yolo_shelf.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
-              <caret line="208" selection-start-line="208" selection-end-line="208" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="shelf_yolo.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/yolo3/shelf_yolo.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-935">
-              <caret line="181" selection-start-line="181" selection-end-line="181" />
-              <folding>
-                <element signature="e#102#117#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="dev.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/set_config/dev.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="228">
               <caret line="35" column="17" lean-forward="true" selection-start-line="35" selection-start-column="17" selection-end-line="35" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_settings.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/test_settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="196">
+              <caret line="123" lean-forward="true" selection-start-line="123" selection-end-line="123" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/goods/urls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="171">
+              <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views_shelf.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/goods/views_shelf.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="342">
+              <caret line="30" column="36" lean-forward="true" selection-start-line="30" selection-start-column="36" selection-end-line="30" selection-end-column="36" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="import_django_settings.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/import_django_settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="76">
+              <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -204,19 +194,19 @@
         <option value="$PROJECT_DIR$/goods/shelfgoods/local_util/huofu_util.py" />
         <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/model_data/shelf_label_map.pbtxt" />
         <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/model_data/shelf_voc_classes.txt" />
-        <option value="$PROJECT_DIR$/goods/views_shelf.py" />
-        <option value="$PROJECT_DIR$/goods/urls.py" />
         <option value="$PROJECT_DIR$/main/test_settings.py" />
         <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py" />
-        <option value="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/shell/shelf_detect.sh" />
         <option value="$PROJECT_DIR$/set_config/local.py" />
         <option value="$PROJECT_DIR$/set_config/dev.py" />
         <option value="$PROJECT_DIR$/set_config/test.py" />
+        <option value="$PROJECT_DIR$/goods/urls.py" />
+        <option value="$PROJECT_DIR$/goods/views_shelf.py" />
+        <option value="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="976" />
@@ -493,11 +483,11 @@
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24743778" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.15959005" side_tool="true" visible="true" weight="0.14308426" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49926794" weight="0.3290938" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5014641" side_tool="true" visible="true" weight="0.14308426" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49853587" weight="0.3290938" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3529412" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.84040993" visible="true" weight="0.14308426" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.84040993" weight="0.14308426" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -757,16 +747,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/goods/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="82">
-          <caret line="42" column="76" selection-start-line="42" selection-start-column="76" selection-end-line="42" selection-end-column="76" />
-          <folding>
-            <element signature="e#642#683#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/main_service.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="190">
@@ -787,23 +767,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="229">
           <caret line="286" column="13" lean-forward="true" selection-start-line="286" selection-start-column="13" selection-end-line="286" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main/test_settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="134" column="6" lean-forward="true" selection-start-line="134" selection-start-column="6" selection-end-line="134" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main/import_django_settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -863,16 +826,6 @@
           <caret line="110" column="14" lean-forward="true" selection-start-line="110" selection-start-column="14" selection-end-line="110" selection-end-column="14" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/goods/views_shelf.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="545" column="27" selection-start-line="545" selection-start-column="6" selection-end-line="545" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -942,13 +895,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
+    <entry file="file://$PROJECT_DIR$/set_config/local.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="423">
-          <caret line="67" column="29" lean-forward="true" selection-start-line="67" selection-start-column="29" selection-end-line="67" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#43#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="158">
+          <caret line="27" column="53" selection-start-line="27" selection-start-column="53" selection-end-line="27" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/set_config/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="310">
+          <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -959,17 +916,47 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/set_config/local.py">
+    <entry file="file://$PROJECT_DIR$/main/test_settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="27" column="53" selection-start-line="27" selection-start-column="53" selection-end-line="27" selection-end-column="86" />
+        <state relative-caret-position="196">
+          <caret line="123" lean-forward="true" selection-start-line="123" selection-end-line="123" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/set_config/test.py">
+    <entry file="file://$PROJECT_DIR$/goods/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="30" column="78" selection-start-line="30" selection-start-column="78" selection-end-line="30" selection-end-column="78" />
+        <state relative-caret-position="171">
+          <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/views_shelf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="30" column="36" lean-forward="true" selection-start-line="30" selection-start-column="36" selection-end-line="30" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main/import_django_settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="17" column="23" lean-forward="true" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
