@@ -31,6 +31,27 @@ class FileManager:
             404：下载文件或数据不存在
             416：文件范围请求不合法
         :return:
+        改成数据流形式的下载（改源码）：
+        httprequest.py文件的185行改成以下
+            blocks = bytes()
+            if response.status_code in [200, 206]:
+                # with open(localfile, 'wb') as fd:
+                    for block in response.iter_content(config.BLOCKSIZE):
+                        # fd.write(block)
+                        blocks += block
+            else:
+                return __return_wraper(response)
+            return __return_wraper(response, True),BytesIO(blocks)  # 二进制数据流blocks
+        改本方法的代码：
+            (ret, resp),byte_stream = downloadufile_handler.download_file(public_bucket, put_key,localfile_path_name, isprivate=False)
+            print(resp.status_code)
+            roiImg = Image.open(byte_stream)
+            # 图片保存
+            roiImg.save(localfile_path_name)
+            if resp.status_code == 200:
+                return byte_stream
+            else:
+                return False
         """
         public_bucket = 'louxia'  # 公共空间名称
         public_savefile = ''  # 保存文件名
@@ -41,16 +62,10 @@ class FileManager:
         downloadufile_handler = filemanager.FileManager(self.public_key, self.private_key)
 
         # 从公共空间下载文件
-        (ret, resp),byte_stream = downloadufile_handler.download_file(public_bucket, put_key,localfile_path_name, isprivate=False)
+        ret, resp = downloadufile_handler.download_file(public_bucket, put_key,localfile_path_name, isprivate=False)
         print(resp.status_code)
-        # print(type(ret))
-        # print(ret)
-        # print(resp)
-        roiImg = Image.open(byte_stream)
-        # 图片保存
-        roiImg.save(localfile_path_name)
         if resp.status_code == 200:
-            return byte_stream
+            return True
         else:
             return False
 
