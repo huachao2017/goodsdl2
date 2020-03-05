@@ -2,6 +2,7 @@
 # api说明：https://github.com/ucloud/ufile-sdk-python
 from ufile import filemanager
 from io import BytesIO
+from PIL import Image
 
 
 class FileManager:
@@ -40,10 +41,16 @@ class FileManager:
         downloadufile_handler = filemanager.FileManager(self.public_key, self.private_key)
 
         # 从公共空间下载文件
-        ret, resp = downloadufile_handler.download_file(public_bucket, put_key,localfile_path_name, isprivate=False)
+        (ret, resp),byte_stream = downloadufile_handler.download_file(public_bucket, put_key,localfile_path_name, isprivate=False)
         print(resp.status_code)
+        # print(type(ret))
+        # print(ret)
+        # print(resp)
+        roiImg = Image.open(byte_stream)
+        # 图片保存
+        roiImg.save(localfile_path_name)
         if resp.status_code == 200:
-            return True
+            return byte_stream
         else:
             return False
 
@@ -95,9 +102,9 @@ class FileManager:
         # 普通上传二进制数据流至公共空间
         # with open(localfile_path_name, 'rb') as f:
         #     a = f.read()
-        bio = BytesIO(stream)  # 二进制数据流
+        byte_stream = BytesIO(stream)  # 二进制数据流
         stream_key = 'store_ass/{}'.format(ucloud_file_name)  # 上传数据流在空间中的名称
-        ret, resp = putufile_handler.putstream(public_bucket, stream_key, bio)
+        ret, resp = putufile_handler.putstream(public_bucket, stream_key, byte_stream)
         print(resp.status_code)
         if resp.status_code == 200:
             return True
