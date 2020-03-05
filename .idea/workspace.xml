@@ -14,10 +14,7 @@
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/views_shelf.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/views_shelf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/set_config/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -28,7 +25,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="176">
@@ -49,11 +46,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/set_config/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="310">
-              <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
+            <state relative-caret-position="63">
+              <caret line="34" column="17" lean-forward="true" selection-start-line="34" selection-start-column="17" selection-end-line="34" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -70,8 +67,8 @@
       <file leaf-file-name="dev.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/set_config/dev.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="35" column="17" lean-forward="true" selection-start-line="35" selection-start-column="17" selection-end-line="35" selection-end-column="17" />
+            <state relative-caret-position="171">
+              <caret line="32" column="77" selection-start-line="32" selection-start-column="21" selection-end-line="32" selection-end-column="77" />
             </state>
           </provider>
         </entry>
@@ -199,14 +196,14 @@
         <option value="$PROJECT_DIR$/goods/sellgoods/shell/shelf_detect.sh" />
         <option value="$PROJECT_DIR$/set_config/local.py" />
         <option value="$PROJECT_DIR$/set_config/dev.py" />
-        <option value="$PROJECT_DIR$/set_config/test.py" />
         <option value="$PROJECT_DIR$/goods/urls.py" />
         <option value="$PROJECT_DIR$/goods/views_shelf.py" />
         <option value="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" />
+        <option value="$PROJECT_DIR$/set_config/test.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="976" />
@@ -902,20 +899,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/set_config/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="310">
-          <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/set_config/dev.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="35" column="17" lean-forward="true" selection-start-line="35" selection-start-column="17" selection-end-line="35" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main/test_settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="196">
@@ -957,6 +940,20 @@
           <folding>
             <element signature="e#0#43#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/set_config/dev.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="32" column="77" selection-start-line="32" selection-start-column="21" selection-end-line="32" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/set_config/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="63">
+          <caret line="34" column="17" lean-forward="true" selection-start-line="34" selection-start-column="17" selection-end-line="34" selection-end-column="17" />
         </state>
       </provider>
     </entry>
