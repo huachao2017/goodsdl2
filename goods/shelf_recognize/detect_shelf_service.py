@@ -28,10 +28,7 @@ class DetectShelf:
             cursor_aucenter = conn.cursor()
             cursor_aucenter.execute(self.sql1)
             results = cursor_aucenter.fetchall()
-            up_http = config.shelf_yolov3_params['up_http']
-            up_jpg = config.shelf_yolov3_params['up_jpg']
             down_jpg = config.shelf_yolov3_params['down_jpg']
-            http_path = os.path.join(up_http,up_jpg)
             print("待检测 图片数量：" + str(len(results)))
             if results is not None and len(results) > 0:
                 data = []
@@ -42,18 +39,17 @@ class DetectShelf:
                     vacancy_face_num = ret[3]
                     ai_img_url = ret[4]
                     try:
-                        down_http_file = os.path.join(up_http,origin_img_url)
-                        ai_filename = "".join(str(uuid.uuid4()).split("-")).lower()+".jpg"
-                        down_local_file = os.path.join(down_jpg, ai_filename)
+                        down_http_file = origin_img_url
+                        # ai_filename = "".join(str(uuid.uuid4()).split("-")).lower()+".jpg"
+                        down_local_file = os.path.join(down_jpg, down_http_file)
                         file_oss_ins.download(down_http_file,down_local_file)
-                        up_local_file = os.path.join(down_jpg,"vis_"+ai_filename)
-                        up_http_file = os.path.join(http_path,"vis_"+ai_filename)
+                        up_local_file = os.path.join(down_jpg,"vis_"+down_http_file)
                         ret, detect_time, output_image, null_box_num = shelf_yolo_ins.detect(down_local_file,self.default_params)
                         output_image.save(up_local_file)
-                        file_oss_ins.upload(up_http_file, up_local_file)
+                        file_oss_ins.upload("vis_"+down_http_file, up_local_file)
                         vacancy_face_num = null_box_num
                         ai_status = 1
-                        ai_img_url = os.path.join(up_jpg,"vis_"+ai_filename)
+                        ai_img_url = "vis_"+down_http_file
                         updated_at = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
                         data.append((ai_status,vacancy_face_num,ai_img_url,updated_at,id))
                     except:

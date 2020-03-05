@@ -36,8 +36,6 @@ shelf_yolov3_params={
     "diff_switch_iou":(False,0.6),
     "single_switch_iou_minscore":(False,0.0,0.28),
     "down_jpg":"D:\\opt\\data\\ai_data\\shelf\\down\\",
-    "up_http":"http://lximages.xianlife.com",
-    "up_jpg":"/g1/2020/1315/",
 }
 
 
