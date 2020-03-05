@@ -263,7 +263,7 @@ if __name__ == '__main__':
     """Test code: Uses the two specified"""
 
     # boxes = [{'level': 1, 'xmin': 200, 'ymin': 200, 'xmax': 400, 'ymax': 400, 'result': 1, 'upc':''}]
-    # image_path = 'c:/fastbox/1.jpg'
+    # image_path = 'c:/fastbox/huofu_1.jpg'
     #
     # shelf_visualize(boxes,image_path)
 

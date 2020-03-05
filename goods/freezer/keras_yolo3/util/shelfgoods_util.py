@@ -37,6 +37,6 @@ def get_post_data_deletegood(goods_shelfgoods_id):
 
 
 if __name__=='__main__':
-    new_image_paths=["/home/ai/1.jpg","/home/ai/2.jpg","/home/ai/3.jpg"]
+    new_image_paths=["/home/ai/huofu_1.jpg","/home/ai/2.jpg","/home/ai/3.jpg"]
     api, post_data = get_post_data_goodstopn(new_image_paths)
     print (post_data)

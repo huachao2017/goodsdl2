@@ -1,0 +1,10 @@
+
+item {
+  id: 101
+  name: 'shelf'
+}
+
+item {
+  id: 102
+  name: 'null_box'
+}}
