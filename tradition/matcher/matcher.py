@@ -410,5 +410,5 @@ if __name__ == '__main__':
 
     # test_1()
     # sys.exit(0)
-    fn1 = 'images/1.jpg'
+    fn1 = 'images/huofu_1.jpg'
     fn2 = 'images/2.jpg'

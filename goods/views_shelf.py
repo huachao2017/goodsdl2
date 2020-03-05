@@ -4,8 +4,9 @@ import logging
 import math
 import os
 import urllib.request
+from PIL import Image
 import subprocess
-
+import base64
 import cv2
 import numpy as np
 import traceback
@@ -26,7 +27,9 @@ from .serializers import *
 from goods.shelfgoods.imgsearch.aliyun.search import ImgSearch
 from goods.shelfgoods.imgsearch.baidu_ai.search import ImgSearch_02
 
+# from goods.freezer.keras_yolo3.yolo3 import yolo_shelf
 logger = logging.getLogger("django")
+# yolo_ins = yolo_shelf.YOLO()
 
 class DefaultMixin:
     paginate_by = 25
@@ -537,3 +540,28 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.CreateModelMixin, mixins.ListModelM
 
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+#
+#
+# class ShelfAndNullBoxDetect(APIView):
+#     def get(self, request):
+#         ret = {}
+#         try:
+#             traceId = int(request.query_params['traceId'])
+#             img_base64 = int(request.query_params['img_base64'])
+#             imgBuf = base64.b64decode(img_base64)
+#             img = cv2.imdecode(np.frombuffer((imgBuf), dtype=np.uint8),
+#                                cv2.IMREAD_COLOR)
+#             img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+#             classes,scores,locations = yolo_ins.predict_img(img)
+#             ret = {
+#                 'classes':classes,
+#                 'scores':scores,
+#                 'locations':locations
+#             }
+#             logger.info("ShelfAndNullBoxDetect traceId={},ret={}".format(traceId,ret))
+#         except Exception as e:
+#             logger.error('ShelfAndNullBoxDetect error:{}'.format(e))
+#             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+#
+#         return Response(ret, status=status.HTTP_200_OK)

@@ -22,6 +22,23 @@ shellgoods_params={
     'shelf_top_level_height': 20,  # 最顶层货架的高度距货架最高的 距离限制  cm
     'shelf_top_level_none_width': 20,  # 最顶层没有商品的宽度 小于该值 结束重新选品
 }
+
+#########################################YOLOV3-shelf##################################################################
+shelf_yolov3_params={
+    'good_model_path' :'D:\\opt\\code\\model\\shelf\\ep1360-loss7.398-val_loss8.272.h5',
+    'anchors_path' :'D:\\opt\\code\\github\\goodsdl2\\goods\\freezer\\keras_yolo3\\model_data\\shelf_yolo_anchors.txt',
+    'classes_path' : 'D:\\opt\\code\\github\\goodsdl2\\goods\\freezer\\keras_yolo3\\model_data\\shelf_voc_classes.txt',
+    'label_path':'D:\\opt\\code\\github\\goodsdl2\\goods\\freezer\\keras_yolo3\\model_data\\shelf_label_map.pbtxt',
+    'score' :0.2,
+    'iou' :0.45,
+    'model_image_size' : (416, 416),
+    'gpu_num' : 1,
+    "diff_switch_iou":(False,0.6),
+    "single_switch_iou_minscore":(False,0.0,0.28),
+    "down_jpg":"D:\\opt\\data\\ai_data\\shelf\\down\\",
+}
+
+
 #erp_online
 erp={
     "host":"123.103.16.19",
