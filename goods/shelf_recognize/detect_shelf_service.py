@@ -18,7 +18,7 @@ class DetectShelf:
         'null_box':0.2,
     }
     sql1 = "select id,origin_img_url,ai_status,vacancy_face_num,ai_img_url,ai_result_desc from sf_shop_shelf_everyday where ai_status = 0 "
-    sql2 = "update sf_shop_shelf_everyday set ai_status = %s,vacancy_face_num = %s,ai_img_url = %s,updated_at = %s where id = %s "
+    sql2 = "update sf_shop_shelf_everyday set ai_status = %s,vacancy_face_num = %s,ai_img_url = %s,updated_at = %s,ai_result_desc = %s where id = %s "
     def detect(self):
         while True:
             time.sleep(60)
