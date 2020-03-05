@@ -203,10 +203,14 @@ class YOLO(object):
                         new_boxes.append(box)
             classes, scores, boxes = new_classes,new_scores,new_boxes
         null_box = 0
+        new_classes = []
         for clz in classes:
             if clz == 'null_box':
                 null_box+=1
-
+                new_classes.append(101)
+            if clz == 'shelf':
+                new_classes.append(100)
+        classes = new_classes
         boxes = np.array(boxes)
         classes = np.array(classes)
         scores = np.array(scores)
