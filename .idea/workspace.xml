@@ -48,14 +48,7 @@
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ModelServer/ModelServer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ModelServer/ModelServer/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/goodsdl2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/goodsdl2.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/freezer/keras_yolo3/good_proxy/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/freezer/keras_yolo3/good_proxy/proxy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/set_config/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/dev.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/local.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/set_config/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -88,26 +81,26 @@
       <file leaf-file-name="yolo_shelf.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="206">
-              <caret line="198" column="52" selection-start-line="198" selection-start-column="52" selection-end-line="198" selection-end-column="52" />
+            <state relative-caret-position="339">
+              <caret line="187" lean-forward="true" selection-start-line="187" selection-end-line="187" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="proxy.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="proxy.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/good_proxy/proxy.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="47" column="39" selection-start-line="47" selection-start-column="39" selection-end-line="47" selection-end-column="39" />
+            <state relative-caret-position="572">
+              <caret line="85" column="16" lean-forward="true" selection-start-line="85" selection-start-column="16" selection-end-line="85" selection-end-column="16" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/set_config/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="40" column="4" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="31" />
+            <state relative-caret-position="139">
+              <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -224,11 +217,11 @@
         <option value="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/track.py" />
         <option value="$PROJECT_DIR$/../GoodsServer/set_config/local.py" />
         <option value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/shelf_test.py" />
-        <option value="$PROJECT_DIR$/set_config/test.py" />
         <option value="$PROJECT_DIR$/set_config/dev.py" />
         <option value="$PROJECT_DIR$/set_config/local.py" />
         <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py" />
         <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/good_proxy/proxy.py" />
+        <option value="$PROJECT_DIR$/set_config/test.py" />
       </list>
     </option>
   </component>
@@ -957,13 +950,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/set_config/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="40" column="4" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/set_config/local.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="291">
@@ -978,17 +964,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py">
+    <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/good_proxy/proxy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="198" column="52" selection-start-line="198" selection-start-column="52" selection-end-line="198" selection-end-column="52" />
+        <state relative-caret-position="572">
+          <caret line="85" column="16" lean-forward="true" selection-start-line="85" selection-start-column="16" selection-end-line="85" selection-end-column="16" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/good_proxy/proxy.py">
+    <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="47" column="39" selection-start-line="47" selection-start-column="39" selection-end-line="47" selection-end-column="39" />
+        <state relative-caret-position="339">
+          <caret line="187" lean-forward="true" selection-start-line="187" selection-end-line="187" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/set_config/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="139">
+          <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
         </state>
       </provider>
     </entry>
