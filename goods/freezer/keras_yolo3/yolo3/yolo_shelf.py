@@ -38,6 +38,7 @@ label_path = config.shelf_yolov3_params['label_path']
 min_score=config.shelf_yolov3_params['score']
 (diff_switch,diff_iou) = config.shelf_yolov3_params['diff_switch_iou']
 (single_switch,single_iou,single_min_score) = config.shelf_yolov3_params['single_switch_iou_minscore']
+(point_in_switch,points_nums) =  config.shelf_yolov3_params['point_in_switch']
 class YOLO(object):
     _defaults = {
         "model_path": config.shelf_yolov3_params['good_model_path'],
@@ -193,6 +194,9 @@ class YOLO(object):
 
         if single_switch:
             classes, scores, boxes = proxy.single_filter(single_iou, single_min_score, classes,scores,boxes)
+
+        if point_in_switch:
+            classes, scores, boxes = proxy.point_in_shelf(classes,scores,boxes,default_point_nums=points_nums)
         if filter_parmas != None:
             new_classes, new_scores, new_boxes = [], [], []
             for clz,score,box in zip(classes, scores, boxes):

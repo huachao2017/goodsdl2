@@ -8,5 +8,9 @@
     <orderEntry type="module" module-name="GoodsServer" />
     <orderEntry type="module" module-name="AlphaZero_Gomoku-master" />
     <orderEntry type="module" module-name="qlearn" />
+    <orderEntry type="module" module-name="Person_reID_baseline_pytorch" />
+    <orderEntry type="module" module-name="App_logical" />
+    <orderEntry type="module" module-name="ImgVision" />
+    <orderEntry type="module" module-name="ModelServer" />
   </component>
 </module>
