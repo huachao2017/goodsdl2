@@ -72,9 +72,11 @@ class DetectShelf:
                             updated_at = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
                             data.append((ai_status, vacancy_face_num, ai_img_url, updated_at, ai_result_desc, id))
                             continue
-
+                        date_up = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+                        suf_path = "store_ass/" + str(date_up) + "/"
+                        upload_ai_file = suf_path+"vis_"+ai_filename
                         try:
-                            file_oss_ins.upload("vis_"+ai_filename, up_local_file)
+                            file_oss_ins.upload(upload_ai_file, up_local_file)
                         except:
                             print("shelf bull_box detect error id = {},origin_img_url={},upload jpg failed,up_local_file={}".format(id,
                                                                                                                   origin_img_url,up_local_file))
@@ -88,10 +90,9 @@ class DetectShelf:
                             continue
                         vacancy_face_num = null_box_num
                         ai_status = 1
-                        ai_img_url = "vis_" + ai_filename
                         ai_result_desc=''
                         updated_at = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
-                        data.append((ai_status, vacancy_face_num, ai_img_url, updated_at, ai_result_desc,id))
+                        data.append((ai_status, vacancy_face_num, upload_ai_file, updated_at, ai_result_desc,id))
                     cursor_aucenter.executemany(self.sql2, data)
                     conn.commit()
                 cursor_aucenter.close()
