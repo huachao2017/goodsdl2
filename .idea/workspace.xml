@@ -48,7 +48,7 @@
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ModelServer/ModelServer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ModelServer/ModelServer/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goods/choose_goods/lishu_util/oss_down_up.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/choose_goods/lishu_util/oss_down_up.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -86,11 +86,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="92" selection-start-line="92" selection-end-line="92" />
+            <state relative-caret-position="-117">
+              <caret line="77" column="28" lean-forward="true" selection-start-line="77" selection-start-column="28" selection-end-line="77" selection-end-column="28" />
               <folding>
                 <element signature="e#0#43#0" expanded="true" />
               </folding>
@@ -98,11 +98,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="oss_down_up.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="oss_down_up.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/goods/choose_goods/lishu_util/oss_down_up.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="64" column="50" selection-start-line="64" selection-start-column="50" selection-end-line="64" selection-end-column="50" />
+            <state relative-caret-position="700">
+              <caret line="143" column="57" selection-start-line="143" selection-start-column="57" selection-end-line="143" selection-end-column="57" />
               <folding>
                 <element signature="e#75#104#0" expanded="true" />
               </folding>
@@ -189,7 +189,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/cacul_util.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_8/data_util/cacul_util.py" />
         <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/proxy/order_rule_8.py" />
         <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/test_mAp.py" />
@@ -240,6 +239,7 @@
         <option value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/shelf_test.py" />
         <option value="$PROJECT_DIR$/../GoodsServer/set_config/local.py" />
         <option value="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" />
+        <option value="$PROJECT_DIR$/goods/choose_goods/lishu_util/oss_down_up.py" />
       </list>
     </option>
   </component>
@@ -267,12 +267,6 @@
               <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
               <item name="goodsdl2" type="462c0819:PsiDirectoryNode" />
               <item name="goods" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="goodsdl2" type="462c0819:PsiDirectoryNode" />
-              <item name="goods" type="462c0819:PsiDirectoryNode" />
-              <item name="shelf_recognize" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -943,16 +937,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/goods/choose_goods/lishu_util/oss_down_up.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="64" column="50" selection-start-line="64" selection-start-column="50" selection-end-line="64" selection-end-column="50" />
-          <folding>
-            <element signature="e#75#104#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../tools/work/Anaconda/Lib/site-packages/ufile/filemanager.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
@@ -972,10 +956,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="92" selection-start-line="92" selection-end-line="92" />
+        <state relative-caret-position="-117">
+          <caret line="77" column="28" lean-forward="true" selection-start-line="77" selection-start-column="28" selection-end-line="77" selection-end-column="28" />
           <folding>
             <element signature="e#0#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/choose_goods/lishu_util/oss_down_up.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="700">
+          <caret line="143" column="57" selection-start-line="143" selection-start-column="57" selection-end-line="143" selection-end-column="57" />
+          <folding>
+            <element signature="e#75#104#0" expanded="true" />
           </folding>
         </state>
       </provider>

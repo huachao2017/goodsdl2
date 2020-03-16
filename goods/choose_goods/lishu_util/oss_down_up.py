@@ -56,7 +56,7 @@ class FileManager:
         public_bucket = 'louxia'  # 公共空间名称
         public_savefile = ''  # 保存文件名
         range_savefile = ''  # 保存文件名
-        put_key = 'store_ass/{}'.format(ucloud_file_name)  # 文件在空间中的名称
+        put_key = '{}'.format(ucloud_file_name)  # 文件在空间中的名称
         stream_key = ''  # 文件在空间中的名称
 
         downloadufile_handler = filemanager.FileManager(self.public_key, self.private_key)
@@ -83,7 +83,7 @@ class FileManager:
         """
         public_bucket = 'louxia'  # 公共空间名称
         # localfile = 'C:/Users/86130/Pictures/BlueDream_4k.jpg'  # 本地文件名
-        put_key = 'store_ass/{}'.format(ucloud_file_name)  # 上传文件在空间中的名称
+        put_key = '{}'.format(ucloud_file_name)  # 上传文件在空间中的名称
 
 
         putufile_handler = filemanager.FileManager(self.public_key, self.private_key)
@@ -118,7 +118,7 @@ class FileManager:
         # with open(localfile_path_name, 'rb') as f:
         #     a = f.read()
         byte_stream = BytesIO(stream)  # 二进制数据流
-        stream_key = 'store_ass/{}'.format(ucloud_file_name)  # 上传数据流在空间中的名称
+        stream_key = '{}'.format(ucloud_file_name)  # 上传数据流在空间中的名称
         ret, resp = putufile_handler.putstream(public_bucket, stream_key, byte_stream)
         print(resp.status_code)
         if resp.status_code == 200:
@@ -136,7 +136,7 @@ class FileManager:
         :return:
         """
         public_bucket = 'louxia'  # 公共空间名称
-        delete_key = 'store_ass/{}'.format(ucloud_file_name)  # 文件在空间中的名称
+        delete_key = '{}'.format(ucloud_file_name)  # 文件在空间中的名称
 
         deleteufile_handler = filemanager.FileManager(self.public_key, self.private_key)
 
