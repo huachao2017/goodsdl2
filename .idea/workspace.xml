@@ -48,7 +48,7 @@
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ModelServer/ModelServer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ModelServer/ModelServer/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -63,7 +63,16 @@
         <entry file="file://$PROJECT_DIR$/../GoodsServer/shelf_predict.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="19">
-              <caret line="1" column="14" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
+              <caret line="1" column="18" lean-forward="true" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dev.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../GoodsServer/set_config/dev.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-510">
+              <caret line="5" column="22" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -71,8 +80,8 @@
       <file leaf-file-name="shelf_test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/shelf_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="18" selection-start-line="18" selection-end-line="20" selection-end-column="46" />
+            <state relative-caret-position="190">
+              <caret line="13" column="12" lean-forward="true" selection-start-line="13" selection-start-column="12" selection-end-line="13" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -80,17 +89,17 @@
       <file leaf-file-name="local.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../GoodsServer/set_config/local.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="45" column="20" selection-start-line="45" selection-start-column="20" selection-end-line="45" selection-end-column="20" />
+            <state relative-caret-position="133">
+              <caret line="46" column="20" lean-forward="true" selection-start-line="46" selection-start-column="20" selection-end-line="46" selection-end-column="20" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="111">
-              <caret line="74" column="74" selection-start-line="74" selection-start-column="73" selection-end-line="74" selection-end-column="74" />
+            <state relative-caret-position="35">
+              <caret line="61" column="93" lean-forward="true" selection-start-line="61" selection-start-column="93" selection-end-line="61" selection-end-column="93" />
               <folding>
                 <element signature="e#0#43#0" expanded="true" />
               </folding>
@@ -98,11 +107,20 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="yolo_shelf.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="251">
+              <caret line="252" column="32" selection-start-line="252" selection-start-column="32" selection-end-line="252" selection-end-column="32" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="oss_down_up.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/choose_goods/lishu_util/oss_down_up.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="115" lean-forward="true" selection-start-line="115" selection-end-line="115" />
+            <state relative-caret-position="117">
+              <caret line="151" lean-forward="true" selection-start-line="151" selection-end-line="151" />
               <folding>
                 <element signature="e#75#104#0" expanded="true" />
               </folding>
@@ -143,27 +161,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Person_reID_baseline_pytorch/model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="26" column="51" lean-forward="true" selection-start-line="26" selection-start-column="51" selection-end-line="26" selection-end-column="51" />
-              <folding>
-                <element signature="e#0#12#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="train.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Person_reID_baseline_pytorch/train.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="155" column="23" lean-forward="true" selection-start-line="155" selection-start-column="23" selection-end-line="155" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -181,6 +178,7 @@
       <find>predict_wfile_path</find>
       <find>predict_wfile</find>
       <find>insert_goods_batch_order</find>
+      <find>store_ass</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -233,13 +231,13 @@
         <option value="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/track.py" />
         <option value="$PROJECT_DIR$/set_config/dev.py" />
         <option value="$PROJECT_DIR$/set_config/local.py" />
-        <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py" />
         <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/good_proxy/proxy.py" />
         <option value="$PROJECT_DIR$/set_config/test.py" />
         <option value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/shelf_test.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/set_config/local.py" />
         <option value="$PROJECT_DIR$/goods/choose_goods/lishu_util/oss_down_up.py" />
         <option value="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" />
+        <option value="$PROJECT_DIR$/../GoodsServer/set_config/local.py" />
+        <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py" />
       </list>
     </option>
   </component>
@@ -273,6 +271,11 @@
               <item name="goodsdl2" type="462c0819:PsiDirectoryNode" />
               <item name="goods" type="462c0819:PsiDirectoryNode" />
               <item name="shelf_recognize" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="goodsdl2" type="462c0819:PsiDirectoryNode" />
+              <item name="set_config" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -309,24 +312,6 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.shelf_predict">
-    <configuration name="detect_shelf_service" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="goodsdl2" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/goods/shelf_recognize" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
     <configuration name="freezer_file_handle" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="GoodsServer" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -381,6 +366,24 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
+    <configuration name="shelf_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="GoodsServer" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/shelf_test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="video_read" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="GoodsServer" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -400,19 +403,19 @@
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <list>
-      <item itemvalue="Python.detect_shelf_service" />
       <item itemvalue="Python.freezer_file_handle" />
       <item itemvalue="Python.video_read" />
       <item itemvalue="Python.my_demo" />
       <item itemvalue="Python.shelf_predict" />
+      <item itemvalue="Python.shelf_test" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.shelf_predict" />
+        <item itemvalue="Python.shelf_test" />
         <item itemvalue="Python.freezer_file_handle" />
         <item itemvalue="Python.my_demo" />
         <item itemvalue="Python.video_read" />
-        <item itemvalue="Python.detect_shelf_service" />
       </list>
     </recent_temporary>
   </component>
@@ -513,11 +516,11 @@
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24743778" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.16325037" side_tool="true" visible="true" weight="0.004769475" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.16325037" side_tool="true" visible="true" weight="0.31160572" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.496875" weight="0.3285968" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3529412" />
       <window_info anchor="bottom" id="Python Console" order="8" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8367496" visible="true" weight="0.004769475" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8367496" visible="true" weight="0.31160572" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -605,9 +608,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelfgoods.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/model_data/shelfgoods_label_map.pbtxt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="76">
@@ -864,13 +864,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="187" lean-forward="true" selection-start-line="187" selection-end-line="187" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/set_config/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="139">
@@ -912,27 +905,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/shelf_predict.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="1" column="14" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/shelf_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="18" selection-start-line="18" selection-end-line="20" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/set_config/local.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="45" column="20" selection-start-line="45" selection-start-column="20" selection-end-line="45" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/main_service.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1669">
@@ -960,10 +932,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/shelf_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="13" column="12" lean-forward="true" selection-start-line="13" selection-start-column="12" selection-end-line="13" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/shelf_predict.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="1" column="18" lean-forward="true" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/set_config/dev.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-510">
+          <caret line="5" column="22" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/set_config/local.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="46" column="20" lean-forward="true" selection-start-line="46" selection-start-column="20" selection-end-line="46" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/goods/choose_goods/lishu_util/oss_down_up.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="115" lean-forward="true" selection-start-line="115" selection-end-line="115" />
+        <state relative-caret-position="117">
+          <caret line="151" lean-forward="true" selection-start-line="151" selection-end-line="151" />
           <folding>
             <element signature="e#75#104#0" expanded="true" />
           </folding>
@@ -972,11 +972,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="74" column="74" selection-start-line="74" selection-start-column="73" selection-end-line="74" selection-end-column="74" />
+        <state relative-caret-position="35">
+          <caret line="61" column="93" lean-forward="true" selection-start-line="61" selection-start-column="93" selection-end-line="61" selection-end-column="93" />
           <folding>
             <element signature="e#0#43#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="251">
+          <caret line="252" column="32" selection-start-line="252" selection-start-column="32" selection-end-line="252" selection-end-column="32" />
         </state>
       </provider>
     </entry>

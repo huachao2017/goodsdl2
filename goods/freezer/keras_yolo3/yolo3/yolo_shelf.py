@@ -249,6 +249,8 @@ class YOLO(object):
         time3 = time.time()
         logger.info('detect_shelf: %d, %.2f, %.2f, %.2f, %.2f' % (
         len(ret), time3 - time0, time1 - time0, time2 - time1, time3 - time2))
+        if output_image is None:
+            output_image = image
         return ret, time1 - time0, output_image,null_box
 
 
