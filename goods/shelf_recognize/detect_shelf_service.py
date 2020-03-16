@@ -72,7 +72,7 @@ class DetectShelf:
                             updated_at = str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
                             data.append((ai_status, vacancy_face_num, ai_img_url, updated_at, ai_result_desc, id))
                             continue
-                        date_up = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+                        date_up = time.strftime('%Y%m%d', time.localtime(time.time()))
                         suf_path = "store_ass/" + str(date_up) + "/"
                         upload_ai_file = suf_path+"vis_"+ai_filename
                         try:

@@ -89,8 +89,8 @@
       <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+            <state relative-caret-position="111">
+              <caret line="74" column="74" selection-start-line="74" selection-start-column="73" selection-end-line="74" selection-end-column="74" />
               <folding>
                 <element signature="e#0#43#0" expanded="true" />
               </folding>
@@ -972,8 +972,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+        <state relative-caret-position="111">
+          <caret line="74" column="74" selection-start-line="74" selection-start-column="73" selection-end-line="74" selection-end-column="74" />
           <folding>
             <element signature="e#0#43#0" expanded="true" />
           </folding>
