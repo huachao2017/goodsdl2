@@ -49,10 +49,6 @@
       <change beforePath="$PROJECT_DIR$/../ModelServer/ModelServer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ModelServer/ModelServer/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/set_config/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/dev.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/set_config/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -93,11 +89,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="detect_shelf_service.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="16" column="20" lean-forward="true" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
+            <state relative-caret-position="-247">
+              <caret line="14" column="18" lean-forward="true" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="18" />
               <folding>
                 <element signature="e#0#43#0" expanded="true" />
               </folding>
@@ -108,8 +104,8 @@
       <file leaf-file-name="dev.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/set_config/dev.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="133">
-              <caret line="38" column="18" lean-forward="true" selection-start-line="38" selection-start-column="18" selection-end-line="38" selection-end-column="18" />
+            <state relative-caret-position="114">
+              <caret line="31" column="78" selection-start-line="31" selection-start-column="78" selection-end-line="31" selection-end-column="78" />
             </state>
           </provider>
         </entry>
@@ -132,11 +128,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/set_config/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="139">
-              <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
+            <state relative-caret-position="44">
+              <caret line="30" column="78" selection-start-line="30" selection-start-column="78" selection-end-line="30" selection-end-column="78" />
             </state>
           </provider>
         </entry>
@@ -233,10 +229,10 @@
         <option value="$PROJECT_DIR$/../GoodsServer/freezer/test/path_file/freezer_file_handle.py" />
         <option value="$PROJECT_DIR$/../GoodsServer/freezer/test/utils/xml_to_imgdir.py" />
         <option value="$PROJECT_DIR$/../GoodsServer/set_config/local.py" />
-        <option value="$PROJECT_DIR$/set_config/dev.py" />
-        <option value="$PROJECT_DIR$/set_config/test.py" />
         <option value="$PROJECT_DIR$/main/settings.py" />
         <option value="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" />
+        <option value="$PROJECT_DIR$/set_config/dev.py" />
+        <option value="$PROJECT_DIR$/set_config/test.py" />
       </list>
     </option>
   </component>
@@ -958,20 +954,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/set_config/dev.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="38" column="18" lean-forward="true" selection-start-line="38" selection-start-column="18" selection-end-line="38" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/set_config/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main/test_settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="114">
@@ -988,11 +970,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="16" column="20" lean-forward="true" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
+        <state relative-caret-position="-247">
+          <caret line="14" column="18" lean-forward="true" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="18" />
           <folding>
             <element signature="e#0#43#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/set_config/dev.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="31" column="78" selection-start-line="31" selection-start-column="78" selection-end-line="31" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/set_config/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="44">
+          <caret line="30" column="78" selection-start-line="30" selection-start-column="78" selection-end-line="30" selection-end-column="78" />
         </state>
       </provider>
     </entry>
