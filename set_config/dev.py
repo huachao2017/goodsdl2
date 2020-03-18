@@ -29,11 +29,11 @@ mengniu_yolov3_params={
 
 #########################################YOLOV3-shelf##################################################################
 shelf_yolov3_params={
-    'good_model_path' :'/home/ai/model/shelf/ep3053-loss39.789-val_loss42.951.h5',
+    'good_model_path' :'/home/ai/model/shelf/ep2206-loss5.839-val_loss5.605.h5',
     'anchors_path' :'/home/src/goodsdl2/goods/freezer/keras_yolo3/model_data/shelf_yolo_anchors.txt',
     'classes_path' : '/home/src/goodsdl2/goods/freezer/keras_yolo3/model_data/shelf_voc_classes.txt',
     'label_path':'/home/src/goodsdl2/goods/freezer/keras_yolo3/model_data/shelf_label_map.pbtxt',
-    'score' :0.2,
+    'score' :0.1,
     'iou' :0.45,
     'model_image_size' : (416, 416),
     'gpu_num' : 1,

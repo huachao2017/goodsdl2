@@ -122,6 +122,17 @@ DATABASES = {
         'CHARSET': 'utf8',
         'COLLATION': 'utf8_general_ci',
     },
+    'alpha_ucenter': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ucenter',
+        'USER': 'fx_ai_rw',
+        'PASSWORD': 'LXhEiT4V75j7n0wb',
+        # 'HOST': '10.19.79.120',   # 从ucloud连ucloud
+        'HOST': 'udb-ucenter-m-1.xianlife.top',  # 从内网连ucloud
+        'PORT': '3306',
+        'CHARSET': 'utf8',
+        'COLLATION': 'utf8_general_ci',
+    },
     'bi': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'bi',
