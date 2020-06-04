@@ -129,17 +129,12 @@ class CreateShelfImage(APIView):
             cursor.execute(insert_sql)
             conn.commit()
         else:
-            print(pic_data)
-            print(len(pic_data))
             if not pic_data[1] is None:
                 return Response(goods.util.wrap_ret(pic_data[1]), status=status.HTTP_200_OK)
             else:
                 create_time = pic_data[-2]
                 diff = now - create_time
-                print(diff)
-                print(diff.seconds)
                 if diff.seconds < 300:
-                    print(123)
                     return Response(goods.util.wrap_ret("正在识别中"), status=status.HTTP_200_OK)
 
 
