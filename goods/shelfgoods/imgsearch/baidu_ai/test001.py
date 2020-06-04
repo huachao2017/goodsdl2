@@ -268,7 +268,7 @@ def get(request):
     pic_data = cursor.fetchone()
     now = datetime.datetime.now()
     if pic_data is None:
-        insert_sql = "insert into baidu_ai_goods_search(picture_url) value {}".format(str(picurl))
+        insert_sql = "insert into baidu_ai_goods_search(picture_url) value({})".format(str(picurl))
         cursor.execute(insert_sql)
         conn.commit()
     else:
