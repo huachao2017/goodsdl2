@@ -7,6 +7,7 @@ import subprocess
 import time
 import urllib.request
 from PIL import Image as PILImage
+import datetime,pymysql
 
 import numpy as np
 from django.conf import settings
@@ -102,7 +103,12 @@ def detect_recognize(shelf_image, source_image_path):
 
 class CreateShelfImage(APIView):
 
-    def get(self, request):
+    def get(self,request):
+        conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl', charset="utf8",
+                               port=3306, use_unicode=True)
+        cursor = conn.cursor()
+
+        logger.info('begin api/createshelfimage2')
 
         picurl = request.query_params['picurl']
         try:
@@ -112,10 +118,31 @@ class CreateShelfImage(APIView):
         except Exception as e:
             logger.error('Shelf score error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
+
+        search_sql = "select * from baidu_ai_goods_search where picture_url= {}".format(str(picurl))
+        cursor.execute(search_sql)
+        pic_data = cursor.fetchone()
+        now = datetime.datetime.now()
+        if pic_data is None:
+            insert_sql = "insert into baidu_ai_goods_search(picture_url) value({})".format(str(picurl))
+            cursor.execute(insert_sql)
+            conn.commit()
+        else:
+            print(pic_data)
+            print(len(pic_data))
+            create_time = pic_data[-1]
+            diff = now - create_time
+            print(diff)
+            print(diff.seconds)
+            if diff.seconds < 300:
+                print(123)
+                return Response(goods.util.wrap_ret([]), status=status.HTTP_200_OK)
+
+
         logger.info('begin detect:{},{}'.format(shopid, shelfid))
 
         # 获取图片
-        now = datetime.datetime.now()
+
         image_relative_dir = os.path.join(settings.DETECT_DIR_NAME, 'shelf', now.strftime('%Y%m'),now.strftime('%d%H'))
         image_dir = os.path.join(settings.MEDIA_ROOT, image_relative_dir)
         if not tf.gfile.Exists(image_dir):
@@ -132,10 +159,10 @@ class CreateShelfImage(APIView):
             source=os.path.join(image_relative_dir, source_image_name),
         )
 
-        ret = detect_recognize(shelf_image, source_image_path)
+        # ret = detect_recognize(shelf_image, source_image_path)
 
-        logger.info('end detect:{},{}'.format(shopid, shelfid))
-        return Response(goods.util.wrap_ret(ret), status=status.HTTP_200_OK)
+        # logger.info('end detect:{},{}'.format(shopid, shelfid))
+        # return Response(goods.util.wrap_ret(ret), status=status.HTTP_200_OK)
 
 
 class RectifyShelfImage(APIView):
@@ -274,3 +301,7 @@ class ShelfGoodsViewSet(DefaultMixin, mixins.ListModelMixin, mixins.RetrieveMode
             imgsearch_02.delete_img(instance.baidu_code)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+if __name__ == '__main__':
+    a = ShelfImage()
+    a.get(1)
