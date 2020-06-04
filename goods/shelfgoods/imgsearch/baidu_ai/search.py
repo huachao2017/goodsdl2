@@ -95,7 +95,7 @@ class ImgSearch_02:
                 request_.add_header('Content-Type', 'application/x-www-form-urlencoded')
                 response = request.urlopen(request_)
                 str_content = response.read().decode("utf-8")
-                print(str_content)
+                # print(str_content)
                 content = json.loads(str_content)
                 if 'error_code' in content:
                     logging.error(str_content)
@@ -123,8 +123,8 @@ class ImgSearch_02:
                 req.add_header('Content-Type', 'application/x-www-form-urlencoded')
                 response = request.urlopen(req)
                 content = response.read().decode("utf-8")
-                if self.debug:
-                    print(content)
+                # if self.debug:
+                #     print(content)
                 content = json.loads(content)
                 results = content['result']
                 upcs = []
@@ -162,7 +162,7 @@ class ImgSearch_02:
                 req.add_header('Content-Type', 'application/x-www-form-urlencoded')
                 response = request.urlopen(req)
                 content = response.read().decode("utf-8")
-                print(content)
+                # print(content)
                 content = json.loads(content)
                 results = content['result']
                 upcs = []
@@ -197,13 +197,13 @@ class ImgSearch_02:
                 req.add_header('Content-Type', 'application/x-www-form-urlencoded')
                 response = request.urlopen(req)
                 content = response.read().decode("utf-8")
-                print(content)
+                # print(content)
                 content = json.loads(content)
                 results = content['result']
                 upc =None
                 for result in results:
                     score = result["score"]
-                    print(score)
+                    # print(score)
                     if score > self.min_score_top1:
                         try:
                             # upc=str(data_eval(result["brief"])["upc"])
@@ -235,9 +235,9 @@ class ImgSearch_02:
                     content = response.read().decode("utf-8")
                     content = json.loads(content)
                     access_token = content["access_token"]
-                    print(access_token)
+                    # print(access_token)
                     end = time.time()
-                    print(end - start)
+                    # print(end - start)
                     return access_token
                 except Exception as err:
                     logging.error(err)
