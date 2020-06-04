@@ -120,12 +120,12 @@ class CreateShelfImage(APIView):
         conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl', charset="utf8",
                                port=3306, use_unicode=True)
         cursor = conn.cursor()
-        search_sql = "select * from baidu_ai_goods_search where picture_url= {}".format(str(picurl))
+        search_sql = "select * from baidu_ai_goods_search where picture_url= '{}'".format(str(picurl))
         cursor.execute(search_sql)
         pic_data = cursor.fetchone()
         now = datetime.datetime.now()
         if pic_data is None:
-            insert_sql = "insert into baidu_ai_goods_search(picture_url) value({})".format(str(picurl))
+            insert_sql = "insert into baidu_ai_goods_search(picture_url) value('{}')".format(str(picurl))
             cursor.execute(insert_sql)
             conn.commit()
         else:
@@ -160,7 +160,7 @@ class CreateShelfImage(APIView):
 
         ret = detect_recognize(shelf_image, source_image_path)
 
-        update_sql = "update baidu_ai_goods_search set value={} where picture_url={}".format(str(ret),picurl)
+        update_sql = "update baidu_ai_goods_search set value={} where picture_url='{}'".format(str(ret),picurl)
         cursor.execute(update_sql)
         conn.commit()
         cursor.close()
