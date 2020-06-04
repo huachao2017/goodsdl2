@@ -54,6 +54,8 @@ def detect_recognize(shelf_image, source_image_path):
     detector = shelfdetection.ShelfDetectorFactory.get_static_detector('shelf')
     step1_min_score_thresh = .5
     detect_ret = detector.detect(source_image_path, step1_min_score_thresh=step1_min_score_thresh)
+    if detect_ret is None:
+        return ret
     if len(detect_ret) > 0:
         caculate_level(detect_ret, shelf_image.tlevel)
 
@@ -160,7 +162,7 @@ class CreateShelfImage(APIView):
 
         ret = detect_recognize(shelf_image, source_image_path)
 
-        update_sql = "update baidu_ai_goods_search set value={} where picture_url='{}'".format(str(ret),picurl)
+        update_sql = "update baidu_ai_goods_search set value='{}' where picture_url='{}'".format(str(ret),picurl)
         cursor.execute(update_sql)
         conn.commit()
         cursor.close()
