@@ -267,7 +267,7 @@ def get(request):
     cursor.execute(search_sql)
     pic_data = cursor.fetchone()
     now = datetime.datetime.now()
-    if len(pic_data) == 0:
+    if pic_data is None:
         insert_sql = "insert into baidu_ai_goods_search(picture_url) value {}".format(str(picurl))
         cursor.execute(insert_sql)
         conn.commit()
