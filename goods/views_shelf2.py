@@ -104,9 +104,7 @@ def detect_recognize(shelf_image, source_image_path):
 class CreateShelfImage(APIView):
 
     def get(self,request):
-        conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl', charset="utf8",
-                               port=3306, use_unicode=True)
-        cursor = conn.cursor()
+
 
         logger.info('begin api/createshelfimage2')
 
@@ -119,6 +117,9 @@ class CreateShelfImage(APIView):
             logger.error('Shelf score error:{}'.format(e))
             return Response(-1, status=status.HTTP_400_BAD_REQUEST)
 
+        conn = pymysql.connect('10.19.68.63', 'gpu_rw', password='jyrMnQR1NdAKwgT4', database='goodsdl', charset="utf8",
+                               port=3306, use_unicode=True)
+        cursor = conn.cursor()
         search_sql = "select * from baidu_ai_goods_search where picture_url= {}".format(str(picurl))
         cursor.execute(search_sql)
         pic_data = cursor.fetchone()
@@ -130,13 +131,16 @@ class CreateShelfImage(APIView):
         else:
             print(pic_data)
             print(len(pic_data))
-            create_time = pic_data[-1]
-            diff = now - create_time
-            print(diff)
-            print(diff.seconds)
-            if diff.seconds < 300:
-                print(123)
-                return Response(goods.util.wrap_ret([]), status=status.HTTP_200_OK)
+            if not pic_data[1] is None:
+                return Response(goods.util.wrap_ret(pic_data[1]), status=status.HTTP_200_OK)
+            else:
+                create_time = pic_data[-2]
+                diff = now - create_time
+                print(diff)
+                print(diff.seconds)
+                if diff.seconds < 300:
+                    print(123)
+                    return Response(goods.util.wrap_ret("正在识别中"), status=status.HTTP_200_OK)
 
 
         logger.info('begin detect:{},{}'.format(shopid, shelfid))
@@ -159,10 +163,16 @@ class CreateShelfImage(APIView):
             source=os.path.join(image_relative_dir, source_image_name),
         )
 
-        # ret = detect_recognize(shelf_image, source_image_path)
+        ret = detect_recognize(shelf_image, source_image_path)
 
-        # logger.info('end detect:{},{}'.format(shopid, shelfid))
-        # return Response(goods.util.wrap_ret(ret), status=status.HTTP_200_OK)
+        update_sql = "update baidu_ai_goods_search set value={} where picture_url={}".format(str(ret),picurl)
+        cursor.execute(update_sql)
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        logger.info('end detect:{},{}'.format(shopid, shelfid))
+        return Response(goods.util.wrap_ret(ret), status=status.HTTP_200_OK)
 
 
 class RectifyShelfImage(APIView):
