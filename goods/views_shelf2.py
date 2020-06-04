@@ -161,8 +161,9 @@ class CreateShelfImage(APIView):
         )
 
         ret = detect_recognize(shelf_image, source_image_path)
-
-        update_sql = "update baidu_ai_goods_search set value='{}' where picture_url='{}'".format(str(ret),picurl)
+        ret = str(ret)
+        ret = ret.replace("'", "\\\'")
+        update_sql = "update baidu_ai_goods_search set value='{}' where picture_url='{}'".format(ret,picurl)
         cursor.execute(update_sql)
         conn.commit()
         cursor.close()
