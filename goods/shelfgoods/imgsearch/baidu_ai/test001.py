@@ -272,6 +272,8 @@ def get(request):
         cursor.execute(insert_sql)
         conn.commit()
     else:
+        print(pic_data)
+        print(len(pic_data))
         create_time = pic_data[-1]
         diff = now - create_time
         print(diff)
