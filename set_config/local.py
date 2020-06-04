@@ -35,6 +35,7 @@ shelf_yolov3_params={
     'gpu_num' : 1,
     "diff_switch_iou":(False,0.6),
     "single_switch_iou_minscore":(False,0.0,0.28),
+    'point_in_switch':(True,2),
     "down_jpg":"D:\\opt\\data\\ai_data\\shelf\\down\\",
 }
 

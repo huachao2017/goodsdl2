@@ -42,3 +42,52 @@ def diff_fiter(iou,classes,scores,boxes):
             p_scores.append(sce)
             p_boxes.append(bx)
     return p_classes, p_scores, p_boxes
+
+
+# 货架空位识别， 判断空位在货架内部 （默认不小于两个点，在内部）
+def point_in_shelf(classes,scores,boxes,default_point_nums = 2):
+    shelf_boxes = []
+    shelf_clzes = []
+    shelf_scores = []
+    null_boxes = []
+    null_boxes_scores = []
+    for (clz,box,score) in zip(classes,boxes,scores):
+        if clz == 'shelf':
+            shelf_boxes.append(box)
+            shelf_clzes.append(clz)
+            shelf_scores.append(score)
+        if clz == 'null_box':
+            null_boxes.append(box)
+            null_boxes_scores.append(score)
+    new_boxes = []
+    new_clzes = []
+    new_scores = []
+    for i in range(len(null_boxes)):
+        xmin,ymin,xmax,ymax = null_boxes[i]
+        score = null_boxes_scores[i]
+        A = (xmin,ymin)
+        B = (xmax,ymin)
+        C = (xmin,ymax)
+        D = (xmax,ymax)
+        flag = False
+        for (shelf_xmin,shelf_ymin,shelf_xmax,shelf_ymax) in shelf_boxes:
+            point_nums = 0
+            if A[0] >= shelf_xmin and A[1] <= shelf_ymax :
+                point_nums += 1
+            if B[0] >= shelf_xmin and B[1] <= shelf_ymax:
+                point_nums += 1
+            if C[0] >= shelf_xmin and C[1] <= shelf_ymax:
+                point_nums += 1
+            if D[0] >= shelf_xmin and D[1] <= shelf_ymax:
+                point_nums += 1
+            if point_nums >= default_point_nums:
+                flag = True
+                break
+        if flag:
+            new_boxes.append([xmin,ymin,xmax,ymax])
+            new_clzes.append('null_box')
+            new_scores.append(score)
+    new_boxes.extend(shelf_boxes)
+    new_clzes.extend(shelf_clzes)
+    new_scores.extend(shelf_scores)
+    return new_clzes,new_scores,new_boxes

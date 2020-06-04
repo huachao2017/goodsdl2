@@ -2,6 +2,10 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../ai/App_logical" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../ai/ImgVision" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../GoodsServer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ModelServer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../Person_reID_baseline_pytorch" vcs="Git" />
   </component>
 </project>

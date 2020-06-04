@@ -28,25 +28,26 @@ mengniu_yolov3_params={
 }
 #########################################YOLOV3-shelf##################################################################
 shelf_yolov3_params={
-    'good_model_path' :'/home/ai/model/shelf/ep1360-loss7.398-val_loss8.272.h5',
+    'good_model_path' :'/home/ai/model/shelf/ep1360-loss5.085-val_loss6.748.h5',
     'anchors_path' :'/home/src/goodsdl2/goods/freezer/keras_yolo3/model_data/shelf_yolo_anchors.txt',
     'classes_path' : '/home/src/goodsdl2/goods/freezer/keras_yolo3/model_data/shelf_voc_classes.txt',
     'label_path':'/home/src/goodsdl2/goods/freezer/keras_yolo3/model_data/shelf_label_map.pbtxt',
-    'score' :0.2,
+    'score' :0.1,
     'iou' :0.45,
     'model_image_size' : (416, 416),
     'gpu_num' : 1,
     "diff_switch_iou":(False,0.6),
     "single_switch_iou_minscore":(False,0.0,0.28),
+    'point_in_switch':(True,2),
     "down_jpg":"/data/ai_data/shelf/down/",
 }
 #########################################shelf_good##################################################################
 
 aliyun_instance1={
-    "AccessKeyID" : "LTAI4Ftp8inKDzFmaEWyj17P",
-    "AccessKeySecret" : "mCVOzv0fABM19dTRlYlWMZdGlAoqsz",
-    "region" : "cn-shanghai",
-    "instance_name" : "hsimgsearch",
+    "AccessKeyID" : "11",
+    "AccessKeySecret" : "11",
+    "region" : "11",
+    "instance_name" : "11",
     "min_score" : 5,
     "min_score_top1":5,
     "search_point": "imagesearch.cn-shanghai.aliyuncs.com",
@@ -54,10 +55,10 @@ aliyun_instance1={
 }
 
 aliyun_instance2={
-    "AccessKeyID" : "LTAI4Fi33wJV958cakMBQxKZ",
-    "AccessKeySecret" : "cJRZsV2ayTAhSLhZWiuzBHrgHK2uhq",
-    "region" : "cn-shanghai",
-    "instance_name" : "hsimgsearch1",
+    "AccessKeyID" : "11",
+    "AccessKeySecret" : "11",
+    "region" : "11",
+    "instance_name" : "11",
     "min_score" : 5,
     "min_score_top1": 5,
     "search_point": "imagesearch.cn-shanghai.aliyuncs.com",
