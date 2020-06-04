@@ -275,6 +275,7 @@ def get(request):
         create_time = pic_data[-1]
         diff = now - create_time
         print(diff)
+        print(diff.seconds)
         if diff.seconds < 300:
             print(123)
 
