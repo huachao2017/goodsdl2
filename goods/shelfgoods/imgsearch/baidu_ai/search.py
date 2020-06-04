@@ -6,9 +6,19 @@ import logging
 logger = logging.getLogger("detect")
 from set_config import config
 from goods.shelfgoods.bean import code
-baidu_ai_instance = config.baidu_ai_instance1
+# baidu_ai_instance = config.baidu_ai_instance1
 
-
+baidu_ai_instance = {
+    "debug":True,
+    "request_url" : "https://aip.baidubce.com/rest/2.0/image-classify/v1/realtime_search/product/",
+    "min_score" : 0.5,
+    "min_score_top1":0.5,
+    "sleep_time" : 0.3,
+    # "ak":"bBcxD1iD0yChCznvft3oR0sn",
+    "ak":"RFNo996bxTRV4riQmcpBCCyx",
+    # "sk":"lL3AjqaCGvmpV077t9q96dihCY2xmgTm"
+    "sk":"7tK4CzR0CbukbkDEod3Krk4ugi1iQNjK"
+}
 class ImgSearch_02:
     debug = baidu_ai_instance['debug']
     request_url = baidu_ai_instance['request_url']
