@@ -274,7 +274,8 @@ def get(request):
     else:
         create_time = pic_data[-1]
         diff = now - create_time
-        if diff < 300:
+        print(diff)
+        if diff.seconds < 300:
             print(123)
 
 if __name__ == '__main__':
