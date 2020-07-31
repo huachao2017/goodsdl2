@@ -12,5 +12,13 @@
     <orderEntry type="module" module-name="App_logical" />
     <orderEntry type="module" module-name="ImgVision" />
     <orderEntry type="module" module-name="ModelServer" />
+    <orderEntry type="module" module-name="keras-yolo4" />
+    <orderEntry type="module" module-name="lotus" />
+    <orderEntry type="module" module-name="goodsdl" />
+    <orderEntry type="module" module-name="PaddleSeg" />
+    <orderEntry type="module" module-name="PaddleDetection" />
+    <orderEntry type="module" module-name="polyp_detection_based_on_yolov3" />
+    <orderEntry type="module" module-name="poly-YOLOv3" />
+    <orderEntry type="module" module-name="poly-yolo" />
   </component>
 </module>

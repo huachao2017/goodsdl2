@@ -48,7 +48,36 @@
       <change beforePath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" beforeDir="false" afterPath="$PROJECT_DIR$/../GoodsServer/set_config/local.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ModelServer/ModelServer/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ModelServer/ModelServer/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/.idea/goodsdl.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/.idea/goodsdl.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/dl/only_step2/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/dl/only_step2/eval.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/dl/raw/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/dl/raw/eval.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/dl/step1/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/dl/step1/eval.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/dl/step2/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/dl/step2/eval.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/dl/step2/eval2_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/dl/step2/eval2_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/dl/step20/eval2_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/dl/step20/eval2_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/dl/step21/eval2_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/dl/step21/eval2_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/dl/step3/eval2_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/dl/step3/eval2_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/dl/step30/eval2_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/dl/step30/eval2_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/dl/stepall/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/dl/stepall/eval.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/goods/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/goods/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/goods/views_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/goods/views_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/goods2/cron.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/goods2/cron.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../goodsdl/goods2/dl/eval2_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/../goodsdl/goods2/dl/eval2_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/goodsdl2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/goodsdl2.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goods/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goods/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/goods/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/set_config/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/dev.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/set_config/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_config/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../poly-YOLOv3/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/../poly-YOLOv3/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../poly-yolo/poly_yolo/poly_yolo.py" beforeDir="false" afterPath="$PROJECT_DIR$/../poly-yolo/poly_yolo/poly_yolo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../poly-yolo/yolo_classes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../poly-yolo/yolo_classes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../polyp_detection_based_on_yolov3/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../polyp_detection_based_on_yolov3/models.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -59,104 +88,104 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="dev.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../GoodsServer/set_config/dev.py">
+      <file leaf-file-name="test_8.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/test_8.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="95">
-              <caret line="5" column="23" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
+            <state relative-caret-position="252">
+              <caret line="24" column="24" lean-forward="true" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="train.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/train.py">
+      <file leaf-file-name="shelfdetection.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dl/shelfdetection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="494">
-              <caret line="37" column="9" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="local.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../GoodsServer/set_config/local.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1425">
-              <caret line="82" column="1" selection-start-line="82" selection-start-column="1" selection-end-line="82" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Grid.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/Grid.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
-              <caret line="21" column="2" selection-start-line="21" selection-start-column="2" selection-end-line="33" selection-end-column="37" />
+            <state relative-caret-position="-916">
+              <caret line="20" column="45" selection-start-line="20" selection-start-column="44" selection-end-line="20" selection-end-column="45" />
               <folding>
-                <element signature="e#0#18#0" expanded="true" />
+                <element signature="e#0#23#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="grid_ai_car.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/grid_ai_car.py">
+      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="224" column="13" lean-forward="true" selection-start-line="224" selection-start-column="13" selection-end-line="224" selection-end-column="13" />
-              <folding>
-                <element signature="e#1#20#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="167">
+              <caret line="19" column="55" lean-forward="true" selection-start-line="19" selection-start-column="55" selection-end-line="19" selection-end-column="55" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dev.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/set_config/dev.py">
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="69" column="20" lean-forward="true" selection-start-line="69" selection-start-column="20" selection-end-line="69" selection-end-column="20" />
+            <state relative-caret-position="647">
+              <caret line="253" column="10" lean-forward="true" selection-start-line="253" selection-start-column="10" selection-end-line="253" selection-end-column="10" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="local.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/set_config/local.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1007">
-              <caret line="31" column="17" lean-forward="true" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/set_config/test.py">
+      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/goods/urls.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="190">
-              <caret line="61" column="20" lean-forward="true" selection-start-line="61" selection-start-column="20" selection-end-line="61" selection-end-column="20" />
+              <caret line="28" column="52" selection-start-line="28" selection-start-column="52" selection-end-line="28" selection-end-column="52" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mg_game.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/mg_game.py">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../freezerdl/freezers/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="186" column="35" selection-start-line="186" selection-start-column="21" selection-end-line="186" selection-end-column="35" />
+            <state relative-caret-position="274">
+              <caret line="88" column="15" lean-forward="true" selection-start-line="88" selection-start-column="15" selection-end-line="88" selection-end-column="15" />
               <folding>
-                <element signature="e#0#19#0" expanded="true" />
+                <element signature="e#0#14#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/test.py">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/goods/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="17" selection-start-line="17" selection-end-line="17" />
+            <state relative-caret-position="207">
+              <caret line="98" lean-forward="true" selection-start-line="98" selection-end-line="98" />
               <folding>
-                <element signature="e#0#42#0" expanded="true" />
+                <element signature="e#0#14#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views_shelf2.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/goods/views_shelf2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-189">
+              <caret line="117" column="37" lean-forward="true" selection-start-line="117" selection-start-column="37" selection-end-line="117" selection-end-column="37" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../freezerdl/freezers/urls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="190">
+              <caret line="22" column="50" selection-start-line="22" selection-start-column="50" selection-end-line="22" selection-end-column="50" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views_shelf.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/goods/views_shelf.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="373" lean-forward="true" selection-start-line="373" selection-end-line="373" />
             </state>
           </provider>
         </entry>
@@ -183,6 +212,11 @@
       <find>A</find>
       <find>subprocess.getstatusoutput</find>
       <find>start_state</find>
+      <find>yolov3</find>
+      <find>gamma</find>
+      <find>upc_stat</find>
+      <find>start_sum</find>
+      <find>HandleStream</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -191,64 +225,64 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/../../qlearn/service/ai_bitcoin3.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/model_data/shelf_voc_classes.txt" />
-        <option value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/yolo3/shelf_yolo.py" />
-        <option value="$PROJECT_DIR$/goods/shelfgoods/local_util/huofu_util.py" />
-        <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/model_data/shelf_voc_classes.txt" />
-        <option value="$PROJECT_DIR$/main/test_settings.py" />
-        <option value="$PROJECT_DIR$/goods/sellgoods/shell/shelf_detect.sh" />
-        <option value="$PROJECT_DIR$/goods/urls.py" />
-        <option value="$PROJECT_DIR$/goods/views_shelf.py" />
-        <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/model_data/shelf_label_map.pbtxt" />
-        <option value="$PROJECT_DIR$/goods/rank_person/test.py" />
-        <option value="$PROJECT_DIR$/goods/rank_person/test/video_read.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/rank_person/test/video_read.py" />
-        <option value="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/tracker.py" />
-        <option value="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/yolo3/yolo_v1.py" />
-        <option value="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/my_demo.py" />
-        <option value="$PROJECT_DIR$/../ModelServer/deep_sort_yolo/deep_sort/track.py" />
-        <option value="$PROJECT_DIR$/set_config/local.py" />
-        <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/good_proxy/proxy.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/shelf_test.py" />
-        <option value="$PROJECT_DIR$/goods/choose_goods/lishu_util/oss_down_up.py" />
-        <option value="$PROJECT_DIR$/goods/freezer/keras_yolo3/yolo3/yolo_shelf.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/freezer/test/path_file/freezer_file_handle.py" />
-        <option value="$PROJECT_DIR$/main/settings.py" />
-        <option value="$PROJECT_DIR$/goods/shelf_recognize/detect_shelf_service.py" />
-        <option value="$PROJECT_DIR$/../../qlearn/service/utils/get_Q.py" />
-        <option value="$PROJECT_DIR$/../../qlearn/service/ai_bitcoin4.py" />
-        <option value="$PROJECT_DIR$/../ModelServer/app/test/gui_main.py" />
-        <option value="$PROJECT_DIR$/../ModelServer/app/test/siyy_main1.py" />
-        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/service/train_service.py" />
-        <option value="$PROJECT_DIR$/../freezerdl/freezers/docs/freezer2_interface.txt" />
-        <option value="$PROJECT_DIR$/../freezerdl/set_config/dev.py" />
-        <option value="$PROJECT_DIR$/../freezerdl/shell_deamon/server.sh" />
-        <option value="$PROJECT_DIR$/../freezerdl/shell_deamon/ai_deamon_process.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/set_config/dev.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/model_data/voc_classes.txt" />
-        <option value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/test.py" />
-        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/train.py" />
-        <option value="$PROJECT_DIR$/../freezerdl/set_config/online.py" />
-        <option value="$PROJECT_DIR$/../ModelServer/app/test/sjyy_main.py" />
-        <option value="$PROJECT_DIR$/../../qlearn/service/auto_device_car/utils/way_env.py" />
-        <option value="$PROJECT_DIR$/../freezerdl/shell_deamon/app_deamon_process.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/freezer/test/utils/xml_to_imgdir.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/shelf_predict.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo4/service/train_service.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo4/train_test/mAp1/predict.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/data/train/bch.csv" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo4/util/write_img_name.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo4/util/voc_anotion.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/600036.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo4/train_test/train.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/bsv1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/eos1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/ht1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/ltc1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/omg1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/seele1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/steem1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/zec1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/bch1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/eth1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/btc1.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/btc1_copy.py" />
+        <option value="$PROJECT_DIR$/../../qlearn/service/ai_btc/utils/data_util.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo4/train_test/test_mAp.py" />
         <option value="$PROJECT_DIR$/../freezerdl/freezers/views.py" />
-        <option value="$PROJECT_DIR$/../GoodsServer/set_config/local.py" />
-        <option value="$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/Grid.py" />
-        <option value="$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/mg_game.py" />
-        <option value="$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/grid_ai_car.py" />
         <option value="$PROJECT_DIR$/set_config/dev.py" />
         <option value="$PROJECT_DIR$/set_config/test.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/set_config/dev.py" />
+        <option value="$PROJECT_DIR$/../GoodsServer/freezer/test/path_file/freezer_file_handle.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo4/yolo4/yolo.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo4/train_test/test.py" />
+        <option value="$PROJECT_DIR$/../poly-YOLOv3/train.py" />
+        <option value="$PROJECT_DIR$/../polyp_detection_based_on_yolov3/models.py" />
+        <option value="$PROJECT_DIR$/../GoodsServer/freezer/test/path_file/bd_json.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/util/voc_anotion.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/model.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/train.py" />
+        <option value="$PROJECT_DIR$/../GoodsServer/freezer/test/utils/kmean_util.py" />
+        <option value="$PROJECT_DIR$/../GoodsServer/freezer/test/utils/test_kmean_xml.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/yolo.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/shell_deamon/ai_deamon_process.py" />
+        <option value="$PROJECT_DIR$/../poly-yolo/yolo_classes.txt" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/test.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/mAp1/mAp.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/set_config/online.py" />
+        <option value="$PROJECT_DIR$/../poly-yolo/poly_yolo/poly_yolo.py" />
+        <option value="$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/generate_order_2saler_add.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/search_phone/train.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/search_phone/predict.py" />
+        <option value="$PROJECT_DIR$/../GoodsServer/freezer/test/utils/xml_to_imgdir.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/predict_imgs.py" />
+        <option value="$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/test_8.py" />
+        <option value="$PROJECT_DIR$/goods/views.py" />
+        <option value="$PROJECT_DIR$/goods/urls.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="55" />
-    <option name="y" value="34" />
-    <option name="width" value="1077" />
+    <option name="x" value="170" />
+    <option name="y" value="4" />
+    <option name="width" value="990" />
     <option name="height" value="727" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -257,6 +291,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -267,51 +302,65 @@
             <path>
               <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
               <item name="goodsdl2" type="462c0819:PsiDirectoryNode" />
-              <item name="set_config" type="462c0819:PsiDirectoryNode" />
+              <item name="goods" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="qlearn" type="462c0819:PsiDirectoryNode" />
+              <item name="goodsdl2" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="qlearn" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
+              <item name="freezerdl" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="qlearn" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-              <item name="ai_game" type="462c0819:PsiDirectoryNode" />
+              <item name="freezerdl" type="462c0819:PsiDirectoryNode" />
+              <item name="freezers" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="qlearn" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-              <item name="ai_game" type="462c0819:PsiDirectoryNode" />
-              <item name="grid_game" type="462c0819:PsiDirectoryNode" />
+              <item name="GoodsServer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GoodsServer" type="462c0819:PsiDirectoryNode" />
+              <item name="freezer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GoodsServer" type="462c0819:PsiDirectoryNode" />
+              <item name="freezer" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="goodsdl2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GoodsServer" type="462c0819:PsiDirectoryNode" />
+              <item name="freezer" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ModelServer" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../poly-yolo" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\opt\code\github\freezerdl\shell_deamon" />
-      <recent name="D:\opt\code\qlearn\service" />
-      <recent name="D:\opt\code\github\ModelServer\deep_sort_yolo" />
-      <recent name="D:\opt\code\github\ModelServer\deep_sort_yolo\yolo3" />
-      <recent name="D:\opt\code\github\goodsdl2\goods\sellgoods\shell" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\opt\code\qlearn\service\ai_btc\jpg_bs\old" />
       <recent name="D:\opt\code\github\GoodsServer" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\opt\code\github\freezerdl\model_train\keras_yolo3\train_test" />
+      <recent name="D:\opt\code\github\poly-yolo\poly_yolo" />
+      <recent name="D:\opt\code\github\poly-yolo" />
+      <recent name="D:\opt\code\qlearn\service\ai_btc\curr_good_model" />
+      <recent name="D:\opt\code\qlearn\service\ai_btc" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -326,44 +375,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.grid_ai_car">
-    <configuration name="grid_ai_car" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="qlearn" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/grid_ai_car.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="mg_game" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="qlearn" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/mg_game.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="shelf_predict" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.xml_to_imgdir">
+    <configuration name="bd_json" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="GoodsServer" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -371,29 +384,65 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../GoodsServer" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../GoodsServer/freezer/test/path_file" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../GoodsServer/shelf_predict.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../GoodsServer/freezer/test/path_file/bd_json.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="GoodsServer" />
+    <configuration name="poly_yolo" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="poly-yolo" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="SDK_HOME" value="D:\opt\code\qlearn\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../poly-yolo/poly_yolo" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/test.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../poly-yolo/poly_yolo/poly_yolo.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="train (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="poly-YOLOv3" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="D:\opt\tools\work\Anaconda\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../poly-YOLOv3" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../poly-YOLOv3/train.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="train" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="polyp_detection_based_on_yolov3" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="D:\opt\code\qlearn\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../polyp_detection_based_on_yolov3" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../polyp_detection_based_on_yolov3/train.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -418,19 +467,19 @@
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <list>
+      <item itemvalue="Python.train" />
+      <item itemvalue="Python.train (1)" />
+      <item itemvalue="Python.bd_json" />
+      <item itemvalue="Python.poly_yolo" />
       <item itemvalue="Python.xml_to_imgdir" />
-      <item itemvalue="Python.test" />
-      <item itemvalue="Python.shelf_predict" />
-      <item itemvalue="Python.grid_ai_car" />
-      <item itemvalue="Python.mg_game" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.grid_ai_car" />
-        <item itemvalue="Python.mg_game" />
-        <item itemvalue="Python.test" />
-        <item itemvalue="Python.shelf_predict" />
         <item itemvalue="Python.xml_to_imgdir" />
+        <item itemvalue="Python.poly_yolo" />
+        <item itemvalue="Python.bd_json" />
+        <item itemvalue="Python.train (1)" />
+        <item itemvalue="Python.train" />
       </list>
     </recent_temporary>
   </component>
@@ -529,17 +578,16 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24743778" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.33601758" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.1647145" side_tool="true" weight="0.37678856" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49633968" weight="0.32750398" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.3529412" />
       <window_info anchor="bottom" id="Python Console" order="8" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8352855" visible="true" weight="0.39109698" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8352855" visible="true" weight="0.24801272" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3990461" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -548,7 +596,29 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49633968" weight="0.32750398" />
     </layout>
+    <layout-to-restore>
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3352855" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="right" id="Data View" order="3" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8352855" visible="true" weight="0.49602544" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.1647145" side_tool="true" weight="0.37678856" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3529412" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49633968" weight="0.32750398" />
+      <window_info anchor="bottom" id="Messages" order="10" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -618,372 +688,407 @@
           <line>32</line>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/yolo.py</url>
+          <line>5</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo4/yolo4/yolo.py</url>
+          <line>5</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="6" />
+      <option name="time" value="8" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../Person_reID_baseline_pytorch/train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="155" column="23" lean-forward="true" selection-start-line="155" selection-start-column="23" selection-end-line="155" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_bitcoin2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="216" column="58" lean-forward="true" selection-start-line="216" selection-start-column="58" selection-end-line="216" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_q.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="644">
-          <caret line="216" column="16" lean-forward="true" selection-start-line="216" selection-start-column="16" selection-end-line="216" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/utils/qval_coin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="12" column="7" lean-forward="true" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_bitcoin3.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="243" lean-forward="true" selection-start-line="243" selection-end-line="243" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/utils/get_Q.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="26" column="28" lean-forward="true" selection-start-line="26" selection-start-column="28" selection-end-line="26" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_bitcoin4.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="172" column="83" lean-forward="true" selection-start-line="172" selection-start-column="83" selection-end-line="172" selection-end-column="83" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../ModelServer/app/test/test1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="11" column="24" lean-forward="true" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../tools/work/Anaconda/Lib/tkinter/ttk.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
-          <caret line="730" column="8" selection-start-line="730" selection-start-column="8" selection-end-line="730" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../ModelServer/app/test/siyy_main1.py" />
-    <entry file="file://$PROJECT_DIR$/../../../tools/work/Anaconda/Lib/tkinter/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="2097" selection-start-line="2097" selection-end-line="2097" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../ModelServer/app/test/gui_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-741">
-          <caret line="27" column="10" selection-start-line="27" selection-start-column="10" selection-end-line="27" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/set_config/local.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/freezers/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="38" column="49" lean-forward="true" selection-start-line="38" selection-start-column="49" selection-end-line="38" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/test/path_file/freezer_file_handle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="61" column="24" selection-start-line="61" selection-start-column="24" selection-end-line="61" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/freezers/docs/freezer2_interface.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="100" column="23" selection-start-line="100" selection-start-column="23" selection-end-line="100" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/set_config/dev.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="88" lean-forward="true" selection-start-line="88" selection-end-line="88" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/shell_deamon/app_deamon.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/shell_deamon/server.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/shell_deamon/ai_deamon.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../freezerdl/shell_deamon/ai_deamon_process.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        <state relative-caret-position="323">
+          <caret line="155" selection-start-line="155" selection-end-line="155" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../ModelServer/deep_sort_yolo/my_demo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="647">
-          <caret line="78" column="24" lean-forward="true" selection-start-line="78" selection-start-column="24" selection-end-line="78" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../ModelServer/deep_sort_yolo/demo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="49" column="13" lean-forward="true" selection-start-line="49" selection-start-column="13" selection-end-line="49" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/set_config/online.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" column="20" lean-forward="true" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/service/train_service.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1235">
-          <caret line="56" column="20" lean-forward="true" selection-start-line="56" selection-start-column="20" selection-end-line="56" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/model_data/voc_classes.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="13" selection-end-line="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/shelf_test.py">
+    <entry file="file://$PROJECT_DIR$/../poly-yolo/simulator_dataset/simulator-test.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/-1437457649/_winapi.py">
+    <entry file="file://$PROJECT_DIR$/../keras-yolo4/yolo4.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="128">
-          <caret line="150" column="4" selection-start-line="150" selection-start-column="4" selection-end-line="150" selection-end-column="4" />
+        <state relative-caret-position="188">
+          <caret line="163" lean-forward="true" selection-start-line="163" selection-end-line="163" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../tools/work/Anaconda/Lib/subprocess.py">
+    <entry file="file://$PROJECT_DIR$/../poly-yolo/README.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1089">
-          <caret line="644" column="13" selection-start-line="644" selection-start-column="13" selection-end-line="644" selection-end-column="13" />
+        <state relative-caret-position="198">
+          <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/-1437457649/builtins.py">
+    <entry file="file://$PROJECT_DIR$/../poly-yolo/poly-yolo-titlepage-image.jpg">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../poly-yolo/tpami_paper/simulator/full_train/yolo_v3.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="2032" column="8" selection-start-line="2032" selection-start-column="8" selection-end-line="2032" selection-end-column="8" />
+        <state relative-caret-position="-4807">
+          <caret line="24" column="20" lean-forward="true" selection-start-line="24" selection-start-column="20" selection-end-line="24" selection-end-column="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../ModelServer/app/test/sjyy_main.py">
+    <entry file="file://$PROJECT_DIR$/../poly-yolo/yolo_anchors.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="208" lean-forward="true" selection-start-line="208" selection-end-line="208" />
+        <state>
+          <caret column="23" lean-forward="true" selection-start-column="23" selection-end-column="23" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/auto_device_car/utils/way_env.py">
+    <entry file="file://$PROJECT_DIR$/../poly-yolo/poly_yolo/conversion_scripts/labels_to_yolo_format.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="4" column="23" selection-start-line="4" selection-start-column="23" selection-end-line="4" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/shell_deamon/app_deamon_process.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/test/utils/xml_to_imgdir.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="12" column="10" selection-start-line="12" selection-start-column="10" selection-end-line="12" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/test/curl_post/xpost.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="13" column="26" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
+        <state relative-caret-position="-2064">
+          <caret line="14" column="33" lean-forward="true" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="33" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/freezers/views.py">
+    <entry file="file://$PROJECT_DIR$/../keras-yolo4/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3344">
-          <caret line="200" column="24" selection-start-line="200" selection-start-column="24" selection-end-line="200" selection-end-column="24" />
+        <state relative-caret-position="250">
+          <caret line="163" lean-forward="true" selection-start-line="163" selection-end-line="163" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/shelfgoods/local_util/levelcompare.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="11" column="52" lean-forward="true" selection-start-line="11" selection-start-column="52" selection-end-line="11" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#49#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/shelfgoods/local_util/tz_compare.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="48" column="63" selection-start-line="48" selection-start-column="63" selection-end-line="48" selection-end-column="63" />
+          <folding>
+            <element signature="e#0#49#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/test_mAp.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../poly-yolo/yolo_classes.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="15" column="13" lean-forward="true" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../poly-yolo/poly_yolo/poly_yolo_lite.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1238">
+          <caret line="248" column="47" lean-forward="true" selection-start-line="248" selection-start-column="47" selection-end-line="248" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/shelfgoods/proxy/filter_wz_box.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="9" column="20" lean-forward="true" selection-start-line="9" selection-start-column="20" selection-end-line="9" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/shelfgoods/proxy/compare_proxy_factory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="24" column="74" selection-start-line="24" selection-start-column="74" selection-end-line="24" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../poly-yolo/poly_yolo/poly_yolo_without_polygon.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4047" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/mAp/voc_eval.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#34#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/mAp1/mAp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="589">
+          <caret line="115" column="27" lean-forward="true" selection-start-line="115" selection-start-column="27" selection-end-line="115" selection-end-column="27" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/yzz_test.py">
+    <entry file="file://$PROJECT_DIR$/../freezerdl/set_config/dev.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="13" column="12" selection-start-line="13" selection-start-column="12" selection-end-line="13" selection-end-column="12" />
+        <state relative-caret-position="247">
+          <caret line="13" column="20" lean-forward="true" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/set_config/online.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="25" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/mAp1/predict.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="19" column="8" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="106" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../poly-yolo/poly_yolo/poly_yolo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="813" column="61" lean-forward="true" selection-start-line="813" selection-start-column="61" selection-end-line="813" selection-end-column="61" />
+          <folding>
+            <element signature="e#281#310#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/generate_order_2saler_add.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="103" column="61" lean-forward="true" selection-start-line="103" selection-start-column="61" selection-end-line="103" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/generate_shelf_dispaly.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="30" column="31" lean-forward="true" selection-start-line="30" selection-start-column="31" selection-end-line="30" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/sellgoods/salesquantity/service/order_version_6/data_util/goods_info.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="458" column="37" lean-forward="true" selection-start-line="458" selection-start-column="37" selection-end-line="458" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="211" column="17" lean-forward="true" selection-start-line="211" selection-start-column="17" selection-end-line="211" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="50" column="20" lean-forward="true" selection-start-line="50" selection-start-column="20" selection-end-line="50" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/service/train_service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="893">
+          <caret line="56" column="20" lean-forward="true" selection-start-line="56" selection-start-column="20" selection-end-line="56" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="55" column="46" lean-forward="true" selection-end-line="116" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/util/voc_anotion.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="25" column="32" lean-forward="true" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/util/write_img_name.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="18" column="17" lean-forward="true" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/search_phone/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="112" column="15" lean-forward="true" selection-start-line="112" selection-start-column="15" selection-end-line="112" selection-end-column="15" />
+          <folding>
+            <element signature="e#97#115#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/test/utils/xml_to_imgdir.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="17" column="54" lean-forward="true" selection-start-line="17" selection-start-column="54" selection-end-line="17" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/yolo3/yolo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2596">
+          <caret line="150" column="30" lean-forward="true" selection-start-line="150" selection-start-column="30" selection-end-line="150" selection-end-column="30" />
+          <folding>
+            <element signature="e#102#117#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/freezers/docs/freezer2_interface.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="94" lean-forward="true" selection-start-line="94" selection-end-line="94" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/search_phone/predict.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
           <folding>
             <element signature="e#0#46#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/shelf_predict.py">
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="7" column="19" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="37" column="9" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/set_config/dev.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="95">
-          <caret line="5" column="23" selection-start-line="5" selection-start-column="23" selection-end-line="5" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/freezer/keras_yolo3/train_test/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        <state relative-caret-position="171">
+          <caret line="9" column="11" lean-forward="true" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
           <folding>
-            <element signature="e#0#42#0" expanded="true" />
+            <element signature="e#0#46#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../GoodsServer/set_config/local.py">
+    <entry file="file://$PROJECT_DIR$/../freezerdl/predict_imgs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1425">
-          <caret line="82" column="1" selection-start-line="82" selection-start-column="1" selection-end-line="82" selection-end-column="1" />
+        <state relative-caret-position="19">
+          <caret line="1" column="15" lean-forward="true" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../tools/work/Anaconda/Lib/site-packages/sklearn/utils/__init__.py">
+    <entry file="file://$PROJECT_DIR$/../freezerdl/model_train/keras_yolo3/train_test/test_8.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-660">
-          <caret line="276" column="4" selection-start-line="276" selection-start-column="4" selection-end-line="276" selection-end-column="4" />
+        <state relative-caret-position="252">
+          <caret line="24" column="24" lean-forward="true" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/Grid.py">
+    <entry file="file://$PROJECT_DIR$/dl/shelfdetection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
-          <caret line="21" column="2" selection-start-line="21" selection-start-column="2" selection-end-line="33" selection-end-column="37" />
+        <state relative-caret-position="-916">
+          <caret line="20" column="45" selection-start-line="20" selection-start-column="44" selection-end-line="20" selection-end-column="45" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/qt_1.pkl">
+    <entry file="file://$PROJECT_DIR$/main/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="9" column="22" lean-forward="true" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
+        <state relative-caret-position="167">
+          <caret line="19" column="55" lean-forward="true" selection-start-line="19" selection-start-column="55" selection-end-line="19" selection-end-column="55" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/qt.pkl">
+    <entry file="file://$PROJECT_DIR$/main/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" column="5" lean-forward="true" selection-start-line="13" selection-start-column="5" selection-end-line="13" selection-end-column="5" />
+        <state relative-caret-position="647">
+          <caret line="253" column="10" lean-forward="true" selection-start-line="253" selection-start-column="10" selection-end-line="253" selection-end-column="10" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/mg_game.py">
+    <entry file="file://$PROJECT_DIR$/../../../tools/work/Anaconda/Lib/site-packages/rest_framework/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="186" column="35" selection-start-line="186" selection-start-column="21" selection-end-line="186" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-22">
+          <caret line="121" column="8" selection-start-line="121" selection-start-column="8" selection-end-line="121" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../qlearn/service/ai_game/grid_game/grid_ai_car.py">
+    <entry file="file://$PROJECT_DIR$/goods/views_shelf.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="224" column="13" lean-forward="true" selection-start-line="224" selection-start-column="13" selection-end-line="224" selection-end-column="13" />
-          <folding>
-            <element signature="e#1#20#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="187">
+          <caret line="373" lean-forward="true" selection-start-line="373" selection-end-line="373" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/set_config/dev.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="69" column="20" lean-forward="true" selection-start-line="69" selection-start-column="20" selection-end-line="69" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/set_config/local.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1007">
-          <caret line="31" column="17" lean-forward="true" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/set_config/test.py">
+    <entry file="file://$PROJECT_DIR$/../freezerdl/freezers/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="190">
-          <caret line="61" column="20" lean-forward="true" selection-start-line="61" selection-start-column="20" selection-end-line="61" selection-end-column="20" />
+          <caret line="22" column="50" selection-start-line="22" selection-start-column="50" selection-end-line="22" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../freezerdl/freezers/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="274">
+          <caret line="88" column="15" lean-forward="true" selection-start-line="88" selection-start-column="15" selection-end-line="88" selection-end-column="15" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/views_shelf2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-189">
+          <caret line="117" column="37" lean-forward="true" selection-start-line="117" selection-start-column="37" selection-end-line="117" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="28" column="52" selection-start-line="28" selection-start-column="52" selection-end-line="28" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/goods/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="98" lean-forward="true" selection-start-line="98" selection-end-line="98" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

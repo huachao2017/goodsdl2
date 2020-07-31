@@ -6,6 +6,14 @@
     <mapping directory="$PROJECT_DIR$/../../ai/ImgVision" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../GoodsServer" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../ModelServer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../PaddleDetection" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../PaddleSeg" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../Person_reID_baseline_pytorch" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../goodsdl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../keras-yolo4" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../lotus" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../poly-YOLOv3" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../poly-yolo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../polyp_detection_based_on_yolov3" vcs="Git" />
   </component>
 </project>

@@ -7,9 +7,17 @@
       <module fileurl="file://$PROJECT_DIR$/../GoodsServer/.idea/GoodsServer.iml" filepath="$PROJECT_DIR$/../GoodsServer/.idea/GoodsServer.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../ai/ImgVision/.idea/ImgVision.iml" filepath="$PROJECT_DIR$/../../ai/ImgVision/.idea/ImgVision.iml" />
       <module fileurl="file://$PROJECT_DIR$/../ModelServer/.idea/ModelServer.iml" filepath="$PROJECT_DIR$/../ModelServer/.idea/ModelServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../PaddleDetection/.idea/PaddleDetection.iml" filepath="$PROJECT_DIR$/../PaddleDetection/.idea/PaddleDetection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../PaddleSeg/.idea/PaddleSeg.iml" filepath="$PROJECT_DIR$/../PaddleSeg/.idea/PaddleSeg.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Person_reID_baseline_pytorch/.idea/Person_reID_baseline_pytorch.iml" filepath="$PROJECT_DIR$/../Person_reID_baseline_pytorch/.idea/Person_reID_baseline_pytorch.iml" />
       <module fileurl="file://$PROJECT_DIR$/../freezerdl/.idea/freezerdl.iml" filepath="$PROJECT_DIR$/../freezerdl/.idea/freezerdl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../goodsdl/.idea/goodsdl.iml" filepath="$PROJECT_DIR$/../goodsdl/.idea/goodsdl.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/goodsdl2.iml" filepath="$PROJECT_DIR$/.idea/goodsdl2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../keras-yolo4/.idea/keras-yolo4.iml" filepath="$PROJECT_DIR$/../keras-yolo4/.idea/keras-yolo4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../lotus/.idea/lotus.iml" filepath="$PROJECT_DIR$/../lotus/.idea/lotus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../poly-YOLOv3/.idea/poly-YOLOv3.iml" filepath="$PROJECT_DIR$/../poly-YOLOv3/.idea/poly-YOLOv3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../poly-yolo/.idea/poly-yolo.iml" filepath="$PROJECT_DIR$/../poly-yolo/.idea/poly-yolo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../polyp_detection_based_on_yolov3/.idea/polyp_detection_based_on_yolov3.iml" filepath="$PROJECT_DIR$/../polyp_detection_based_on_yolov3/.idea/polyp_detection_based_on_yolov3.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../qlearn/.idea/qlearn.iml" filepath="$PROJECT_DIR$/../../qlearn/.idea/qlearn.iml" />
     </modules>
   </component>

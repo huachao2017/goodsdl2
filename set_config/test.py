@@ -44,10 +44,10 @@ shelf_yolov3_params={
 #########################################shelf_good##################################################################
 
 aliyun_instance1={
-    "AccessKeyID" : "11",
-    "AccessKeySecret" : "11",
-    "region" : "11",
-    "instance_name" : "11",
+    "AccessKeyID" : "LTAI4Ftp8inKDzFmaEWyj17P",
+    "AccessKeySecret" : "mCVOzv0fABM19dTRlYlWMZdGlAoqsz",
+    "region" : "cn-shanghai",
+    "instance_name" : "hsimgsearch",
     "min_score" : 5,
     "min_score_top1":5,
     "search_point": "imagesearch.cn-shanghai.aliyuncs.com",
@@ -55,10 +55,10 @@ aliyun_instance1={
 }
 
 aliyun_instance2={
-    "AccessKeyID" : "11",
-    "AccessKeySecret" : "11",
-    "region" : "11",
-    "instance_name" : "11",
+    "AccessKeyID" : "LTAI4Fi33wJV958cakMBQxKZ",
+    "AccessKeySecret" : "cJRZsV2ayTAhSLhZWiuzBHrgHK2uhq",
+    "region" : "cn-shanghai",
+    "instance_name" : "hsimgsearch1",
     "min_score" : 5,
     "min_score_top1": 5,
     "search_point": "imagesearch.cn-shanghai.aliyuncs.com",
