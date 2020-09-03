@@ -141,7 +141,7 @@ def get_shop_order_goods(shopid,add_type=False):
                         # 获取商品属性
                         try:
                             cursor.execute(
-                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,display_first_cat_id,display_second_cat_id,display_third_cat_id,storage_day,package_type,display_goods_num,supplier_id,supplier_goods_code,goods_status from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                                "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,display_first_cat_id,display_second_cat_id,display_third_cat_id,storage_day,package_type,display_goods_num,supplier_id,supplier_goods_code,goods_status from uc_merchant_goods where mch_id = {} and mch_goods_code = '{}'".format(
                                     mch_id, mch_code))
                             # FIXME width,height暂时翻转
                             # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
@@ -540,7 +540,7 @@ def for_taizhang_upc(taizhangs,mch_id):
                     mch_code = goods['mch_goods_code']
                     try:
                         cursor.execute(
-                            "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = {}".format(
+                            "select id, goods_name,upc, tz_display_img, spec, volume,is_superimpose,is_suspension,delivery_type,category1_id,category2_id,category_id,storage_day,package_type from uc_merchant_goods where mch_id = {} and mch_goods_code = '{}'".format(
                                 mch_id, mch_code))
                         # FIXME width,height暂时翻转
                         # (goods_id, goods_name, upc, tz_display_img, spec, volume, width, height, depth,is_superimpose,is_suspension) = cursor.fetchone()
