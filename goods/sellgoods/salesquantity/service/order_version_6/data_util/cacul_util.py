@@ -274,7 +274,7 @@ def update_order_data(new_data_dict,order_data):
         upc = str(key).split(",")[1]
         order_sale = new_data_dict[key]
         for v_dict in order_data_dict:
-            if order_sale>0 and int(v_dict['mch_goods_code']) == int(mch_goods_code) and str(v_dict['upc']) == str(upc):
+            if order_sale>0 and str(v_dict['mch_goods_code']) == str(mch_goods_code) and str(v_dict['upc']) == str(upc):
                 v_dict['order_sale'] = order_sale
                 order_data_new.append(v_dict)
     order_data_new = demjson.encode(order_data_new)
