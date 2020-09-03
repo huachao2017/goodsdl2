@@ -7,9 +7,12 @@
       <module fileurl="file://$PROJECT_DIR$/../GoodsServer/.idea/GoodsServer.iml" filepath="$PROJECT_DIR$/../GoodsServer/.idea/GoodsServer.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../ai/ImgVision/.idea/ImgVision.iml" filepath="$PROJECT_DIR$/../../ai/ImgVision/.idea/ImgVision.iml" />
       <module fileurl="file://$PROJECT_DIR$/../ModelServer/.idea/ModelServer.iml" filepath="$PROJECT_DIR$/../ModelServer/.idea/ModelServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../NxAi/.idea/NxAi.iml" filepath="$PROJECT_DIR$/../NxAi/.idea/NxAi.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PaddleDetection/.idea/PaddleDetection.iml" filepath="$PROJECT_DIR$/../PaddleDetection/.idea/PaddleDetection.iml" />
       <module fileurl="file://$PROJECT_DIR$/../PaddleSeg/.idea/PaddleSeg.iml" filepath="$PROJECT_DIR$/../PaddleSeg/.idea/PaddleSeg.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Person_reID_baseline_pytorch/.idea/Person_reID_baseline_pytorch.iml" filepath="$PROJECT_DIR$/../Person_reID_baseline_pytorch/.idea/Person_reID_baseline_pytorch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../SjMailChange/.idea/SjMailChange.iml" filepath="$PROJECT_DIR$/../SjMailChange/.idea/SjMailChange.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../TDemo/.idea/TDemo.iml" filepath="$PROJECT_DIR$/../TDemo/.idea/TDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/../freezerdl/.idea/freezerdl.iml" filepath="$PROJECT_DIR$/../freezerdl/.idea/freezerdl.iml" />
       <module fileurl="file://$PROJECT_DIR$/../goodsdl/.idea/goodsdl.iml" filepath="$PROJECT_DIR$/../goodsdl/.idea/goodsdl.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/goodsdl2.iml" filepath="$PROJECT_DIR$/.idea/goodsdl2.iml" />

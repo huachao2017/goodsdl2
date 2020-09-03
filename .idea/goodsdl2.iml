@@ -20,5 +20,8 @@
     <orderEntry type="module" module-name="polyp_detection_based_on_yolov3" />
     <orderEntry type="module" module-name="poly-YOLOv3" />
     <orderEntry type="module" module-name="poly-yolo" />
+    <orderEntry type="module" module-name="TDemo" />
+    <orderEntry type="module" module-name="NxAi" />
+    <orderEntry type="module" module-name="SjMailChange" />
   </component>
 </module>
